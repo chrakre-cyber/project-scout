@@ -24,7 +24,7 @@ Status: BACKLOG / READY / IN_PROGRESS / REVIEW / DONE / BLOCKED. Prioritet: P0 n
 | TAX-001 | Første import-/salgsprofil og nødvendige felt valgt; unsupported cases og kilder definert | ChatGPT + Christian | READY | P0 | 30–60 min | 2–3 t | PM-004 |
 | TAX-002 | Uavhengige referansecaser for mva., avgifter og salg; input/dato/fasit dokumentert | Christian + ChatGPT | BACKLOG | P0 | 3–5 t | 4–6 t | TAX-001, BUS-004 |
 | UX-001 | Skisser for tre skjermer; demo, mva., bidrag og kontrollbehov forståelige | Claude Design / ChatGPT | READY | P1 | 30–45 min | 2–4 t | PM-001 |
-| DEV-001 | Next.js-appskall, tydelig mock-demo og lokal startinstruks | Hovedutvikler | BACKLOG | P0 | 15–30 min | 2–4 t | SET-001, PM-004 |
+| DEV-001 | Next.js-appskall, tydelig mock-demo og lokal startinstruks | Hovedutvikler | REVIEW | P0 | 15–30 min | 2–4 t | SET-001, PM-004 |
 | DEV-002 | Migrasjoner, Auth, membership og RLS; firma A kan ikke lese/skrive Bs data | Hovedutvikler | BACKLOG | P0 | 20–40 min | 4–6 t | DEV-001, SET-002 |
 | DEV-003 | MarketplaceProvider + syntetisk mock; normalisering og feiltyper kontrollert | Hovedutvikler | BACKLOG | P0 | 15–30 min | 3–4 t | DEV-001 |
 | DEV-004 | Agent CRUD/pause, inputkontroll og atomisk maks 10 aktive per firma | Hovedutvikler | BACKLOG | P0 | 30–45 min | 4–6 t | DEV-002, DEV-003 |
@@ -57,6 +57,7 @@ Skriv dato, ny status, commit/fil og testbelegg i seksjonen under. Juster estima
 ## Hendelseslogg
 
 - 03.10.2026: PM-001–PM-004 dokumentleveranser opprettet. Resten er uutført. DEV-006 blokkert av datatilgang.
+- 03.10.2026: DEV-001 → REVIEW (branch `claude/wonderful-bardeen-yussx3`). Next.js-appskall med tre visninger, demo-banner og åtte syntetiske bilkort. Kontroller kjørt: `npm ci` fra ren tilstand, `npm run check` (typecheck, lint, 13 Vitest-tester, build), `next start` med HTTP-røyktest av alle ruter (200/307/404 som forventet) og Playwright-klikkflyt desktop/mobil uten konsollfeil. Venter separat review før DONE. Observasjon: repoet finnes (SET-001 i praksis utført), men dokumentene ligger flatt i roten, mens README/CLAUDE.md lenker til `docs/`, `planning/`, `prompts/` og `templates/`.
 
 ## Dagens anbefalte rekkefølge
 

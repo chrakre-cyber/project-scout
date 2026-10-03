@@ -8,6 +8,25 @@ Gi norske bilforhandlere relevante innkjøpsmuligheter fra mobile.de, vurdert mo
 
 **Dette er en prosjekt- og spesifikasjonspakke, ikke en ferdig app.** GitHub, Supabase, Vercel, n8n og mobile.de-konto er ikke opprettet av denne leveransen. Ingen henvendelser er sendt. Ingen avgiftsmotor eller kode er implementert eller godkjent.
 
+## Kjøre demo-appen (DEV-001)
+
+Appskallet er en **syntetisk demo**: ingen ekte annonser, ingen mobile.de-data, ingen innlogging og ingen avgifts- eller marginberegning.
+
+Krav: Node.js 20.9 eller nyere (testet med Node 22.22, npm 10.9).
+
+```bash
+npm ci            # ren installasjon fra package-lock.json
+npm run dev       # utvikling på http://localhost:3000
+npm run build && npm run start   # produksjonsbygg lokalt
+npm run check     # typecheck + lint + tester + build
+```
+
+Visninger: `/dashboard` (åtte syntetiske bilkort, filter per demo-agent), `/agents` (demo-agenter, kun lesing) og `/opportunities/<id>` (detaljside; kost/bidrag vises som «ikke beregnet»).
+
+Versjoner (låst i `package-lock.json`): Next.js 16.3.8, React 19.3.0, TypeScript 5.9.3, Tailwind CSS 4.3.3, ESLint 9 med eslint-config-next 16.3.8, Vitest 5.0.3.
+
+Kodeplassering: `src/domain/` (rene domenetyper, ingen UI/provider), `src/demo/` (syntetiske fixturer + lesefunksjoner som DEV-003 erstatter), `src/lib/format.ts` (visning, «ikke oppgitt»), `src/components/`, `src/app/` og `tests/`.
+
 ## Start her
 
 1. Les [START_HER.md](START_HER.md): dine tre første oppgaver og første utviklingsoppdrag.

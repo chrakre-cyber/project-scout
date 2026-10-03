@@ -20,6 +20,7 @@ Oppdatert 03.10.2026. «Vedtatt» gjengir produktvalgene i samtalen. «Arbeidsbe
 | DEC-014 | Arbeidsbeslutning | Fritekst-til-filtre er sekundær etter kjerneflyten | Strukturerte filtre dekker hovedbehovet |
 | DEC-015 | Arbeidsbeslutning | Historiske annonse- og bildata beholdes bare hvis avtalen tillater det | «Data moat» er ikke en gitt bruksrett |
 | DEC-016 | Arbeidsbeslutning | Ingen ekstern utvikler; tidsskala har buffer | Christian styrer AI-arbeid, oppsett og QA; AI-tid er ikke autonom levering |
+| DEC-017 | Arbeidsbeslutning (03.10.2026, DEV-001) | Pengebeløp i domenet er heltall i minste valutaenhet (`amountMinor`) + ISO 4217-valuta | Oppfyller DATABASE_SCHEMA-kravet om én representasjon uten flyttall. DEV-002 bør bruke `bigint` minor units + valuta i migrasjonen; revurder hvis avgiftsregler krever høyere presisjon enn øre |
 
 ## Åpne avklaringer
 
