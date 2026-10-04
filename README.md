@@ -30,35 +30,35 @@ Kodeplassering: `src/domain/` (rene domenetyper, ingen UI/provider), `src/demo/`
 ## Start her
 
 1. Les [START_HER.md](START_HER.md): dine tre første oppgaver og første utviklingsoppdrag.
-2. Les [produktspesifikasjonen](docs/PRODUCT_SPEC.md) og [Sprint 0](planning/SPRINT_0.md).
+2. Les [produktspesifikasjonen](PRODUCT_SPEC.md) og [Sprint 0](SPRINT_0.md).
 3. Opprett et privat GitHub-repository, `project-scout`, og legg inn innholdet i denne mappen i repositoryets rot. `CLAUDE.md` og `AGENTS.md` skal ligge i roten.
-4. Avklar mobile.de-tilgang med [utkastet](templates/MOBILE_DE_REQUEST.md). Lagre svaret som avtaledokumentasjon; oppdater BUS-001.
-5. Start oppgavene som står READY i [backloggen](planning/MVP_BACKLOG.md). Arbeid på mock-sporet fortsetter mens API-vilkårene avklares.
+4. Avklar mobile.de-tilgang med [utkastet](MOBILE_DE_REQUEST.md). Lagre svaret som avtaledokumentasjon; oppdater BUS-001.
+5. Start oppgavene som står READY i [backloggen](MVP_BACKLOG.md). Arbeid på mock-sporet fortsetter mens API-vilkårene avklares.
 
 ## Dokumentkart
 
 | Fil | Formål |
 |---|---|
-| docs/PRODUCT_SPEC.md | Låst MVP, brukerflyt, akseptkrav og begreper |
-| planning/MVP_BACKLOG.md | Oppgaver, ansvar, estimater, avhengigheter og status |
-| planning/ROADMAP.md | 30-dagers plan og beslutningsporter |
-| docs/DECISIONS.md | Beslutninger og åpne avklaringer |
-| docs/AI_TEAM_ROLES.md | Hvem som gjør hva, og hvordan arbeid overleveres |
-| planning/SPRINT_0.md | Arbeidsliste for dag 1–3 |
-| planning/PILOT_PLAN.md | Rekruttering, to ukers pilot og målemetode |
-| docs/SWOT_AND_RISKS.md | SWOT og risikoregister med tiltak |
-| docs/ARCHITECTURE.md | Modulgrenser, datakildekontrakt og kjøring |
-| docs/DATABASE_SCHEMA.md | Logisk datamodell, tilgangskontroll og integritet |
-| docs/MOBILE_DE_INTEGRATION.md | Verifiserte API-fakta og kommersielle avklaringer |
-| docs/IMPORT_ENGINE_SPEC.md | Kost-, mva.- og marginregler; valideringsport |
-| docs/AI_ANALYSIS_SPEC.md | Strukturert annonseanalyse med kildebelegg |
-| docs/OPPORTUNITY_SCORE.md | Forklarbar score og varselkriterier |
-| docs/TEST_PLAN.md | Tester og krav før ekte pilot |
-| docs/SOURCES.md | Kilder kontrollert 03.10.2026 og deres begrensninger |
-| prompts/SPRINT_1_HANDOFF.md | Oppdrag som kan gis til Claude Code/Codex |
-| templates/TASK_HANDOFF.md | Mal for nye utviklingsoppdrag |
-| templates/MOBILE_DE_REQUEST.md | Engelsk utkast til API-forespørsel |
-| templates/PILOT_INTERVIEW.md | Spørsmål til forhandlere |
+| PRODUCT_SPEC.md | Låst MVP, brukerflyt, akseptkrav og begreper |
+| MVP_BACKLOG.md | Oppgaver, ansvar, estimater, avhengigheter og status |
+| ROADMAP.md | 30-dagers plan og beslutningsporter |
+| DECISIONS.md | Beslutninger og åpne avklaringer |
+| AI_TEAM_ROLES.md | Hvem som gjør hva, og hvordan arbeid overleveres |
+| SPRINT_0.md | Arbeidsliste for dag 1–3 |
+| PILOT_PLAN.md | Rekruttering, to ukers pilot og målemetode |
+| SWOT_AND_RISKS.md | SWOT og risikoregister med tiltak |
+| ARCHITECTURE.md | Modulgrenser, datakildekontrakt og kjøring |
+| DATABASE_SCHEMA.md | Logisk datamodell, tilgangskontroll og integritet |
+| MOBILE_DE_INTEGRATION.md | Verifiserte API-fakta og kommersielle avklaringer |
+| IMPORT_ENGINE_SPEC.md | Kost-, mva.- og marginregler; valideringsport |
+| AI_ANALYSIS_SPEC.md | Strukturert annonseanalyse med kildebelegg |
+| OPPORTUNITY_SCORE.md | Forklarbar score og varselkriterier |
+| TEST_PLAN.md | Tester og krav før ekte pilot |
+| SOURCES.md | Kilder kontrollert 03.10.2026 og deres begrensninger |
+| SPRINT_1_HANDOFF.md | Oppdrag som kan gis til Claude Code/Codex |
+| TASK_HANDOFF.md | Mal for nye utviklingsoppdrag |
+| MOBILE_DE_REQUEST.md | Engelsk utkast til API-forespørsel |
+| PILOT_INTERVIEW.md | Spørsmål til forhandlere |
 | CLAUDE.md / AGENTS.md | Felles spilleregler i repositoryet |
 
 ## Hvordan vi holder oversikt

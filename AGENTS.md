@@ -1,6 +1,6 @@
 # Project Scout — instruksjoner for utviklingsverktøy
 
-Les README.md, docs/PRODUCT_SPEC.md, docs/ARCHITECTURE.md, docs/DATABASE_SCHEMA.md, docs/DECISIONS.md og aktuell backloggoppgave før endringer. Disse filene har ulik funksjon: product spec bestemmer scope, beslutningslogg bevarer historikk, backlogg styrer faktisk arbeid. Ved uavklart motstrid: beskriv den og arbeid videre på uavhengige deler.
+Les README.md, PRODUCT_SPEC.md, ARCHITECTURE.md, DATABASE_SCHEMA.md, DECISIONS.md og aktuell backloggoppgave før endringer. Disse filene har ulik funksjon: product spec bestemmer scope, beslutningslogg bevarer historikk, backlogg styrer faktisk arbeid. Ved uavklart motstrid: beskriv den og arbeid videre på uavhengige deler.
 
 1. Arbeid kun på avtalt task. Ingen nye produkter, live scraping, billing, valuation eller kilder i MVP uten eksplisitt scope-endring.
 2. Hold domain-beregninger uavhengige av UI, n8n, providers og LLM. Pris/avgift/bidrag/score beregnes deterministisk.

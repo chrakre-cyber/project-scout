@@ -21,7 +21,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
       <section aria-label="Status" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Siste vellykkede søk" value="Aldri kjørt" note="Ingen kilde tilkoblet i demo" />
-        <Stat label="Ny i Scout (demo)" value={String(listings.length)} note="Syntetiske annonser i visningen" />
+        <Stat label="Annonser i visningen" value={String(listings.length)} note="Syntetiske demoannonser, ikke nye siden forrige kjøring" />
         <Stat label="Relevante treff" value="Ikke vurdert" note="Matching kommer i DEV-010" />
         <Stat label="Når marginmål" value="Ikke beregnet" note="Kost-/bidragsmotor finnes ikke ennå" />
       </section>

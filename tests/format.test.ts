@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NOT_STATED, formatFirstRegistration, formatMileage, formatMoney } from "@/lib/format";
+import { NOT_STATED, formatFirstRegistration, formatMileage, formatMoney, formatPriceBasis } from "@/lib/format";
 
 describe("visning av ukjente og upresise verdier", () => {
   it("viser null som «ikke oppgitt», aldri 0", () => {
@@ -27,5 +27,20 @@ describe("visning av ukjente og upresise verdier", () => {
 
   it("feiler på ukjent valuta i stedet for å gjette desimaler", () => {
     expect(() => formatMoney({ amountMinor: 100, currency: "JPY" })).toThrow();
+  });
+});
+
+describe("prisgrunnlag", () => {
+  const amount = { amountMinor: 100_000, currency: "EUR" };
+
+  it("viser brutto/netto uten belegg som ukjent i stedet for å anta", () => {
+    expect(formatPriceBasis({ amount, basis: "gross", basisEvidence: null })).toBe("prisgrunnlag ukjent");
+    expect(formatPriceBasis({ amount, basis: "net", basisEvidence: "" })).toBe("prisgrunnlag ukjent");
+  });
+
+  it("viser oppgitt grunnlag som ukontrollert annonsepåstand når belegg finnes", () => {
+    const label = formatPriceBasis({ amount, basis: "net", basisEvidence: "«Nettopreis»" });
+    expect(label).toMatch(/netto/);
+    expect(label).toMatch(/ikke kontrollert/);
   });
 });

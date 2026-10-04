@@ -4,8 +4,8 @@ import { notFound } from "next/navigation";
 import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { agentsForListing, getDemoListing, listDemoListings } from "@/demo/repository";
 import {
-  BODY_LABEL, FUEL_LABEL, NOT_STATED, PRICE_BASIS_LABEL, SELLER_LABEL, TRANSMISSION_LABEL,
-  formatDateTime, formatFirstRegistration, formatMileage, formatMoney, formatNumber, labelOrNotStated,
+  BODY_LABEL, FUEL_LABEL, NOT_STATED, SELLER_LABEL, TRANSMISSION_LABEL,
+  formatDateTime, formatFirstRegistration, formatMileage, formatMoney, formatNumber, formatPriceBasis, labelOrNotStated,
 } from "@/lib/format";
 
 type Params = { params: Promise<{ id: string }> };
@@ -59,7 +59,7 @@ export default async function OpportunityPage({ params }: Params) {
 
           <Section title="Annonsepris">
             <p className="text-2xl font-semibold">{formatMoney(price.amount)}</p>
-            <p className="text-sm text-slate-700">Grunnlag: {PRICE_BASIS_LABEL[price.basis]}</p>
+            <p className="text-sm text-slate-700">Grunnlag: {formatPriceBasis(price)}</p>
             <p className="text-sm text-slate-600">Belegg: {price.basisEvidence ?? NOT_STATED}</p>
             <p className="mt-2 text-xs text-slate-500">
               Annonsens mva.-opplysning gir ikke automatisk rett til netto eksportpris eller norsk fradrag.
@@ -121,7 +121,7 @@ export default async function OpportunityPage({ params }: Params) {
             <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
               <Row label="Kilde" value="Syntetisk demo" />
               <Row label="Demo-ID" value={listing.sourceListingId} />
-              <Row label="Ny i Scout" value={formatDateTime(listing.firstSeenAt)} />
+              <Row label="Først sett i Scout (syntetisk)" value={formatDateTime(listing.firstSeenAt)} />
               <Row label="Sist endret i kilde" value={formatDateTime(listing.sourceModifiedAt)} />
             </dl>
             <button

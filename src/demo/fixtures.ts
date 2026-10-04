@@ -78,7 +78,7 @@ export const demoListings: readonly NormalizedListing[] = [
     originalUrl: null,
     sourceModifiedAt: "2026-10-03T07:45:00Z",
     firstSeenAt: "2026-10-03T08:00:00Z",
-    price: { amount: { amountMinor: 5_490_000, currency: "EUR" }, basis: "gross", basisEvidence: "«MwSt. ausweisbar» (syntetisk)" },
+    price: { amount: { amountMinor: 5_490_000, currency: "EUR" }, basis: "unknown", basisEvidence: null },
     specs: {
       make: "BMW", model: "X3", variant: "xDrive30e",
       firstRegistration: { precision: "month", year: 2024, month: 2 },
@@ -96,7 +96,7 @@ export const demoListings: readonly NormalizedListing[] = [
     originalUrl: null,
     sourceModifiedAt: null,
     firstSeenAt: "2026-09-28T15:40:00Z",
-    price: { amount: { amountMinor: 1_895_000, currency: "EUR" }, basis: "gross", basisEvidence: null },
+    price: { amount: { amountMinor: 1_895_000, currency: "EUR" }, basis: "unknown", basisEvidence: null },
     specs: {
       make: "Skoda", model: "Octavia", variant: "Combi 2.0 TDI",
       firstRegistration: { precision: "date", year: 2020, month: 6, day: 2 },

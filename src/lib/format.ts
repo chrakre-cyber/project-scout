@@ -3,7 +3,7 @@
  * økonomiske beregninger. `null` vises som «ikke oppgitt».
  */
 import type {
-  BodyType, FirstRegistration, Fuel, Mileage, Money, PriceBasis, SellerType, Transmission,
+  BodyType, FirstRegistration, Fuel, ListingPrice, Mileage, Money, PriceBasis, SellerType, Transmission,
 } from "@/domain/types";
 
 export const NOT_STATED = "ikke oppgitt";
@@ -56,11 +56,20 @@ export function formatNumber(n: number | null, unit: string): string {
   return `${new Intl.NumberFormat("nb-NO").format(n)} ${unit}`;
 }
 
-export const PRICE_BASIS_LABEL: Record<PriceBasis, string> = {
-  gross: "brutto (inkl. utenlandsk mva. iflg. annonsen)",
-  net: "netto (iflg. annonsen — ikke kontrollert)",
+const PRICE_BASIS_LABEL: Record<PriceBasis, string> = {
+  gross: "oppgitt som brutto i annonsen — ikke kontrollert",
+  net: "oppgitt som netto i annonsen — ikke kontrollert",
   unknown: "prisgrunnlag ukjent",
 };
+
+/**
+ * Prisgrunnlag vises bare som kjent når det finnes eksplisitt belegg.
+ * Brutto/netto uten belegg vises som ukjent i stedet for å antas.
+ */
+export function formatPriceBasis(price: ListingPrice): string {
+  if (price.basis === "unknown" || !price.basisEvidence) return PRICE_BASIS_LABEL.unknown;
+  return PRICE_BASIS_LABEL[price.basis];
+}
 
 export const FUEL_LABEL: Record<Fuel, string> = {
   petrol: "Bensin", diesel: "Diesel", electric: "Elektrisk", hybrid: "Hybrid",

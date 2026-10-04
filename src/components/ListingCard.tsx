@@ -1,8 +1,8 @@
 import Link from "next/link";
 import type { NormalizedListing } from "@/domain/types";
 import {
-  FUEL_LABEL, PRICE_BASIS_LABEL, TRANSMISSION_LABEL, formatDateTime, formatFirstRegistration,
-  formatMileage, formatMoney, labelOrNotStated,
+  FUEL_LABEL, TRANSMISSION_LABEL, formatDateTime, formatFirstRegistration,
+  formatMileage, formatMoney, formatPriceBasis, labelOrNotStated,
 } from "@/lib/format";
 import { CarPlaceholder } from "./CarPlaceholder";
 
@@ -32,9 +32,9 @@ export function ListingCard({ listing }: { listing: NormalizedListing }) {
         </dl>
         <div className="mt-auto border-t border-slate-100 pt-2">
           <p className="text-lg font-semibold">{formatMoney(listing.price.amount)}</p>
-          <p className="text-xs text-slate-600">Annonsepris · {PRICE_BASIS_LABEL[listing.price.basis]}</p>
+          <p className="text-xs text-slate-600">Annonsepris · {formatPriceBasis(listing.price)}</p>
           <p className="mt-1 text-xs text-slate-500">Estimert bidrag: <em>ikke beregnet</em></p>
-          <p className="text-xs text-slate-500">Ny i Scout: {formatDateTime(listing.firstSeenAt)}</p>
+          <p className="text-xs text-slate-500">Først sett i Scout (syntetisk): {formatDateTime(listing.firstSeenAt)}</p>
         </div>
       </div>
     </Link>

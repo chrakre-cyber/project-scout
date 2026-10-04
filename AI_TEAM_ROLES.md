@@ -21,7 +21,7 @@ AI-navn beskriver foreslått kapasitet, ikke dokumentert tilgjengelig konto elle
 
 ## Oppdraget må inneholde
 
-Task-ID, mål, inputfiler, avhengigheter, tillatte endringer, akseptkrav, relevante tester og hva som skal rapporteres. Bruk `templates/TASK_HANDOFF.md`.
+Task-ID, mål, inputfiler, avhengigheter, tillatte endringer, akseptkrav, relevante tester og hva som skal rapporteres. Bruk `TASK_HANDOFF.md`.
 
 ## Statusflyt
 

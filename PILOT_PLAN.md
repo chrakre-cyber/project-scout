@@ -4,7 +4,7 @@
 
 ## Utvalg og oppstart
 
-Fem profiler: premium/sportsbil, tysk premium, bred bruktbil, volum og en annen aktiv importprofil. Dette er ønsket variasjon, ikke navn på rekrutterte kunder. Bruk `templates/PILOT_INTERVIEW.md`.
+Fem profiler: premium/sportsbil, tysk premium, bred bruktbil, volum og en annen aktiv importprofil. Dette er ønsket variasjon, ikke navn på rekrutterte kunder. Bruk `PILOT_INTERVIEW.md`.
 
 Hver forhandler gir tre konkrete biltyper de vil kjøpe, forventet norsk sluttkundepris med avgiftsgrunnlag, minste bidrag, klargjøringsreserve og forhold som diskvalifiserer bilen. Onboarding: 30–45 min per firma; minst 4 agenter hver gir 20 samlet, fortsatt maks 10 per firma.
 

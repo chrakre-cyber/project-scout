@@ -1,6 +1,6 @@
 # DEV-001 — leveranserapport og selvreview
 
-Dato: 03.10.2026 · Branch: `claude/wonderful-bardeen-yussx3` · Implementasjonscommit: `9801e1a` · Status: REVIEW (ikke DONE)
+Dato: 03.10.2026 · Branch: `claude/wonderful-bardeen-yussx3` · Implementasjonscommit: `9801e1a` · Reviewrettinger: se egen seksjon nederst · Status: REVIEW (ikke DONE)
 
 ## Leveranse
 
@@ -82,3 +82,30 @@ Kontrollert uten funn: ingen secrets eller `.env` i git; ingen eksterne nettverk
 1. Uavhengig review av DEV-001. Avgjør R1–R5. R1 bør rettes senest i DEV-003.
 2. DEV-003: MarketplaceProvider + ≥100 syntetiske fixturer.
 3. DEV-002 venter på at Christian oppretter Supabase-prosjektet (SET-002).
+
+## Retting etter review (04.10.2026)
+
+Oppdrag: rett funnene 1–5 fra review uten å utvide scope. Ingen nye funksjoner eller integrasjoner. DEV-002/DEV-003 er ikke startet.
+
+| Funn | Utfall | Endring |
+|---|---|---|
+| R2: Next.js skriver i AGENTS.md | Rettet | `agentRules: false` i `next.config.ts` (toppnivå-innstilling i Next 16.3.8, bekreftet i `config-schema.js`). Kontroll: `next dev` kjørt av AI-agent på nytt; SHA-256 av `AGENTS.md` og `CLAUDE.md` er identisk før og etter. |
+| R3: prisgrunnlag uten belegg | Rettet | `demo-005` (brutto uten belegg) → `unknown`/`null`. `demo-004` («MwSt. ausweisbar» sier ikke om prisen er inkl. mva.) → `unknown`/`null`. Etiketten «iflg. annonsen» er fjernet. Ny `formatPriceBasis()` viser «prisgrunnlag ukjent» hvis brutto/netto mangler belegg, ellers «oppgitt som brutto/netto i annonsen — ikke kontrollert». Ingen utledning av fradragsrett. |
+| R4: «Ny i Scout» | Rettet | Dashboardfeltet heter «Annonser i visningen» med merknaden «Syntetiske demoannonser, ikke nye siden forrige kjøring». Tidspunktet på kort og detaljside heter «Først sett i Scout (syntetisk)», som er det `firstSeenAt` faktisk betyr. |
+| R8: brutte dokumentlenker | Rettet | Stiprefiksene `docs/`, `planning/`, `prompts/` og `templates/` er fjernet der målfilen ligger i roten: `README.md`, `START_HER.md`, `PILOT_PLAN.md`, `AI_TEAM_ROLES.md`, `CLAUDE.md`, `AGENTS.md`. Ingen filer er flyttet. I `CLAUDE.md`/`AGENTS.md` er bare stiene i første linje endret; reglene er uendret og filene er fortsatt identiske. Alle relative markdown-lenker er kontrollert mot filsystemet. |
+| R1: valuta | Videreført til DEV-003 | Ingen konkret feil i DEV-001: alle demoannonser bruker EUR og alle agentbeløp NOK, som begge støttes. Krasjet oppstår først med valuta utenfor listen, og det kommer med DEV-003-fixturer. Krav til DEV-003: annonser i ustøttet valuta skal ikke gi feilside; legg til test med f.eks. USD. |
+
+Ikke en del av dette oppdraget, fortsatt åpne: R5 (kommentar «heltallsdivisjon» og bigint↔number før DEV-002), R6 (felt for mva.-opplysninger og `lastSeenAt` i DEV-003), R7 (bredere filter i DEV-004), R9 (npm audit, kun dev-verktøy).
+
+### Kontroller kjørt etter retting
+
+| Kontroll | Resultat |
+|---|---|
+| `npm run typecheck` | OK |
+| `npm run lint` | OK |
+| `npm test` | 16/16 bestått (3 nye: belegg-invariant for fixturer, brutto/netto uten belegg → ukjent, belegg → «ikke kontrollert») |
+| `npm run build` | OK, 13 statiske sider |
+| `next dev` + HTTP | `/dashboard`, `/agents`, `/opportunities/demo-004`, `/opportunities/demo-005` gir 200 med banner; «prisgrunnlag ukjent» vises; 0 forekomster av «iflg. annonsen» og «Ny i Scout»; «Annonser i visningen» vises |
+| AGENTS.md/CLAUDE.md etter `next dev` | Uendret (sammenlignet med SHA-256) |
+
+Ikke kjørt på nytt etter retting: `npm ci` fra ren tilstand, Playwright-klikkflyt og skjermbilder. Avhengighetene og lockfilen er uendret.

@@ -40,6 +40,12 @@ describe("syntetiske demoannonser", () => {
     }
   });
 
+  it("oppgir bare brutto/netto når annonsen har eksplisitt belegg", () => {
+    for (const l of demoListings) {
+      if (l.price.basis !== "unknown") expect(l.price.basisEvidence, l.sourceListingId).toBeTruthy();
+    }
+  });
+
   it("dekker ukjente og upresise felt slik at UI-et viser «ikke oppgitt»", () => {
     expect(demoListings.some((l) => l.price.basis === "unknown")).toBe(true);
     expect(demoListings.some((l) => l.specs.firstRegistration?.precision === "year")).toBe(true);

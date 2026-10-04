@@ -58,6 +58,7 @@ Skriv dato, ny status, commit/fil og testbelegg i seksjonen under. Juster estima
 
 - 03.10.2026: PM-001–PM-004 dokumentleveranser opprettet. Resten er uutført. DEV-006 blokkert av datatilgang.
 - 03.10.2026: DEV-001 → REVIEW (branch `claude/wonderful-bardeen-yussx3`). Next.js-appskall med tre visninger, demo-banner og åtte syntetiske bilkort. Kontroller kjørt: `npm ci` fra ren tilstand, `npm run check` (typecheck, lint, 13 Vitest-tester, build), `next start` med HTTP-røyktest av alle ruter (200/307/404 som forventet) og Playwright-klikkflyt desktop/mobil uten konsollfeil. Venter separat review før DONE. Observasjon: repoet finnes (SET-001 i praksis utført), men dokumentene ligger flatt i roten, mens README/CLAUDE.md lenker til `docs/`, `planning/`, `prompts/` og `templates/`.
+- 04.10.2026: DEV-001 reviewrettinger (R2, R3, R4, R8 rettet; R1 valuta videreført til DEV-003). Typecheck, lint, 16/16 tester, build og `next dev`-kontroll bestått. Detaljer: `reviews/DEV-001-leveranserapport.md`. Status fortsatt REVIEW til rettingene er kontrollert.
 
 ## Dagens anbefalte rekkefølge
 
