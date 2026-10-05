@@ -44,7 +44,7 @@ try {
   await page.fill('input[name="name"]', `E2E agent ${run}`);
   await page.fill('input[name="make"]', "Volkswagen");
   await page.fill('input[name="model"]', "Golf");
-  await page.evaluate((b) => { const f = document.querySelector("form[action], form"); for (const [n, v] of [["dealership_id", b], ["active", "true"], ["version", "99"]]) { const i = document.createElement("input"); i.type = "hidden"; i.name = n; i.value = v; document.querySelectorAll("form")[1].appendChild(i); } }, FIRM_B);
+  await page.evaluate((b) => { for (const [n, v] of [["dealership_id", b], ["active", "true"], ["version", "99"]]) { const i = document.createElement("input"); i.type = "hidden"; i.name = n; i.value = v; document.querySelectorAll("form")[1].appendChild(i); } }, FIRM_B);
   await Promise.all([page.waitForURL(/agents\?(created|error)=/), page.click('button:has-text("Opprett agent")')]);
   check("opprettelse gir «Agenten er lagret»", (await page.content()).includes("Agenten er lagret"));
   const { rows } = await db.query("select dealership_id, active, version from public.search_agents where name = $1", [`E2E agent ${run}`]);
