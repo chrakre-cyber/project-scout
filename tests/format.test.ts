@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { NOT_STATED, formatFirstRegistration, formatMileage, formatMoney, formatPriceBasis } from "@/lib/format";
+import type { ListingPrice, SourceVatStatement } from "@/domain/types";
+import {
+  NOT_STATED, UNSUPPORTED_CURRENCY_NOTE, formatFirstRegistration, formatListingPrice, formatMileage, formatMoney,
+  formatPriceBasis, formatVatStatement,
+} from "@/lib/format";
+
+const NO_VAT: SourceVatStatement = { statedRateBasisPoints: null, reclaimableClaim: "unknown", evidence: [], origin: "none" };
+function priceOf(p: Partial<ListingPrice>): ListingPrice {
+  return {
+    stated: { amount: "1000", currency: "EUR" }, amount: { amountMinor: 100_000, currency: "EUR" },
+    basis: "unknown", basisEvidence: null, vat: { ...NO_VAT, evidence: [] }, ...p,
+  };
+}
 
 describe("visning av ukjente og upresise verdier", () => {
   it("viser null som «ikke oppgitt», aldri 0", () => {
@@ -25,21 +37,34 @@ describe("visning av ukjente og upresise verdier", () => {
     expect(formatMoney({ amountMinor: 1_050, currency: "NOK" }).replace(/\s/g, "")).toMatch(/10,5/);
   });
 
-  it("feiler på ukjent valuta i stedet for å gjette desimaler", () => {
-    expect(() => formatMoney({ amountMinor: 100, currency: "JPY" })).toThrow();
+  it("krasjer ikke på ustøttet valuta og gjetter ikke desimaler (R1)", () => {
+    expect(formatMoney({ amountMinor: 4_150_000, currency: "USD" })).toBe("4150000 (minste enhet) USD");
+  });
+
+  it("viser annonsepris i ustøttet valuta ordrett med merknad", () => {
+    const shown = formatListingPrice(priceOf({ stated: { amount: "41500.00", currency: "USD" }, amount: null }));
+    expect(shown).toEqual({ text: "41500.00 USD", note: UNSUPPORTED_CURRENCY_NOTE });
+    expect(formatListingPrice(null).text).toBe("Pris ikke oppgitt");
   });
 });
 
 describe("prisgrunnlag", () => {
-  const amount = { amountMinor: 100_000, currency: "EUR" };
-
   it("viser brutto/netto uten belegg som ukjent i stedet for å anta", () => {
-    expect(formatPriceBasis({ amount, basis: "gross", basisEvidence: null })).toBe("prisgrunnlag ukjent");
-    expect(formatPriceBasis({ amount, basis: "net", basisEvidence: "" })).toBe("prisgrunnlag ukjent");
+    expect(formatPriceBasis(priceOf({ basis: "gross", basisEvidence: null }))).toBe("prisgrunnlag ukjent");
+    expect(formatPriceBasis(priceOf({ basis: "net", basisEvidence: "" }))).toBe("prisgrunnlag ukjent");
+    expect(formatPriceBasis(null)).toBe("prisgrunnlag ukjent");
+  });
+
+  it("viser mva.-opplysninger som ukontrollert annonsepåstand, aldri som fradragsrett", () => {
+    expect(formatVatStatement(NO_VAT)).toBe("ingen mva.-opplysninger i annonsen");
+    const text = formatVatStatement({ statedRateBasisPoints: 810, reclaimableClaim: "claimed", evidence: ["x"], origin: "structured_field" });
+    expect(text).toMatch(/8,1 %/);
+    expect(text).toMatch(/ikke kontrollert/);
+    expect(text).not.toMatch(/fradragsrett|fradragsberettiget/);
   });
 
   it("viser oppgitt grunnlag som ukontrollert annonsepåstand når belegg finnes", () => {
-    const label = formatPriceBasis({ amount, basis: "net", basisEvidence: "«Nettopreis»" });
+    const label = formatPriceBasis(priceOf({ basis: "net", basisEvidence: "Nettopreis" }));
     expect(label).toMatch(/netto/);
     expect(label).toMatch(/ikke kontrollert/);
   });

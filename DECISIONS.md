@@ -22,6 +22,9 @@ Oppdatert 03.10.2026. «Vedtatt» gjengir produktvalgene i samtalen. «Arbeidsbe
 | DEC-016 | Arbeidsbeslutning | Ingen ekstern utvikler; tidsskala har buffer | Christian styrer AI-arbeid, oppsett og QA; AI-tid er ikke autonom levering |
 | DEC-017 | Arbeidsbeslutning (03.10.2026, DEV-001) | Pengebeløp i domenet er heltall i minste valutaenhet (`amountMinor`) + ISO 4217-valuta | Oppfyller DATABASE_SCHEMA-kravet om én representasjon uten flyttall. DEV-002 bør bruke `bigint` minor units + valuta i migrasjonen; revurder hvis avgiftsregler krever høyere presisjon enn øre |
 
+| DEC-018 | Arbeidsbeslutning (05.10.2026, DEV-003) | Appen støtter et uttrykkelig sett valutaer (NOK, EUR, SEK, DKK, CHF, GBP, PLN). Annonser i andre valutaer beholder kildens beløp som tekst; `amount` er `null`, og ingenting regnes om eller vises med gjettede desimaler | Løser DEV-001 review R1 uten FX. Settet kan utvides med ISO 4217-desimaler når en kilde krever det; FX-kilde er OPEN-005/DEV-009 |
+| DEC-019 | Arbeidsbeslutning (05.10.2026, DEV-003) | Annonsefelt er bare kildens opplysninger. Brutto/netto krever ordrett belegg; mva.-påstander lagres som claimed/denied/unknown med belegg og opphav, og gir aldri prisgrunnlag eller fradragsrett | Konkretiserer CLAUDE.md pkt. 4 og PRODUCT_SPEC §7 i datamodellen. Scouts vurderinger hører til kalkylesnapshot (DEV-007) |
+
 ## Åpne avklaringer
 
 | ID | Spørsmål | Eier | Frist / kobling | Effekt hvis uavklart |

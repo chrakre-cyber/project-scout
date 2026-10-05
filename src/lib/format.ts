@@ -2,20 +2,24 @@
  * Visningsformatering (nb-NO, Europe/Oslo). Kun presentasjon — ingen
  * økonomiske beregninger. `null` vises som «ikke oppgitt».
  */
+import { minorDigits } from "@/domain/currency";
 import type {
-  BodyType, FirstRegistration, Fuel, ListingPrice, Mileage, Money, PriceBasis, SellerType, Transmission,
+  BodyType, FirstRegistration, Fuel, ListingPrice, Mileage, Money, PriceBasis, SellerType, SourceVatStatement, Transmission,
 } from "@/domain/types";
 
 export const NOT_STATED = "ikke oppgitt";
 
-/** Antall desimaler i minste enhet. Ukjent valuta gir feil fremfor gjetning. */
-const MINOR_UNIT_DIGITS: Record<string, number> = { NOK: 2, EUR: 2, SEK: 2, DKK: 2, CHF: 2, GBP: 2, PLN: 2 };
+export const UNSUPPORTED_CURRENCY_NOTE = "valuta støttes ikke — vist som oppgitt, ikke omregnet";
 
+/**
+ * Formaterer et beløp. Kaster aldri: ustøttet valuta vises som heltall i
+ * minste enhet med valutakode i stedet for å gjette desimaler (R1).
+ */
 export function formatMoney(money: Money | null): string {
   if (!money) return NOT_STATED;
-  const digits = MINOR_UNIT_DIGITS[money.currency];
-  if (digits === undefined) throw new Error(`Ukjent valuta for visning: ${money.currency}`);
-  // Heltallsdivisjon i visning er trygt: beløpet lagres eksakt i minste enhet.
+  const digits = minorDigits(money.currency);
+  if (digits === null) return `${money.amountMinor} (minste enhet) ${money.currency}`;
+  // Divisjonen er bare for visning; beløpet lagres eksakt i minste enhet.
   const major = money.amountMinor / 10 ** digits;
   return new Intl.NumberFormat("nb-NO", {
     style: "currency",
@@ -66,9 +70,29 @@ const PRICE_BASIS_LABEL: Record<PriceBasis, string> = {
  * Prisgrunnlag vises bare som kjent når det finnes eksplisitt belegg.
  * Brutto/netto uten belegg vises som ukjent i stedet for å antas.
  */
-export function formatPriceBasis(price: ListingPrice): string {
-  if (price.basis === "unknown" || !price.basisEvidence) return PRICE_BASIS_LABEL.unknown;
+export function formatPriceBasis(price: ListingPrice | null): string {
+  if (!price || price.basis === "unknown" || !price.basisEvidence) return PRICE_BASIS_LABEL.unknown;
   return PRICE_BASIS_LABEL[price.basis];
+}
+
+/** Annonsepris for visning. Ustøttet valuta vises ordrett med valutakode. */
+export function formatListingPrice(price: ListingPrice | null): { text: string; note: string | null } {
+  if (!price) return { text: "Pris ikke oppgitt", note: null };
+  if (price.amount) return { text: formatMoney(price.amount), note: null };
+  return { text: `${price.stated.amount} ${price.stated.currency}`, note: UNSUPPORTED_CURRENCY_NOTE };
+}
+
+/** Mva.-opplysninger slik annonsen oppgir dem. Ikke en vurdering av fradragsrett. */
+export function formatVatStatement(vat: SourceVatStatement | null): string {
+  if (!vat || vat.origin === "none") return "ingen mva.-opplysninger i annonsen";
+  const parts: string[] = [];
+  if (vat.statedRateBasisPoints !== null) {
+    parts.push(`oppgitt sats ${new Intl.NumberFormat("nb-NO").format(vat.statedRateBasisPoints / 100)} %`);
+  }
+  if (vat.reclaimableClaim === "claimed") parts.push("annonsen oppgir at mva. kan trekkes fra");
+  if (vat.reclaimableClaim === "denied") parts.push("annonsen oppgir at mva. ikke kan trekkes fra");
+  const origin = vat.origin === "structured_field" ? "strukturert felt" : "annonsetekst";
+  return `${parts.join("; ")} (kilde: ${origin}; ikke kontrollert)`;
 }
 
 export const FUEL_LABEL: Record<Fuel, string> = {

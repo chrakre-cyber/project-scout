@@ -109,3 +109,7 @@ Ikke en del av dette oppdraget, fortsatt åpne: R5 (kommentar «heltallsdivisjon
 | AGENTS.md/CLAUDE.md etter `next dev` | Uendret (sammenlignet med SHA-256) |
 
 Ikke kjørt på nytt etter retting: `npm ci` fra ren tilstand, Playwright-klikkflyt og skjermbilder. Avhengighetene og lockfilen er uendret.
+
+## Oppfølging i DEV-003 (05.10.2026)
+
+R1 (valuta) og R6 (mva.-felt og `lastSeenAt`) er løst i DEV-003. Se `reviews/DEV-003-leveranserapport.md`. DEV-001 er satt til DONE etter godkjenning oppgitt av Christian.

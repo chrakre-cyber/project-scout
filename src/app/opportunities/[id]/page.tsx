@@ -2,20 +2,30 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CarPlaceholder } from "@/components/CarPlaceholder";
-import { agentsForListing, getDemoListing, listDemoListings } from "@/demo/repository";
+import { SourceErrorNotice } from "@/components/SourceErrorNotice";
+import { agentsForListing } from "@/demo/repository";
+import type { NormalizedListing } from "@/domain/types";
 import {
   BODY_LABEL, FUEL_LABEL, NOT_STATED, SELLER_LABEL, TRANSMISSION_LABEL,
-  formatDateTime, formatFirstRegistration, formatMileage, formatMoney, formatNumber, formatPriceBasis, labelOrNotStated,
+  formatDateTime, formatFirstRegistration, formatListingPrice, formatMileage, formatMoney, formatNumber, formatPriceBasis,
+  formatVatStatement, labelOrNotStated,
 } from "@/lib/format";
+import { MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
 
 type Params = { params: Promise<{ id: string }> };
 
-export function generateStaticParams() {
-  return listDemoListings().map((l) => ({ id: l.sourceListingId }));
+async function load(id: string): Promise<NormalizedListing | null | MarketplaceError> {
+  try {
+    return await getMarketplaceProvider().getListing(id);
+  } catch (e) {
+    if (e instanceof MarketplaceError) return e;
+    throw e;
+  }
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const listing = getDemoListing((await params).id);
+  const listing = await load((await params).id);
+  if (listing instanceof MarketplaceError) return { title: "Kildefeil — Project Scout demo" };
   return { title: listing ? `${listing.specs.make} ${listing.specs.model} — Project Scout demo` : "Ikke funnet" };
 }
 
@@ -32,9 +42,18 @@ const COST_LINES = [
 
 export default async function OpportunityPage({ params }: Params) {
   const { id } = await params;
-  const listing = getDemoListing(id);
+  const listing = await load(id);
+  if (listing instanceof MarketplaceError) {
+    return (
+      <div className="space-y-4">
+        <Link href="/dashboard" className="text-sm text-slate-600 hover:underline">← Tilbake til dashboard</Link>
+        <SourceErrorNotice error={listing} />
+      </div>
+    );
+  }
   if (!listing) notFound();
   const { specs, price, seller } = listing;
+  const shownPrice = formatListingPrice(price);
   const agents = agentsForListing(listing.sourceListingId);
 
   return (
@@ -58,9 +77,14 @@ export default async function OpportunityPage({ params }: Params) {
           <CarPlaceholder seed={listing.sourceListingId} bodyType={specs.bodyType} className="h-56 rounded-lg border border-slate-200" />
 
           <Section title="Annonsepris">
-            <p className="text-2xl font-semibold">{formatMoney(price.amount)}</p>
+            <p className="text-2xl font-semibold">{shownPrice.text}</p>
+            {shownPrice.note && <p className="text-sm font-medium text-amber-800">{shownPrice.note}</p>}
             <p className="text-sm text-slate-700">Grunnlag: {formatPriceBasis(price)}</p>
-            <p className="text-sm text-slate-600">Belegg: {price.basisEvidence ?? NOT_STATED}</p>
+            <p className="text-sm text-slate-600">Belegg: {price?.basisEvidence ? `«${price.basisEvidence}»` : NOT_STATED}</p>
+            <p className="text-sm text-slate-700">Mva. i annonsen: {formatVatStatement(price?.vat ?? null)}</p>
+            {price && price.vat.evidence.length > 0 && (
+              <p className="text-sm text-slate-600">Mva.-belegg: {price.vat.evidence.map((e) => `«${e}»`).join(", ")}</p>
+            )}
             <p className="mt-2 text-xs text-slate-500">
               Annonsens mva.-opplysning gir ikke automatisk rett til netto eksportpris eller norsk fradrag.
             </p>
@@ -122,8 +146,17 @@ export default async function OpportunityPage({ params }: Params) {
               <Row label="Kilde" value="Syntetisk demo" />
               <Row label="Demo-ID" value={listing.sourceListingId} />
               <Row label="Først sett i Scout (syntetisk)" value={formatDateTime(listing.firstSeenAt)} />
+              <Row label="Sist sett i Scout (syntetisk)" value={formatDateTime(listing.lastSeenAt)} />
               <Row label="Sist endret i kilde" value={formatDateTime(listing.sourceModifiedAt)} />
             </dl>
+            {listing.provenance.normalizationNotes.length > 0 && (
+              <div className="mt-3 text-xs text-slate-600">
+                <p className="font-semibold">Satt til ukjent ved innlesing:</p>
+                <ul className="list-disc pl-4">
+                  {listing.provenance.normalizationNotes.map((n) => <li key={n}>{n}</li>)}
+                </ul>
+              </div>
+            )}
             <button
               type="button"
               disabled

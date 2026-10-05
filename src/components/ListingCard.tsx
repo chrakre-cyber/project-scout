@@ -2,12 +2,13 @@ import Link from "next/link";
 import type { NormalizedListing } from "@/domain/types";
 import {
   FUEL_LABEL, TRANSMISSION_LABEL, formatDateTime, formatFirstRegistration,
-  formatMileage, formatMoney, formatPriceBasis, labelOrNotStated,
+  formatListingPrice, formatMileage, formatPriceBasis, labelOrNotStated,
 } from "@/lib/format";
 import { CarPlaceholder } from "./CarPlaceholder";
 
 export function ListingCard({ listing }: { listing: NormalizedListing }) {
   const { specs } = listing;
+  const price = formatListingPrice(listing.price);
   return (
     <Link
       href={`/opportunities/${listing.sourceListingId}`}
@@ -31,7 +32,8 @@ export function ListingCard({ listing }: { listing: NormalizedListing }) {
           <dt className="text-slate-500">Gir</dt><dd>{labelOrNotStated(TRANSMISSION_LABEL, specs.transmission)}</dd>
         </dl>
         <div className="mt-auto border-t border-slate-100 pt-2">
-          <p className="text-lg font-semibold">{formatMoney(listing.price.amount)}</p>
+          <p className="text-lg font-semibold">{price.text}</p>
+          {price.note && <p className="text-xs font-medium text-amber-800">{price.note}</p>}
           <p className="text-xs text-slate-600">Annonsepris · {formatPriceBasis(listing.price)}</p>
           <p className="mt-1 text-xs text-slate-500">Estimert bidrag: <em>ikke beregnet</em></p>
           <p className="text-xs text-slate-500">Først sett i Scout (syntetisk): {formatDateTime(listing.firstSeenAt)}</p>

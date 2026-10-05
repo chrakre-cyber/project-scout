@@ -2,8 +2,12 @@
  * Domenetyper for Project Scout.
  *
  * Dette laget er uavhengig av UI, providers, n8n og LLM (CLAUDE.md pkt. 2).
- * Det inneholder bare typer i DEV-001; kost-, avgifts-, bidrags- og
- * scoreberegninger kommer i egne oppgaver (DEV-007 – DEV-010).
+ * Kost-, avgifts-, bidrags- og scoreberegninger kommer i egne oppgaver
+ * (DEV-007 – DEV-010).
+ *
+ * Annonsefeltene beskriver hva kilden/annonsen OPPGIR. Project Scouts egne
+ * vurderinger (skatteprofil, fradragsrett, kalkyle) hører hjemme i kalkyler
+ * og ligger aldri på annonsen.
  *
  * Konvensjon: ukjent verdi er `null`, aldri 0, tom streng eller en gjettet verdi.
  */
@@ -23,11 +27,38 @@ export interface Money {
 /** Om annonseprisen inkluderer mva. Ukjent må forbli ukjent. */
 export type PriceBasis = "gross" | "net" | "unknown";
 
+/** Påstand i annonsen: oppgitt, uttrykkelig avkreftet eller ikke avklart. */
+export type ClaimValue = "claimed" | "denied" | "unknown";
+
+/**
+ * Mva.-opplysninger slik kilden oppgir dem — ikke Scouts vurdering.
+ * En påstand om at mva. kan trekkes fra («MwSt. ausweisbar») gir ikke norsk
+ * fradragsrett eller rett til netto eksportpris (PRODUCT_SPEC §7).
+ */
+export interface SourceVatStatement {
+  /** Oppgitt mva.-sats i basispunkter (1900 = 19 %), eller null. */
+  statedRateBasisPoints: number | null;
+  /** Påstand om at utenlandsk mva. kan vises/trekkes fra separat. */
+  reclaimableClaim: ClaimValue;
+  /** Korte ordrette belegg fra kilden. Tom liste når ingenting er oppgitt. */
+  evidence: string[];
+  /** Hvor opplysningene kom fra («VAT-opphav», MOBILE_DE_INTEGRATION). */
+  origin: "structured_field" | "listing_text" | "none";
+}
+
 export interface ListingPrice {
-  amount: Money;
+  /** Beløpet nøyaktig slik kilden oppga det (desimalstreng + valutakode). Bevares alltid. */
+  stated: { amount: string; currency: CurrencyCode };
+  /**
+   * Beløpet i minste enhet. `null` når valutaen ikke støttes av appen;
+   * da regnes det ikke om og det gjettes ikke på desimaler.
+   */
+  amount: Money | null;
+  /** Brutto/netto bare med eksplisitt belegg, ellers "unknown". */
   basis: PriceBasis;
   /** Kort ordrett belegg fra kilden for prisgrunnlaget, eller null. */
   basisEvidence: string | null;
+  vat: SourceVatStatement;
 }
 
 /** Førsteregistrering med kildens presisjon; ingen oppdiktet dag/måned. */
@@ -80,6 +111,8 @@ export interface Provenance {
   kind: "synthetic" | "provider";
   /** Fritekst om opphav, f.eks. "syntetisk demo-fixture DEV-001". */
   description: string;
+  /** Felt normaliseringen satte til null/unknown, med grunn. Tom liste hvis ingen. */
+  normalizationNotes: string[];
 }
 
 /**
@@ -92,9 +125,15 @@ export interface NormalizedListing {
   /** Godkjent URL til originalannonsen, eller null (alltid null i demo). */
   originalUrl: string | null;
   sourceModifiedAt: string | null;
-  /** Når Scout først observerte annonsen (UTC ISO 8601). Ikke kildens opprettelsesdato. */
+  /**
+   * Når Scout først observerte annonsen (UTC ISO 8601). Ikke kildens
+   * opprettelsesdato. For ekte kilder settes dette av ingestion (DEV-005).
+   */
   firstSeenAt: string;
-  price: ListingPrice;
+  /** Når Scout sist observerte annonsen hos kilden (UTC ISO 8601), ≥ firstSeenAt. */
+  lastSeenAt: string;
+  /** `null` når annonsen ikke oppgir pris. Aldri 0 som erstatning. */
+  price: ListingPrice | null;
   specs: VehicleSpecs;
   text: string | null;
   seller: SellerInfo | null;

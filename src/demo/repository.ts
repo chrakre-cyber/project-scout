@@ -1,24 +1,9 @@
 /**
- * Lesetilgang til syntetiske demodata for UI-et.
- *
- * Skjermene henter data herfra og kjenner ikke til fixture-filen direkte, slik
- * at DEV-003 (MarketplaceProvider) og DEV-002/DEV-004 (database) kan bytte ut
- * implementasjonen uten å endre komponentene.
+ * Lesetilgang til syntetiske demo-agenter. Annonser hentes via
+ * MarketplaceProvider (src/providers/marketplace), ikke herfra.
+ * DEV-004 erstatter dette med lagrede agenter.
  */
-import type { NormalizedListing } from "@/domain/types";
-import { demoAgents, demoListings, type DemoAgent } from "./fixtures";
-
-export function listDemoListings(agentId?: string): NormalizedListing[] {
-  const sorted = [...demoListings].sort((a, b) => b.firstSeenAt.localeCompare(a.firstSeenAt));
-  if (!agentId) return sorted;
-  const agent = getDemoAgent(agentId);
-  if (!agent) return [];
-  return sorted.filter((l) => agent.demoListingIds.includes(l.sourceListingId));
-}
-
-export function getDemoListing(sourceListingId: string): NormalizedListing | null {
-  return demoListings.find((l) => l.sourceListingId === sourceListingId) ?? null;
-}
+import { demoAgents, type DemoAgent } from "./fixtures";
 
 export function listDemoAgents(): DemoAgent[] {
   return [...demoAgents];

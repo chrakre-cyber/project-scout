@@ -24,9 +24,9 @@ Status: BACKLOG / READY / IN_PROGRESS / REVIEW / DONE / BLOCKED. Prioritet: P0 n
 | TAX-001 | Første import-/salgsprofil og nødvendige felt valgt; unsupported cases og kilder definert | ChatGPT + Christian | READY | P0 | 30–60 min | 2–3 t | PM-004 |
 | TAX-002 | Uavhengige referansecaser for mva., avgifter og salg; input/dato/fasit dokumentert | Christian + ChatGPT | BACKLOG | P0 | 3–5 t | 4–6 t | TAX-001, BUS-004 |
 | UX-001 | Skisser for tre skjermer; demo, mva., bidrag og kontrollbehov forståelige | Claude Design / ChatGPT | READY | P1 | 30–45 min | 2–4 t | PM-001 |
-| DEV-001 | Next.js-appskall, tydelig mock-demo og lokal startinstruks | Hovedutvikler | REVIEW | P0 | 15–30 min | 2–4 t | SET-001, PM-004 |
+| DEV-001 | Next.js-appskall, tydelig mock-demo og lokal startinstruks | Hovedutvikler | DONE | P0 | 15–30 min | 2–4 t | SET-001, PM-004 |
 | DEV-002 | Migrasjoner, Auth, membership og RLS; firma A kan ikke lese/skrive Bs data | Hovedutvikler | BACKLOG | P0 | 20–40 min | 4–6 t | DEV-001, SET-002 |
-| DEV-003 | MarketplaceProvider + syntetisk mock; normalisering og feiltyper kontrollert | Hovedutvikler | BACKLOG | P0 | 15–30 min | 3–4 t | DEV-001 |
+| DEV-003 | MarketplaceProvider + syntetisk mock; normalisering og feiltyper kontrollert | Hovedutvikler | REVIEW | P0 | 15–30 min | 3–4 t | DEV-001 |
 | DEV-004 | Agent CRUD/pause, inputkontroll og atomisk maks 10 aktive per firma | Hovedutvikler | BACKLOG | P0 | 30–45 min | 4–6 t | DEV-002, DEV-003 |
 | QA-001 | Gate G1 bestått; isolasjon og agentgrense dokumentert, feil lukket | Codex / kontrollør | BACKLOG | P0 | 30–60 min | 2–3 t | DEV-004 |
 | DEV-005 | Ingestion, stable kilde-ID, revisjoner, pagination og run-logg; samme annonse gir ikke duplikat | Hovedutvikler | BACKLOG | P0 | 20–40 min | 4–6 t | DEV-003, DEV-004 |
@@ -59,6 +59,8 @@ Skriv dato, ny status, commit/fil og testbelegg i seksjonen under. Juster estima
 - 03.10.2026: PM-001–PM-004 dokumentleveranser opprettet. Resten er uutført. DEV-006 blokkert av datatilgang.
 - 03.10.2026: DEV-001 → REVIEW (branch `claude/wonderful-bardeen-yussx3`). Next.js-appskall med tre visninger, demo-banner og åtte syntetiske bilkort. Kontroller kjørt: `npm ci` fra ren tilstand, `npm run check` (typecheck, lint, 13 Vitest-tester, build), `next start` med HTTP-røyktest av alle ruter (200/307/404 som forventet) og Playwright-klikkflyt desktop/mobil uten konsollfeil. Venter separat review før DONE. Observasjon: repoet finnes (SET-001 i praksis utført), men dokumentene ligger flatt i roten, mens README/CLAUDE.md lenker til `docs/`, `planning/`, `prompts/` og `templates/`.
 - 04.10.2026: DEV-001 reviewrettinger (R2, R3, R4, R8 rettet; R1 valuta videreført til DEV-003). Typecheck, lint, 16/16 tester, build og `next dev`-kontroll bestått. Detaljer: `reviews/DEV-001-leveranserapport.md`. Status fortsatt REVIEW til rettingene er kontrollert.
+- 05.10.2026: DEV-001 → DONE. Godkjenning oppgitt av Christian i oppdraget for DEV-003; review-belegg i `reviews/DEV-001-leveranserapport.md` (commit `0425db0`).
+- 05.10.2026: DEV-003 → REVIEW. Syntetisk MarketplaceProvider med normalisering, 109 annonser, paginering/truncation, revisjoner, duplikat, feiltyper; DEV-001 R1 (valuta) og R6 (mva.-felt, `lastSeenAt`) løst. Typecheck, lint, 45 tester (4 filer), build, HTTP-røyktest og Playwright-klikkflyt bestått. Detaljer: `reviews/DEV-003-leveranserapport.md`. Venter uavhengig review før DONE.
 
 ## Dagens anbefalte rekkefølge
 

@@ -21,11 +21,13 @@ npm run build && npm run start   # produksjonsbygg lokalt
 npm run check     # typecheck + lint + tester + build
 ```
 
-Visninger: `/dashboard` (åtte syntetiske bilkort, filter per demo-agent), `/agents` (demo-agenter, kun lesing) og `/opportunities/<id>` (detaljside; kost/bidrag vises som «ikke beregnet»).
+Visninger: `/dashboard` (syntetiske annonser fra datakilden, 24 per side, filter per demo-agent), `/agents` (demo-agenter, kun lesing) og `/opportunities/<id>` (detaljside; kost/bidrag vises som «ikke beregnet»).
+
+Annonser hentes gjennom `MarketplaceProvider` (DEV-003). I dag brukes bare den syntetiske provideren med 109 oppdiktede annonser; se `src/providers/marketplace/synthetic/fixtures/FIXTURES.md`. Kildefeil kan simuleres lokalt uten nettverk, f.eks. `SCOUT_SYNTHETIC_FAILURE=unavailable npm run start` (se `.env.example`).
 
 Versjoner (låst i `package-lock.json`): Next.js 16.3.8, React 19.3.0, TypeScript 5.9.3, Tailwind CSS 4.3.3, ESLint 9 med eslint-config-next 16.3.8, Vitest 5.0.3.
 
-Kodeplassering: `src/domain/` (rene domenetyper, ingen UI/provider), `src/demo/` (syntetiske fixturer + lesefunksjoner som DEV-003 erstatter), `src/lib/format.ts` (visning, «ikke oppgitt»), `src/components/`, `src/app/` og `tests/`.
+Kodeplassering: `src/domain/` (rene domenetyper og valuta, ingen UI/provider), `src/providers/marketplace/` (provider-kontrakt, feiltyper, syntetisk provider med normalisering og fixturer), `src/demo/` (syntetiske demo-agenter til DEV-004), `src/lib/format.ts` (visning, «ikke oppgitt»), `src/components/`, `src/app/` og `tests/`.
 
 ## Start her
 

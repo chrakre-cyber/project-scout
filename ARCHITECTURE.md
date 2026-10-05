@@ -45,6 +45,16 @@ Pris er et beløp + valuta + grunnlag (`gross`, `net`, `unknown`) og mva.-opplys
 
 Feiltyper: authentication, forbidden, rate_limit, invalid_query, timeout, unavailable, malformed_data. Autentisering/forbidden gir stopp og synlig blokkering; kun transient feil får begrenset retry med backoff og jitter.
 
+### Implementert i DEV-003 (syntetisk provider)
+
+Koden ligger i `src/providers/marketplace/` (`types.ts`, `errors.ts`, `index.ts`) og `src/providers/marketplace/synthetic/`. UI henter annonser bare via `getMarketplaceProvider()`. Konkretiseringer av kontrakten:
+
+- `NormalizedListing` har i tillegg `lastSeenAt`, og `price` kan være `null` (pris ikke oppgitt). `price` har `stated` (beløp som kildens desimalstreng + valuta, alltid bevart), `amount` (`Money` eller `null` ved ustøttet valuta, se DEC-018) og `vat` (sats, fradragspåstand claimed/denied/unknown, belegg og opphav). Alle annonsefelt er kildens opplysninger; Scouts vurderinger ligger i kalkyler.
+- `SearchPage.rejected` lister poster som ikke kunne normaliseres (`malformed_data`); resten av siden leveres. `getListing` kaster `malformed_data` for en slik post og returnerer `null` når annonsen ikke finnes.
+- `firstSeenAt`/`lastSeenAt` er syntetisk observasjonshistorikk i mock-dataene. For ekte kilder settes de av ingestion (DEV-005), ikke av kilden.
+- Syntetisk søk ekskluderer ikke annonser med ukjent verdi for et filter, og sammenligner ikke pris på tvers av valuta. Hardfilter og needs_review avgjøres i DEV-010. Miles regnes eksakt om (1 mi = 1,609344 km) bare for sammenligning; lagret verdi beholder kildens enhet.
+- Fixturene ligger under `src/providers/marketplace/synthetic/fixtures/` (ikke `tests/fixtures/`) fordi demoen bruker dem i appen. Opphav: `FIXTURES.md` i samme mappe.
+
 ## Kjøring av én agent
 
 1. Verifiser aktiv agent og firmatilgang; ta tidsavgrenset lock.
