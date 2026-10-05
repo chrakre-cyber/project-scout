@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthStatus } from "@/components/AuthStatus";
 import { DemoBanner } from "@/components/DemoBanner";
 import { SiteNav } from "@/components/SiteNav";
 import "./globals.css";
@@ -18,9 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-4 py-3">
             <span className="text-lg font-semibold tracking-tight">Project Scout</span>
             <SiteNav />
-            <span className="text-xs text-slate-500" title="Innlogging kommer i DEV-002">
-              Ikke innlogget · ingen autentisering i demo
-            </span>
+            <AuthStatus />
           </div>
         </header>
         <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>

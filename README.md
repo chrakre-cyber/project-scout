@@ -27,7 +27,25 @@ Annonser hentes gjennom `MarketplaceProvider` (DEV-003). I dag brukes bare den s
 
 Versjoner (låst i `package-lock.json`): Next.js 16.3.8, React 19.3.0, TypeScript 5.9.3, Tailwind CSS 4.3.3, ESLint 9 med eslint-config-next 16.3.8, Vitest 5.0.3.
 
-Kodeplassering: `src/domain/` (rene domenetyper og valuta, ingen UI/provider), `src/providers/marketplace/` (provider-kontrakt, feiltyper, syntetisk provider med normalisering og fixturer), `src/demo/` (syntetiske demo-agenter til DEV-004), `src/lib/format.ts` (visning, «ikke oppgitt»), `src/components/`, `src/app/` og `tests/`.
+### Supabase, innlogging og firmadata (DEV-002)
+
+Appen bruker bare `NEXT_PUBLIC_SUPABASE_URL` og `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (i `.env.local`, se `.env.example`). Ingen secret/service-role-nøkkel brukes i appen. Uten variablene kjører appen i demomodus.
+
+Lokalt (krever Docker):
+
+```bash
+npx supabase start          # lokal Postgres, Auth og API (lokale utviklingsnøkler)
+npx supabase db reset       # migrasjoner fra tom database + syntetisk seed (to firma)
+npm run test:db             # RLS-/constraint-/samtidighetstester mot lokal Supabase
+```
+
+Hostet prosjekt (gjøres av prosjekteier):
+
+1. Kjør migrasjonene i `supabase/migrations/` (`npx supabase link` + `npx supabase db push`, eller lim inn SQL i SQL-editoren). Ikke kjør `supabase/seed.sql` mot et prosjekt med ekte data.
+2. Auth: behold e-post/passord som innloggingsmetode, men slå av «Allow new users to sign up».
+3. Opprett brukere i Auth-dashboardet (Add user, auto-confirm). Knytt dem til firma i SQL-editoren: `select private.admin_create_dealership('Firmanavn');` og `select private.admin_add_member('bruker@firma.no', '<firma-id>');`.
+
+Kodeplassering: `src/domain/` (rene domenetyper og valuta, ingen UI/provider), `src/providers/marketplace/` (provider-kontrakt, feiltyper, syntetisk provider med normalisering og fixturer), `src/demo/` (syntetiske demo-agenter når man ikke er innlogget), `src/lib/supabase/` og `src/proxy.ts` (Supabase-klient og sesjonsfornying), `src/server/` (sesjon/firmakontekst og agentlagring), `supabase/` (konfigurasjon, migrasjoner, lokal seed), `src/lib/format.ts` (visning, «ikke oppgitt»), `src/components/`, `src/app/` og `tests/`.
 
 ## Start her
 

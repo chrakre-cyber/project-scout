@@ -38,6 +38,16 @@ UTC for timestamps; vis Europe/Oslo i UI. Førsteregistrering lagres med kildens
 - analyser deles bare når vilkår/personvern tillater det; minst mulig selgerkontaktdata sendes til LLM.
 - composite forhold mellom agent, opportunity, calculation og notification valideres i DB eller tilsvarende sterke constraints; ikke bare i UI.
 
+## Implementert i DEV-002
+
+Migrasjon `supabase/migrations/20261005090000_dev002_tenancy_and_agents.sql` lager `dealerships`, `dealership_members` og `search_agents`. Øvrige tabeller lages i oppgavene som tar dem i bruk (DEC-022).
+
+- **Nøkler og constraints:** `dealership_members.user_id` er primærnøkkel (én membership per bruker) med FK til `auth.users`. `search_agents` har `unique (id, dealership_id)` for senere sammensatte FK-er. Navn har lengdegrense, JSON-feltene må være objekter, og penger i JSON må ha formatet i DEC-020.
+- **Triggere:** `version` settes til 1 ved opprettelse og økes ved endring av navn, filtre, forutsetninger eller aktiv-status. `dealership_id` kan ikke endres. Maks 10 aktive per firma håndheves i trigger med radlås på firmaet (atomisk under samtidighet).
+- **RLS:** aktivert på alle tre tabellene. `authenticated` kan lese eget firma og eget medlemskap, og lese, opprette og endre agenter i eget firma (kolonnevise rettigheter; ikke `version`, `last_success_at` eller tidsstempler, ingen DELETE). `anon` har ingen tilgang. Medlemskap og firma kan ikke skrives fra klienten.
+- **Administrasjon:** `private.admin_create_dealership(name)` og `private.admin_add_member(email, dealership_id)` kan bare kjøres av databaseeier. Skjemaet `private` er ikke eksponert i API-et.
+- **Gjenoppretting/rollback:** Migrasjonen er ny og har ingen pilotdata. Rollback i testmiljø: `drop table public.search_agents, public.dealership_members, public.dealerships; drop schema private cascade;`. Destruktiv rollback mot ekte data krever egen beslutning (se under).
+
 ## Migrasjons- og kontrollkrav
 
 DEV-002 skal levere migrasjoner, syntetisk seed for to firmaer og test av lese/skrive-isolasjon. Aktiv-agentgrensen må kontrolleres under samtidige opprettelser. Alle migrasjoner dokumenteres med rollback/gjenopprettingsplan; destruktiv sletting av reelle pilotdata krever egen beslutning.

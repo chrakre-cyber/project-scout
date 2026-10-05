@@ -25,6 +25,10 @@ Oppdatert 03.10.2026. «Vedtatt» gjengir produktvalgene i samtalen. «Arbeidsbe
 | DEC-018 | Arbeidsbeslutning (05.10.2026, DEV-003) | Appen støtter et uttrykkelig sett valutaer (NOK, EUR, SEK, DKK, CHF, GBP, PLN). Annonser i andre valutaer beholder kildens beløp som tekst; `amount` er `null`, og ingenting regnes om eller vises med gjettede desimaler | Løser DEV-001 review R1 uten FX. Settet kan utvides med ISO 4217-desimaler når en kilde krever det; FX-kilde er OPEN-005/DEV-009 |
 | DEC-019 | Arbeidsbeslutning (05.10.2026, DEV-003) | Annonsefelt er bare kildens opplysninger. Brutto/netto krever ordrett belegg; mva.-påstander lagres som claimed/denied/unknown med belegg og opphav, og gir aldri prisgrunnlag eller fradragsrett | Konkretiserer CLAUDE.md pkt. 4 og PRODUCT_SPEC §7 i datamodellen. Scouts vurderinger hører til kalkylesnapshot (DEV-007) |
 
+| DEC-020 | Arbeidsbeslutning (05.10.2026, DEV-002) | Penger ved databasegrensen (JSONB/PostgREST) er `{"amountMinor": "<heltall som tekst>", "currency": "XXX"}`, høyst 2^53-1. Domenet bruker `number` bare etter kontrollert konvertering (`moneyFromDb`/`moneyToDb`), og visning skjer uten flyttallsdivisjon | Løser DEV-001 review R5: JSON-tall over 2^53 mister presisjon i JavaScript uten feil. Databasen håndhever formatet med CHECK. Fremtidige `bigint`-kolonner leses som tekst eller med samme grense |
+| DEC-021 | Arbeidsbeslutning (05.10.2026, DEV-002) | Innlogging med Supabase Auth e-post/passord. Åpen registrering er av; prosjekteier oppretter brukere og knytter dem til firma via `private.admin_*` | Ingen egen passordhåndtering og ingen e-post fra appen (CLAUDE.md pkt. 9). Magic link/invitasjoner vurderes ved pilot |
+| DEC-022 | Arbeidsbeslutning (05.10.2026, DEV-002) | DEV-002 migrerer bare `dealerships`, `dealership_members` og `search_agents`; øvrige tabeller i den logiske modellen lages i oppgavene som bruker dem | Løser motstrid mellom «migrasjoner fra logisk modell» (SPRINT_1_HANDOFF) og at senere schema ikke skal lages før behov. Nye agenter lagres som ikke aktive; aktivering/pause er DEV-004 |
+
 ## Åpne avklaringer
 
 | ID | Spørsmål | Eier | Frist / kobling | Effekt hvis uavklart |

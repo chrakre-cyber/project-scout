@@ -48,3 +48,51 @@ export function toMoney(amount: string, currency: CurrencyCode): Money | null {
   const amountMinor = parseDecimalToMinor(amount, digits);
   return amountMinor === null ? null : { amountMinor, currency };
 }
+
+/**
+ * Pengeformat ved databasegrensen (DEC-020, DEV-001 review R5).
+ *
+ * I Postgres/JSONB og over PostgREST er `amountMinor` en heltallsstreng, ikke et
+ * JSON-tall, fordi JSON-tall over 2^53 mister presisjon i JavaScript uten feil.
+ * Databasen avviser verdier over 2^53-1 (CHECK), og konverteringen her feiler
+ * eksplisitt i stedet for å runde stille.
+ */
+export interface MoneyDb {
+  amountMinor: string;
+  currency: string;
+}
+
+export class MoneyBoundaryError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "MoneyBoundaryError";
+  }
+}
+
+export function moneyToDb(money: Money): MoneyDb {
+  if (!Number.isSafeInteger(money.amountMinor) || money.amountMinor <= 0) {
+    throw new MoneyBoundaryError(`amountMinor må være et positivt trygt heltall, fikk ${money.amountMinor}`);
+  }
+  if (!isCurrencyCodeFormat(money.currency)) throw new MoneyBoundaryError(`ugyldig valutakode ${money.currency}`);
+  return { amountMinor: String(money.amountMinor), currency: money.currency };
+}
+
+export function moneyFromDb(value: unknown): Money {
+  if (typeof value !== "object" || value === null) throw new MoneyBoundaryError("penger mangler eller er ikke et objekt");
+  const { amountMinor, currency } = value as Record<string, unknown>;
+  if (typeof amountMinor !== "string" || !/^[1-9]\d{0,15}$/.test(amountMinor)) {
+    throw new MoneyBoundaryError(`amountMinor må være en heltallsstreng, fikk ${JSON.stringify(amountMinor)}`);
+  }
+  const big = BigInt(amountMinor);
+  if (big > BigInt(Number.MAX_SAFE_INTEGER)) throw new MoneyBoundaryError(`amountMinor ${amountMinor} er større enn 2^53-1`);
+  if (typeof currency !== "string" || !isCurrencyCodeFormat(currency)) throw new MoneyBoundaryError("ugyldig valutakode");
+  return { amountMinor: Number(big), currency };
+}
+
+/** Eksakt desimalstreng fra minste enhet, uten flyttall: 9007199254740991, 2 → "90071992547409.91". */
+export function minorToDecimalString(amountMinor: number, digits: number): string {
+  if (!Number.isSafeInteger(amountMinor)) throw new MoneyBoundaryError(`ikke et trygt heltall: ${amountMinor}`);
+  const s = String(Math.abs(amountMinor)).padStart(digits + 1, "0");
+  const sign = amountMinor < 0 ? "-" : "";
+  return digits === 0 ? sign + s : `${sign}${s.slice(0, -digits)}.${s.slice(-digits)}`;
+}

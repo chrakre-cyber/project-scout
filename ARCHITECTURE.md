@@ -78,6 +78,13 @@ Ingen garanti om «exactly once» på tvers av en ekstern e-posttjeneste. Uavkla
 
 ## Firmatilgang og drift
 
+### Implementert i DEV-002
+
+- **Supabase-klient:** opprettes bare på serveren (`src/lib/supabase/server.ts`, `@supabase/ssr`) med URL og publishable key. Brukerens sesjon ligger i cookies. `src/proxy.ts` (Next 16-erstatningen for middleware) fornyer sesjonen, men autoriserer ingenting. Det finnes ingen nettleserklient for data.
+- **Sesjonskontekst:** `src/server/session.ts` henter brukeren med `auth.getUser()` (validert mot Auth) og firma fra `dealership_members` under RLS. Resultatet er en av statusene `not_configured`, `anonymous`, `no_membership` eller `member`.
+- **Agentlagring:** server actions bruker `dealership_id` fra konteksten og ignorerer skjemafelt som firma-ID, `active` og `version`. RLS `WITH CHECK` avviser uansett andre firma.
+
+
 User ID utledes fra validert sesjon. Firma utledes fra membership; browserinput er aldri tilstrekkelig autorisasjon. RLS testes med ordinære brukercredentials. Servicerolle brukes bare i avgrensede serverjobber med eksplisitt scope og audit-logg.
 
 Monitorér siste vellykkede run, antall treff, truncation, API-/LLM-forbruk, kø, sendfeil og blokkerte kalkyler. Pause-knapp stopper neste kjøring og nye varsler; pågående jobb sjekker aktiv status før enqueue. Logg IDs/status, ikke secrets eller komplette annonse-/kundetekster.

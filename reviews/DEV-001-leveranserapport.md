@@ -113,3 +113,7 @@ Ikke kjørt på nytt etter retting: `npm ci` fra ren tilstand, Playwright-klikkf
 ## Oppfølging i DEV-003 (05.10.2026)
 
 R1 (valuta) og R6 (mva.-felt og `lastSeenAt`) er løst i DEV-003. Se `reviews/DEV-003-leveranserapport.md`. DEV-001 er satt til DONE etter godkjenning oppgitt av Christian.
+
+## Oppfølging i DEV-002 (05.10.2026)
+
+R5 (bigint/number og kommentaren om «heltallsdivisjon») er løst i DEV-002: penger er tekst ved databasegrensen, grensen er 2^53-1, og visning skjer uten flyttall (DEC-020). Se `reviews/DEV-002-leveranserapport.md`.

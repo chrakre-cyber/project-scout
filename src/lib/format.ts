@@ -2,7 +2,7 @@
  * Visningsformatering (nb-NO, Europe/Oslo). Kun presentasjon — ingen
  * økonomiske beregninger. `null` vises som «ikke oppgitt».
  */
-import { minorDigits } from "@/domain/currency";
+import { minorDigits, minorToDecimalString } from "@/domain/currency";
 import type {
   BodyType, FirstRegistration, Fuel, ListingPrice, Mileage, Money, PriceBasis, SellerType, SourceVatStatement, Transmission,
 } from "@/domain/types";
@@ -19,8 +19,8 @@ export function formatMoney(money: Money | null): string {
   if (!money) return NOT_STATED;
   const digits = minorDigits(money.currency);
   if (digits === null) return `${money.amountMinor} (minste enhet) ${money.currency}`;
-  // Divisjonen er bare for visning; beløpet lagres eksakt i minste enhet.
-  const major = money.amountMinor / 10 ** digits;
+  // Eksakt desimalstreng (ingen flyttallsdivisjon); Intl formaterer strengen uten avrundingsfeil.
+  const major = minorToDecimalString(money.amountMinor, digits) as `${number}`;
   return new Intl.NumberFormat("nb-NO", {
     style: "currency",
     currency: money.currency,
