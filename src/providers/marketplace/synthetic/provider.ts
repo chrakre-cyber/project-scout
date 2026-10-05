@@ -155,6 +155,8 @@ export function matchesQuery(l: NormalizedListing, q: SearchQuery): boolean {
   const eq = (a: string, b: string) => a.localeCompare(b, "de", { sensitivity: "base" }) === 0;
   if (q.make !== null && !eq(s.make, q.make)) return false;
   if (q.model !== null && !eq(s.model, q.model)) return false;
+  // Variant: delstreng uten hensyn til store/små bokstaver. Ukjent variant ekskluderes ikke.
+  if (q.variant !== null && s.variant !== null && !s.variant.toLocaleLowerCase("de").includes(q.variant.toLocaleLowerCase("de"))) return false;
 
   const year = s.firstRegistration?.year ?? null;
   if (year !== null && q.yearMin !== null && year < q.yearMin) return false;
@@ -179,6 +181,6 @@ export function matchesQuery(l: NormalizedListing, q: SearchQuery): boolean {
 }
 
 export const EMPTY_QUERY: SearchQuery = {
-  make: null, model: null, yearMin: null, yearMax: null, maxMileageKm: null,
+  make: null, model: null, variant: null, yearMin: null, yearMax: null, maxMileageKm: null,
   fuels: [], transmissions: [], bodyTypes: [], countryCodes: [], maxPrice: null,
 };

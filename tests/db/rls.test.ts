@@ -7,7 +7,7 @@ import type { Client } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { agentFromRow, type AgentRow } from "@/server/agent-records";
 import {
-  adminDb, anonClient, asUser, assertLocal, cleanup, createFirmWithMember, createUser, signIn, type TestUser,
+  adminDb, anonClient, asUser, assertLocal, cleanup, createFirmWithMember, createUser, READY, signIn, type TestUser,
 } from "./harness";
 
 let db: Client;
@@ -24,7 +24,7 @@ beforeAll(async () => {
   firmB = await createFirmWithMember(db, "Testfirma B", userB);
   firmC = await createFirmWithMember(db, "Testfirma C", userC);
   [a, b] = [await signIn(userA), await signIn(userB)];
-  const { data, error } = await b.from("search_agents").insert({ dealership_id: firmB, name: "B sin agent" }).select("id").single();
+  const { data, error } = await b.from("search_agents").insert({ dealership_id: firmB, name: "B sin agent", ...READY }).select("id").single();
   if (error) throw error;
   agentB = data.id;
 });
@@ -177,9 +177,9 @@ describe("R5: penger ved databasegrensen", () => {
 
 describe("maks 10 aktive agenter per firma (atomisk)", () => {
   it("11. aktivering avvises ved insert og update; pause frigjør plass", async () => {
-    const rows = Array.from({ length: 10 }, (_, i) => ({ dealership_id: firmB, name: `Aktiv ${i}`, active: true }));
+    const rows = Array.from({ length: 10 }, (_, i) => ({ dealership_id: firmB, name: `Aktiv ${i}`, active: true, ...READY }));
     expect((await b.from("search_agents").insert(rows)).error).toBeNull();
-    const eleventh = await b.from("search_agents").insert({ dealership_id: firmB, name: "Aktiv 11", active: true });
+    const eleventh = await b.from("search_agents").insert({ dealership_id: firmB, name: "Aktiv 11", active: true, ...READY });
     expect(eleventh.error?.code).toBe("23514");
     expect(eleventh.error?.message).toContain("active_agent_limit");
     const activate = await b.from("search_agents").update({ active: true }).eq("id", agentB);
@@ -188,13 +188,13 @@ describe("maks 10 aktive agenter per firma (atomisk)", () => {
     expect((await b.from("search_agents").update({ active: false }).eq("id", one)).error).toBeNull();
     expect((await b.from("search_agents").update({ active: true }).eq("id", agentB)).error).toBeNull();
     // Andre firma påvirkes ikke av Bs grense.
-    expect((await a.from("search_agents").insert({ dealership_id: firmA, name: "A aktiv", active: true })).error).toBeNull();
+    expect((await a.from("search_agents").insert({ dealership_id: firmA, name: "A aktiv", active: true, ...READY })).error).toBeNull();
   });
 
   it("20 samtidige aktiveringer via API gir nøyaktig 10 aktive", async () => {
     const c = await signIn(userC);
     const results = await Promise.all(Array.from({ length: 20 }, (_, i) =>
-      c.from("search_agents").insert({ dealership_id: firmC, name: `Samtidig ${i}`, active: true })));
+      c.from("search_agents").insert({ dealership_id: firmC, name: `Samtidig ${i}`, active: true, ...READY })));
     expect(results.filter((r) => r.error === null)).toHaveLength(10);
     expect(results.filter((r) => r.error?.code === "23514")).toHaveLength(10);
     const { rows } = await db.query("select count(*)::int as n from public.search_agents where dealership_id = $1 and active", [firmC]);
@@ -212,9 +212,9 @@ describe("maks 10 aktive agenter per firma (atomisk)", () => {
     try {
       await asUser(t1, userC);
       await asUser(t2, userC);
-      await t1.query("insert into public.search_agents (dealership_id, name, active) values ($1, 'T1', true)", [firmC]);
+      await t1.query("insert into public.search_agents (dealership_id, name, active, filters, assumptions) values ($1, 'T1', true, $2, $3)", [firmC, READY.filters, READY.assumptions]);
       let settled = false;
-      const second = t2.query("insert into public.search_agents (dealership_id, name, active) values ($1, 'T2', true)", [firmC])
+      const second = t2.query("insert into public.search_agents (dealership_id, name, active, filters, assumptions) values ($1, 'T2', true, $2, $3)", [firmC, READY.filters, READY.assumptions])
         .finally(() => { settled = true; });
       second.catch(() => {});
       await new Promise((r) => setTimeout(r, 500));

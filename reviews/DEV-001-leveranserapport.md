@@ -117,3 +117,7 @@ R1 (valuta) og R6 (mva.-felt og `lastSeenAt`) er løst i DEV-003. Se `reviews/DE
 ## Oppfølging i DEV-002 (05.10.2026)
 
 R5 (bigint/number og kommentaren om «heltallsdivisjon») er løst i DEV-002: penger er tekst ved databasegrensen, grensen er 2^53-1, og visning skjer uten flyttall (DEC-020). Se `reviews/DEV-002-leveranserapport.md`.
+
+## Oppfølging i DEV-004 (06.10.2026)
+
+R7 (hva et «avklart bredere filter» er) er lukket i DEV-004 med DEC-023: merke alene er nok; uten merke kreves uttrykkelig bekreftelse og minst ett annet kriterium. Se `reviews/DEV-004-leveranserapport.md`.

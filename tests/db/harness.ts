@@ -89,3 +89,13 @@ export async function asUser(db: Client, user: TestUser) {
     JSON.stringify({ sub: user.id, role: "authenticated" }),
   ]);
 }
+
+/** Komplett agent (klar for aktivering) i DB-format (DEC-020), for tester som aktiverer. */
+export const READY = {
+  filters: { make: "Volkswagen" },
+  assumptions: {
+    retail: { expectedRetailTotal: { amountMinor: "39990000", currency: "NOK" }, priceBasis: { vat: "included", registrationTaxes: "included" } },
+    minimumContribution: { amountMinor: "3000000", currency: "NOK" },
+    preparationReserve: { amount: { amountMinor: "1500000", currency: "NOK" }, vatBasis: "ex_vat" },
+  },
+};

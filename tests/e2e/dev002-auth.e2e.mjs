@@ -41,11 +41,12 @@ try {
   await login(page, A);
   check("innlogging A → /agents med firma A", page.url().endsWith("/agents") && (await page.content()).includes("Syntetisk Firma A (demo)"));
   // Manipulasjon: injiser Bs firma-ID i skjemaet før innsending.
+  await page.goto(`${BASE}/agents/new`); // DEV-004: opprettelse via eget skjema
   await page.fill('input[name="name"]', `E2E agent ${run}`);
   await page.fill('input[name="make"]', "Volkswagen");
   await page.fill('input[name="model"]', "Golf");
-  await page.evaluate((b) => { for (const [n, v] of [["dealership_id", b], ["active", "true"], ["version", "99"]]) { const i = document.createElement("input"); i.type = "hidden"; i.name = n; i.value = v; document.querySelectorAll("form")[1].appendChild(i); } }, FIRM_B);
-  await Promise.all([page.waitForURL(/agents\?(created|error)=/), page.click('button:has-text("Opprett agent")')]);
+  await page.evaluate((b) => { for (const [n, v] of [["dealership_id", b], ["active", "true"], ["version", "99"]]) { const i = document.createElement("input"); i.type = "hidden"; i.name = n; i.value = v; document.querySelector('main input[name="name"]').form.appendChild(i); } }, FIRM_B);
+  await Promise.all([page.waitForURL(/agents\?msg=saved/), page.click('button:has-text("Lagre")')]);
   check("opprettelse gir «Agenten er lagret»", (await page.content()).includes("Agenten er lagret"));
   const { rows } = await db.query("select dealership_id, active, version from public.search_agents where name = $1", [`E2E agent ${run}`]);
   check("injisert firma-ID/active/version ignorert: agent i firma A, ikke aktiv, versjon 1", rows.length === 1 && rows[0].dealership_id === FIRM_A && rows[0].active === false && rows[0].version === 1);

@@ -25,9 +25,9 @@ Status: BACKLOG / READY / IN_PROGRESS / REVIEW / DONE / BLOCKED. Prioritet: P0 n
 | TAX-002 | Uavhengige referansecaser for mva., avgifter og salg; input/dato/fasit dokumentert | Christian + ChatGPT | BACKLOG | P0 | 3–5 t | 4–6 t | TAX-001, BUS-004 |
 | UX-001 | Skisser for tre skjermer; demo, mva., bidrag og kontrollbehov forståelige | Claude Design / ChatGPT | READY | P1 | 30–45 min | 2–4 t | PM-001 |
 | DEV-001 | Next.js-appskall, tydelig mock-demo og lokal startinstruks | Hovedutvikler | DONE | P0 | 15–30 min | 2–4 t | SET-001, PM-004 |
-| DEV-002 | Migrasjoner, Auth, membership og RLS; firma A kan ikke lese/skrive Bs data | Hovedutvikler | REVIEW | P0 | 20–40 min | 4–6 t | DEV-001, SET-002 |
+| DEV-002 | Migrasjoner, Auth, membership og RLS; firma A kan ikke lese/skrive Bs data | Hovedutvikler | DONE | P0 | 20–40 min | 4–6 t | DEV-001, SET-002 |
 | DEV-003 | MarketplaceProvider + syntetisk mock; normalisering og feiltyper kontrollert | Hovedutvikler | DONE | P0 | 15–30 min | 3–4 t | DEV-001 |
-| DEV-004 | Agent CRUD/pause, inputkontroll og atomisk maks 10 aktive per firma | Hovedutvikler | BACKLOG | P0 | 30–45 min | 4–6 t | DEV-002, DEV-003 |
+| DEV-004 | Agent CRUD/pause, inputkontroll og atomisk maks 10 aktive per firma | Hovedutvikler | REVIEW | P0 | 30–45 min | 4–6 t | DEV-002, DEV-003 |
 | QA-001 | Gate G1 bestått; isolasjon og agentgrense dokumentert, feil lukket | Codex / kontrollør | BACKLOG | P0 | 30–60 min | 2–3 t | DEV-004 |
 | DEV-005 | Ingestion, stable kilde-ID, revisjoner, pagination og run-logg; samme annonse gir ikke duplikat | Hovedutvikler | BACKLOG | P0 | 20–40 min | 4–6 t | DEV-003, DEV-004 |
 | DEV-006 | MobileDeProvider virker mot avtalt API; mapping, kvoter og rettighetsvalg kontrollert | Hovedutvikler | BLOCKED | P0 | 30–60 min | 4–6 t | BUS-002, DEV-005 |
@@ -63,6 +63,8 @@ Skriv dato, ny status, commit/fil og testbelegg i seksjonen under. Juster estima
 - 05.10.2026: DEV-003 → REVIEW. Syntetisk MarketplaceProvider med normalisering, 109 annonser, paginering/truncation, revisjoner, duplikat, feiltyper; DEV-001 R1 (valuta) og R6 (mva.-felt, `lastSeenAt`) løst. Typecheck, lint, 45 tester (4 filer), build, HTTP-røyktest og Playwright-klikkflyt bestått. Detaljer: `reviews/DEV-003-leveranserapport.md`. Venter uavhengig review før DONE.
 - 05.10.2026: DEV-003 → DONE og SET-002 → DONE, oppgitt av Christian i oppdraget for DEV-002.
 - 05.10.2026: DEV-002 → REVIEW. Migrasjon for firma, medlemskap og agenter med RLS, kolonnerettigheter, triggere og atomisk maks 10 aktive; Supabase Auth (e-post/passord, åpen registrering av); R5 løst (DEC-020). Kontrollert mot lokal Supabase: migrasjon fra tom DB, 18 DB-/RLS-tester, 11 nettleserkontroller og 55 enhetstester. Ikke kontrollert mot hostet prosjekt (variablene finnes ikke i utviklingsmiljøet). Detaljer: `reviews/DEV-002-leveranserapport.md`.
+- 06.10.2026: DEV-002 → DONE, inkl. hosted smoke test, oppgitt av Christian i oppdraget for DEV-004.
+- 06.10.2026: DEV-004 → REVIEW. Opprett/rediger/valider/aktiver/pause/reaktiver agenter; validering i server og database (CHECK), aktiveringskrav (DEC-024), R7 lukket (DEC-023), 10 representative agentoppsett. Kontrollert mot lokal Supabase: 95 enhetstester, 60 DB-tester, 23 + 11 nettleserkontroller, migrasjon fra tom DB og fra DEV-002-data. Ikke kjørt mot hostet prosjekt. Kontroller til QA-001 ligger i `tests/db/` og `tests/e2e/`. Detaljer: `reviews/DEV-004-leveranserapport.md`.
 
 ## Dagens anbefalte rekkefølge
 

@@ -48,6 +48,16 @@ Migrasjon `supabase/migrations/20261005090000_dev002_tenancy_and_agents.sql` lag
 - **Administrasjon:** `private.admin_create_dealership(name)` og `private.admin_add_member(email, dealership_id)` kan bare kjøres av databaseeier. Skjemaet `private` er ikke eksponert i API-et.
 - **Gjenoppretting/rollback:** Migrasjonen er ny og har ingen pilotdata. Rollback i testmiljø: `drop table public.search_agents, public.dealership_members, public.dealerships; drop schema private cascade;`. Destruktiv rollback mot ekte data krever egen beslutning (se under).
 
+## Implementert i DEV-004
+
+Migrasjon `supabase/migrations/20261006090000_dev004_agent_validation.sql`:
+
+- **`search_agents_filters_valid`:** kjente nøkler; merke/modell/variant 1–60 tegn (modell krever merke, variant krever modell); år 1900–2100 og fra ≤ til (serveren bruker inneværende år + 1 som øvre grense); maks km 1–2 000 000; drivstoff/gir/karosseri/land fra faste lister uten duplikater; maks pris i DEC-020-format og støttet valuta (DEC-018); `broadSearchConfirmed` boolsk.
+- **`search_agents_assumptions_valid`:** `retail` (`expectedRetailTotal` NOK > 0, `priceBasis.vat` og `priceBasis.registrationTaxes` = included/excluded), `minimumContribution` (NOK > 0) og `preparationReserve` (`amount` NOK ≥ 0, `vatBasis` = ex_vat/incl_vat). Alle kan være null (ikke oppgitt).
+- **`search_agents_ready_when_active`:** `active` krever aktiveringskravene i DEC-023/024. Funksjonene er NULL-sikre, fordi en CHECK som gir NULL ellers regnes som bestått.
+- **Oppgradering:** eksisterende DEV-002-agenter beholdes. En aktiv agent uten komplette krav pauses før constraintet legges til (kontrollert lokalt fra DEV-002-data).
+- DEV-002s `search_agents_money_format` er erstattet av sjekkene over. RLS, kolonnerettigheter og grensen på 10 aktive er uendret.
+
 ## Migrasjons- og kontrollkrav
 
 DEV-002 skal levere migrasjoner, syntetisk seed for to firmaer og test av lese/skrive-isolasjon. Aktiv-agentgrensen må kontrolleres under samtidige opprettelser. Alle migrasjoner dokumenteres med rollback/gjenopprettingsplan; destruktiv sletting av reelle pilotdata krever egen beslutning.

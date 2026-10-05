@@ -106,6 +106,14 @@ describe("filtre og enheter", () => {
     expect((await p.getListing("demo-008"))?.specs.mileage).toEqual({ value: 38_000, unit: "mi" });
   });
 
+  it("variant: delstreng uten hensyn til store/små bokstaver; ukjent variant ekskluderes ikke", async () => {
+    const p = new SyntheticMarketplaceProvider();
+    const ids = async (o: Partial<typeof EMPTY_QUERY>) => (await p.search(q(o), {})).items.map((l) => l.sourceListingId);
+    expect(await ids({ make: "Volkswagen", model: "Golf", variant: "variant" })).toContain("demo-001");
+    expect(await ids({ make: "Volkswagen", model: "Golf", variant: "GTI" })).not.toContain("demo-001");
+    expect(await ids({ make: "Mercedes-Benz", model: "E-Klasse", variant: "AMG" })).toContain("demo-008"); // variant ukjent
+  });
+
   it("ekskluderer ikke annonser med ukjent verdi; DEV-010 avgjør needs_review", async () => {
     const p = new SyntheticMarketplaceProvider();
     const res = await p.search(q({ make: "Mercedes-Benz", yearMin: 2023 }), {});

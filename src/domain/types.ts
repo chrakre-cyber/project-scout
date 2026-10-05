@@ -140,10 +140,15 @@ export interface NormalizedListing {
   provenance: Provenance;
 }
 
-/** Strukturerte agentfiltre (PRODUCT_SPEC §4). Utelatt filter = ikke satt. */
+/**
+ * Strukturerte agentfiltre (PRODUCT_SPEC §4). `null` / tom liste betyr «alle»
+ * (ingen begrensning) — ikke «ukjent». Se DEC-023 for brede filtre.
+ */
 export interface AgentFilters {
   make: string | null;
   model: string | null;
+  /** Variant/utstyrsnivå; krever modell. Delstreng uten hensyn til store/små bokstaver. */
+  variant: string | null;
   yearMin: number | null;
   yearMax: number | null;
   maxMileageKm: number | null;
@@ -151,20 +156,34 @@ export interface AgentFilters {
   transmissions: Transmission[];
   bodyTypes: BodyType[];
   countryCodes: string[];
+  /** Maks annonsepris i valgt valuta. Sammenlignes bare mot annonser i samme valuta (DEC-018). */
   maxPrice: Money | null;
 }
 
-/** Forhandlerens forventede norske sluttkundepris med eksplisitt grunnlag. */
+/** Om et beløp inkluderer en avgift/mva. `null` = ikke oppgitt (blokkerer aktivering). */
+export type InclusionBasis = "included" | "excluded";
+
+/**
+ * Forhandlerens forventede norske sluttkundepris med eksplisitt prisgrunnlag
+ * (IMPORT_ENGINE_SPEC «Inputs»). Lagret retail betyr ikke beregnet margin.
+ */
 export interface RetailAssumption {
-  expectedRetailTotal: Money;
-  /** Beskrivelse av hva prisen inkluderer (mva., registreringsavgifter). */
-  priceBasisDescription: string;
+  expectedRetailTotal: Money | null;
+  priceBasis: { vat: InclusionBasis | null; registrationTaxes: InclusionBasis | null };
 }
 
+/** Klargjøringsreserve med mva.-basis. 0 kr er et gyldig, uttrykkelig valg; `null` = ikke oppgitt. */
+export interface PreparationReserve {
+  amount: Money | null;
+  vatBasis: "ex_vat" | "incl_vat" | null;
+}
+
+/** Økonomiforutsetninger i NOK. `null` = ikke oppgitt, aldri 0 som erstatning. */
 export interface AgentAssumptions {
-  retail: RetailAssumption | null;
+  retail: RetailAssumption;
+  /** Minimum ønsket bidrag (T i OPPORTUNITY_SCORE), må være > 0 for aktivering. */
   minimumContribution: Money | null;
-  preparationReserve: Money | null;
+  preparationReserve: PreparationReserve;
 }
 
 export type AgentStatus = "active" | "paused";
@@ -174,6 +193,8 @@ export interface SearchAgent {
   name: string;
   status: AgentStatus;
   filters: AgentFilters;
+  /** Brukeren har uttrykkelig bekreftet søk uten merke (DEC-023). */
+  broadSearchConfirmed: boolean;
   assumptions: AgentAssumptions;
   version: number;
   /** Siste vellykkede søk mot kilde, null hvis aldri kjørt. */

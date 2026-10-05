@@ -8,7 +8,7 @@ import type { NormalizedListing } from "@/domain/types";
 import {
   BODY_LABEL, FUEL_LABEL, NOT_STATED, SELLER_LABEL, TRANSMISSION_LABEL,
   formatDateTime, formatFirstRegistration, formatListingPrice, formatMileage, formatMoney, formatNumber, formatPriceBasis,
-  formatVatStatement, labelOrNotStated,
+  formatReserve, formatRetailBasis, formatVatStatement, labelOrNotStated,
 } from "@/lib/format";
 import { MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
 
@@ -184,11 +184,11 @@ export default async function OpportunityPage({ params }: Params) {
               <div key={a.id} className="text-sm">
                 <p className="font-medium">{a.name}{a.status === "paused" ? " (pauset)" : ""}</p>
                 <dl className="mt-1 grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5">
-                  <Row label="Forventet salgspris" value={formatMoney(a.assumptions.retail?.expectedRetailTotal ?? null)} />
+                  <Row label="Forventet salgspris" value={formatMoney(a.assumptions.retail.expectedRetailTotal)} />
                   <Row label="Min. bidrag" value={formatMoney(a.assumptions.minimumContribution)} />
-                  <Row label="Klargjøringsreserve" value={formatMoney(a.assumptions.preparationReserve)} />
+                  <Row label="Klargjøringsreserve" value={formatReserve(a.assumptions.preparationReserve)} />
                 </dl>
-                <p className="mt-1 text-xs text-slate-500">{a.assumptions.retail?.priceBasisDescription ?? "Prisgrunnlag ikke oppgitt"}</p>
+                <p className="mt-1 text-xs text-slate-500">Syntetisk eksempel. Prisgrunnlag: {formatRetailBasis(a.assumptions.retail.priceBasis)}</p>
               </div>
             ))}
           </Section>

@@ -114,3 +114,18 @@ export const SELLER_LABEL: Record<SellerType, string> = {
 export function labelOrNotStated<K extends string>(map: Record<K, string>, key: K | null): string {
   return key === null ? NOT_STATED : map[key];
 }
+
+/** Prisgrunnlag for forventet salgspris. Ukjent vises som «ikke oppgitt». */
+export function formatRetailBasis(basis: { vat: "included" | "excluded" | null; registrationTaxes: "included" | "excluded" | null }): string {
+  const part = (v: "included" | "excluded" | null, what: string) =>
+    v === null ? `${what}: ${NOT_STATED}` : `${v === "included" ? "inkl." : "ekskl."} ${what}`;
+  return `${part(basis.vat, "mva.")}, ${part(basis.registrationTaxes, "registreringsavgifter")}`;
+}
+
+/** Klargjøringsreserve med mva.-basis. 0 kr vises som 0 kr (uttrykkelig valg), null som «ikke oppgitt». */
+export function formatReserve(r: { amount: Money | null; vatBasis: "ex_vat" | "incl_vat" | null }): string {
+  if (r.amount === null) return NOT_STATED;
+  const amount = r.amount.amountMinor === 0 ? "0 kr" : formatMoney(r.amount);
+  const basis = r.vatBasis === null ? `mva.-basis ${NOT_STATED}` : r.vatBasis === "ex_vat" ? "eks. mva." : "inkl. mva.";
+  return `${amount} (${basis})`;
+}
