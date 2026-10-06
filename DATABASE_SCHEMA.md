@@ -58,6 +58,14 @@ Migrasjon `supabase/migrations/20261006090000_dev004_agent_validation.sql`:
 - **Oppgradering:** eksisterende DEV-002-agenter beholdes. En aktiv agent uten komplette krav pauses før constraintet legges til (kontrollert lokalt fra DEV-002-data).
 - DEV-002s `search_agents_money_format` er erstattet av sjekkene over. RLS, kolonnerettigheter og grensen på 10 aktive er uendret.
 
+## Implementert i QA-001-FIX
+
+Migrasjon `supabase/migrations/20261006100000_qa001_fix_active_limit_trigger.sql` erstatter `private.enforce_active_agent_limit()` (DEV-002-migrasjonen er uendret):
+
+- **F1 (P1) tenantsjekk først:** når `auth.uid()` er satt og firmaet på raden ikke er brukerens, avvises forsøket med `42501` og samme melding som RLS, før noe telles eller låses. Svaret er dermed identisk uansett hvor mange aktive agenter et fremmed firma har, og forsøket tar ikke lås på det firmaet. Direkte databasekall uten bruker (eier/serverjobb) påvirkes ikke og får grensen som før.
+- **F2 (P2) isolasjonsnivå:** aktivering avvises eksplisitt under REPEATABLE READ (`0A000`). READ COMMITTED og SERIALIZABLE er uendret. Se DEC-025. Kommentaren i DEV-002-migrasjonen om serialiseringsfeil under REPEATABLE READ var feil.
+- Rettigheter og `search_path` på funksjonen er uendret.
+
 ## Migrasjons- og kontrollkrav
 
 DEV-002 skal levere migrasjoner, syntetisk seed for to firmaer og test av lese/skrive-isolasjon. Aktiv-agentgrensen må kontrolleres under samtidige opprettelser. Alle migrasjoner dokumenteres med rollback/gjenopprettingsplan; destruktiv sletting av reelle pilotdata krever egen beslutning.

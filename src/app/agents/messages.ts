@@ -16,3 +16,11 @@ export const SUCCESS_MESSAGES: Record<string, string> = {
   activated: "Agenten er aktivert. Automatisk søk er ikke koblet til ennå (DEV-005).",
   paused: "Agenten er pauset.",
 };
+
+/**
+ * Slår bare opp nøkler som uttrykkelig finnes i tabellen (egne egenskaper). Query-parametre er brukerstyrt:
+ * `obj[key]` ville truffet Object.prototype for `__proto__`, `constructor`, `toString` m.fl. (QA-001 F3).
+ */
+export function lookupMessage<T extends string>(table: Readonly<Record<string, T>>, key: string | undefined): T | null {
+  return key !== undefined && Object.hasOwn(table, key) ? (table[key] as T) : null;
+}

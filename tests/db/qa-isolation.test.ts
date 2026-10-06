@@ -104,7 +104,7 @@ describe.each([
     for (const active of [false, true]) {
       const res = await me.client.from("search_agents").insert({ dealership_id: other.firm, name: "innbrudd", active, ...READY });
       expect(res.error).not.toBeNull();
-      expect(["42501", "23514"]).toContain(res.error?.code); // 23514 for active=true mot fullt firma: se funn F1
+      expect(res.error?.code).toBe("42501"); // alltid samme autorisasjonsfeil, også med active=true (F1 rettet)
     }
     expect((await me.client.from("search_agents").insert(Array.from({ length: 3 }, () => ({ dealership_id: other.firm, name: "batch", ...READY })))).error?.code).toBe("42501");
     expect((await me.client.from("search_agents").upsert({ id: other.pausedId, dealership_id: me.firm, name: "x", ...READY }, { onConflict: "id" })).error).not.toBeNull();

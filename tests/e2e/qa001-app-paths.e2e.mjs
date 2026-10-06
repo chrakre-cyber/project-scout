@@ -1,7 +1,7 @@
 // QA-001 / Gate G1: app- og serverstier i nettleser mot LOKAL Supabase + `next start -p 3100`.
 // Kjøring: PW=<playwright> PG=$PWD/node_modules/pg DB_URL=<lokal DB_URL> node tests/e2e/qa001-app-paths.e2e.mjs
 // Dekker det DEV-002/004-e2e ikke dekker: stale versjon/samtidig lagring, XSS-strenger, sesjonsgjenbruk etter
-// utlogging, anonym direkteadgang, bruker uten firma, og query-parametre som peker på objektprototyper.
+// utlogging, anonym direkteadgang, bruker uten firma, og query-parametre som peker på objektprototyper (F3, rettet i QA-001-FIX).
 // Testbrukere med tilfeldige passord opprettes lokalt og slettes. Ingen service-role.
 import { createRequire } from "node:module";
 import { randomBytes, randomUUID } from "node:crypto";
@@ -32,8 +32,6 @@ await db.query("select private.admin_add_member($1,$2)", [A.email, FIRM_A]);
 await db.query("select private.admin_add_member($1,$2)", [B.email, FIRM_B]);
 const results = [];
 const check = (name, ok, extra = "") => results.push(`${ok ? "OK  " : "FEIL"} ${name}${ok || !extra ? "" : ` — ${extra}`}`);
-// Kjent, dokumentert funn: «KJENT» mens funnet er åpent (påstanden feiler), «FIKSET» når den begynner å bestå (da fjernes merkingen).
-const known = (id, name, ok, extra = "") => results.push(`${ok ? `FIKSET (fjern kjent-merking ${id})` : `KJENT ${id}`} ${name}${ok || !extra ? "" : ` — ${extra}`}`);
 const mk = async (firm, name, active = false) => (await db.query("insert into public.search_agents (dealership_id,name,filters,assumptions,active) values ($1,$2,$3,$4,$5) returning id", [firm, name, READY.filters, READY.assumptions, active])).rows[0].id;
 const aAgent = await mk(FIRM_A, `A-agent ${run}`), bAgent = await mk(FIRM_B, `B-agent ${run}`);
 const browser = await chromium.launch();
@@ -77,7 +75,7 @@ try {
   for (const q of ["error=__proto__", "error=constructor", "error=toString", "error=hasOwnProperty", "msg=__proto__", "msg=constructor", "msg=toString"]) {
     const r = await pA.goto(`${BASE}/agents?${q}`);
     const t = await text(pA);
-    known("F4", `/agents?${q} gir 200 uten krasj eller feilside`, r.status() === 200 && !t.includes("Application error"), `status ${r.status()}`);
+    check(`/agents?${q} gir 200 uten krasj, og viser ingen melding fra objektprototypen (F3 rettet)`, r.status() === 200 && !t.includes("Application error") && !t.includes("function ") && !t.includes("[object"), `status ${r.status()}`);
   }
 
   // 5. XSS-/HTML-strenger
@@ -156,5 +154,4 @@ try {
   await browser.close(); await db.end();
 }
 console.log(results.join("\n"));
-const unexpectedErrors = pageErrors.filter((e) => !e.includes("#441")); // #441 = F4 (funksjon/objekt som React-barn)
-console.log("sidefeil (utenom F4):", unexpectedErrors.length ? unexpectedErrors : "ingen");
+console.log("sidefeil:", pageErrors.length ? pageErrors : "ingen");

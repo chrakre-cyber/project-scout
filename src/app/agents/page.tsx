@@ -11,7 +11,7 @@ import { agentToDraft } from "@/server/agent-records";
 import { listAgents } from "@/server/agents";
 import { getSessionContext } from "@/server/session";
 import { setActiveAction } from "./actions";
-import { AGENT_MESSAGES, SUCCESS_MESSAGES } from "./messages";
+import { AGENT_MESSAGES, SUCCESS_MESSAGES, lookupMessage } from "./messages";
 
 export const metadata: Metadata = { title: "Mine agenter — Project Scout" };
 
@@ -24,7 +24,8 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
   const { error, msg } = await searchParams;
   const agents = await listAgents(ctx);
   const activeCount = agents.filter((a) => a.status === "active").length;
-  const errorText = error ? AGENT_MESSAGES[error as keyof typeof AGENT_MESSAGES] ?? AGENT_MESSAGES.failed : null;
+  const successText = lookupMessage(SUCCESS_MESSAGES, msg);
+  const errorText = error ? lookupMessage(AGENT_MESSAGES, error) ?? AGENT_MESSAGES.failed : null;
 
   return (
     <div className="space-y-6">
@@ -39,7 +40,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
         <Link href="/agents/new" className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">Ny agent</Link>
       </div>
       {errorText && <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">{errorText}</p>}
-      {msg && SUCCESS_MESSAGES[msg] && <p role="status" className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">{SUCCESS_MESSAGES[msg]}</p>}
+      {successText && <p role="status" className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">{successText}</p>}
 
       {agents.length === 0 ? (
         <p className="text-sm text-slate-600">Firmaet har ingen agenter ennå.</p>

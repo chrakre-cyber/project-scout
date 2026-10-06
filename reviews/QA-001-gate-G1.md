@@ -2,7 +2,7 @@
 
 Dato: 06.10.2026 · Branch: `claude/wonderful-bardeen-yussx3` · Kontrollert commit: `055b162` (DEV-004) + QA-filer i denne leveransen
 
-**Gate G1: PASS** — ingen åpne P0 eller P1. Tre åpne P2-funn (F1–F3) og tre P3 anbefales rettet i en liten oppfølging før DEV-005 går videre mot ekte data. Se «Gate-konklusjon» for hva som er avhengig av din vurdering.
+**Gate G1: PASS (oppdatert etter QA-001-FIX).** Første kjøring ga PASS under forutsetning av at F1 var P2. Produkteier klassifiserte F1 som **P1** (cross-tenant lekkasje av tilstand), og gaten var da FAIL til rettingen var gjort. F1 (P1), F2 (P2) og F3 (P2) er rettet i QA-001-FIX (migrasjon `20261006100000`, `src/app/agents`), og F1/F2-vaktene er ordinære regresjonstester. Ingen åpne P0, P1 eller P2. Gjenstår: F4–F6 (P3, ikke i scope for rettingen). Se «QA-001-FIX — oppfølging» nederst.
 
 **QA-001 står som REVIEW, ikke DONE.** QA er utført av samme verktøy (Claude Code) som skrev DEV-001–004, i samme sesjon. Det er ikke en kontrollør uten tilknytning til implementasjonen (CLAUDE.md pkt. 15). Jeg har derfor skrevet testene som angrep, ikke som bekreftelse, og bevist at de kan feile (se «Testmutasjoner»). Endelig godkjenning av gaten ligger hos produkteier.
 
@@ -116,7 +116,7 @@ Publishable-nøkkelen (offentlig av design) finnes i serverbundelen, men ikke i 
 
 Ingen P0. Ingen P1.
 
-### F1 — P2 — Sidekanal på tvers av firma via grensetriggeren (DEV-002)
+### F1 — P1 (opprinnelig P2, omklassifisert av produkteier) — Sidekanal på tvers av firma via grensetriggeren (DEV-002) — **RETTET i QA-001-FIX**
 
 Triggeren `enforce_active_agent_limit` er `SECURITY DEFINER` og kjører **før** RLS `WITH CHECK`. En bruker i firma A som kjenner Bs firma-UUID kan sette inn en agent med `dealership_id = B` og `active = true`. Svaret er `23514 active_agent_limit` hvis B har 10 aktive agenter, og `42501` ellers. Dermed kan A lese «B har 10 aktive agenter». Ingen rader leses eller skrives, og angriperen trenger en UUID som ikke vises noe sted for andre firma.
 
@@ -124,14 +124,14 @@ Triggeren `enforce_active_agent_limit` er `SECURITY DEFINER` og kjører **før**
 - **Hvorfor P2 og ikke P1/P0:** én bit avledet informasjon, krever en UUID angriperen ikke kan gjette, ingen radtilgang. Rubrikkens P0 («cross-tenant read») og P1 («sikkerhetsregel kan omgås») kan leses strengt slik at dette teller. Se «Gate-konklusjon».
 - **Rettelse (validert lokalt, ikke committet):** i triggeren, før telling og lås, avvis med 42501 når `auth.uid()` er satt og firmaet ikke er brukerens. Direkte databasekall uten bruker påvirkes ikke. Med rettelsen anvendt ble alle 195 øvrige DB-tester grønne, og kun F1-vakten ble rød (som den skal). Ferdig SQL: se «Foreslått retting». Krever ny migrasjon som du må kjøre på hostet prosjekt.
 
-### F2 — P2 (latent) — Grensen kan overskrides under REPEATABLE READ (DEV-002)
+### F2 — P2 (latent) — Grensen kan overskrides under REPEATABLE READ (DEV-002) — **RETTET i QA-001-FIX**
 
 Telling i triggeren bruker transaksjonens eldre snapshot. To REPEATABLE READ-transaksjoner om siste plass ender med **11** aktive (verifisert). READ COMMITTED og SERIALIZABLE holder 10. Kommentaren i DEV-002-migrasjonen («under REPEATABLE READ … serialiseringsfeil») er feil.
 
 - **Ikke nåbart for ordinære brukere:** Data API kjører READ COMMITTED, og ingen rolle har konfigurert annen isolasjon (kontrollert i `qa-catalog`). Det blir relevant hvis serverkode (DEV-005+) kjører aktivering med direkte tilkobling og høyere isolasjon.
 - **Anbefalt:** en vakt i triggeren som avviser aktivering når `transaction_isolation = 'repeatable read'`, og retting av kommentaren. Vakt i testene: `it.fails` i `qa-limit.test.ts`.
 
-### F3 — P2 (lav praktisk risiko) — HTTP 500 på spørringsparametre (DEV-004)
+### F3 — P2 (lav praktisk risiko) — HTTP 500 på spørringsparametre (DEV-004) — **RETTET i QA-001-FIX**
 
 `/agents?error=__proto__` (også `constructor`, `toString`, `hasOwnProperty`) og `?msg=__proto__|constructor|toString` gir 500 for innlogget bruker. Meldingsoppslaget `AGENT_MESSAGES[error]` treffer `Object.prototype`, og React kan ikke vise funksjon/objekt. Bare brukerens egen side, ingen datalekkasje, men en lenke kan gi en innlogget bruker feilside.
 
@@ -240,3 +240,54 @@ npm run qa:migrations && npm run qa:secrets && npm run qa:demo
 # e2e (bygg med .env.local mot lokal stack, `next start -p 3100`):
 PW=<playwright> PG=$PWD/node_modules/pg DB_URL=<lokal DB_URL> node tests/e2e/qa001-app-paths.e2e.mjs
 ```
+
+## QA-001-FIX — oppfølging (06.10.2026)
+
+Oppdrag: rett F1–F3 uten å utvide scope. Ingen endring i provider, marketplace, search-runs, alerts eller produkt. DEV-005 er ikke startet. F4–F6 er ikke rettet.
+
+### Løsninger
+
+- **F1:** ny migrasjon `20261006100000_qa001_fix_active_limit_trigger.sql` (eldre migrasjoner er urørt). `enforce_active_agent_limit()` avviser nå som første handling, når `auth.uid()` er satt og firmaet på raden ikke er brukerens (`not exists` mot `my_dealership_ids()`, slik at også NULL avvises), med `42501` og nøyaktig samme melding som RLS. Det skjer før telling og før firmalåsen. Resultat: A får identisk feil mot B uansett om B har 0, 9 eller 10 aktive, og mot et ukjent firma, og forsøket tar ikke lås på B. Brukerens eget firma og eierstien (uten `auth.uid()`) får grensen som før.
+- **F2:** i samme funksjon avvises aktivering under `repeatable read` med `0A000` og `active_agent_limit_isolation`. READ COMMITTED (standard) og SERIALIZABLE er uendret. Pause og redigering av aktive agenter virker også under REPEATABLE READ. Beslutningen er dokumentert som DEC-025. Dette var det eneste alternativet som ikke krever ny snapshot-mekanisme.
+- **F3:** `lookupMessage()` i `src/app/agents/messages.ts` slår bare opp egne egenskaper (`Object.hasOwn`), og `/agents` bruker den for både `error` og `msg`. Ukjent nøkkel gir null og dermed trygg fallback uten unntak.
+
+### Nye og endrede filer
+
+Ny: `supabase/migrations/20261006100000_qa001_fix_active_limit_trigger.sql`, `tests/agent-messages.test.ts`. Endret: `src/app/agents/{messages.ts,page.tsx}`, `tests/db/qa-limit.test.ts` (de to F1/F2-vaktene er erstattet av 7 ordinære tester), `tests/db/qa-isolation.test.ts` (alltid 42501), `tests/db/qa-catalog.test.ts` (kommentar), `tests/e2e/qa001-app-paths.e2e.mjs` (F3-sjekkene er ordinære), `scripts/qa-upgrade-check.sh` (oppgradering fra DEV-004-schema), `DECISIONS.md` (DEC-025), `DATABASE_SCHEMA.md`, `MVP_BACKLOG.md`, denne rapporten.
+
+### Tester faktisk kjørt (fra ren database, `db reset` med alle tre migrasjoner)
+
+| Kontroll | Resultat |
+|---|---|
+| `npm run typecheck`, `npm run lint` | 0 feil, 0 advarsler |
+| `npm test` (enhet, 10 filer) | **119/119** (14 nye for F3) |
+| `npm run test:db` (6 filer, hele DB/RLS-suiten) | **202/202, 0 forventede feil** (før: 195 + 2 `it.fails`) |
+| – QA-isolasjon (`qa-isolation`) | 18/18, A mot B gir nå alltid 42501 også med `active=true` |
+| – QA-grense/samtidighet (`qa-limit`) | 18/18, inkludert 24 samtidige aktiveringer, batch >10, READ COMMITTED/SERIALIZABLE/REPEATABLE READ |
+| Nettleser e2e `dev002-auth` / `dev004-agents` | 11/11 / 23/23 |
+| Nettleser e2e `qa001-app-paths` | **26/26** (F3: alle 7 URL-er gir nå 200), ingen React-sidefeil |
+| `npm run qa:migrations` | alle kontroller bestått, inkludert **oppgradering fra eksisterende DEV-004-schema** (10 aktive agenter beholdt, funksjonen byttet, schema identisk med ren oppbygging) |
+| `npm run qa:secrets` | ingen funn |
+| `npm run build` | OK |
+
+### Regresjonsvaktene
+
+F1/F2-vaktene er ikke lenger `it.fails`:
+- F1: identisk kode og melding mot B med 0/9/10 aktive og ukjent firma; ingen lås på fremmed firma (A avvises umiddelbart mens eier holder Bs firmalås, og Bs egne aktiveringer virker etterpå); egen 10. aktivering virker og 11. avvises (23514).
+- F2: REPEATABLE READ avvises i race (begge transaksjoner, 9 aktive, aldri 11), avvises også for en enkelt aktivering uten konkurrent, og pause/omdøping virker under REPEATABLE READ. READ COMMITTED gir 10 og 23514 for taperen. SERIALIZABLE ≤ 10. Eier-/serverstien håndhever fortsatt grensen.
+
+### Målrettede mutasjoner (gjenopprettet, ikke committet)
+
+| Mutasjon | Røde tester |
+|---|---|
+| MF1: F1-tenantsjekken fjernet | 2 (identisk feil; ingen lås på fremmed firma) |
+| MF2: F2-isolasjonsvakten fjernet | 2 (REPEATABLE READ-race gir 11 aktive; enkelt-aktivering) |
+| MF3: F1-sjekken flyttet etter grensekontrollen (sidekanalen gjeninnført) | 2 |
+| MF4: `lookupMessage` uten `hasOwn` | enhetstestene for `__proto__`, `constructor`, `toString`, `hasOwnProperty` m.fl. |
+| MF5: siden slår opp `AGENT_MESSAGES[error]` direkte igjen | e2e: 500 på alle 7 URL-er |
+
+Etter gjenoppretting: DB-suiten 202/202.
+
+### Resterende funn
+
+Ingen P0, P1 eller P2. F4 (paritet i kanttilfeller), F5 (oppgradering stopper på eldre data) og F6 (hygiene, inkl. R9) er uendret og åpne som P3. Hostet Supabase: **externally verified by product owner** for DEV-002/004 tidligere; QA-001-FIX er **ikke** kjørt mot hostet prosjekt. Migrasjonen `20261006100000` må kjøres der (`supabase db push`) før F1 og F2 er rettet i produksjonsmiljøet.

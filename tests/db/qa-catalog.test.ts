@@ -181,7 +181,7 @@ describe("constraints og triggere", () => {
 });
 
 describe("konfigurasjon", () => {
-  it("rolle authenticated bruker READ COMMITTED som standard (grensetriggeren er avhengig av det, se F2)", async () => {
+  it("rolle authenticated bruker READ COMMITTED som standard (grensetriggeren avviser REPEATABLE READ, DEC-025)", async () => {
     const rows = await q<{ cfg: string[] | null }>("select rolconfig::text[] cfg from pg_roles where rolname in ('authenticated', 'anon', 'authenticator')");
     for (const r of rows) expect((r.cfg ?? []).join(",")).not.toMatch(/default_transaction_isolation/);
     expect((await q<{ s: string }>("select current_setting('default_transaction_isolation') s"))[0]!.s).toBe("read committed");

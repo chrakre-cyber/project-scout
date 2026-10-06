@@ -177,17 +177,23 @@ describe("transaksjonsisolasjon (databasegrensen bak API-et)", () => {
       await t.query("select set_config('role', 'authenticated', true), set_config('request.jwt.claims', $1, true)", [claims]);
       await t.query("select count(*) from public.search_agents"); // tar snapshot før konkurrenten committer
     };
-    const outcome = { t1: "ok", t2: "ok" };
+    const outcome = { t1: "ok", t2: "ok", t2Message: "" };
     try {
       await begin(t1);
       await begin(t2);
-      await t1.query("update public.search_agents set active = true where id = $1", [ids[9]]);
-      await t1.query("commit");
+      try {
+        await t1.query("update public.search_agents set active = true where id = $1", [ids[9]]);
+        await t1.query("commit");
+      } catch (e) {
+        outcome.t1 = (e as { code?: string }).code ?? "feil";
+        await t1.query("rollback").catch(() => {});
+      }
       try {
         await t2.query("update public.search_agents set active = true where id = $1", [ids[10]]);
         await t2.query("commit");
       } catch (e) {
         outcome.t2 = (e as { code?: string }).code ?? "feil";
+        outcome.t2Message = (e as { message?: string }).message ?? "";
         await t2.query("rollback").catch(() => {});
       }
     } finally {
@@ -208,33 +214,118 @@ describe("transaksjonsisolasjon (databasegrensen bak API-et)", () => {
     expect(r.active).toBeLessThanOrEqual(10);
   });
 
-  // FUNN QA-001-F2 (P3/P2, ikke nåbart for ordinære brukere): under REPEATABLE READ kan grensen overskrides, fordi
-  // telling bruker transaksjonens eldre snapshot. Kommentaren i DEV-002-migrasjonen påstår at dette gir serialiseringsfeil.
-  // `it.fails` er grønn så lenge feilen finnes og blir rød når den rettes (da fjernes `.fails`).
-  it.fails("REPEATABLE READ: aldri mer enn 10 (FUNN F2: overskrides i dag)", async () => {
+  // F2 (QA-001-FIX, DEC-025): REPEATABLE READ ga 11 aktive fordi tellingen brukte transaksjonens eldre snapshot.
+  // Aktivering avvises nå eksplisitt i den isolasjonen. Dette var en `it.fails`-vakt og er nå en ordinær regresjonstest.
+  it("REPEATABLE READ: aldri mer enn 10 — aktivering avvises eksplisitt (F2)", async () => {
     const r = await race("repeatable read");
     expect(r.active).toBeLessThanOrEqual(10);
+    expect(r.active).toBe(9); // begge transaksjonene kjører repeatable read og avvises; ingen får plassen
+    expect(r.t1).toBe("0A000");
+    expect(r.t2).toBe("0A000");
+    expect(r.t2Message).toContain("active_agent_limit_isolation");
+  });
+
+  it("REPEATABLE READ: også en enkelt aktivering uten konkurrent avvises (ingen avhengighet av timing)", async () => {
+    const { firm, members } = await newFirm("rr-single");
+    const [id] = await seedPaused(firm, 1, "RR1");
+    const t = await adminDb();
+    try {
+      await t.query("begin isolation level repeatable read");
+      await t.query("select set_config('role', 'authenticated', true), set_config('request.jwt.claims', $1, true)", [JSON.stringify({ sub: members[0]!.id, role: "authenticated" })]);
+      await expect(t.query("update public.search_agents set active = true where id = $1", [id])).rejects.toMatchObject({ code: "0A000" });
+      await t.query("rollback");
+    } finally {
+      await t.end();
+    }
+    expect(await activeCount(firm)).toBe(0);
+  });
+
+  it("pause og redigering av allerede aktive agenter virker under REPEATABLE READ (kun nye aktiveringer avvises)", async () => {
+    const { firm, members } = await newFirm("rr-pause");
+    const [id] = await seedPaused(firm, 1, "RRP");
+    await db.query("update public.search_agents set active = true where id = $1", [id]);
+    const t = await adminDb();
+    try {
+      await t.query("begin isolation level repeatable read");
+      await t.query("select set_config('role', 'authenticated', true), set_config('request.jwt.claims', $1, true)", [JSON.stringify({ sub: members[0]!.id, role: "authenticated" })]);
+      await t.query("update public.search_agents set name = 'omdøpt' where id = $1", [id]);
+      await t.query("update public.search_agents set active = false where id = $1", [id]);
+      await t.query("commit");
+    } finally {
+      await t.end();
+    }
+    expect(await activeCount(firm)).toBe(0);
+  });
+
+  it("direkte databasekall uten bruker (eier/serverjobb) håndhever fortsatt grensen under read committed", async () => {
+    const { firm } = await newFirm("owner-path");
+    const ids = await seedPaused(firm, 11, "OW");
+    for (const id of ids.slice(0, 10)) await db.query("update public.search_agents set active = true where id = $1", [id]);
+    await expect(db.query("update public.search_agents set active = true where id = $1", [ids[10]])).rejects.toMatchObject({ code: "23514" });
+    expect(await activeCount(firm)).toBe(10);
   });
 });
 
-describe("informasjon på tvers av firma via grensetriggeren", () => {
-  // FUNN QA-001-F1 (P2): BEFORE-triggeren (SECURITY DEFINER) teller og låser Bs firma FØR RLS WITH CHECK avviser raden.
-  // Brukere i A som kjenner Bs UUID får `active_agent_limit` (23514) når B har 10 aktive, ellers 42501.
-  // `it.fails` er grønn så lenge funnet er åpent og blir rød når det rettes (da fjernes `.fails`).
-  it.fails("A får samme feil mot et fullt firma B som mot et tomt firma B (FUNN F1: sidekanal i dag)", async () => {
-    const [a, b, empty] = [await newFirm("leak-a"), await newFirm("leak-b"), await newFirm("leak-empty")];
-    await db.query(
-      `insert into public.search_agents (dealership_id, name, filters, assumptions, active)
-       select $1, 'F'||g, $2::jsonb, $3::jsonb, true from generate_series(1, 10) g`,
-      [b.firm, JSON.stringify(READY.filters), JSON.stringify(READY.assumptions)],
-    );
-    expect(await activeCount(b.firm)).toBe(10);
+describe("ingen informasjon om andre firma via grensetriggeren (F1)", () => {
+  // F1 (QA-001-FIX): triggeren kjørte før RLS WITH CHECK og svarte 23514 for et fullt fremmed firma, 42501 ellers.
+  // Nå avvises fremmede firma før noe telles. Dette var en `it.fails`-vakt og er nå en ordinær regresjonstest.
+  async function firmWithActive(label: string, n: number) {
+    const f = await newFirm(label);
+    if (n > 0) {
+      await db.query(
+        `insert into public.search_agents (dealership_id, name, filters, assumptions, active)
+         select $1, 'F'||g, $2::jsonb, $3::jsonb, true from generate_series(1, $4::int) g`,
+        [f.firm, JSON.stringify(READY.filters), JSON.stringify(READY.assumptions), n],
+      );
+    }
+    expect(await activeCount(f.firm)).toBe(n);
+    return f;
+  }
+
+  it("A får identisk feil (kode og melding) mot B med 0, 9 og 10 aktive, og mot et ukjent firma", async () => {
+    const a = await newFirm("leak-a");
+    const targets = [await firmWithActive("leak-b0", 0), await firmWithActive("leak-b9", 9), await firmWithActive("leak-b10", 10)];
     const client = await signIn(a.members[0]!);
-    const probe = (firm: string) => client.from("search_agents").insert({ dealership_id: firm, name: "probe", active: true, ...READY });
-    const against = await probe(b.firm); // B har 10 aktive
-    const againstEmpty = await probe(empty.firm); // 0 aktive
-    expect(againstEmpty.error?.code).toBe("42501");
-    expect(against.error?.code).toBe(againstEmpty.error?.code);
-    expect(against.error?.message).toBe(againstEmpty.error?.message);
+    const probe = (firm: string, active = true) => client.from("search_agents").insert({ dealership_id: firm, name: "probe", active, ...READY });
+    const answers = [
+      ...(await Promise.all(targets.map((t) => probe(t.firm)))),
+      await probe("11111111-1111-4111-8111-111111111111"), // finnes ikke
+      await probe(targets[2]!.firm, false), // ikke aktiv: skal ikke avvike heller
+    ].map((r) => `${r.error?.code}|${r.error?.message}`);
+    expect(new Set(answers).size).toBe(1);
+    expect(answers[0]).toBe('42501|new row violates row-level security policy for table "search_agents"');
+    for (const t of targets) expect((await db.query("select count(*)::int n from public.search_agents where dealership_id = $1 and name = 'probe'", [t.firm])).rows[0].n).toBe(0);
+  });
+
+  it("forsøket tar ikke lås på det fremmede firmaet (blokkerer ikke Bs egne aktiveringer)", async () => {
+    const a = await newFirm("lock-a");
+    const b = await firmWithActive("lock-b", 9);
+    const [spare] = await seedPaused(b.firm, 1, "LK");
+    const holder = await adminDb();
+    try {
+      // Eieren holder firmalåsen på B i en åpen transaksjon. A sitt forsøk skal avvises umiddelbart, ikke vente på låsen.
+      await holder.query("begin");
+      await holder.query("select 1 from public.dealerships where id = $1 for no key update", [b.firm]);
+      const client = await signIn(a.members[0]!);
+      const started = Date.now();
+      const res = await client.from("search_agents").insert({ dealership_id: b.firm, name: "probe", active: true, ...READY });
+      expect(res.error?.code).toBe("42501");
+      expect(Date.now() - started).toBeLessThan(3000);
+      await holder.query("rollback");
+    } finally {
+      await holder.end();
+    }
+    const own = await signIn(b.members[0]!);
+    expect((await own.from("search_agents").update({ active: true }).eq("id", spare!)).error).toBeNull(); // 9 → 10 virker fortsatt
+    expect(await activeCount(b.firm)).toBe(10);
+  });
+
+  it("egen aktivering mot eget firma virker fortsatt, og 11. avvises som før (23514)", async () => {
+    const own = await firmWithActive("own-limit", 9);
+    const c = await signIn(own.members[0]!);
+    expect((await c.from("search_agents").insert({ dealership_id: own.firm, name: "tiende", active: true, ...READY })).error).toBeNull();
+    const eleventh = await c.from("search_agents").insert({ dealership_id: own.firm, name: "ellevte", active: true, ...READY });
+    expect(eleventh.error?.code).toBe("23514");
+    expect(eleventh.error?.message).toContain("active_agent_limit");
   });
 });
