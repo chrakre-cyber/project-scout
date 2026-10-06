@@ -13,7 +13,7 @@ export interface SyntheticRawListing {
   id: string;
   /** Kildens endringstidspunkt (ISO 8601), eller null. Flere poster med samme id = revisjoner. */
   modifiedAt: string | null;
-  /** Syntetisk observasjonshistorikk i Scout. Ekte kilder leverer ikke dette (DEV-005). */
+  /** Syntetisk observasjonshistorikk i Scout. Ekte kilder leverer ikke dette (DEV-005B). */
   observed: { firstSeenAt: string; lastSeenAt: string };
   price?: {
     /** Desimalstreng med punktum, f.eks. "32490" eller "32490.50". */

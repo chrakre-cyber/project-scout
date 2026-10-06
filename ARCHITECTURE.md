@@ -51,7 +51,7 @@ Koden ligger i `src/providers/marketplace/` (`types.ts`, `errors.ts`, `index.ts`
 
 - `NormalizedListing` har i tillegg `lastSeenAt`, og `price` kan være `null` (pris ikke oppgitt). `price` har `stated` (beløp som kildens desimalstreng + valuta, alltid bevart), `amount` (`Money` eller `null` ved ustøttet valuta, se DEC-018) og `vat` (sats, fradragspåstand claimed/denied/unknown, belegg og opphav). Alle annonsefelt er kildens opplysninger; Scouts vurderinger ligger i kalkyler.
 - `SearchPage.rejected` lister poster som ikke kunne normaliseres (`malformed_data`); resten av siden leveres. `getListing` kaster `malformed_data` for en slik post og returnerer `null` når annonsen ikke finnes.
-- `firstSeenAt`/`lastSeenAt` er syntetisk observasjonshistorikk i mock-dataene. For ekte kilder settes de av ingestion (DEV-005), ikke av kilden.
+- `firstSeenAt`/`lastSeenAt` er syntetisk observasjonshistorikk i mock-dataene. For ekte kilder settes de av ingestion (DEV-005B), ikke av kilden.
 - Syntetisk søk ekskluderer ikke annonser med ukjent verdi for et filter, og sammenligner ikke pris på tvers av valuta. Hardfilter og needs_review avgjøres i DEV-010. Miles regnes eksakt om (1 mi = 1,609344 km) bare for sammenligning; lagret verdi beholder kildens enhet.
 - Fixturene ligger under `src/providers/marketplace/synthetic/fixtures/` (ikke `tests/fixtures/`) fordi demoen bruker dem i appen. Opphav: `FIXTURES.md` i samme mappe.
 
@@ -70,7 +70,10 @@ Koden ligger i `src/providers/marketplace/` (`types.ts`, `errors.ts`, `index.ts`
 
 Standard planleggingsmål er hvert 30. minutt; faktisk intervall fastsettes av kvoter og avtale. Søke-jobben er asynkron og skal ikke bindes til en lang nettleserforespørsel. Jobbrute må autentiseres med separat serversecret og begrenset funksjon.
 
-## Manuell søkekjøring (DEV-005)
+## Manuell søkekjøring (DEV-005A)
+
+Omfang: DEV-005A = manuelle, tenant-isolerte søkekjøringer med snapshots. **DEV-005B** (delt ingestion: `listings`, `listing_revisions`, dedup på tvers av kjøringer, sjekkpunkter, låser) er BLOCKED på BUS-002 / OPEN-001 / OPEN-002 og finnes ikke ennå. Resultatrader fra DEV-005A er ikke autoritative input til automatikk før FU-005-1 (betrodd server-side skriving) er løst; «Se annonse» slår opp mot nåværende provider, ikke lagret revisjon (DEC-026).
+
 
 Agent → Search Run → Provider → Resultat er adskilt: `src/domain/matching.ts` og `src/domain/search-run.ts` (rene regler, rangering, snapshot), `src/server/search-pipeline.ts` (provider-sider, tidsavbrudd, begrenset retry, validering, hashing; provider injiseres), `src/server/search-runs.ts` (orkestrering mot databasen), databasen (tabeller, constraints og triggere for tenant, status og idempotens — ingen domenelogikk) og UI (`/agents/[id]/runs`). Provideren er fortsatt `MarketplaceProvider`; en ekte provider (DEV-006) kan byttes inn uten UI-endring. Se DEC-026/027.
 

@@ -1,14 +1,16 @@
-# DEV-005 — leveranserapport
+# DEV-005A — leveranserapport (opprinnelig «DEV-005»)
 
-Dato: 07.10.2026 · Branch: `claude/wonderful-bardeen-yussx3` · Status: **DEV-005 READY FOR REVIEW** (ikke DONE; venter på uavhengig kontroll og eventuell hosted smoke-test)
+> **Rettelse etter uavhengig review av `4630d65`:** leveransen er omdøpt til **DEV-005A – Manuelle søkekjøringer med tenant-isolerte snapshots**. Den erstatter *ikke* originalomfanget. **DEV-005B – Delt ingestion-fundament** (global annonseidentitet, `listings`, `listing_revisions`, dedup på tvers av kjøringer, revisjonshistorikk, sjekkpunkter, låsemodell) er **BLOCKED** på BUS-002 / OPEN-001 / OPEN-002 og er ikke påbegynt. Koden og testene er uendret; kun status og dokumentasjon er korrigert. Se også punkt 15 og 17.
+
+Dato: 07.10.2026 · Branch: `claude/wonderful-bardeen-yussx3` · Status: **DEV-005A READY FOR REVIEW** (ikke DONE; venter på uavhengig kontroll og eventuell hosted smoke-test)
 
 ## 1. Task-ID
-DEV-005 — manuell, deterministisk søkekjøring for aktiv agent mot den syntetiske `MarketplaceProvider`, med lagret kjøring og resultater.
+DEV-005A — manuell, deterministisk søkekjøring for aktiv agent mot den syntetiske `MarketplaceProvider`, med lagret kjøring og resultater.
 
 ## 2. Sammendrag og avvik (rapportert før scope-utvidelse)
 En innlogget bruker kan åpne en aktiv agent → «Søkekjøringer» → «Kjør søk». Serveren leser kriteriene, kaller providere, matcher i domenet, lagrer kjøringen med kriteriesnapshot og resultater, og viser tidspunkt, status, antall og treff. Kjøringen og resultatene finnes etter reload.
 
-**Avvik fra backlogg-teksten** («Ingestion, stable kilde-ID, revisjoner, pagination og run-logg; samme annonse gir ikke duplikat»): repoets backlogg beskriver delt ingestion med annonse-/revisjonstabeller. Det krever skriving til delte (ikke-tenant) tabeller, dvs. service-role/serverjobb som oppdraget forbyr i normal appflyt, og avklarte rettigheter til å lagre kildedata (OPEN-001/002). Jeg har derfor levert per-firma snapshot-modellen fra oppdraget (DEC-026) og **utsatt** `listings`, `listing_revisions`, `agent_locks` og sjekkpunktkolonner. Kildens stabile ID, paginering (sider, grense, avkorting) og duplikatfjerning innen en kjøring er med; duplikatfjerning *mellom* kjøringer (felles annonsekatalog) er ikke.
+**Omfang (rettet):** backlogg-teksten «Ingestion, stable kilde-ID, revisjoner, pagination og run-logg; samme annonse gir ikke duplikat» er delt. **DEV-005A** (denne leveransen) gir per-firma snapshot-modellen fra oppdraget (DEC-026). **DEV-005B** (`listings`, `listing_revisions`, global/stabil identitet, dedup på tvers av kjøringer, revisjonshistorikk, sjekkpunkter, `agent_locks`/låsemodell) er utsatt fordi rett til å lagre og bruke leverandørdata, oppbevaringsregler og ingestion-driftsmodell er uavklart under BUS-002 / OPEN-001 / OPEN-002 — ikke fordi delt ingestion i seg selv krever service-role (en framtidig løsning kan bruke en begrenset server-only kjøringsvei uten klienteksponert legitimasjon). I DEV-005A er kildens stabile ID, paginering og duplikatfjerning *innen* en kjøring med; dedup *mellom* kjøringer er ikke.
 
 ## 3. Arkitekturvalg
 - **Domene** (`src/domain/matching.ts`, `search-run.ts`): matching, rangering, snapshot-projeksjon, kanonisk JSON. Rent, ingen I/O.
@@ -61,8 +63,10 @@ Nye: migrasjonen, `src/domain/{matching,search-run}.ts`, `src/server/{search-pip
 DEC-026 (søkekjøringsmodell, snapshot, idempotens, statusmodell, avvik) og DEC-027 (matching i domenet, ukjent-policy).
 
 ## 15. Begrensninger / utsatt
-- Ingen delt annonsekatalog/revisjoner/ingestion (se punkt 2), ingen scheduler/cron/n8n, ingen e-post, ingen kost/margin/avgift/verdi, ingen mobile.de.
-- Resultatrader skrives med brukerens egen sesjon: en bruker kan forfalske *egne* resultater (ikke andres). Server-/jobbskriving med egen rolle hører til ingestion/DEV-013.
+- **DEV-005B er ikke levert** (BLOCKED, se punkt 2/17): ingen delt annonsekatalog, revisjoner, dedup på tvers av kjøringer, sjekkpunkter eller låsemodell.
+- ingen scheduler/cron/n8n, ingen e-post, ingen kost/margin/avgift/verdi, ingen mobile.de.
+- **Resultatintegritet (midlertidig DEV-005A-begrensning):** autentiserte brukere kan teknisk sett sette inn resultatrader og fullføre egne kjøringer direkte via Data API (ikke andres). Radene er **ikke autoritative** og **skal ikke** brukes som input til automatiske varsler, beregninger eller eksterne handlinger. **Krav FU-005-1:** før live ingestion/automatiserte nedstrømsbeslutninger skal bare en betrodd server-side vei kunne opprette og ferdigstille autoritative resultater. Ingen service-role eller ny legitimasjonsinfrastruktur er innført i denne rettelsen.
+- **Historisk annonselenke:** «Se annonse» slår opp mot nåværende syntetiske provider, ikke lagret historisk revisjon. Det lagrede utdraget er autoritativt for hva kjøringen så. Revisjonsbevisst navigasjon hører til DEV-005B.
 - Resultater avkortes ved 2 000 rader per kjøring (merket `truncated`); provider-sidegrense 30.
 - Kjøringen skjer synkront i serverhandlingen (ingen kø); «Pågår»-visning vises bare ved reload dersom en annen fane/forespørsel kjører samtidig.
 - Hosted smoke-test av ny migrasjon er **ikke** utført (kun lokal Supabase). Migrasjonen må anvendes hosted av eier.
@@ -71,4 +75,7 @@ DEC-026 (søkekjøringsmodell, snapshot, idempotens, statusmodell, avvik) og DEC
 Branch `claude/wonderful-bardeen-yussx3`; commit-hash oppgis i chat-svaret (en rapport kan ikke inneholde sin egen hash).
 
 ## 17. Status
-**DEV-005 READY FOR REVIEW.** Ikke markert DONE. Neste: uavhengig review + hosted smoke-test; deretter DEV-006 (blokkert av BUS-002) eller avklaring av ingestion-modell (OPEN-001/002).
+- **DEV-005A: READY FOR REVIEW** (ikke DONE; venter på uavhengig kontroll og hosted smoke-test).
+- **DEV-005B: BLOCKED** på BUS-002 / OPEN-001 / OPEN-002 (lagrings-/bruksrett, leverandørvilkår, oppbevaring, driftsmodell). Ikke påbegynt, ikke DONE.
+- Oppfølging **FU-005-1** (betrodd server-side skriving av autoritative resultater) før live ingestion.
+- Neste: uavhengig review + hosted smoke-test av DEV-005A; avklaring av BUS-002.

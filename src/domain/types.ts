@@ -127,7 +127,7 @@ export interface NormalizedListing {
   sourceModifiedAt: string | null;
   /**
    * Når Scout først observerte annonsen (UTC ISO 8601). Ikke kildens
-   * opprettelsesdato. For ekte kilder settes dette av ingestion (DEV-005).
+   * opprettelsesdato. For ekte kilder settes dette av ingestion (DEV-005B).
    */
   firstSeenAt: string;
   /** Når Scout sist observerte annonsen hos kilden (UTC ISO 8601), ≥ firstSeenAt. */

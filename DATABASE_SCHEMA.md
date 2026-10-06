@@ -66,7 +66,9 @@ Migrasjon `supabase/migrations/20261006100000_qa001_fix_active_limit_trigger.sql
 - **F2 (P2) isolasjonsnivå:** aktivering avvises eksplisitt under REPEATABLE READ (`0A000`). READ COMMITTED og SERIALIZABLE er uendret. Se DEC-025. Kommentaren i DEV-002-migrasjonen om serialiseringsfeil under REPEATABLE READ var feil.
 - Rettigheter og `search_path` på funksjonen er uendret.
 
-## Implementert i DEV-005
+## Implementert i DEV-005A
+
+**Omfang:** dette er DEV-005A (manuelle søkekjøringer med tenant-isolerte snapshots). Delt ingestion (`listings`, `listing_revisions`, dedup på tvers av kjøringer, sjekkpunkter, `agent_locks`) er **DEV-005B**, status **BLOCKED** på BUS-002 / OPEN-001 / OPEN-002, og er ikke implementert.
 
 Migrasjon `supabase/migrations/20261007090000_dev005_search_runs.sql` (DEC-026). Nye tabeller: `search_runs` og `search_run_results`, begge med RLS, ingen DELETE, ingen UPDATE på resultater.
 
@@ -74,7 +76,9 @@ Migrasjon `supabase/migrations/20261007090000_dev005_search_runs.sql` (DEC-026).
 - **`search_run_results`:** `search_run_id` (+ sammensatt FK med `dealership_id`), `source`, `source_listing_id`, `content_hash`, `rank`, `match_status` (match/needs_review), `unknown_criteria`, `listing_snapshot` (minimalt utdrag), `created_at`. Unik `(search_run_id, source, source_listing_id)` og `(search_run_id, rank)`.
 - **Triggere (SECURITY DEFINER, `search_path=''`):** `search_runs_before_insert` (tenantsjekk først, aktiv/klar/versjon, stale-opprydding, utleder firma/versjon/snapshot), `search_runs_before_update` (bare running → completed/failed, uforanderlige kolonner, tellerkonsistens), `search_run_results_before_insert` (tenantsjekk, kjøringen må pågå).
 - **Rettigheter:** klienten kan bare sette `agent_id`, `request_token`, `requested_agent_version`, `provider` ved opprettelse og `status`, `counts`, `error_code` ved avslutning.
-- **Avvik fra den logiske modellen:** ingen delt `listings`/`listing_revisions`, ingen `agent_locks` og ingen sjekkpunktkolonner (`last_checkpoint`) — utsatt til ingestion (DEC-026). Tidspunkt for avslutning heter `finished_at`.
+- **Avvik fra den logiske modellen:** ingen delt `listings`/`listing_revisions`, ingen `agent_locks` og ingen sjekkpunktkolonner (`last_checkpoint`) — **DEV-005B (BLOCKED)**, ikke bare «utsatt»: den logiske modellen over er fortsatt målbildet for ingestion. Tidspunkt for avslutning heter `finished_at`.
+- **Resultatintegritet (midlertidig):** `authenticated` har INSERT på `search_run_results` og kan sette `completed` på egne kjøringer. Radene er derfor *ikke autoritative* og skal ikke mates inn i automatiske varsler, beregninger eller eksterne handlinger. Krav FU-005-1: før live ingestion/nedstrøms automatikk skal bare en betrodd server-side vei kunne opprette og ferdigstille resultater (DEC-026).
+- **Historisk annonselenke:** resultatet viser lagret utdrag (autoritativt for hva kjøringen så); «Se annonse» åpner nåværende syntetiske annonse, ikke lagret revisjon. Revisjonsbevisst navigasjon: DEV-005B.
 - **Oppgradering:** kontrollert fra DEV-004 + QA-001-FIX-schema med eksisterende agentdata (`scripts/qa-upgrade-check.sh`, scenario 2c): agentdata byte-for-byte uendret, schema identisk med ren oppbygging.
 
 ## Migrasjons- og kontrollkrav
