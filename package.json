@@ -13,7 +13,10 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "check": "npm run typecheck && npm run lint && npm run test && npm run build",
-    "test:db": "bash scripts/test-db.sh"
+    "test:db": "bash scripts/test-db.sh",
+    "qa:migrations": "bash scripts/qa-upgrade-check.sh",
+    "qa:secrets": "bash scripts/qa-secret-scan.sh",
+    "qa:demo": "bash scripts/qa-demo-mode.sh"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

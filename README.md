@@ -19,6 +19,9 @@ npm ci            # ren installasjon fra package-lock.json
 npm run dev       # utvikling på http://localhost:3000
 npm run build && npm run start   # produksjonsbygg lokalt
 npm run check     # typecheck + lint + tester + build
+npm run qa:migrations   # QA-001: migrasjonskjede fra ren DB og fra DEV-002-data (lokal Supabase, destruktiv lokalt)
+npm run qa:secrets      # QA-001: secret-skann av repo, historikk og build
+npm run qa:demo         # QA-001: demomodus uten Supabase-konfigurasjon
 ```
 
 Visninger: `/dashboard` (syntetiske annonser fra datakilden, 24 per side, filter per demo-agent), `/agents` (demo-agenter, kun lesing) og `/opportunities/<id>` (detaljside; kost/bidrag vises som «ikke beregnet»).
