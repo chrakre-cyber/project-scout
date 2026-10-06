@@ -50,6 +50,10 @@ Hostet prosjekt (gjøres av prosjekteier):
 
 Kodeplassering: `src/domain/` (rene domenetyper og valuta, ingen UI/provider), `src/providers/marketplace/` (provider-kontrakt, feiltyper, syntetisk provider med normalisering og fixturer), `src/demo/` (syntetiske demo-agenter når man ikke er innlogget), `src/lib/supabase/` og `src/proxy.ts` (Supabase-klient og sesjonsfornying), `src/server/` (sesjon/firmakontekst og agentlagring), `supabase/` (konfigurasjon, migrasjoner, lokal seed), `src/lib/format.ts` (visning, «ikke oppgitt»), `src/components/`, `src/app/` og `tests/`.
 
+### Søkekjøringer (DEV-005)
+
+Fra `/agents` kan en aktiv agent kjøres manuelt («Søkekjøringer» → «Kjør søk»). Søket går mot den **syntetiske** demokilden (ingen live mobile.de-data). Hver kjøring lagres med kriteriesnapshot, status, tellere og resultater, og finnes igjen etter reload. Kontroller: `npm run test:db` (RLS/idempotens), `node tests/e2e/dev005-search-runs.e2e.mjs` (se toppen av filen), `npm run qa:migrations`.
+
 ## Start her
 
 1. Les [START_HER.md](START_HER.md): dine tre første oppgaver og første utviklingsoppdrag.

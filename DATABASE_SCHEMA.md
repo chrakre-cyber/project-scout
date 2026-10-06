@@ -66,6 +66,17 @@ Migrasjon `supabase/migrations/20261006100000_qa001_fix_active_limit_trigger.sql
 - **F2 (P2) isolasjonsnivå:** aktivering avvises eksplisitt under REPEATABLE READ (`0A000`). READ COMMITTED og SERIALIZABLE er uendret. Se DEC-025. Kommentaren i DEV-002-migrasjonen om serialiseringsfeil under REPEATABLE READ var feil.
 - Rettigheter og `search_path` på funksjonen er uendret.
 
+## Implementert i DEV-005
+
+Migrasjon `supabase/migrations/20261007090000_dev005_search_runs.sql` (DEC-026). Nye tabeller: `search_runs` og `search_run_results`, begge med RLS, ingen DELETE, ingen UPDATE på resultater.
+
+- **`search_runs`:** `id`, `dealership_id` (utledet av agenten), `agent_id` (+ sammensatt FK `(agent_id, dealership_id)`), `agent_version`, `requested_agent_version`, `request_token` (unik per agent), `provider`, `status` (running/completed/failed), `criteria_snapshot` (agentnavn, filtre og forutsetninger slik de var), `counts` (validerte tellere), `error_code` (fast liste, aldri rå feiltekst), `started_at`, `finished_at`, `created_at`. Delvis unik indeks: én `running` per agent.
+- **`search_run_results`:** `search_run_id` (+ sammensatt FK med `dealership_id`), `source`, `source_listing_id`, `content_hash`, `rank`, `match_status` (match/needs_review), `unknown_criteria`, `listing_snapshot` (minimalt utdrag), `created_at`. Unik `(search_run_id, source, source_listing_id)` og `(search_run_id, rank)`.
+- **Triggere (SECURITY DEFINER, `search_path=''`):** `search_runs_before_insert` (tenantsjekk først, aktiv/klar/versjon, stale-opprydding, utleder firma/versjon/snapshot), `search_runs_before_update` (bare running → completed/failed, uforanderlige kolonner, tellerkonsistens), `search_run_results_before_insert` (tenantsjekk, kjøringen må pågå).
+- **Rettigheter:** klienten kan bare sette `agent_id`, `request_token`, `requested_agent_version`, `provider` ved opprettelse og `status`, `counts`, `error_code` ved avslutning.
+- **Avvik fra den logiske modellen:** ingen delt `listings`/`listing_revisions`, ingen `agent_locks` og ingen sjekkpunktkolonner (`last_checkpoint`) — utsatt til ingestion (DEC-026). Tidspunkt for avslutning heter `finished_at`.
+- **Oppgradering:** kontrollert fra DEV-004 + QA-001-FIX-schema med eksisterende agentdata (`scripts/qa-upgrade-check.sh`, scenario 2c): agentdata byte-for-byte uendret, schema identisk med ren oppbygging.
+
 ## Migrasjons- og kontrollkrav
 
 DEV-002 skal levere migrasjoner, syntetisk seed for to firmaer og test av lese/skrive-isolasjon. Aktiv-agentgrensen må kontrolleres under samtidige opprettelser. Alle migrasjoner dokumenteres med rollback/gjenopprettingsplan; destruktiv sletting av reelle pilotdata krever egen beslutning.

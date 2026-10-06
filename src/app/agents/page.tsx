@@ -35,7 +35,7 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
           <p className="text-sm text-slate-600">
             Firma: {ctx.dealership.name}. <strong>{activeCount} av maks {MAX_ACTIVE_AGENTS} aktive.</strong> Grensen håndheves av databasen.
           </p>
-          <p className="text-xs text-slate-500">Aktiv betyr at agenten er aktivert. Automatisk søk er ikke koblet til ennå (DEV-005), og det hentes ingen live mobile.de-data.</p>
+          <p className="text-xs text-slate-500">Aktiv betyr at agenten er aktivert. Du kan kjøre søk manuelt mot den syntetiske demokilden; automatisk søk finnes ikke, og det hentes ingen live mobile.de-data.</p>
         </div>
         <Link href="/agents/new" className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">Ny agent</Link>
       </div>
@@ -68,6 +68,7 @@ function StoredAgentCard({ agent: a }: { agent: SearchAgent }) {
             {active ? "Aktiv" : "Ikke aktiv"}
           </span>
           <Link href={`/agents/${a.id}`} className="rounded-md border border-slate-300 px-3 py-1 text-sm hover:bg-slate-100">Rediger</Link>
+          <Link href={`/agents/${a.id}/runs`} className="rounded-md border border-slate-300 px-3 py-1 text-sm hover:bg-slate-100">Søkekjøringer</Link>
           <form action={setActiveAction}>
             <input type="hidden" name="id" value={a.id} />
             <input type="hidden" name="active" value={active ? "false" : "true"} />

@@ -70,6 +70,10 @@ Koden ligger i `src/providers/marketplace/` (`types.ts`, `errors.ts`, `index.ts`
 
 Standard planleggingsmål er hvert 30. minutt; faktisk intervall fastsettes av kvoter og avtale. Søke-jobben er asynkron og skal ikke bindes til en lang nettleserforespørsel. Jobbrute må autentiseres med separat serversecret og begrenset funksjon.
 
+## Manuell søkekjøring (DEV-005)
+
+Agent → Search Run → Provider → Resultat er adskilt: `src/domain/matching.ts` og `src/domain/search-run.ts` (rene regler, rangering, snapshot), `src/server/search-pipeline.ts` (provider-sider, tidsavbrudd, begrenset retry, validering, hashing; provider injiseres), `src/server/search-runs.ts` (orkestrering mot databasen), databasen (tabeller, constraints og triggere for tenant, status og idempotens — ingen domenelogikk) og UI (`/agents/[id]/runs`). Provideren er fortsatt `MarketplaceProvider`; en ekte provider (DEV-006) kan byttes inn uten UI-endring. Se DEC-026/027.
+
 ## Duplikater, varsler og prisendringer
 
 Ingestion er idempotent. MVP sender høyst ett første varsel per `(dealership_id, agent_id, source, source_listing_id, notification_type=initial)`; endrede annonser oppdaterer opportunity uten nye prisvarsler i v0.1. En outbox-unique constraint stopper duplikater i DB. E-postleverandørens idempotency-mulighet brukes hvis tilgjengelig; crash etter akseptert sending men før DB-kvittering må avstemmes, ikke blindt resend.

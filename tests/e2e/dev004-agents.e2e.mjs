@@ -110,8 +110,8 @@ try {
 
   // 5–6: aktiver
   await clickAndWait(card(N1).locator('button:has-text("Aktiver")'), /msg=activated/);
-  check("aktivering: status «Aktiv», 1 av maks 10, tekst om at automatisk søk ikke er koblet til",
-    (await card(N1).textContent()).includes("Aktiv") && (await text()).includes("1 av maks 10 aktive") && (await text()).includes("Automatisk søk er ikke koblet til ennå"));
+  check("aktivering: status «Aktiv», 1 av maks 10, tekst om manuelt søk mot syntetisk kilde og at automatisk søk ikke finnes (DEV-005 oppdatert tekst)",
+    (await card(N1).textContent()).includes("Aktiv") && (await text()).includes("1 av maks 10 aktive") && (await text()).includes("automatisk søk finnes ikke") && (await text()).includes("syntetiske demokilden"));
 
   // 9: reload
   await page.reload();

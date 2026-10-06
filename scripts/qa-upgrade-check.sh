@@ -3,6 +3,7 @@
 #   1. Ren oppbygging (alle migrasjoner) → lagrer schema-dump som referanse.
 #   2. Oppgradering: DEV-002-database med DEV-002-data → DEV-004-migrasjon. Verifiserer data og schema-likhet mot (1).
 #   2b. Oppgradering fra eksisterende DEV-004-schema (QA-001-FIX): aktive agenter beholdes, funksjonen byttes, schema identisk.
+#   2c. Oppgradering fra hosted-tilstand (DEV-004 + QA-001-FIX) til DEV-005: agentdata bevart, nye tabeller med RLS, schema identisk.
 #   3. Feilscenario: DEV-002-data som bryter DEV-004-reglene. Migrasjonen skal feile ATOMISK (ingen delvis anvendelse).
 # Avslutter med ren database fra alle migrasjoner. Exit-kode ≠ 0 ved feil.
 set -uo pipefail
@@ -15,6 +16,7 @@ case "$DB_URL" in *127.0.0.1*|*localhost*) ;; *) echo "Nekter å kjøre mot ikke
 PSQL="psql $DB_URL -At -q -v ON_ERROR_STOP=1"
 V002=20261005090000
 V004=20261006090000
+V004FIX=20261006100000
 FIRM_A=00000000-0000-4000-a000-00000000000a
 FIRM_B=00000000-0000-4000-a000-00000000000b
 OUT="${QA_OUT:-/tmp}"
@@ -27,9 +29,9 @@ reset_to() { npx supabase db reset ${1:+--version "$1"} 2>&1 | grep -E "Applying
 echo "== 1. Ren oppbygging (alle migrasjoner)"
 reset_to "" 
 dump > "$OUT/schema-clean.sql"
-check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000"
+check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000"
 check "seed: to syntetiske firma, ingen brukere eller agenter" "$($PSQL -c "select (select count(*) from public.dealerships)||'/'||(select count(*) from auth.users)||'/'||(select count(*) from public.search_agents)")" "2/0/0"
-check "RLS på alle tabeller" "$($PSQL -c "select count(*) from pg_class where relnamespace='public'::regnamespace and relkind='r' and relrowsecurity")" "3"
+check "RLS på alle tabeller" "$($PSQL -c "select count(*) from pg_class where relnamespace='public'::regnamespace and relkind='r' and relrowsecurity")" "5"
 
 echo "== 2. Oppgradering fra DEV-002 med eksisterende agentdata"
 reset_to "$V002"
@@ -71,6 +73,27 @@ check "fortsatt nøyaktig 10 aktive etter avvist forsøk" "$($PSQL -c "select co
 dump > "$OUT/schema-upgraded-004.sql"
 if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-004 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-004):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" | head -20; fails=$((fails+1)); fi
 
+echo "== 2c. Oppgradering fra DEV-004 + QA-001-FIX (hosted-tilstand) til DEV-005 med eksisterende agentdata"
+reset_to "$V004FIX"
+check "database før DEV-005 har ingen søkekjøringstabeller" "$($PSQL -c "select count(*) from pg_class where relnamespace='public'::regnamespace and relname in ('search_runs','search_run_results')")" "0"
+$PSQL <<SQL
+insert into public.search_agents (dealership_id, name, filters, assumptions, active)
+select '$FIRM_A', 'Aktiv '||g, '{"make":"Volkswagen"}',
+ '{"retail":{"expectedRetailTotal":{"amountMinor":"39990000","currency":"NOK"},"priceBasis":{"vat":"included","registrationTaxes":"included"}},"minimumContribution":{"amountMinor":"3000000","currency":"NOK"},"preparationReserve":{"amount":{"amountMinor":"0","currency":"NOK"},"vatBasis":"ex_vat"}}',
+ true from generate_series(1, 10) g;
+insert into public.search_agents (dealership_id, name, filters, assumptions) values ('$FIRM_A', 'Pauset utkast', '{"make":"BMW"}', '{}');
+SQL
+before="$($PSQL -c "select md5(string_agg(id||name||filters::text||assumptions::text||active||version, ',' order by id)) from public.search_agents")"
+npx supabase migration up 2>&1 | grep -E "Applying|ERROR" | sed 's/^/      /'
+check "DEV-005-migrasjonen registrert" "$($PSQL -c "select count(*) from supabase_migrations.schema_migrations where version='20261007090000'")" "1"
+check "agentdata byte-for-byte uendret (11 agenter, 10 aktive)" "$($PSQL -c "select md5(string_agg(id||name||filters::text||assumptions::text||active||version, ',' order by id)) from public.search_agents")" "$before"
+check "nye tabeller har RLS" "$($PSQL -c "select count(*) from pg_class where relnamespace='public'::regnamespace and relname in ('search_runs','search_run_results') and relrowsecurity")" "2"
+check "søkekjøring kan startes for eksisterende aktiv agent etter oppgradering" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Aktiv 1' returning status")" "running"
+check "aktiv agent kan ikke ha to pågående kjøringer" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Aktiv 1'" 2>&1 | grep -c 'search_runs_one_running_per_agent')" "1"
+$PSQL -c "delete from public.search_runs"
+dump > "$OUT/schema-upgraded-fix.sql"
+if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra QA-001-FIX er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra QA-001-FIX):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" | head -20; fails=$((fails+1)); fi
+
 echo "== 3. Feilscenario: DEV-002-data som bryter DEV-004-reglene → atomisk feil"
 reset_to "$V002"
 $PSQL -c "insert into public.search_agents (dealership_id, name, filters, assumptions) values ('$FIRM_A','Gammel reserve som beløp','{\"make\":\"VW\"}','{\"preparationReserve\":{\"amountMinor\":\"1500000\",\"currency\":\"NOK\"}}')"
@@ -79,11 +102,12 @@ check "migrasjonen feiler (ugyldig eldre data stoppes, ikke ignorert)" "$(echo "
 check "ingen delvis anvendelse: ingen DEV-004-funksjoner" "$($PSQL -c "select count(*) from pg_proc where pronamespace='private'::regnamespace and proname in ('jnull','agent_ready','agent_filters_valid')")" "0"
 check "ingen delvis anvendelse: DEV-002-constraint intakt" "$($PSQL -c "select count(*) from pg_constraint where conname='search_agents_money_format'")" "1"
 check "ingen delvis anvendelse: migrasjon ikke registrert" "$($PSQL -c "select count(*) from supabase_migrations.schema_migrations where version='20261006090000'")" "0"
+check "ingen delvis anvendelse: DEV-005-tabeller finnes ikke" "$($PSQL -c "select count(*) from pg_class where relnamespace='public'::regnamespace and relname = 'search_runs'")" "0"
 check "dataene er uendret" "$($PSQL -c "select count(*) from public.search_agents")" "1"
 
 echo "== 4. Avslutter med ren database fra alle migrasjoner"
 reset_to ""
-check "ren database etter avslutning" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000"
+check "ren database etter avslutning" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000"
 echo
 [ "$fails" -eq 0 ] && echo "MIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT" || echo "MIGRASJONSKJEDE: $fails KONTROLL(ER) FEILET"
 exit "$fails"

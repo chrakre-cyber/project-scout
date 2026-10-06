@@ -13,7 +13,7 @@ export const AGENT_MESSAGES: Record<AgentWriteError, string> = {
 
 export const SUCCESS_MESSAGES: Record<string, string> = {
   saved: "Agenten er lagret.",
-  activated: "Agenten er aktivert. Automatisk søk er ikke koblet til ennå (DEV-005).",
+  activated: "Agenten er aktivert. Du kan kjøre søk manuelt fra «Søkekjøringer»; automatisk søk finnes ikke.",
   paused: "Agenten er pauset.",
 };
 

@@ -129,3 +129,23 @@ export function formatReserve(r: { amount: Money | null; vatBasis: "ex_vat" | "i
   const basis = r.vatBasis === null ? `mva.-basis ${NOT_STATED}` : r.vatBasis === "ex_vat" ? "eks. mva." : "inkl. mva.";
   return `${amount} (${basis})`;
 }
+
+export const RUN_STATUS_LABEL = { running: "Pågår", completed: "Fullført", failed: "Feilet" } as const;
+
+/** Trygge, forklarende tekster for lagret feilkode. Aldri rå feiltekst fra kilde eller database. */
+export const RUN_ERROR_LABEL: Record<string, string> = {
+  authentication: "Kilden avviste innloggingen. Søket ble stoppet.",
+  forbidden: "Kilden nekter tilgang. Søket ble stoppet.",
+  rate_limit: "Kildens kvote er brukt opp. Prøv igjen senere.",
+  invalid_query: "Kilden avviste søket som ugyldig.",
+  timeout: "Kilden svarte ikke i tide. Prøv igjen.",
+  unavailable: "Kilden er utilgjengelig. Prøv igjen senere.",
+  malformed_data: "Kilden returnerte data som ikke kunne leses.",
+  abandoned: "Kjøringen ble ikke fullført og er avbrutt.",
+  internal: "Kjøringen feilet internt. Prøv igjen.",
+};
+
+export const CRITERION_LABEL: Record<string, string> = {
+  make: "merke", model: "modell", variant: "variant", year: "årsmodell", mileage: "kjørelengde", fuel: "drivstoff",
+  transmission: "girkasse", bodyType: "karosseri", country: "land", price: "pris",
+};

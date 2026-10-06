@@ -25,11 +25,22 @@ const EXPECTED_TABLE_PRIVS: Record<string, string[]> = {
   dealerships: ["SELECT"],
   dealership_members: ["SELECT"],
   search_agents: ["SELECT"],
+  search_runs: ["SELECT"],
+  search_run_results: ["SELECT"],
 };
 const EXPECTED_COLUMN_PRIVS: Record<string, { insert: string[]; update: string[] }> = {
   search_agents: {
     insert: ["active", "assumptions", "dealership_id", "filters", "name"],
     update: ["active", "assumptions", "filters", "name"],
+  },
+  // DEV-005: klienten oppgir bare hva som ikke kan utledes. Firma, agentversjon, kriterier og tidspunkt settes av databasen.
+  search_runs: {
+    insert: ["agent_id", "provider", "request_token", "requested_agent_version"],
+    update: ["counts", "error_code", "status"],
+  },
+  search_run_results: {
+    insert: ["content_hash", "listing_snapshot", "match_status", "rank", "search_run_id", "source", "source_listing_id", "unknown_criteria"],
+    update: [],
   },
 };
 
@@ -37,7 +48,7 @@ describe("tabeller i public", () => {
   it("alle tabeller har RLS aktivert (vakt for fremtidige migrasjoner)", async () => {
     const rows = await q<{ relname: string; relrowsecurity: boolean }>(
       "select relname, relrowsecurity from pg_class where relnamespace = 'public'::regnamespace and relkind in ('r','p')");
-    expect(rows.map((r) => r.relname).sort()).toEqual(["dealership_members", "dealerships", "search_agents"]);
+    expect(rows.map((r) => r.relname).sort()).toEqual(["dealership_members", "dealerships", "search_agents", "search_run_results", "search_runs"]);
     for (const r of rows) expect(r.relrowsecurity, r.relname).toBe(true);
   });
 
@@ -84,7 +95,7 @@ describe("policies", () => {
   it("bare authenticated-policyer, ingen åpne (true), ingen bruk av JWT-metadata", async () => {
     const pol = await q<{ tablename: string; policyname: string; roles: string[]; cmd: string; qual: string | null; with_check: string | null }>(
       "select tablename::text, policyname::text, roles::text[], cmd::text, qual, with_check from pg_policies where schemaname = 'public'");
-    expect(pol.length).toBe(5);
+    expect(pol.length).toBe(10);
     for (const p of pol) {
       expect(p.roles, p.policyname).toEqual(["authenticated"]);
       const text = `${p.qual ?? ""} ${p.with_check ?? ""}`;
@@ -93,6 +104,7 @@ describe("policies", () => {
     }
     expect(pol.map((p) => `${p.tablename}:${p.cmd}`).sort()).toEqual([
       "dealership_members:SELECT", "dealerships:SELECT", "search_agents:INSERT", "search_agents:SELECT", "search_agents:UPDATE",
+      "search_run_results:INSERT", "search_run_results:SELECT", "search_runs:INSERT", "search_runs:SELECT", "search_runs:UPDATE",
     ]);
   });
 
@@ -116,14 +128,17 @@ describe("funksjoner i private", () => {
     }
   });
 
-  it("SECURITY DEFINER er begrenset til to kjente funksjoner", async () => {
+  it("SECURITY DEFINER er begrenset til kjente funksjoner", async () => {
     const rows = await q<{ proname: string }>("select proname::text from pg_proc where prosecdef and pronamespace in ('private'::regnamespace, 'public'::regnamespace) order by 1");
-    expect(rows.map((r) => r.proname)).toEqual(["enforce_active_agent_limit", "my_dealership_ids"]);
+    expect(rows.map((r) => r.proname)).toEqual([
+      "enforce_active_agent_limit", "my_dealership_ids", "search_run_results_before_insert", "search_runs_before_insert", "search_runs_before_update",
+    ]);
   });
 
   it("administrasjonsfunksjoner og triggerfunksjoner kan ikke kjøres av ordinære roller eller service_role", async () => {
     for (const fn of ["private.admin_create_dealership(text)", "private.admin_add_member(text, uuid)",
-      "private.enforce_active_agent_limit()", "private.search_agents_before_write()"]) {
+      "private.enforce_active_agent_limit()", "private.search_agents_before_write()",
+      "private.search_runs_before_insert()", "private.search_runs_before_update()", "private.search_run_results_before_insert()"]) {
       for (const role of ["anon", "authenticated", "service_role", "public"]) {
         expect((await q<{ ok: boolean }>("select has_function_privilege($1, $2, 'EXECUTE') ok", [role, fn]))[0]!.ok, `${role} ${fn}`).toBe(false);
       }
@@ -136,6 +151,7 @@ describe("funksjoner i private", () => {
     expect(rows.map((r) => r.proname)).toEqual([
       "agent_assumptions_valid", "agent_filters_valid", "agent_ready", "is_money_json", "is_money_json_allow_zero", "jnull",
       "keys_subset", "my_dealership_ids", "nok_money_or_null", "opt_enum", "opt_enum_array", "opt_int", "opt_text",
+      "search_run_counts_valid",
     ]);
   });
 });
@@ -155,6 +171,26 @@ describe("constraints og triggere", () => {
       `select a.attname::text from pg_index i join pg_attribute a on a.attrelid = i.indrelid and a.attnum = any(i.indkey)
        where i.indrelid = 'public.dealership_members'::regclass and i.indisprimary`);
     expect(pk.map((r) => r.attname)).toEqual(["user_id"]);
+  });
+
+  it("DEV-005: forventede constraints, indekser og triggere på søkekjøringer", async () => {
+    const names = async (t: string) => (await q<{ conname: string }>("select conname::text from pg_constraint where conrelid = $1::regclass", [`public.${t}`])).map((r) => r.conname);
+    expect(await names("search_runs")).toEqual(expect.arrayContaining([
+      "search_runs_pkey", "search_runs_id_dealership_key", "search_runs_token_key", "search_runs_agent_fkey",
+    ]));
+    const fks = await q<{ def: string }>("select pg_get_constraintdef(oid) def from pg_constraint where conrelid = 'public.search_runs'::regclass and contype = 'f'");
+    expect(fks.some((f) => /FOREIGN KEY \(agent_id, dealership_id\) REFERENCES (public\.)?search_agents\(id, dealership_id\)/.test(f.def))).toBe(true);
+    const rfks = await q<{ def: string }>("select pg_get_constraintdef(oid) def from pg_constraint where conrelid = 'public.search_run_results'::regclass and contype = 'f'");
+    expect(rfks.some((f) => /FOREIGN KEY \(search_run_id, dealership_id\) REFERENCES (public\.)?search_runs\(id, dealership_id\)/.test(f.def))).toBe(true);
+    const idx = (await q<{ indexdef: string }>("select indexdef from pg_indexes where schemaname = 'public' and tablename = 'search_runs'")).map((r) => r.indexdef);
+    expect(idx.some((d) => /UNIQUE INDEX search_runs_one_running_per_agent .*\(agent_id\) WHERE/.test(d))).toBe(true);
+    for (const [t, expected] of [
+      ["search_runs", ["search_runs_before_insert", "search_runs_before_update"]],
+      ["search_run_results", ["search_run_results_before_insert"]],
+    ] as const) {
+      const trg = await q<{ tgname: string; tgenabled: string }>("select tgname::text, tgenabled::text from pg_trigger where tgrelid = $1::regclass and not tgisinternal order by 1", [`public.${t}`]);
+      expect(trg, t).toEqual(expected.map((n) => ({ tgname: n, tgenabled: "O" })));
+    }
   });
 
   it("alle constraints er validerte og triggerne er aktive", async () => {

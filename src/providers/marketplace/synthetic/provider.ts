@@ -14,6 +14,7 @@
  */
 import { MarketplaceError, type MarketplaceErrorCode } from "../errors";
 import type { MarketplaceProvider, RejectedListing, SearchPage, SearchQuery, SearchWindow } from "../types";
+import { evaluateListing } from "@/domain/matching";
 import type { NormalizedListing } from "@/domain/types";
 import { syntheticRawListings } from "./fixtures";
 import { normalizeSyntheticListing, SYNTHETIC_SOURCE } from "./normalize";
@@ -147,37 +148,12 @@ function modifiedSinceOk(l: NormalizedListing, since: number | null): boolean {
   return since === null || l.sourceModifiedAt === null || Date.parse(l.sourceModifiedAt) >= since;
 }
 
-/** 1 mile = 1,609344 km (eksakt definisjon). Heltallsregning, ingen avrunding. */
-const KM_PER_MILE_MICRO = 1_609_344;
-
+/**
+ * Grovt forhåndsfilter slik et kilde-API ville gjort. Reglene ligger i domenelaget (evaluateListing): kjent avvik
+ * ekskluderes, ukjent verdi beholdes. Den autoritative vurderingen (match / må kontrolleres) gjøres av domenet.
+ */
 export function matchesQuery(l: NormalizedListing, q: SearchQuery): boolean {
-  const s = l.specs;
-  const eq = (a: string, b: string) => a.localeCompare(b, "de", { sensitivity: "base" }) === 0;
-  if (q.make !== null && !eq(s.make, q.make)) return false;
-  if (q.model !== null && !eq(s.model, q.model)) return false;
-  // Variant: delstreng uten hensyn til store/små bokstaver. Ukjent variant ekskluderes ikke.
-  if (q.variant !== null && s.variant !== null && !s.variant.toLocaleLowerCase("de").includes(q.variant.toLocaleLowerCase("de"))) return false;
-
-  const year = s.firstRegistration?.year ?? null;
-  if (year !== null && q.yearMin !== null && year < q.yearMin) return false;
-  if (year !== null && q.yearMax !== null && year > q.yearMax) return false;
-
-  if (s.mileage && q.maxMileageKm !== null) {
-    const micro = s.mileage.unit === "km" ? s.mileage.value * 1_000_000 : s.mileage.value * KM_PER_MILE_MICRO;
-    if (micro > q.maxMileageKm * 1_000_000) return false;
-  }
-
-  const inList = <T>(value: T | null, list: readonly T[]) => list.length === 0 || value === null || list.includes(value);
-  if (!inList(s.fuel, q.fuels)) return false;
-  if (!inList(s.transmission, q.transmissions)) return false;
-  if (!inList(s.bodyType, q.bodyTypes)) return false;
-  if (!inList(l.seller?.countryCode ?? null, q.countryCodes)) return false;
-
-  const amount = l.price?.amount ?? null;
-  if (q.maxPrice !== null && amount !== null && amount.currency === q.maxPrice.currency && amount.amountMinor > q.maxPrice.amountMinor) {
-    return false;
-  }
-  return true;
+  return evaluateListing(q, l).status !== "excluded";
 }
 
 export const EMPTY_QUERY: SearchQuery = {
