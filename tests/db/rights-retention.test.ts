@@ -486,6 +486,165 @@ describe("retensjon: utløpte rader er usynlige og kan slettes", () => {
   });
 });
 
+describe("rettighetslivssyklus: trukket/utløpt profil skjuler lagrede data (review-rettelse, DEC-028)", () => {
+  async function completedRun(t: Tenant, n = 2) {
+    const run = await newRun(t);
+    expect((await store(t, run.id, Array.from({ length: n }, (_, i) => row(i + 1)))).error).toBeNull();
+    expect((await complete(t, run.id, { matches: n, needsReview: 0 })).error).toBeNull();
+    return run.id as string;
+  }
+  const visibleRuns = async (t: Tenant, ids: string[]) => ((await t.client.from("search_runs").select("id").in("id", ids)).data ?? []).map((r) => r.id as string).sort();
+  const visibleResults = async (t: Tenant, runId: string) => (await t.client.from("search_run_results").select("id").eq("search_run_id", runId)).data ?? [];
+
+  it("1–3: avsluttet kjøring er først synlig; når profilen trekkes forsvinner kjøring og resultater umiddelbart (alle lesestier)", async () => {
+    const id = await completedRun(A);
+    expect(await visibleRuns(A, [id])).toEqual([id]);
+    expect(await visibleResults(A, id)).toHaveLength(2);
+
+    await tweakProfile("status = 'revoked'", async () => {
+      expect(await visibleRuns(A, [id])).toEqual([]);
+      expect(await visibleResults(A, id)).toEqual([]);
+      expect((await A.client.from("search_runs").select("*", { count: "exact", head: true }).eq("id", id)).count).toBe(0);
+      expect((await A.client.from("search_run_results").select("*", { count: "exact", head: true }).eq("search_run_id", id)).count).toBe(0);
+      expect((await A.client.from("search_runs").select("id").eq("dealership_id", A.firm).limit(1000)).data!.map((r) => r.id)).not.toContain(id);
+      const emb = await A.client.from("search_agents").select("id, search_runs(id)");
+      for (const a of emb.data!) expect((a.search_runs as { id: string }[]).map((r) => r.id)).not.toContain(id);
+      // Raden finnes fortsatt fysisk (fjernes av purge), bare ikke lesbar
+      expect(await runStatus(id)).toBeDefined();
+      expect(await resultCount(id)).toBe(2);
+    });
+    // Profilen er gjenopprettet (kun testoppsett): synlig igjen, ingen varig endring
+    expect(await visibleRuns(A, [id])).toEqual([id]);
+  });
+
+  it("3b: profil som når effective_to skjuler dataene på samme måte (øvre grense for synlighet)", async () => {
+    const id = await completedRun(A);
+    await tweakProfile("effective_to = now() - interval '1 second'", async () => {
+      expect(await visibleRuns(A, [id])).toEqual([]);
+      expect(await visibleResults(A, id)).toEqual([]);
+    });
+    await tweakProfile("effective_from = now() + interval '1 hour'", async () => {
+      expect(await visibleRuns(A, [id])).toEqual([]); // ikke i kraft: heller ikke lesbar
+    });
+    await tweakProfile("status = 'draft', verified_by = null, verified_at = null", async () => {
+      expect(await visibleRuns(A, [id])).toEqual([]);
+    });
+    expect(await visibleRuns(A, [id])).toEqual([id]);
+  });
+
+  it("4: betrodd policy og skrivevei nekter videre behandling av en pågående kjøring når profilen er trukket", async () => {
+    const run = await newRun(A);
+    expect((await policy(A, run.id)).error).toBeNull(); // først tillatt
+    await tweakProfile("status = 'revoked'", async () => {
+      const p = await policy(A, run.id);
+      expect(p.error?.code).toBe("23514");
+      expect(p.error?.message).toMatch(/search_run_rights_profile_expired/);
+      expect((await store(A, run.id, row(1))).error?.message).toMatch(/search_run_rights_profile_expired/);
+      expect((await complete(A, run.id, { matches: 0, needsReview: 0 })).error?.message).toMatch(/search_run_rights_profile_expired/);
+      expect((await fail(A, run.id, "rights_blocked")).error).toBeNull(); // avslutning som feilet er alltid mulig
+    });
+    expect(await runStatus(run.id)).toEqual({ status: "failed", error_code: "rights_blocked" });
+    expect(await resultCount(run.id)).toBe(0);
+  });
+
+  it("4b: policy nekter også en kjøring som selv har utløpt, før providerbehandling", async () => {
+    const run = await newRun(A);
+    await backdate(run.id, 2);
+    const p = await policy(A, run.id);
+    expect(p.error?.message).toMatch(/search_run_rights_profile_expired/);
+  });
+
+  it("5: annet firma lærer ingenting — fremmed kjøring ser lik ut før og etter, og lik ukjent ID; egne data følger bare profilen", async () => {
+    const aRun = await completedRun(A);
+    const bRun = await completedRun(B);
+    const probe = async () => ({
+      foreign: (await B.client.from("search_runs").select("id").eq("id", aRun)).data,
+      foreignResults: (await B.client.from("search_run_results").select("id").eq("search_run_id", aRun)).data,
+      unknown: (await B.client.from("search_runs").select("id").eq("id", randomUUID())).data,
+      foreignCount: (await B.client.from("search_runs").select("*", { count: "exact", head: true }).eq("id", aRun)).count,
+    });
+    const before = await probe();
+    expect(before).toEqual({ foreign: [], foreignResults: [], unknown: [], foreignCount: 0 });
+    await tweakProfile("status = 'revoked'", async () => {
+      expect(await probe()).toEqual(before); // identisk: ingen signal om at A sin kjøring finnes eller er skjult
+      // B sin egen kjøring følger samme (provider-brede) profil og er også skjult for B, men A sine rader påvirker ikke B sitt svar
+      expect(await visibleRuns(B, [bRun])).toEqual([]);
+      const startForeign = await startRun(B, A.activeId);
+      const startUnknown = await startRun(B, randomUUID());
+      expect(startForeign.error?.code).toBe("42501"); // tenantsjekken kommer før profilsjekken
+      expect(startForeign.error?.message).toBe(startUnknown.error?.message);
+    });
+    expect(await probe()).toEqual(before);
+    expect(await visibleRuns(B, [bRun])).toEqual([bRun]);
+  });
+
+  it("6: effective_to i fremtiden kapper retensjonen; lengre effective_to eller åpen slutt gjør det ikke", async () => {
+    let capped = "";
+    await tweakProfile("effective_to = now() + interval '1 hour'", async () => {
+      const run = await newRun(A);
+      capped = run.id;
+      const r = (await db.query("select r.expires_at = p.effective_to as at_cap, r.expires_at < r.started_at + interval '7 days' as shorter, r.expires_at > r.started_at as after_start from public.search_runs r join private.provider_rights_profiles p on p.id = r.rights_profile_id where r.id = $1", [run.id])).rows[0];
+      expect(r).toEqual({ at_cap: true, shorter: true, after_start: true });
+      const res = await store(A, run.id, row(1));
+      expect(res.error).toBeNull();
+      expect((await db.query("select expires_at = (select expires_at from public.search_runs where id = $1) as same from public.search_run_results where search_run_id = $1", [run.id])).rows[0].same).toBe(true);
+    });
+    expect(capped).not.toBe("");
+    await tweakProfile("effective_to = now() + interval '30 days'", async () => {
+      const run = await newRun(A);
+      expect(Math.round((new Date(run.expires_at as string).getTime() - new Date(run.started_at as string).getTime()) / 1000)).toBe(604800);
+    });
+    const open = await newRun(A);
+    expect(Math.round((new Date(open.expires_at as string).getTime() - new Date(open.started_at as string).getTime()) / 1000)).toBe(604800);
+  });
+
+  it("6b: når effective_to nås etter at kjøringen ble kappet, er dataene usynlige og kan ikke utvides", async () => {
+    let id = "";
+    await tweakProfile("effective_to = now() + interval '1 hour'", async () => {
+      id = await completedRun(A);
+      expect(await visibleRuns(A, [id])).toEqual([id]);
+    });
+    // Profilen er gjenopprettet; simuler at effective_to er nådd
+    await tweakProfile("effective_to = now() - interval '1 second'", async () => {
+      expect(await visibleRuns(A, [id])).toEqual([]);
+    });
+  });
+
+  it("7: purge fjerner rader som ikke lenger er tillatt synlige (trukket profil), inkl. pågående kjøring som avsluttes først", async () => {
+    const done = await completedRun(A);
+    const doneB = await completedRun(B);
+    const running = (await newRun(A)).id as string;
+    await tweakProfile("status = 'revoked'", async () => {
+      const res = await purge(500);
+      expect(res.error).toBeNull();
+      expect(Number(res.rows[0]!.runs_deleted)).toBeGreaterThanOrEqual(3);
+      expect(Number(res.rows[0]!.results_deleted)).toBeGreaterThanOrEqual(4);
+    });
+    for (const id of [done, doneB, running]) expect(await runStatus(id), id).toBeUndefined();
+    expect(await resultCount(done)).toBe(0);
+    expect((await db.query("select count(*)::int n from public.search_run_results x where not exists (select 1 from public.search_runs r where r.id = x.search_run_id)")).rows[0].n).toBe(0);
+  });
+
+  it("7b: purge fjerner også rader hvor effective_to er nådd, men lar rader med gjeldende profil stå", async () => {
+    const stays = await completedRun(A);
+    let gone = "";
+    await tweakProfile("effective_to = now() + interval '1 hour'", async () => {
+      gone = await completedRun(B);
+    });
+    // Det som er kappet til effective_to: nå nådd
+    await tweakProfile("effective_to = now() - interval '1 second'", async () => {
+      expect((await purge(500)).error).toBeNull();
+    });
+    expect(await runStatus(gone)).toBeUndefined();
+    expect(await runStatus(stays)).toBeUndefined(); // samme (provider-brede) profil var ute av kraft under purge
+    // Med gjeldende profil lar purge friske rader stå
+    const fresh = await completedRun(A);
+    expect((await purge(500)).error).toBeNull();
+    expect(await runStatus(fresh)).toBeDefined();
+    expect(await resultCount(fresh)).toBe(2);
+  });
+});
+
 describe("backfill og migrering", () => {
   it("alle eksisterende rader har rettighetsprofil, profilversjon og expires_at etter migreringen", async () => {
     for (const t of ["search_runs", "search_run_results"]) {

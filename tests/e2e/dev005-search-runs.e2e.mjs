@@ -141,6 +141,18 @@ try {
   check("purge-skriptet sletter utløpte kjøringer og resultater", /Slettet [1-9]/.test(purgeOut) && !(await runs(aGolf)).some((r) => r.id === expRun.id) && (await nResults(expRun.id)) === 0, purgeOut);
   check("den ikke-utløpte kjøringen er urørt av purge", (await runs(aGolf)).length === 1 && (await nResults(oldRun.id)) > 0);
 
+  // Trukket rettighetsprofil skjuler lagrede data umiddelbart (review-rettelse, DEC-028)
+  await db.query("alter table private.provider_rights_profiles disable trigger provider_rights_profiles_guard");
+  await db.query("update private.provider_rights_profiles set status = 'revoked' where provider = 'synthetic-demo' and version = 1");
+  const revokedPage = await page.goto(`${BASE}/agents/${aGolf}/runs/${oldRun.id}`);
+  await page.goto(`${BASE}/agents/${aGolf}/runs`);
+  const revokedHistory = await page.locator('[data-testid="run-history"] li').count();
+  await db.query("update private.provider_rights_profiles set status = 'verified' where provider = 'synthetic-demo' and version = 1");
+  await db.query("alter table private.provider_rights_profiles enable trigger provider_rights_profiles_guard");
+  check("trukket profil: kjøringssiden gir 404 og historikken er tom, selv om raden finnes", revokedPage.status() === 404 && revokedHistory === 0 && (await nResults(oldRun.id)) > 0);
+  const restored = await page.goto(`${BASE}/agents/${aGolf}/runs/${oldRun.id}`);
+  check("etter gjenoppretting (kun testoppsett) er kjøringen synlig igjen", restored.status() === 200);
+
   // Uten betrodd skrivevei kan ingen kjøring startes (ville blitt stående som «pågår»)
   check("tredje appinstans (uten betrodd skrivevei) startet", await waitUp(`${NOCFG_BASE}/login`));
   const p3 = await browser.newPage();

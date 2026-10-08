@@ -129,7 +129,7 @@ describe("funksjoner i private", () => {
   it("SECURITY DEFINER er begrenset til kjente funksjoner", async () => {
     const rows = await q<{ proname: string }>("select proname::text from pg_proc where prosecdef and pronamespace in ('private'::regnamespace, 'public'::regnamespace) order by 1");
     expect(rows.map((r) => r.proname)).toEqual([
-      "enforce_active_agent_limit", "my_dealership_ids", "purge_expired_search_runs", "rights_profile_in_force", "rights_profiles_guard",
+      "enforce_active_agent_limit", "my_dealership_ids", "purge_expired_search_runs", "rights_profile_active", "rights_profile_in_force", "rights_profiles_guard",
       "search_run_results_before_insert", "search_runs_before_insert", "search_runs_before_update",
       "trusted_complete_run", "trusted_fail_run", "trusted_run_policy", "trusted_store_results",
     ]);
@@ -152,7 +152,7 @@ describe("funksjoner i private", () => {
     expect(rows.map((r) => r.proname)).toEqual([
       "agent_assumptions_valid", "agent_filters_valid", "agent_ready", "is_money_json", "is_money_json_allow_zero", "jnull",
       "keys_subset", "my_dealership_ids", "nok_money_or_null", "opt_enum", "opt_enum_array", "opt_int", "opt_text",
-      "search_run_counts_valid",
+      "rights_profile_active", "search_run_counts_valid",
     ]);
   });
 });

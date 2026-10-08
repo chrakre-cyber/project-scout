@@ -77,3 +77,25 @@ DEC-028 (provider-spesifikk, rettighetsstyrt lagring; godkjent av Christian 08.1
 - **DEV-005B0: READY FOR REVIEW** (ikke DONE; uavhengig kontroll og hosted smoke-test gjenstår).
 - **DEV-005B: BLOCKED** på provider-avklaringer (BUS-002, OPEN-001/002) og DEV-005B0-review. Ikke påbegynt.
 - Commit-hash oppgis i chat-svaret.
+
+---
+
+## Review-rettelse 1 (P2) — rettighetsstyrt synlighet
+
+**Funn (uavhengig review av `0433ccc`):** synligheten av lagrede rader var bare `expires_at > now()`. Ble profilen senere trukket eller nådde `effective_to`, ble nye skrivinger blokkert, men allerede fullførte rader forble lesbare til opprinnelig `expires_at`. Det strider mot default-deny.
+
+**Løsning (konservativ MVP-regel, DEC-028 presisert):** lagrede providerdata er lesbare bare mens både (1) raden ikke har nådd `expires_at` og (2) den tilknyttede profilen er `verified` og gjelder nå.
+
+**Migrasjon:** ny `supabase/migrations/20261009090000_dev005b0_rights_visibility.sql` — ikke redigering av `20261008090000`. Begrunnelse: migrasjoner er append-only i prosjektet (CLAUDE.md pkt. 8; «ikke endre migrasjoner som allerede er kjørt hosted»), `20261008090000` er levert og gjennomgått som fast artefakt, og en ny migrasjon virker likt enten den eldre er anvendt hosted eller ikke. Ikke anvendt hosted.
+
+**Endringer:**
+- `private.rights_profile_active(uuid)` (SECURITY DEFINER, stable) brukt av policyene; kun `authenticated` får kjøre den (den kan ikke nås via Data API, og gir bare ja/nei).
+- SELECT-policy `search_runs`: firma ∧ ikke utløpt ∧ aktiv profil. SELECT-policy `search_run_results`: firma ∧ ikke utløpt ∧ `search_run_id in (select id from search_runs)` (følger kjøringens policy).
+- `expires_at` kappes ved `effective_to` for nye kjøringer (`least(start + retensjon, effective_to)`); backfill kapper eksisterende.
+- `trusted_run_policy` nekter en kjøring hvis profilen ikke gjelder (23514 `search_run_rights_profile_expired`) eller kjøringen er utløpt — før providerbehandling; serveren avslutter som `rights_blocked`.
+- `purge_expired_search_runs`: avslutter pågående kjøringer med ikke-gjeldende profil (`rights_blocked`) og sletter alle avsluttede rader som er utløpt eller hvis profil ikke gjelder. Fysisk sletting skjer ved purge (manuelt inntil scheduler finnes); synligheten er stengt umiddelbart av RLS.
+- Ingen kryss-tenant-lekkasje: tenantsjekken ved start kommer først; fremmed kjøringsid gir tom liste lik ukjent id både før og etter at profilen trekkes (testet).
+
+**Tester (nye, i `tests/db/rights-retention.test.ts`):** (1) kjøring først synlig; (2–3) profil trukket ⇒ kjøring og resultater forsvinner umiddelbart på alle lesestier (id, liste, count, embed); også `effective_to` nådd, `effective_from` i fremtiden og utkast; (4) betrodd policy/lagring/fullføring nektes, feilmerking `rights_blocked` mulig; policy nekter også utløpt kjøring; (5) annet firma ser identisk tomt svar før/etter og lik ukjent id; (6) fremtidig `effective_to` kapper retensjon, lengre/åpen gjør det ikke; (7) purge fjerner ikke lenger tillatte rader (inkl. pågående kjøring avsluttet først, `effective_to` nådd) og lar gjeldende rader stå. Katalogtestene er oppdatert, og migrasjonsscriptet har nytt scenario 2e (oppgradering fra `0433ccc`-schema med data).
+
+**Resultater (én sammenhengende kjøring fra ren database):** tsc/eslint rent; enhetstester 152/152; DB/RLS 282/282 (`rights-retention` er nå 46 tester, +9); migrasjonskjeden 50/50 kontroller (inkl. nytt scenario 2e); e2e DEV-002 11, DEV-004 22, QA-001 26, DEV-005 38 (kjørt to ganger; +2 for trukket profil); secret-skann ingen funn; demomodus bestått; produksjonsbygg OK. Seks nye mutasjoner (kjøringspolicy uten profilkrav, resultatpolicy uten kobling til synlig kjøring, policy uten rettighetssjekk, ingen kapping, purge uten rettighetsklausul, profilsjekk uten `effective_to`) ga alle røde tester.

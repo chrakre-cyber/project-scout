@@ -81,6 +81,7 @@ Agent → Search Run → Provider → Resultat er adskilt: `src/domain/matching.
 
 - **Rettighetsprofil per provider** (DEC-028): lagring er default-deny og styres av en versjonert, verifisert profil (retensjon, datatyper, virkningsperiode). Domenet (`src/domain/rights.ts`) projiserer resultatutdraget gjennom profilen før hashing og lagring; databasen håndhever det samme (hvitelistet snapshot, `expires_at`, usynlighet via RLS). Se `DATABASE_SCHEMA.md`.
 - **Betrodd skrivevei** (DEC-029): brukerens sesjon starter en kjøring (tenant-sjekket i databasen). Lagring og avslutning av resultater går via `src/server/trusted-ingest.ts` som den begrensede databaserollen `scout_ingest` (fem funksjoner, ingen tabellrettigheter). Orkestreringen i `src/server/search-runs.ts` bruker begge: brukerklient for start og lesing, betrodd vei for skriving. `pg` og `SCOUT_INGEST_DATABASE_URL` er avgrenset til denne ene modulen (arkitekturtest).
+- **Synlighet:** lagrede data er lesbare bare mens raden ikke er utløpt OG profilen fortsatt gjelder (trukket/utløpt profil skjuler umiddelbart; `effective_to` er øvre grense). Purge fjerner også slike rader.
 - **Retensjon:** `npm run purge:expired` (eller funksjonen direkte) sletter utløpte rader. Ingen scheduler er satt opp; DEV-013 eier periodisk kjøring.
 - Ingen ekstern provider, ingen global katalog og ingen n8n: DEV-005B er fortsatt BLOCKED.
 

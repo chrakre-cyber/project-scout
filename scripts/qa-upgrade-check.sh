@@ -5,6 +5,7 @@
 #   2b. Oppgradering fra eksisterende DEV-004-schema (QA-001-FIX): aktive agenter beholdes, funksjonen byttes, schema identisk.
 #   2c. Oppgradering fra hosted-tilstand (DEV-004 + QA-001-FIX) til DEV-005: agentdata bevart, nye tabeller med RLS, schema identisk.
 #   2d. Oppgradering fra DEV-005-schema med eksisterende kjøringer/resultater til DEV-005B0: data uendret, backfill av rettighetsprofil og utløp.
+#   2e. Oppgradering fra DEV-005B0 (0433ccc) med kjøringer/resultater til synlighetsrettelsen: data uendret, policyene krever aktiv profil.
 #   3. Feilscenario: DEV-002-data som bryter DEV-004-reglene. Migrasjonen skal feile ATOMISK (ingen delvis anvendelse).
 # Avslutter med ren database fra alle migrasjoner. Exit-kode ≠ 0 ved feil.
 set -uo pipefail
@@ -19,6 +20,7 @@ V002=20261005090000
 V004=20261006090000
 V004FIX=20261006100000
 V005=20261007090000
+V005B0=20261008090000
 FIRM_A=00000000-0000-4000-a000-00000000000a
 FIRM_B=00000000-0000-4000-a000-00000000000b
 OUT="${QA_OUT:-/tmp}"
@@ -31,7 +33,7 @@ reset_to() { npx supabase db reset ${1:+--version "$1"} 2>&1 | grep -E "Applying
 echo "== 1. Ren oppbygging (alle migrasjoner)"
 reset_to "" 
 dump > "$OUT/schema-clean.sql"
-check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000,20261008090000"
+check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000,20261008090000,20261009090000"
 check "seed: to syntetiske firma, ingen brukere eller agenter" "$($PSQL -c "select (select count(*) from public.dealerships)||'/'||(select count(*) from auth.users)||'/'||(select count(*) from public.search_agents)")" "2/0/0"
 check "RLS på alle tabeller" "$($PSQL -c "select count(*) from pg_class where relnamespace='public'::regnamespace and relkind='r' and relrowsecurity")" "5"
 
@@ -128,6 +130,36 @@ $PSQL -c "delete from public.search_run_results; delete from public.search_runs"
 dump > "$OUT/schema-upgraded-005.sql"
 if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-005 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-005):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" | head -20; fails=$((fails+1)); fi
 
+echo "== 2e. Oppgradering fra DEV-005B0 (0433ccc) til synlighetsrettelsen med eksisterende kjøringer"
+reset_to "$V005B0"
+check "0433ccc-schema mangler rights_profile_active" "$($PSQL -c "select count(*) from pg_proc where proname='rights_profile_active'")" "0"
+$PSQL <<SQL
+insert into public.search_agents (dealership_id, name, filters, assumptions, active) values
+ ('$FIRM_A', 'Synlighet-agent', '{"make":"Volkswagen"}',
+  '{"retail":{"expectedRetailTotal":{"amountMinor":"39990000","currency":"NOK"},"priceBasis":{"vat":"included","registrationTaxes":"included"}},"minimumContribution":{"amountMinor":"3000000","currency":"NOK"},"preparationReserve":{"amount":{"amountMinor":"0","currency":"NOK"},"vatBasis":"ex_vat"}}', true);
+insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Synlighet-agent';
+insert into public.search_run_results (search_run_id, source, source_listing_id, content_hash, rank, match_status, unknown_criteria, listing_snapshot)
+ select r.id, 'synthetic-demo', 'V-'||g, repeat('d', 64), g, 'match', '[]', jsonb_build_object('source','synthetic-demo','sourceListingId','V-'||g,'make','Volkswagen')
+ from public.search_runs r, generate_series(1, 2) g;
+update public.search_runs set status = 'completed', counts = '{"matches":2,"needsReview":0}';
+SQL
+data5_md5() { $PSQL -c "select md5(coalesce((select string_agg(id||status||counts::text||criteria_snapshot::text||expires_at::text||rights_profile_version, ',' order by id) from public.search_runs),'') || coalesce((select string_agg(id||source_listing_id||content_hash||rank||expires_at::text, ',' order by id) from public.search_run_results),''))"; }
+before_e="$(data5_md5)"
+npx supabase migration up 2>&1 | grep -E "Applying|ERROR" | sed 's/^/      /'
+check "synlighetsmigrasjonen registrert" "$($PSQL -c "select count(*) from supabase_migrations.schema_migrations where version='20261009090000'")" "1"
+check "data uendret etter oppgradering (ingen profil har effective_to ⇒ ingen kapping)" "$(data5_md5)" "$before_e"
+check "SELECT-policyene krever aktiv profil (kjøringer) og synlig kjøring (resultater)" "$($PSQL -c "select count(*) from pg_policies where schemaname='public' and cmd='SELECT' and ((tablename='search_runs' and qual like '%rights_profile_active%') or (tablename='search_run_results' and qual like '%search_runs%'))")" "2"
+check "ny start får expires_at kappet av effective_to når profilen har slutt" "$($PSQL <<SQL
+alter table private.provider_rights_profiles disable trigger provider_rights_profiles_guard;
+update private.provider_rights_profiles set effective_to = now() + interval '1 hour' where provider = 'synthetic-demo' and version = 1;
+alter table private.provider_rights_profiles enable trigger provider_rights_profiles_guard;
+delete from public.search_run_results; delete from public.search_runs;
+insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Synlighet-agent' returning (expires_at = (select effective_to from private.provider_rights_profiles where provider = 'synthetic-demo' and version = 1))::text;
+SQL
+)" "true"
+dump > "$OUT/schema-upgraded-005b0.sql"
+if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-005B0 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-005B0):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" | head -20; fails=$((fails+1)); fi
+
 echo "== 3. Feilscenario: DEV-002-data som bryter DEV-004-reglene → atomisk feil"
 reset_to "$V002"
 $PSQL -c "insert into public.search_agents (dealership_id, name, filters, assumptions) values ('$FIRM_A','Gammel reserve som beløp','{\"make\":\"VW\"}','{\"preparationReserve\":{\"amountMinor\":\"1500000\",\"currency\":\"NOK\"}}')"
@@ -141,7 +173,7 @@ check "dataene er uendret" "$($PSQL -c "select count(*) from public.search_agent
 
 echo "== 4. Avslutter med ren database fra alle migrasjoner"
 reset_to ""
-check "ren database etter avslutning" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000,20261008090000"
+check "ren database etter avslutning" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000,20261008090000,20261009090000"
 echo
 [ "$fails" -eq 0 ] && echo "MIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT" || echo "MIGRASJONSKJEDE: $fails KONTROLL(ER) FEILET"
 exit "$fails"
