@@ -3,11 +3,15 @@ import { describe, expect, it } from "vitest";
 import { MarketplaceError } from "@/providers/marketplace/errors";
 import { EMPTY_QUERY, SyntheticMarketplaceProvider } from "@/providers/marketplace/synthetic/provider";
 import type { MarketplaceProvider, SearchPage } from "@/providers/marketplace/types";
+import type { StoragePolicy } from "@/domain/rights";
 import { runSearchPipeline } from "@/server/search-pipeline";
 import { fetchAll } from "./helpers";
 
 const noSleep = async () => {};
-const opts = { sleep: noSleep, random: () => 0 };
+const ALLOW_ALL: StoragePolicy = {
+  profileVersion: 1, retentionSeconds: 3600, allowPrice: true, allowSpecs: true, allowText: false, allowImages: false, allowSellerData: true,
+};
+const opts = { sleep: noSleep, random: () => 0, rights: ALLOW_ALL };
 
 function fake(search: MarketplaceProvider["search"], source = "synthetic-demo"): MarketplaceProvider {
   return { source, search, getListing: async () => null };
@@ -31,6 +35,23 @@ describe("runSearchPipeline", () => {
     const a = await runSearchPipeline(new SyntheticMarketplaceProvider(), f, opts);
     const b = await runSearchPipeline(new SyntheticMarketplaceProvider(), f, { ...opts, pageSize: 7 });
     expect(a.ok && b.ok && a.rows).toEqual(b.ok && b.rows);
+  });
+
+  it("rettighetsprofilen styrer hva som lagres: tilbakeholdt pris/spesifikasjoner/selger er null og merket i withheld", async () => {
+    const restricted: StoragePolicy = { ...ALLOW_ALL, allowPrice: false, allowSpecs: false, allowSellerData: false };
+    const full = await runSearchPipeline(new SyntheticMarketplaceProvider(), EMPTY_QUERY, opts);
+    const out = await runSearchPipeline(new SyntheticMarketplaceProvider(), EMPTY_QUERY, { ...opts, rights: restricted });
+    expect(full.ok && out.ok).toBe(true);
+    if (!full.ok || !out.ok) return;
+    expect(out.rows.length).toBe(full.rows.length); // treffstatus og rang er vår egen avledede vurdering
+    expect(out.counts.matches).toBe(full.counts.matches);
+    for (const r of out.rows) {
+      expect(r.snapshot).toMatchObject({ price: null, make: null, model: null, variant: null, firstRegistration: null, mileage: null, fuel: null, transmission: null, bodyType: null, sellerType: null, sellerCountry: null });
+      expect(r.snapshot.withheld).toEqual(["price", "specs", "seller"]);
+      expect(r.snapshot.sourceListingId).toBeTruthy();
+    }
+    expect(out.rows[0]!.contentHash).not.toBe(full.rows[0]!.contentHash);
+    expect(full.rows.every((r) => r.snapshot.withheld.length === 0)).toBe(true);
   });
 
   it("tomt resultat er ok med null rader", async () => {

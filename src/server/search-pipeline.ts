@@ -6,6 +6,7 @@
  * Feil blir alltid en kode fra SEARCH_RUN_ERROR_CODES — aldri rå feiltekst (kan inneholde hemmeligheter).
  */
 import { createHash } from "node:crypto";
+import { applyStoragePolicy, type StoragePolicy } from "@/domain/rights";
 import { evaluateAndRank, canonicalJson, projectSnapshot, type ResultSnapshot, type RunCounts, type SearchRunErrorCode } from "@/domain/search-run";
 import type { Criterion } from "@/domain/matching";
 import type { AgentFilters, NormalizedListing } from "@/domain/types";
@@ -16,6 +17,8 @@ import type { MarketplaceProvider, SearchPage } from "@/providers/marketplace/ty
 export const MAX_STORED_RESULTS = 2_000;
 
 export interface PipelineOptions {
+  /** Hva rettighetsprofilen tillater å lagre. Resultatutdraget projiseres gjennom denne før hashing og lagring. */
+  rights: StoragePolicy;
   /** Tidsgrense per providerkall. */
   timeoutMs?: number;
   pageSize?: number;
@@ -54,9 +57,10 @@ const realSleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 export async function runSearchPipeline(
   provider: MarketplaceProvider,
   filters: AgentFilters,
-  options: PipelineOptions = {},
+  options: PipelineOptions,
 ): Promise<PipelineOutcome> {
   const o = { ...DEFAULTS, ...options };
+  const policy = options.rights;
   const sleep = options.sleep ?? realSleep;
   const random = options.random ?? Math.random;
   try {
@@ -86,7 +90,7 @@ export async function runSearchPipeline(
     const kept = evaluated.planned.slice(0, MAX_STORED_RESULTS);
     if (kept.length < evaluated.planned.length) truncated = true;
     const rows: ResultRow[] = kept.map((p) => {
-      const snapshot = projectSnapshot(p.listing);
+      const snapshot = applyStoragePolicy(projectSnapshot(p.listing), policy);
       return {
         sourceListingId: p.listing.sourceListingId,
         source: p.listing.source,

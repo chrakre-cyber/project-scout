@@ -77,6 +77,13 @@ Omfang: DEV-005A = manuelle, tenant-isolerte søkekjøringer med snapshots. **DE
 
 Agent → Search Run → Provider → Resultat er adskilt: `src/domain/matching.ts` og `src/domain/search-run.ts` (rene regler, rangering, snapshot), `src/server/search-pipeline.ts` (provider-sider, tidsavbrudd, begrenset retry, validering, hashing; provider injiseres), `src/server/search-runs.ts` (orkestrering mot databasen), databasen (tabeller, constraints og triggere for tenant, status og idempotens — ingen domenelogikk) og UI (`/agents/[id]/runs`). Provideren er fortsatt `MarketplaceProvider`; en ekte provider (DEV-006) kan byttes inn uten UI-endring. Se DEC-026/027.
 
+### Lagringsrettigheter og betrodd skrivevei (DEV-005B0)
+
+- **Rettighetsprofil per provider** (DEC-028): lagring er default-deny og styres av en versjonert, verifisert profil (retensjon, datatyper, virkningsperiode). Domenet (`src/domain/rights.ts`) projiserer resultatutdraget gjennom profilen før hashing og lagring; databasen håndhever det samme (hvitelistet snapshot, `expires_at`, usynlighet via RLS). Se `DATABASE_SCHEMA.md`.
+- **Betrodd skrivevei** (DEC-029): brukerens sesjon starter en kjøring (tenant-sjekket i databasen). Lagring og avslutning av resultater går via `src/server/trusted-ingest.ts` som den begrensede databaserollen `scout_ingest` (fem funksjoner, ingen tabellrettigheter). Orkestreringen i `src/server/search-runs.ts` bruker begge: brukerklient for start og lesing, betrodd vei for skriving. `pg` og `SCOUT_INGEST_DATABASE_URL` er avgrenset til denne ene modulen (arkitekturtest).
+- **Retensjon:** `npm run purge:expired` (eller funksjonen direkte) sletter utløpte rader. Ingen scheduler er satt opp; DEV-013 eier periodisk kjøring.
+- Ingen ekstern provider, ingen global katalog og ingen n8n: DEV-005B er fortsatt BLOCKED.
+
 ## Duplikater, varsler og prisendringer
 
 Ingestion er idempotent. MVP sender høyst ett første varsel per `(dealership_id, agent_id, source, source_listing_id, notification_type=initial)`; endrede annonser oppdaterer opportunity uten nye prisvarsler i v0.1. En outbox-unique constraint stopper duplikater i DB. E-postleverandørens idempotency-mulighet brukes hvis tilgjengelig; crash etter akseptert sending men før DB-kvittering må avstemmes, ikke blindt resend.

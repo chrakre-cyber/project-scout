@@ -101,3 +101,24 @@ export const READY = {
     preparationReserve: { amount: { amountMinor: "1500000", currency: "NOK" }, vatBasis: "ex_vat" },
   },
 };
+
+/**
+ * Tilkobling som den begrensede rollen `scout_ingest` (betrodd skrivevei, DEC-029). Rollen er NOLOGIN i migrasjonen;
+ * testen aktiverer innlogging med et tilfeldig engangspassord (som databaseeier) og slår den av igjen ved close().
+ */
+export async function connectIngest(db: Client): Promise<{ ingest: Client; close: () => Promise<void> }> {
+  const pw = randomBytes(18).toString("hex");
+  await db.query(`alter role scout_ingest login password '${pw}'`);
+  const u = new URL(env.dbUrl);
+  u.username = "scout_ingest";
+  u.password = pw;
+  const ingest = new Client({ connectionString: u.toString() });
+  await ingest.connect();
+  return {
+    ingest,
+    close: async () => {
+      await ingest.end().catch(() => {});
+      await db.query("alter role scout_ingest nologin password null");
+    },
+  };
+}

@@ -1,13 +1,14 @@
 // Ende-til-ende for DEV-005 mot LOKAL Supabase + `next start -p 3100` (bygget mot lokal stack).
 // Kjøring: PW=<sti til playwright> PG=$PWD/node_modules/pg DB_URL=<lokal DB_URL> node tests/e2e/dev005-search-runs.e2e.mjs
-// Starter selv en andre appinstans (port 3101) med simulert kildefeil. Testbrukere opprettes lokalt og slettes etterpå. Ingen service-role.
+// Forutsetter at appen på 3100 er startet etter `npm run setup:ingest-role` (betrodd skrivevei, DEC-029).
+// Starter selv tre appinstanser: 3101 med simulert kildefeil, 3102 uten betrodd skrivevei og 3103 med ugyldig innlogging for den. Testbrukere opprettes lokalt og slettes etterpå. Ingen service-role.
 import { createRequire } from "node:module";
 import { randomBytes, randomUUID } from "node:crypto";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 const require = createRequire(import.meta.url);
 const { chromium } = require(process.env.PW);
 const { Client } = require(process.env.PG);
-const BASE = "http://localhost:3100", FAIL_BASE = "http://localhost:3101";
+const BASE = "http://localhost:3100", FAIL_BASE = "http://localhost:3101", NOCFG_BASE = "http://localhost:3102", BADCRED_BASE = "http://localhost:3103";
 const FIRM_A = "00000000-0000-4000-a000-00000000000a", FIRM_B = "00000000-0000-4000-a000-00000000000b";
 const db = new Client({ connectionString: process.env.DB_URL }); await db.connect();
 const run = randomBytes(3).toString("hex");
@@ -40,6 +41,9 @@ const runs = async (agentId) => (await db.query("select id, status, error_code, 
 const nResults = async (runId) => (await db.query("select count(*)::int n from public.search_run_results where search_run_id = $1", [runId])).rows[0].n;
 
 const failServer = spawn("npx", ["next", "start", "-p", "3101"], { env: { ...process.env, SCOUT_SYNTHETIC_FAILURE: "unavailable" }, stdio: "ignore", detached: true });
+const noCfgServer = spawn("npx", ["next", "start", "-p", "3102"], { env: { ...process.env, SCOUT_INGEST_DATABASE_URL: "" }, stdio: "ignore", detached: true });
+const badUrl = new URL(process.env.DB_URL); badUrl.username = "scout_ingest"; badUrl.password = "feil-passord";
+const badCredServer = spawn("npx", ["next", "start", "-p", "3103"], { env: { ...process.env, SCOUT_INGEST_DATABASE_URL: badUrl.toString() }, stdio: "ignore", detached: true });
 const browser = await chromium.launch();
 const errors = [];
 const page = await browser.newPage();
@@ -121,6 +125,40 @@ try {
   await page.goto(`${BASE}/agents/${aGolf}/runs/${oldRun.id}`);
   check("gammel kjøring viser fortsatt kriteriene den ble kjørt med", (await page.locator('[data-testid="run-criteria"]').innerText()).includes("modell Golf") && (await page.locator('[data-testid="run-results"] li').count()) > 0);
 
+  // Retensjon (DEC-028): sluttdato vises, utløpt kjøring er usynlig før sletting, purge sletter
+  await page.goto(runUrl);
+  check("kjøringssiden viser sluttdato og rettighetsprofil", (await page.locator('[data-testid="run-expires"]').innerText()).includes("synthetic-demo v1"));
+  const expRun = (await runs(aGolf)).find((r) => r.id !== oldRun.id);
+  await db.query("alter table public.search_runs disable trigger search_runs_before_update");
+  await db.query("update public.search_runs set started_at = now() - interval '10 minutes', created_at = now() - interval '10 minutes', expires_at = now() - interval '1 minute' where id = $1", [expRun.id]);
+  await db.query("update public.search_run_results set expires_at = now() - interval '1 minute' where search_run_id = $1", [expRun.id]);
+  await db.query("alter table public.search_runs enable trigger search_runs_before_update");
+  const expired = await page.goto(`${BASE}/agents/${aGolf}/runs/${expRun.id}`);
+  check("utløpt kjøring er usynlig i appen (404) selv om raden ennå ikke er slettet", expired.status() === 404 && (await nResults(expRun.id)) > 0);
+  await page.goto(`${BASE}/agents/${aGolf}/runs`);
+  check("historikken viser ikke den utløpte kjøringen", (await page.locator('[data-testid="run-history"] li').count()) === 1);
+  const purgeOut = execFileSync("node", ["--env-file=.env.local", "scripts/purge-expired.mjs"], { encoding: "utf8" });
+  check("purge-skriptet sletter utløpte kjøringer og resultater", /Slettet [1-9]/.test(purgeOut) && !(await runs(aGolf)).some((r) => r.id === expRun.id) && (await nResults(expRun.id)) === 0, purgeOut);
+  check("den ikke-utløpte kjøringen er urørt av purge", (await runs(aGolf)).length === 1 && (await nResults(oldRun.id)) > 0);
+
+  // Uten betrodd skrivevei kan ingen kjøring startes (ville blitt stående som «pågår»)
+  check("tredje appinstans (uten betrodd skrivevei) startet", await waitUp(`${NOCFG_BASE}/login`));
+  const p3 = await browser.newPage();
+  await login(p3, A, NOCFG_BASE);
+  await p3.goto(`${NOCFG_BASE}/agents/${aStale}/runs`);
+  const staleBefore = (await runs(aStale)).length;
+  await Promise.all([p3.waitForURL(/error=unavailable/), p3.click('[data-testid="run-button"]')]);
+  check("uten betrodd skrivevei: forståelig melding og ingen kjøring opprettet", (await text(p3)).includes("midlertidig utilgjengelig") && (await runs(aStale)).length === staleBefore);
+
+  // Ugyldig innlogging for den betrodde veien: ingen kjøring opprettes (ellers ville den stå som «pågår»)
+  check("fjerde appinstans (ugyldig innlogging for betrodd skrivevei) startet", await waitUp(`${BADCRED_BASE}/login`));
+  const p4 = await browser.newPage();
+  await login(p4, A, BADCRED_BASE);
+  await p4.goto(`${BADCRED_BASE}/agents/${aStale}/runs`);
+  const staleBefore2 = (await runs(aStale)).length;
+  await Promise.all([p4.waitForURL(/error=unavailable/, { timeout: 20000 }), p4.click('[data-testid="run-button"]')]);
+  check("ugyldig betrodd innlogging: forståelig melding og ingen hengende kjøring", (await text(p4)).includes("midlertidig utilgjengelig") && (await runs(aStale)).length === staleBefore2 && !(await runs(aStale)).some((r) => r.status === "running"));
+
   // Kildefeil (egen appinstans med simulert provider-feil)
   check("andre appinstans (simulert kildefeil) startet", await waitUp(`${FAIL_BASE}/login`));
   const p2 = await browser.newPage();
@@ -152,6 +190,8 @@ try {
   check("ingen JS-feil i nettleseren", errors.length === 0, errors.join(" | "));
 } finally {
   try { process.kill(-failServer.pid); } catch {}
+  try { process.kill(-noCfgServer.pid); } catch {}
+  try { process.kill(-badCredServer.pid); } catch {}
   await db.query("delete from public.search_run_results where search_run_id in (select id from public.search_runs where agent_id = any($1::uuid[]))", [[aGolf, aPaused, aEmpty, aStale, aFail, bAgent]]);
   await db.query("delete from public.search_runs where agent_id = any($1::uuid[])", [[aGolf, aPaused, aEmpty, aStale, aFail, bAgent]]);
   await db.query("delete from public.search_agents where id = any($1::uuid[])", [[aGolf, aPaused, aEmpty, aStale, aFail, bAgent]]);

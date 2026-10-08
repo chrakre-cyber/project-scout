@@ -54,6 +54,14 @@ Kodeplassering: `src/domain/` (rene domenetyper og valuta, ingen UI/provider), `
 
 Fra `/agents` kan en aktiv agent kjøres manuelt («Søkekjøringer» → «Kjør søk»). Søket går mot den **syntetiske** demokilden (ingen live mobile.de-data). Hver kjøring lagres med kriteriesnapshot, status, tellere og resultater, og finnes igjen etter reload. Delt ingestion (DEV-005B) er ikke bygget og er blokkert på BUS-002. Resultatene er ikke autoritative input til automatikk (DEC-026). Kontroller: `npm run test:db` (RLS/idempotens), `node tests/e2e/dev005-search-runs.e2e.mjs` (se toppen av filen), `npm run qa:migrations`.
 
+### Rettigheter, retensjon og betrodd skrivevei (DEV-005B0)
+
+Lagring av providerdata styres av en rettighetsprofil per kilde (DEC-028); uten gyldig profil startes ingen kjøring, og utløpte rader er usynlige og kan slettes. Resultater skrives av den begrensede databaserollen `scout_ingest` (DEC-029), ikke av brukeren. Det krever én server-only miljøvariabel, `SCOUT_INGEST_DATABASE_URL`; uten den kan ikke søkekjøringer startes (appen sier fra).
+
+- **Lokalt:** `npm run setup:ingest-role` (aktiverer rollen med et tilfeldig passord og skriver strengen til `.env.local`), start deretter appen på nytt. DB-testene slår rollen av igjen (`NOLOGIN`) når de er ferdige; kjør skriptet på nytt før e2e.
+- **Slette utløpte rader:** `npm run purge:expired` (leser `.env.local`). Periodisk kjøring er ikke satt opp.
+- **Hosted oppsett av `scout_ingest` (ikke utprøvd):** (1) anvend migrasjonen `20261008090000_dev005b0_rights_retention.sql`; (2) som prosjekteier i SQL Editor: `alter role scout_ingest login password '<generert passord>';` (passordet lagres aldri i git eller chat); (3) sett `SCOUT_INGEST_DATABASE_URL` som server-only miljøvariabel (ikke `NEXT_PUBLIC_`) i Vercel, med tilkoblingsstrengen fra Supabase (Database → Connection string, bruker `scout_ingest`). Om Supabase sin pooler godtar rollen i transaksjonsmodus må kontrolleres i hosted smoke-test. Dette er **ikke** service-role-nøkkelen.
+
 ## Start her
 
 1. Les [START_HER.md](START_HER.md): dine tre første oppgaver og første utviklingsoppdrag.

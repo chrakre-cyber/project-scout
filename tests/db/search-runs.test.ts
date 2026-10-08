@@ -1,22 +1,24 @@
 /**
  * DEV-005 — søkekjøringer: RLS/tenant-isolasjon, constraints, statusoverganger, idempotens og samtidighet.
- * Alle påstander kjøres som ordinære innloggede brukere (Auth + Data API) eller anon. Oppsett/«uendret»-kontroll som databaseeier.
+ * Alle brukerpåstander kjøres som ordinære innloggede brukere (Auth + Data API) eller anon. Oppsett/«uendret»-kontroll som databaseeier.
+ * Lagring og avslutning av resultater skjer, som i appen, via den betrodde skriveveien (rollen scout_ingest, DEC-029).
  */
 import { randomUUID } from "node:crypto";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Client } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { adminDb, anonClient, assertLocal, cleanup, createFirmWithMember, createUser, READY, signIn, type TestUser } from "./harness";
+import { adminDb, anonClient, assertLocal, cleanup, connectIngest, createFirmWithMember, createUser, READY, signIn, type TestUser } from "./harness";
 
 interface Tenant { user: TestUser; firm: string; client: SupabaseClient; activeId: string; pausedId: string }
 
 let db: Client;
+let ingest: Client;
+let closeIngest: () => Promise<void>;
 let A: Tenant, B: Tenant;
 let loner: TestUser;
 const users: TestUser[] = [];
 const HASH = "a".repeat(64);
 const MSG_RUNS = 'new row violates row-level security policy for table "search_runs"';
-const MSG_RESULTS = 'new row violates row-level security policy for table "search_run_results"';
 
 async function tenant(label: string): Promise<Tenant> {
   const user = await createUser(db, `sr-${label}`);
@@ -44,14 +46,28 @@ const freshAgent = async (t: Tenant, active = true) => {
   return (await t.client.from("search_agents").insert({ dealership_id: t.firm, name: "x", active, ...READY }).select("id").single()).data!.id as string;
 };
 
-async function complete(t: Tenant, runId: string, counts: Record<string, unknown>) {
-  return t.client.from("search_runs").update({ status: "completed", counts }).eq("id", runId).select("id, status");
+/** Kall mot den betrodde skriveveien; returnerer feilen i stedet for å kaste, slik at tester kan hevde på den. */
+type DbError = Error & { code?: string };
+async function trusted(sql: string, params: unknown[]): Promise<{ error: DbError | null }> {
+  try {
+    await ingest.query(sql, params);
+    return { error: null };
+  } catch (e) {
+    return { error: e as DbError };
+  }
 }
+const store = (t: Tenant, runId: string, rows: object | object[]) =>
+  trusted("select private.trusted_store_results($1::uuid, $2::uuid, $3::jsonb)", [t.firm, runId, JSON.stringify(Array.isArray(rows) ? rows : [rows])]);
+const complete = (t: Tenant, runId: string, c: unknown) =>
+  trusted("select private.trusted_complete_run($1::uuid, $2::uuid, $3::jsonb)", [t.firm, runId, JSON.stringify(c)]);
+const fail = (t: Tenant, runId: string, code: string | null) =>
+  trusted("select private.trusted_fail_run($1::uuid, $2::uuid, $3::text)", [t.firm, runId, code]);
 const counts = (matches: number, needsReview = 0) => ({ matches, needsReview });
 
 beforeAll(async () => {
   assertLocal();
   db = await adminDb();
+  ({ ingest, close: closeIngest } = await connectIngest(db));
   A = await tenant("a");
   B = await tenant("b");
   loner = await createUser(db, "sr-loner");
@@ -60,6 +76,7 @@ beforeAll(async () => {
 afterAll(async () => {
   if (db) {
     await cleanup(db, [A?.firm, B?.firm].filter(Boolean), users);
+    await closeIngest?.();
     await db.end();
   }
 });
@@ -73,7 +90,7 @@ describe("opprett og les egen kjøring", () => {
     expect(data!.criteria_snapshot).toMatchObject({ schemaVersion: 1, agentName: "x", filters: { make: "Volkswagen" } });
     expect(data!.criteria_snapshot.assumptions.minimumContribution).toEqual({ amountMinor: "3000000", currency: "NOK" });
     // Klienten kan ikke sette utledede kolonner (ingen kolonnerettighet)
-    for (const col of ["dealership_id", "status", "criteria_snapshot", "agent_version", "started_at", "finished_at", "counts", "error_code", "id"]) {
+    for (const col of ["dealership_id", "status", "criteria_snapshot", "agent_version", "started_at", "finished_at", "counts", "error_code", "id", "rights_profile_id", "rights_profile_version", "expires_at"]) {
       const r = await startRun(A, await freshAgent(A), { [col]: col === "dealership_id" ? B.firm : col === "id" ? randomUUID() : "x" });
       expect(r.error?.code, col).toBe("42501");
     }
@@ -99,10 +116,10 @@ describe.each([["A → B", () => [A, B] as const], ["B → A", () => [B, A] as c
   beforeAll(async () => {
     [me, other] = pair();
     otherFinishedRun = (await startRun(other, await freshAgent(other))).data!.id;
-    await other.client.from("search_runs").update({ status: "failed", error_code: "timeout" }).eq("id", otherFinishedRun);
+    await fail(other, otherFinishedRun, "timeout");
     const agent = await freshAgent(other);
     otherRun = (await startRun(other, agent)).data!.id;
-    await other.client.from("search_run_results").insert(result(otherRun, 1));
+    await store(other, otherRun, result(otherRun, 1));
   });
 
   it("leser ikke det andre firmaets kjøringer eller resultater (ID, liste, telling, filter, embed)", async () => {
@@ -133,16 +150,18 @@ describe.each([["A → B", () => [A, B] as const], ["B → A", () => [B, A] as c
 
   it("kan ikke endre, slette eller flytte det andre firmaets kjøring/resultater", async () => {
     const upd = await me.client.from("search_runs").update({ status: "failed", error_code: "internal" }).eq("id", otherRun).select("id");
-    expect(upd.data ?? []).toEqual([]);
+    expect(upd.error?.code).toBe("42501");
     expect((await me.client.from("search_runs").delete().eq("id", otherRun)).error?.code).toBe("42501");
     expect((await me.client.from("search_run_results").delete().eq("search_run_id", otherRun)).error?.code).toBe("42501");
     expect((await me.client.from("search_run_results").update({ rank: 9 }).eq("search_run_id", otherRun)).error?.code).toBe("42501");
-    expect((await me.client.from("search_run_results").insert(result(otherRun, 2))).error?.message).toBe(MSG_RESULTS);
-    expect((await me.client.from("search_run_results").insert(result(randomUUID(), 2))).error?.message).toBe(MSG_RESULTS);
-    // Avsluttet fremmed kjøring må ikke avsløre status (ellers kunne «ikke running» skille fremmed fra ukjent)
-    const finished = await me.client.from("search_run_results").insert(result(otherFinishedRun, 1));
-    expect(finished.error?.code).toBe("42501");
-    expect(finished.error?.message).toBe(MSG_RESULTS);
+    // Brukere har ingen INSERT-rett på resultater (DEC-029): fremmed, ukjent og avsluttet kjøring gir identisk svar.
+    const attempts = [
+      await me.client.from("search_run_results").insert(result(otherRun, 2)),
+      await me.client.from("search_run_results").insert(result(randomUUID(), 2)),
+      await me.client.from("search_run_results").insert(result(otherFinishedRun, 1)),
+    ];
+    for (const a of attempts) expect(a.error?.code).toBe("42501");
+    expect(new Set(attempts.map((a) => a.error?.message)).size).toBe(1);
     expect((await db.query("select status from public.search_runs where id = $1", [otherRun])).rows[0].status).toBe("running");
     expect((await db.query("select count(*)::int n from public.search_run_results where search_run_id = $1", [otherRun])).rows[0].n).toBe(1);
   });
@@ -226,7 +245,7 @@ describe("constraints", () => {
       { listing_snapshot: { blob: "x".repeat(9000), source: "synthetic-demo", sourceListingId: "L-1" } }, { source_listing_id: "" },
     ];
     for (const b of bad) {
-      const r = await A.client.from("search_run_results").insert(result(run!.id, 1, "L-1", b));
+      const r = await store(A, run!.id, result(run!.id, 1, "L-1", b));
       expect(r.error, JSON.stringify(b).slice(0, 60)).not.toBeNull();
     }
     expect((await db.query("select count(*)::int n from public.search_run_results where search_run_id = $1", [run!.id])).rows[0].n).toBe(0);
@@ -234,16 +253,16 @@ describe("constraints", () => {
 
   it("unik rang og unik annonse per kjøring", async () => {
     const { data: run } = await startRun(A, await freshAgent(A));
-    expect((await A.client.from("search_run_results").insert(result(run!.id, 1, "L-1"))).error).toBeNull();
-    expect((await A.client.from("search_run_results").insert(result(run!.id, 1, "L-2"))).error?.code).toBe("23505");
-    expect((await A.client.from("search_run_results").insert(result(run!.id, 2, "L-1"))).error?.code).toBe("23505");
+    expect((await store(A, run!.id, result(run!.id, 1, "L-1"))).error).toBeNull();
+    expect((await store(A, run!.id, result(run!.id, 1, "L-2"))).error?.code).toBe("23505");
+    expect((await store(A, run!.id, result(run!.id, 2, "L-1"))).error?.code).toBe("23505");
   });
 });
 
 describe("statusoverganger", () => {
   it("running → completed med riktige tellere; finished_at settes av DB", async () => {
     const { data: run } = await startRun(A, await freshAgent(A));
-    await A.client.from("search_run_results").insert([result(run!.id, 1), { ...result(run!.id, 2), match_status: "needs_review", unknown_criteria: ["fuel"] }]);
+    expect((await store(A, run!.id, [result(run!.id, 1), { ...result(run!.id, 2), match_status: "needs_review", unknown_criteria: ["fuel"] }])).error).toBeNull();
     const done = await complete(A, run!.id, { ...counts(1, 1), sourceTotal: 5, fetched: 5, excluded: 3, rejected: 0, duplicates: 0, pages: 1, truncated: false });
     expect(done.error).toBeNull();
     const row = (await db.query("select status, finished_at, counts from public.search_runs where id = $1", [run!.id])).rows[0];
@@ -253,34 +272,36 @@ describe("statusoverganger", () => {
 
   it("completed avvises ved feil eller manglende tellere (også NULL)", async () => {
     const { data: run } = await startRun(A, await freshAgent(A));
-    await A.client.from("search_run_results").insert(result(run!.id, 1));
+    await store(A, run!.id, result(run!.id, 1));
     for (const c of [counts(0), counts(2), counts(0, 0), {}, { matches: 1 }, { needsReview: 0 }, { matches: "1", needsReview: 0 }]) {
       const r = await complete(A, run!.id, c);
       expect(r.error, JSON.stringify(c)).not.toBeNull();
     }
-    expect((await A.client.from("search_runs").update({ status: "completed" }).eq("id", run!.id)).error).not.toBeNull(); // uten counts
+    expect((await complete(A, run!.id, null)).error).not.toBeNull(); // uten tellere
     expect((await db.query("select status from public.search_runs where id = $1", [run!.id])).rows[0].status).toBe("running");
   });
 
   it("failed krever gyldig feilkode og ingen tellere er påkrevd; completed kan ikke ha feilkode", async () => {
     const { data: run } = await startRun(A, await freshAgent(A));
-    expect((await A.client.from("search_runs").update({ status: "failed" }).eq("id", run!.id)).error).not.toBeNull();
-    expect((await A.client.from("search_runs").update({ status: "failed", error_code: "hemmelig passord" }).eq("id", run!.id)).error).not.toBeNull();
-    expect((await A.client.from("search_runs").update({ status: "completed", counts: counts(0), error_code: "internal" }).eq("id", run!.id)).error).not.toBeNull();
-    const ok = await A.client.from("search_runs").update({ status: "failed", error_code: "timeout" }).eq("id", run!.id).select("status");
-    expect(ok.data).toEqual([{ status: "failed" }]);
+    expect((await fail(A, run!.id, null)).error).not.toBeNull();
+    expect((await fail(A, run!.id, "hemmelig passord")).error).not.toBeNull();
+    // completed med feilkode kan ikke konstrueres via den betrodde veien; heller ikke direkte som eier (trigger)
+    await expect(db.query("update public.search_runs set status = 'completed', counts = $2::jsonb, error_code = 'internal' where id = $1", [run!.id, JSON.stringify(counts(0))])).rejects.toThrow();
+    expect((await fail(A, run!.id, "timeout")).error).toBeNull();
+    expect((await db.query("select status, error_code from public.search_runs where id = $1", [run!.id])).rows[0]).toEqual({ status: "failed", error_code: "timeout" });
   });
 
   it("avsluttet kjøring er endelig; ingen retur til running; ingen nye resultater; kriterier er uforanderlige", async () => {
     const { data: run } = await startRun(A, await freshAgent(A));
-    await A.client.from("search_runs").update({ status: "failed", error_code: "unavailable" }).eq("id", run!.id);
-    // Etter avslutning matcher ikke update-policyen (status = running) lenger: ingen rader berøres
+    await fail(A, run!.id, "unavailable");
+    // Brukere kan ikke endre kjøringer i det hele tatt; den betrodde veien nekter å røre en avsluttet kjøring
     for (const patch of [{ status: "running" }, { status: "completed", counts: counts(0) }, { error_code: "internal" }]) {
       const r = await A.client.from("search_runs").update(patch).eq("id", run!.id).select("id");
-      expect(r.data ?? [], JSON.stringify(patch)).toEqual([]);
+      expect(r.error?.code, JSON.stringify(patch)).toBe("42501");
     }
-    const add = await A.client.from("search_run_results").insert(result(run!.id, 1));
-    expect(add.error).not.toBeNull();
+    expect((await complete(A, run!.id, counts(0))).error).not.toBeNull();
+    expect((await fail(A, run!.id, "internal")).error).not.toBeNull();
+    expect((await store(A, run!.id, result(run!.id, 1))).error).not.toBeNull();
     // Som eier (omgår RLS): triggeren avviser likevel
     await expect(db.query("update public.search_runs set status = 'running', error_code = null where id = $1", [run!.id])).rejects.toThrow(/search_run_invalid_transition|check/);
     const { data: run2 } = await startRun(A, await freshAgent(A));
@@ -290,7 +311,7 @@ describe("statusoverganger", () => {
 
   it("resultater kan ikke endres eller slettes av bruker (ingen UPDATE/DELETE-rettighet)", async () => {
     const { data: run } = await startRun(A, await freshAgent(A));
-    await A.client.from("search_run_results").insert(result(run!.id, 1));
+    await store(A, run!.id, result(run!.id, 1));
     expect((await A.client.from("search_run_results").update({ rank: 5 }).eq("search_run_id", run!.id)).error?.code).toBe("42501");
     expect((await A.client.from("search_run_results").delete().eq("search_run_id", run!.id)).error?.code).toBe("42501");
     expect((await A.client.from("search_runs").delete().eq("id", run!.id)).error?.code).toBe("42501");
@@ -310,7 +331,7 @@ describe("idempotens og samtidighet", () => {
     const token = randomUUID();
     const first = await A.client.from("search_runs").insert({ agent_id: id, request_token: token, provider: "synthetic-demo" }).select("id").single();
     expect(first.error).toBeNull();
-    await A.client.from("search_runs").update({ status: "failed", error_code: "timeout" }).eq("id", first.data!.id);
+    await fail(A, first.data!.id, "timeout");
     const second = await A.client.from("search_runs").insert({ agent_id: id, request_token: token, provider: "synthetic-demo" });
     expect(second.error?.code).toBe("23505");
     expect(second.error?.message).toContain("search_runs_token_key");
@@ -323,7 +344,7 @@ describe("idempotens og samtidighet", () => {
     const second = await startRun(A, id);
     expect(second.error?.code).toBe("23505");
     expect(second.error?.message).toContain("search_runs_one_running_per_agent");
-    await A.client.from("search_runs").update({ status: "completed", counts: counts(0) }).eq("id", first.data!.id);
+    await complete(A, first.data!.id, counts(0));
     expect((await startRun(A, id)).error).toBeNull();
   });
 
@@ -390,11 +411,12 @@ describe("firmaisolasjon i fremmednøkler", () => {
       await db.query("alter table public.search_runs disable trigger search_runs_before_insert");
       await db.query("savepoint s1");
       await expect(db.query(
-        `insert into public.search_run_results (search_run_id, dealership_id, source, source_listing_id, content_hash, rank, match_status, unknown_criteria, listing_snapshot)
-         values ($1, $2, 'synthetic-demo', 'L-1', $3, 1, 'match', '[]', '{"source":"synthetic-demo","sourceListingId":"L-1"}')`, [run!.id, B.firm, HASH])).rejects.toThrow(/foreign key|search_run_results_run_fkey/);
+        `insert into public.search_run_results (search_run_id, dealership_id, source, source_listing_id, content_hash, rank, match_status, unknown_criteria, listing_snapshot, rights_profile_version, expires_at)
+         values ($1, $2, 'synthetic-demo', 'L-1', $3, 1, 'match', '[]', '{"source":"synthetic-demo","sourceListingId":"L-1"}', 1, now() + interval '1 day')`, [run!.id, B.firm, HASH])).rejects.toThrow(/foreign key|search_run_results_run_fkey/);
       await db.query("rollback to savepoint s1");
       await expect(db.query(
-        "insert into public.search_runs (dealership_id, agent_id, request_token, provider, agent_version, status, criteria_snapshot, started_at, created_at) values ($1, $2, $3, 'synthetic-demo', 1, 'running', '{}', now(), now())",
+        `insert into public.search_runs (dealership_id, agent_id, request_token, provider, agent_version, status, criteria_snapshot, started_at, created_at, rights_profile_id, rights_profile_version, expires_at)
+         values ($1, $2, $3, 'synthetic-demo', 1, 'running', '{}', now(), now(), (select id from private.provider_rights_profiles where provider = 'synthetic-demo' and version = 1), 1, now() + interval '1 day')`,
         [B.firm, A.activeId, randomUUID()])).rejects.toThrow(/search_runs_agent_fkey/);
     } finally {
       await db.query("rollback");

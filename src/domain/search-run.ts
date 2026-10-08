@@ -8,7 +8,7 @@ import { evaluateListing, type Criterion, type MatchEvaluation } from "./matchin
 export type SearchRunStatus = "running" | "completed" | "failed";
 
 export const SEARCH_RUN_ERROR_CODES = [
-  "authentication", "forbidden", "rate_limit", "invalid_query", "timeout", "unavailable", "malformed_data", "abandoned", "internal",
+  "authentication", "forbidden", "rate_limit", "invalid_query", "timeout", "unavailable", "malformed_data", "abandoned", "internal", "rights_blocked",
 ] as const;
 export type SearchRunErrorCode = (typeof SEARCH_RUN_ERROR_CODES)[number];
 
@@ -19,8 +19,9 @@ export interface ResultSnapshot {
   sourceModifiedAt: string | null;
   firstSeenAt: string;
   lastSeenAt: string;
-  make: string;
-  model: string;
+  /** `null` når annonsen ikke oppgir det, eller når rettighetsprofilen ikke tillater lagring (se `withheld`). */
+  make: string | null;
+  model: string | null;
   variant: string | null;
   firstRegistration: NormalizedListing["specs"]["firstRegistration"];
   mileage: NormalizedListing["specs"]["mileage"];
@@ -33,6 +34,8 @@ export interface ResultSnapshot {
   price: { stated: string; currency: string; amountMinor: string | null; basis: "gross" | "net" | "unknown" } | null;
   /** Alltid satt: syntetiske data skal kunne merkes også i historikken. */
   provenanceKind: "synthetic" | "provider";
+  /** Hva rettighetsprofilen holdt tilbake fra lagring (DEC-028). Tom liste = alt som ble hentet er lagret. */
+  withheld: ("price" | "specs" | "seller")[];
 }
 
 export function projectSnapshot(l: NormalizedListing): ResultSnapshot {
@@ -56,6 +59,7 @@ export function projectSnapshot(l: NormalizedListing): ResultSnapshot {
     // Beløp som tekst (DEC-020): stabilt og uten presisjonstap i JSON.
     price: p === null ? null : { stated: p.stated.amount, currency: p.stated.currency, amountMinor: p.amount === null ? null : String(p.amount.amountMinor), basis: p.basis },
     provenanceKind: l.provenance.kind,
+    withheld: [],
   };
 }
 

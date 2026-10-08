@@ -11,8 +11,9 @@ import { getSessionContext } from "@/server/session";
 
 export const metadata: Metadata = { title: "Søkekjøring — Project Scout" };
 
-function priceText(p: StoredResult["snapshot"]["price"]): string {
-  if (!p) return "ikke oppgitt";
+function priceText(snap: StoredResult["snapshot"]): string {
+  const p = snap.price;
+  if (!p) return snap.withheld?.includes("price") ? "pris lagres ikke (rettighetsprofil)" : "ikke oppgitt";
   const basis = p.basis === "gross" ? "brutto" : p.basis === "net" ? "netto" : "mva.-grunnlag ukjent";
   return p.amountMinor === null
     ? `${p.stated} ${p.currency} (valuta støttes ikke, ikke omregnet) · ${basis}`
@@ -46,6 +47,7 @@ export default async function RunPage({
         <dt className="text-slate-500">Startet</dt><dd>{formatDateTime(run.startedAt)}</dd>
         <dt className="text-slate-500">Avsluttet</dt><dd>{run.finishedAt ? formatDateTime(run.finishedAt) : "ikke avsluttet"}</dd>
         <dt className="text-slate-500">Agentversjon</dt><dd>{run.agentVersion}</dd>
+        <dt className="text-slate-500">Slettes automatisk</dt><dd data-testid="run-expires">{formatDateTime(run.expiresAt)} (rettighetsprofil {run.provider} v{run.rightsProfileVersion})</dd>
         {run.counts && (
           <>
             <dt className="text-slate-500">Treff</dt><dd data-testid="run-matches">{run.counts.matches}</dd>
@@ -91,13 +93,15 @@ export default async function RunPage({
               {results.map((r) => (
                 <li key={r.sourceListingId} data-listing-id={r.sourceListingId} data-match-status={r.matchStatus} className="rounded-lg border border-slate-200 bg-white p-3 text-sm">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="font-medium">#{r.rank} {r.snapshot.make} {r.snapshot.model}{r.snapshot.variant ? ` ${r.snapshot.variant}` : ""}</span>
+                    <span className="font-medium">
+                      #{r.rank} {r.snapshot.make ? `${r.snapshot.make} ${r.snapshot.model ?? ""}${r.snapshot.variant ? ` ${r.snapshot.variant}` : ""}` : "Detaljer lagres ikke (rettighetsprofil)"}
+                    </span>
                     <span className={r.matchStatus === "match" ? "text-emerald-800" : "text-amber-900"}>
                       {r.matchStatus === "match" ? "Treff" : `Må kontrolleres (ukjent: ${r.unknownCriteria.map((c) => CRITERION_LABEL[c] ?? c).join(", ")})`}
                     </span>
                   </div>
                   <p className="text-slate-600">
-                    {formatFirstRegistration(r.snapshot.firstRegistration)} · {formatMileage(r.snapshot.mileage)} · {priceText(r.snapshot.price)} · syntetisk
+                    {formatFirstRegistration(r.snapshot.firstRegistration)} · {formatMileage(r.snapshot.mileage)} · {priceText(r.snapshot)} · syntetisk
                   </p>
                   <Link href={`/opportunities/${encodeURIComponent(r.sourceListingId)}`} className="underline">Se annonse</Link>
                 </li>

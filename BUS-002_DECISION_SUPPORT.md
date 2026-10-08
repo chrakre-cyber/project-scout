@@ -1,6 +1,6 @@
 # BUS-002 — beslutningsgrunnlag: datamodell og operativ modell for eksterne markedsdata
 
-Dato: 08.10.2026 · Status: **UTKAST TIL GODKJENNING** (ingen kode, ingen migrasjon, DEV-005B er ikke startet) · Eier: Christian · Relaterer: BUS-001, BUS-002, OPEN-001, OPEN-002, OPEN-006, DEC-015, DEC-026, FU-005-1, DEV-005A, DEV-005B, DEV-006
+Dato: 08.10.2026 · Status: **PRINSIPPET GODKJENT 08.10.2026** (DEC-028). DEV-005B0 er opprettet og levert til REVIEW; DEV-005B forblir BLOCKED på provider-avklaringer. Resten av dokumentet (anbefalinger per fase, spørsmål til markedsplassene) er fortsatt beslutningsgrunnlag, ikke vedtatt · Eier: Christian · Relaterer: BUS-001, BUS-002, OPEN-001, OPEN-002, OPEN-006, DEC-015, DEC-026, FU-005-1, DEV-005A, DEV-005B, DEV-006
 
 ## 0. Hvordan fakta er merket
 

@@ -33,13 +33,11 @@ const EXPECTED_COLUMN_PRIVS: Record<string, { insert: string[]; update: string[]
     insert: ["active", "assumptions", "dealership_id", "filters", "name"],
     update: ["active", "assumptions", "filters", "name"],
   },
-  // DEV-005: klienten oppgir bare hva som ikke kan utledes. Firma, agentversjon, kriterier og tidspunkt settes av databasen.
+  // DEV-005: klienten oppgir bare hva som ikke kan utledes. Firma, agentversjon, kriterier, rettighetsprofil og tidspunkt
+  // settes av databasen. DEV-005B0: brukere kan IKKE avslutte kjøringer (update: []) og har ingen skriverett på resultater
+  // (ingen oppføring) — det gjøres av den betrodde skriveveien (scout_ingest).
   search_runs: {
     insert: ["agent_id", "provider", "request_token", "requested_agent_version"],
-    update: ["counts", "error_code", "status"],
-  },
-  search_run_results: {
-    insert: ["content_hash", "listing_snapshot", "match_status", "rank", "search_run_id", "source", "source_listing_id", "unknown_criteria"],
     update: [],
   },
 };
@@ -95,7 +93,7 @@ describe("policies", () => {
   it("bare authenticated-policyer, ingen åpne (true), ingen bruk av JWT-metadata", async () => {
     const pol = await q<{ tablename: string; policyname: string; roles: string[]; cmd: string; qual: string | null; with_check: string | null }>(
       "select tablename::text, policyname::text, roles::text[], cmd::text, qual, with_check from pg_policies where schemaname = 'public'");
-    expect(pol.length).toBe(10);
+    expect(pol.length).toBe(8);
     for (const p of pol) {
       expect(p.roles, p.policyname).toEqual(["authenticated"]);
       const text = `${p.qual ?? ""} ${p.with_check ?? ""}`;
@@ -104,7 +102,7 @@ describe("policies", () => {
     }
     expect(pol.map((p) => `${p.tablename}:${p.cmd}`).sort()).toEqual([
       "dealership_members:SELECT", "dealerships:SELECT", "search_agents:INSERT", "search_agents:SELECT", "search_agents:UPDATE",
-      "search_run_results:INSERT", "search_run_results:SELECT", "search_runs:INSERT", "search_runs:SELECT", "search_runs:UPDATE",
+      "search_run_results:SELECT", "search_runs:INSERT", "search_runs:SELECT",
     ]);
   });
 
@@ -131,14 +129,17 @@ describe("funksjoner i private", () => {
   it("SECURITY DEFINER er begrenset til kjente funksjoner", async () => {
     const rows = await q<{ proname: string }>("select proname::text from pg_proc where prosecdef and pronamespace in ('private'::regnamespace, 'public'::regnamespace) order by 1");
     expect(rows.map((r) => r.proname)).toEqual([
-      "enforce_active_agent_limit", "my_dealership_ids", "search_run_results_before_insert", "search_runs_before_insert", "search_runs_before_update",
+      "enforce_active_agent_limit", "my_dealership_ids", "purge_expired_search_runs", "rights_profile_in_force", "rights_profiles_guard",
+      "search_run_results_before_insert", "search_runs_before_insert", "search_runs_before_update",
+      "trusted_complete_run", "trusted_fail_run", "trusted_run_policy", "trusted_store_results",
     ]);
   });
 
   it("administrasjonsfunksjoner og triggerfunksjoner kan ikke kjøres av ordinære roller eller service_role", async () => {
     for (const fn of ["private.admin_create_dealership(text)", "private.admin_add_member(text, uuid)",
       "private.enforce_active_agent_limit()", "private.search_agents_before_write()",
-      "private.search_runs_before_insert()", "private.search_runs_before_update()", "private.search_run_results_before_insert()"]) {
+      "private.search_runs_before_insert()", "private.search_runs_before_update()", "private.search_run_results_before_insert()",
+      "private.rights_profiles_guard()", "private.rights_profile_in_force(text, timestamptz)"]) {
       for (const role of ["anon", "authenticated", "service_role", "public"]) {
         expect((await q<{ ok: boolean }>("select has_function_privilege($1, $2, 'EXECUTE') ok", [role, fn]))[0]!.ok, `${role} ${fn}`).toBe(false);
       }
@@ -190,6 +191,29 @@ describe("constraints og triggere", () => {
     ] as const) {
       const trg = await q<{ tgname: string; tgenabled: string }>("select tgname::text, tgenabled::text from pg_trigger where tgrelid = $1::regclass and not tgisinternal order by 1", [`public.${t}`]);
       expect(trg, t).toEqual(expected.map((n) => ({ tgname: n, tgenabled: "O" })));
+    }
+  });
+
+  it("DEV-005B0: rettighetsprofiler (private), rollen scout_ingest og utløpskolonner", async () => {
+    expect((await q("select relname from pg_class where relnamespace = 'private'::regnamespace and relkind in ('r','p') order by 1")).map((r) => (r as { relname: string }).relname)).toEqual(["provider_rights_profiles"]);
+    const trg = await q<{ tgname: string; tgenabled: string }>("select tgname::text, tgenabled::text from pg_trigger where tgrelid = 'private.provider_rights_profiles'::regclass and not tgisinternal");
+    expect(trg).toEqual([{ tgname: "provider_rights_profiles_guard", tgenabled: "O" }]);
+    const role = (await q<{ rolcanlogin: boolean; rolsuper: boolean; rolbypassrls: boolean }>("select rolcanlogin, rolsuper, rolbypassrls from pg_roles where rolname = 'scout_ingest'"))[0];
+    expect(role, "rollen scout_ingest finnes").toBeDefined();
+    expect(role).toEqual({ rolcanlogin: false, rolsuper: false, rolbypassrls: false }); // NOLOGIN som standard; passord settes utenfor git
+    for (const t of ["search_runs", "search_run_results"]) {
+      const cols = await q<{ column_name: string; is_nullable: string }>(
+        "select column_name::text, is_nullable::text from information_schema.columns where table_schema = 'public' and table_name = $1 and column_name in ('rights_profile_version', 'expires_at')", [t]);
+      expect(cols.map((c) => `${c.column_name}:${c.is_nullable}`).sort(), t).toEqual(["expires_at:NO", "rights_profile_version:NO"]);
+    }
+    // Ingen rolle utenom eieren kan skrive til søkekjøringstabellene direkte
+    for (const role of ["anon", "authenticated", "scout_ingest"]) { // service_role er Supabase-standard og brukes ikke av appen
+      for (const t of ["search_runs", "search_run_results"]) {
+        for (const priv of ["INSERT", "UPDATE", "DELETE", "TRUNCATE"]) {
+          if (role === "authenticated" && t === "search_runs" && priv === "INSERT") continue; // brukere starter kjøringer (kolonnevis)
+          expect((await q<{ ok: boolean }>("select has_table_privilege($1, $2, $3) ok", [role, `public.${t}`, priv]))[0]!.ok, `${role} ${priv} ${t}`).toBe(false);
+        }
+      }
     }
   });
 

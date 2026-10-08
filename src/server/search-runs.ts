@@ -4,8 +4,11 @@ import type { RunCounts, ResultSnapshot, SearchRunErrorCode, SearchRunStatus } f
 import type { AgentFilters } from "@/domain/types";
 import { getMarketplaceProvider, type MarketplaceProvider } from "@/providers/marketplace";
 import { agentFromRow } from "./agent-records";
-import { runSearchPipeline, type PipelineOptions, type ResultRow } from "./search-pipeline";
+import { runSearchPipeline, type PipelineOptions } from "./search-pipeline";
 import type { SessionContext } from "./session";
+import {
+  TrustedPathError, checkTrustedPath, trustedCompleteRun, trustedFailRun, trustedRunPolicy, trustedStoreResults,
+} from "./trusted-ingest";
 
 type Member = Extract<SessionContext, { status: "member" }>;
 
@@ -14,7 +17,8 @@ type Member = Extract<SessionContext, { status: "member" }>;
  * forventet agentversjon; firma, agentversjon og kriteriesnapshot utledes av databasen. Matching skjer i domenet.
  */
 
-export type RunStartError = "not_found" | "inactive" | "not_ready" | "stale_agent" | "already_running" | "invalid" | "failed";
+export type RunStartError =
+  | "not_found" | "inactive" | "not_ready" | "stale_agent" | "already_running" | "invalid" | "rights_unavailable" | "unavailable" | "failed";
 
 export interface SearchRun {
   id: string;
@@ -27,6 +31,9 @@ export interface SearchRun {
   errorCode: SearchRunErrorCode | null;
   startedAt: string;
   finishedAt: string | null;
+  /** Når kjøringen og resultatene slettes (rettighetsprofilens retensjon, DEC-028). */
+  expiresAt: string;
+  rightsProfileVersion: number;
 }
 
 export interface StoredResult {
@@ -41,19 +48,20 @@ export type RunStartResult =
   | { ok: true; run: SearchRun; replayed: boolean }
   | { ok: false; code: RunStartError; runId?: string };
 
-const RUN_COLUMNS = "id, agent_id, agent_version, provider, status, criteria_snapshot, counts, error_code, started_at, finished_at";
+const RUN_COLUMNS =
+  "id, agent_id, agent_version, provider, status, criteria_snapshot, counts, error_code, started_at, finished_at, expires_at, rights_profile_version";
 const RESULT_COLUMNS = "rank, source_listing_id, match_status, unknown_criteria, listing_snapshot";
-const CHUNK = 250;
+const CHUNK = 250; // ≤ 500 per kall i trusted_store_results
 export const RESULTS_PAGE_SIZE = 50;
 
 interface RunRow {
   id: string; agent_id: string; agent_version: number; provider: string; status: SearchRunStatus;
-  criteria_snapshot: unknown; counts: unknown; error_code: SearchRunErrorCode | null; started_at: string; finished_at: string | null;
+  criteria_snapshot: unknown; counts: unknown; error_code: SearchRunErrorCode | null; started_at: string; finished_at: string | null; expires_at: string; rights_profile_version: number;
 }
 
 export interface RunDeps {
   provider?: MarketplaceProvider;
-  pipeline?: PipelineOptions;
+  pipeline?: Omit<PipelineOptions, "rights">;
 }
 
 const isUuid = (v: string) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(v);
@@ -78,6 +86,7 @@ function runFromRow(row: RunRow): SearchRun {
   return {
     id: row.id, agentId: row.agent_id, agentVersion: row.agent_version, provider: row.provider, status: row.status,
     criteria, counts: (row.counts as RunCounts | null) ?? null, errorCode: row.error_code, startedAt: row.started_at, finishedAt: row.finished_at,
+    expiresAt: row.expires_at, rightsProfileVersion: row.rights_profile_version,
   };
 }
 
@@ -88,6 +97,7 @@ function mapInsertError(error: { code?: string; message?: string; details?: stri
     if (msg.includes("search_run_agent_inactive")) return "inactive";
     if (msg.includes("search_run_agent_not_ready")) return "not_ready";
     if (msg.includes("search_run_stale_agent")) return "stale_agent";
+    if (msg.includes("search_run_rights_")) return "rights_unavailable";
     return "invalid";
   }
   if (error.code === "23505" && msg.includes("search_runs_one_running_per_agent")) return "already_running";
@@ -103,6 +113,8 @@ export async function startSearchRun(
 ): Promise<RunStartResult> {
   if (!isUuid(agentId) || !isUuid(token)) return { ok: false, code: "invalid" };
   const provider = deps.provider ?? getMarketplaceProvider();
+  // Uten en fungerende betrodd skrivevei kan en kjøring ikke avsluttes; start den da ikke (ville blitt stående som «pågår»).
+  if ((await checkTrustedPath()) !== "ok") return { ok: false, code: "unavailable" };
   const supabase = await client();
 
   const ins = await supabase
@@ -126,43 +138,42 @@ export async function startSearchRun(
   }
 
   const run = runFromRow(ins.data as RunRow);
-  if (!run.criteria) return fail(supabase, run, "internal");
+  if (!run.criteria) return fail(supabase, ctx, run, "internal");
 
   try {
-    const outcome = await runSearchPipeline(provider, run.criteria.filters, deps.pipeline);
-    if (!outcome.ok) return fail(supabase, run, outcome.errorCode);
-    const stored = await storeResults(supabase, run.id, provider.source, outcome.rows);
-    if (!stored) return fail(supabase, run, "internal");
-    const done = await supabase
-      .from("search_runs").update({ status: "completed", counts: outcome.counts })
-      .eq("id", run.id).eq("status", "running").select(RUN_COLUMNS).maybeSingle();
-    if (done.error || !done.data) return fail(supabase, run, "internal");
-    return { ok: true, run: runFromRow(done.data as RunRow), replayed: false };
-  } catch {
-    return fail(supabase, run, "internal");
+    // Betrodd skrivevei (DEC-029): policy, lagring og avslutning går via scout_ingest, ikke brukerens sesjon.
+    const policy = await trustedRunPolicy(ctx.dealership.id, run.id);
+    const outcome = await runSearchPipeline(provider, run.criteria.filters, { ...deps.pipeline, rights: policy });
+    if (!outcome.ok) return fail(supabase, ctx, run, outcome.errorCode);
+    for (let i = 0; i < outcome.rows.length; i += CHUNK) {
+      await trustedStoreResults(ctx.dealership.id, run.id, outcome.rows.slice(i, i + CHUNK));
+    }
+    await trustedCompleteRun(ctx.dealership.id, run.id, outcome.counts);
+    return { ok: true, run: await reread(supabase, run), replayed: false };
+  } catch (e) {
+    return fail(supabase, ctx, run, e instanceof TrustedPathError && e.code === "rights_blocked" ? "rights_blocked" : "internal");
   }
 }
 
 type Supabase = Awaited<ReturnType<typeof client>>;
 
-async function storeResults(supabase: Supabase, runId: string, source: string, rows: ResultRow[]): Promise<boolean> {
-  for (let i = 0; i < rows.length; i += CHUNK) {
-    const chunk = rows.slice(i, i + CHUNK).map((r) => ({
-      search_run_id: runId, source, source_listing_id: r.sourceListingId, content_hash: r.contentHash, rank: r.rank,
-      match_status: r.matchStatus, unknown_criteria: r.unknownCriteria, listing_snapshot: r.snapshot,
-    }));
-    const { error } = await supabase.from("search_run_results").insert(chunk);
-    if (error) return false;
-  }
-  return true;
+/** Sannheten om kjøringen slik databasen har den (brukerens sesjon kan lese, ikke skrive). */
+async function reread(supabase: Supabase, run: SearchRun): Promise<SearchRun> {
+  const { data } = await supabase.from("search_runs").select(RUN_COLUMNS).eq("id", run.id).maybeSingle();
+  return data ? runFromRow(data as RunRow) : run;
 }
 
-/** Aldri la en kjøring bli stående som «running»: marker som feilet (best effort; stale-opprydding tar resten). */
-async function fail(supabase: Supabase, run: SearchRun, code: SearchRunErrorCode): Promise<RunStartResult> {
-  const { data } = await supabase
-    .from("search_runs").update({ status: "failed", error_code: code })
-    .eq("id", run.id).eq("status", "running").select(RUN_COLUMNS).maybeSingle();
-  return { ok: true, run: data ? runFromRow(data as RunRow) : { ...run, status: "failed", errorCode: code }, replayed: false };
+/**
+ * Aldri la en kjøring bli stående som «running»: marker som feilet via den betrodde veien (best effort). Lykkes ikke
+ * det, returneres kjøringens faktiske tilstand, og opprydding av hengende kjøringer (5 min) tar resten.
+ */
+async function fail(supabase: Supabase, ctx: Member, run: SearchRun, code: SearchRunErrorCode): Promise<RunStartResult> {
+  try {
+    await trustedFailRun(ctx.dealership.id, run.id, code);
+  } catch {
+    // ignorert: tilstanden leses på nytt under
+  }
+  return { ok: true, run: await reread(supabase, run), replayed: false };
 }
 
 export async function listRuns(ctx: Member, agentId: string, limit = 20): Promise<SearchRun[]> {

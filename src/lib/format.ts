@@ -143,6 +143,7 @@ export const RUN_ERROR_LABEL: Record<string, string> = {
   malformed_data: "Kilden returnerte data som ikke kunne leses.",
   abandoned: "Kjøringen ble ikke fullført og er avbrutt.",
   internal: "Kjøringen feilet internt. Prøv igjen.",
+  rights_blocked: "Rettighetsprofilen for kilden utløp eller ble trukket mens søket pågikk. Ingenting ble lagret.",
 };
 
 export const CRITERION_LABEL: Record<string, string> = {
