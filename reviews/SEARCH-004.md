@@ -5,7 +5,7 @@ Status: **REVIEW** (ikke DONE). Utfører Claude Code, kontrollør Codex. UI-/lag
 ## 0. Utgangspunkt
 
 - Branch `claude/wonderful-bardeen-yussx3`, **base/HEAD før endring: `70f2d90`** (`70f2d90` = SEARCH-003-FIX1-ZIP oppå koden `8e019be`; ingen kodeendring i `70f2d90`). Arbeidstreet var rent. Ingen avvik fra oppdragets beskrivelse.
-- **Commits:** implementasjon `@IMPL@`; sluttcommit = den neste commiten (kun rapportens commit-hash; hash i ZIP-ens MANIFEST/README).
+- **Commits:** implementasjon `52dea9d`; sluttcommit = den neste commiten (kun rapportens commit-hash; hash i ZIP-ens MANIFEST/README).
 - Christians lokale app er fortsatt på SYNC-001; SEARCH-003/FIX1 og denne leveransen er ikke lagt inn lokalt. Ingen automatisk synkronisering antatt.
 - Bevart uendret: domenet (`src/domain/**`), prototypen, SEARCH-003-adapteren, provider-kontrakten (`NormalizedListing`, `MarketplaceProvider`), eksisterende søkepipeline, agenter, lagring, pakker. Windows-/utløpsrettelsene og DEC-030/031 er uberørt.
 
