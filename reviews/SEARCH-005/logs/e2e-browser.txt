@@ -1,0 +1,55 @@
+OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret (c3b0020d39274f2405a4f733c391c7fa)
+bygger appen mot testemulatoren …
+OK   anonym /searches/new omdirigeres
+OK   anonym /searches/<uuid> omdirigeres
+OK   anonym /searches ber om innlogging og viser ingen utkast
+OK   bruker uten firma får ikke lage søk
+OK   eksisterende agentside har lenke til nye søk og er ellers uendret
+OK   oversikt: ingen utkast ennå, forklarer at utkast ikke er aktive agenter
+OK   GLS-eksempel er forhåndsutfylt (merke, modell, seter 7–7, budsjett 750 000)
+OK   GLS-eksempel: kilometerstand er ikke satt
+OK   valideringsfeil: prioritet for farger og registreringsscenario må velges uttrykkelig
+OK   valideringsfeil: skjemaet beholder verdiene (merke/budsjett) og fokus flyttes til feiloversikten
+OK   ingenting er lagret etter avvist skjema
+OK   ugyldig budsjett 0, avvik 150 % og dato 2021-13 gir feltfeil
+OK   fortsatt ingenting lagret
+OK   GLS-utkast lagret (versjon 1, eget firma, bigint som streng i lagret dokument)
+OK   sammendrag: kilometerstand vises som IKKE satt; grensen 825 000 kr er en grense og ikke et treff
+OK   GLS: ingen fullstendige treff, ærlig forklaring på hva demokilden mangler
+OK   GLS: viser at innkjøpskostnad til Norge ikke er beregnet; ingen total eller budsjettreff påstås
+OK   GLS: resultatet sier at det beregnes nå og ikke lagres
+OK   GLS: dekning oppgis (109 av 109, ikke avkortet)
+OK   resultat GLS (skrivebord): ingen horisontal rulling (1280 ≤ 1280)
+OK   demofixtur: ukjent EUR-kostnad lagret som ukjent (null) med valuta EUR, inkludert i budsjettet; fast id «transport»
+OK   demofixtur: minst ett kjent treff og ett kjent kravbrudd (treff 4, må kontrolleres 2, ikke oppfylt 103)
+OK   treff viser merke/modell, registrering, km, annonsepris med valuta og brutto/netto/ukjent
+OK   treff: sier at innkjøpskostnad til Norge ikke er beregnet
+OK   forklaring viser krav og ønsker
+OK   ekskludert bil: forklaringen peker på kjent kravbrudd (Ikke oppfylt)
+OK   detalj: syntetisk merking, ingen kilde-URL som lenke, ubetrodd tekst vist som tekst, ikke-beregnet kostnad
+OK   lagre → åpne → endre → lagre: versjon 2; 0 er 0 (ikke ukjent); valuta bevart; mva-grunnlag bevart
+OK   egne kostnadslinjer har varige id-er (c-<hex>), ikke posisjonsbaserte custom-<n>
+OK   datapresisjon (måned) og fritekstvariant er bevart
+OK   gjenåpnet skjema viser lagret rad med skjult id, uten at id vises som tekst
+OK   sletting/omrekkefølge: gjenværende linje beholder id; ny linje får ny id; slettet id gjenbrukes ikke
+OK   foreldet versjon gir forståelig konflikt; vinneren overskrives ikke; taperens tekst beholdes i skjemaet
+OK   forhåndsvisning av foreldet versjon viser ingen resultater
+OK   ulagrede endringer: forhåndsvisning er skjult og bruker får beskjed
+OK   kildefeil: tydelig melding, ingen resultater, ingen påstand om dekning
+OK   firma B ser ingen av firma A sine utkast
+OK   firma B: /searches/<A-id> gir 404
+OK   firma B: /searches/<A-id>/preview?v=4 gir 404
+OK   firma B: /searches/<A-id>/preview/syn-005?v=4 gir 404
+OK   firma B kan ikke overskrive A sitt utkast via manipulert id/versjon (avvist, A uendret)
+OK   nytt utkast i firma B: firma fra membership (ikke skjemafeltet), versjon 1, ikke aktiv-felt
+OK   appen sendte aldri dealership_id i skrivekall mot databasen
+OK   tastatur: fokus i søkeflaten har synlig markering (≥ 2 px)
+OK   tastatur: lagre-knappen kan nås med Tab alene (137 stopp i søkeflaten)
+OK   skjema (skrivebord): ingen horisontal rulling (1280 ≤ 1280)
+OK   mobil: lagret søk/skjema: ingen horisontal rulling (390 ≤ 390)
+OK   mobil: resultat: ingen horisontal rulling (390 ≤ 390)
+OK   mobil: handlinger er synlige og ikke tildekket (første handlingsknapp i viewport-bredde)
+OK   mobil: oversikt: ingen horisontal rulling (390 ≤ 390)
+OK   ingen JavaScript-feil i konsollen under hele flyten
+
+51/51 sjekker OK

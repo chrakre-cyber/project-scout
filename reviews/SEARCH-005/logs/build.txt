@@ -1,0 +1,42 @@
+
+> project-scout@0.1.0 build
+> next build
+
+▲ Next.js 16.3.8 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 55ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1045ms
+  Running TypeScript ...
+  Finished TypeScript in 1424ms ...
+  Collecting page data using 3 workers ...
+  Generating static pages using 3 workers (0/9) ...
+  Generating static pages using 3 workers (2/9) 
+  Generating static pages using 3 workers (4/9) 
+  Generating static pages using 3 workers (6/9) 
+✓ Generating static pages using 3 workers (9/9) in 149ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ƒ /
+├ ƒ /_not-found
+├ ƒ /agents
+├ ƒ /agents/[id]
+├ ƒ /agents/[id]/runs
+├ ƒ /agents/[id]/runs/[runId]
+├ ƒ /agents/new
+├ ƒ /dashboard
+├ ƒ /login
+├ ƒ /opportunities/[id]
+├ ƒ /searches
+├ ƒ /searches/[id]
+├ ƒ /searches/[id]/preview
+├ ƒ /searches/[id]/preview/[listingId]
+└ ƒ /searches/new
+
+
+ƒ Proxy (Middleware)
+
+ƒ  (Dynamic)  server-rendered on demand
+

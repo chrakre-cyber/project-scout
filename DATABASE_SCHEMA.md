@@ -115,3 +115,8 @@ Retensjon av råannonse/bilder bestemmes av BUS-002. Man kan lagre revisionshash
 ## Planlagt modellendring 15.10.2026 — DEC-030
 
 Ny søkemodell er beskrevet i MEROVO_SEARCH_SPEC.md, ikke migrert her. Eksisterende søk/kjøringer og deres opprinnelige kriterier bevares. Budsjett i NOK må ikke utledes fra gammel maks annonsepris i lokal valuta eller retail. Overgang krever ny søkeversjon, eksplisitt brukerangitt budsjett, server-/databasevalidering og oppgraderingstester uten stille datatap eller automatisk masseaktivering/pause. Nye migrasjoner er append-only. RLS, firmatilgang, atomisk maks ti aktive og betrodd skrivevei bevares. Retensjon av nye kalkylesnapshots må avklares iht. rettighetsprofilen.
+
+
+## Implementert i SEARCH-005 (søkeutkast)
+
+`public.search_drafts` (migrasjon `20261015090000_search005_search_drafts.sql`): `id`, `dealership_id` (satt av databasen fra membership), `name` (1–120 tegn), `spec jsonb` (`merovo.search-model` v1; struktur kontrollert av `private.search_spec_valid`, ≤ 30 000 byte), `version` (databasestyrt), `base_version` (klientens konfliktpåstand; nullstilles), `created_by/updated_by`, tidsstempler. RLS: select/insert/update for eget firma; ingen delete; anon har ingenting. Kolonnerettigheter: insert `(name, spec)`, update `(name, spec, base_version)`. Triggere: `search_drafts_before_insert` (firma, versjon 1, opphav) og `search_drafts_before_update` (uforanderlige felt, konflikt, versjon+1 ved endring). Databasen validerer struktur, ikke katalog. Ingen kobling til `search_agents`/`search_runs`; påvirker ikke grensen på ti aktive agenter.

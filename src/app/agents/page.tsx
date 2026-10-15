@@ -37,7 +37,10 @@ export default async function AgentsPage({ searchParams }: { searchParams: Promi
           </p>
           <p className="text-xs text-slate-500">Aktiv betyr at agenten er aktivert. Du kan kjøre søk manuelt mot den syntetiske demokilden; automatisk søk finnes ikke, og det hentes ingen live mobile.de-data.</p>
         </div>
-        <Link href="/agents/new" className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">Ny agent</Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/searches" className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium hover:bg-slate-100">Nye søk (utkast)</Link>
+          <Link href="/agents/new" className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700">Ny agent</Link>
+        </div>
       </div>
       {errorText && <p role="alert" className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-800">{errorText}</p>}
       {successText && <p role="status" className="rounded-md border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-900">{successText}</p>}

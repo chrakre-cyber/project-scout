@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const links = [
   { href: "/dashboard", label: "Dashboard", match: ["/dashboard", "/opportunities"] },
   { href: "/agents", label: "Mine agenter", match: ["/agents"] },
+  { href: "/searches", label: "Nye søk", match: ["/searches"] },
 ];
 
 export function SiteNav() {

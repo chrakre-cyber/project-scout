@@ -110,3 +110,8 @@ Gjenoppretting fra backup og replay av jobb er del av pilotporten. Retensjon og 
 ## Planlagt utvidelse 15.10.2026 — søk og budsjett
 
 Se DEC-030 og MEROVO_SEARCH_SPEC.md. Skill kjøretøykrav, ønsker, budsjettsum, kostnadsforutsetninger og varslingsvalg i en versjonert modell. Matching, budsjettklassifisering og økonomiske beregninger forblir deterministisk domenelogikk. Provider-kapasitet skal være eksplisitt; ukjente/ikke støttede filtre må ikke falle bort stille. UI, server, databasevalidering, provider-kontrakt og resultat-hvitelister oppdateres samlet i senere oppgaver. Gjeldende implementasjon endres ikke av spesifikasjonen.
+
+
+## Søkeutkast og manuell forhåndsvisning (SEARCH-005)
+
+Ny flyt under `/searches`: skjema (`src/components/search/SearchForm.tsx`) → server-action → `parseSearchForm` (skjema → `SearchSpec`, domenets `validateSpec` mot demokatalogen) → `search_drafts` (RLS, firma fra membership). Forhåndsvisning (`src/server/search-preview.ts`): provider → kandidatadapter → `evaluateCandidate` → ikke-beregnet budsjett; beregnes per forespørsel og lagres ikke. Rå skjematilstand (`FormValues`), versjonert dokument (`SearchSpecJson`) og intern modell (`bigint`) holdes adskilt. Eksisterende `/agents`, kjøringer og dashboard er uendret.

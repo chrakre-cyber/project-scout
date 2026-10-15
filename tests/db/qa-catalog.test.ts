@@ -25,6 +25,7 @@ const EXPECTED_TABLE_PRIVS: Record<string, string[]> = {
   dealerships: ["SELECT"],
   dealership_members: ["SELECT"],
   search_agents: ["SELECT"],
+  search_drafts: ["SELECT"],
   search_runs: ["SELECT"],
   search_run_results: ["SELECT"],
 };
@@ -32,6 +33,12 @@ const EXPECTED_COLUMN_PRIVS: Record<string, { insert: string[]; update: string[]
   search_agents: {
     insert: ["active", "assumptions", "dealership_id", "filters", "name"],
     update: ["active", "assumptions", "filters", "name"],
+  },
+  // SEARCH-005: søkeutkast. Klienten oppgir bare navn og dokument; firma, versjon og tidspunkt settes av databasen.
+  // base_version er klientens påstand om hvilken versjon som redigeres (konfliktsjekk), nullstilles av triggeren.
+  search_drafts: {
+    insert: ["name", "spec"],
+    update: ["base_version", "name", "spec"],
   },
   // DEV-005: klienten oppgir bare hva som ikke kan utledes. Firma, agentversjon, kriterier, rettighetsprofil og tidspunkt
   // settes av databasen. DEV-005B0: brukere kan IKKE avslutte kjøringer (update: []) og har ingen skriverett på resultater
@@ -46,7 +53,7 @@ describe("tabeller i public", () => {
   it("alle tabeller har RLS aktivert (vakt for fremtidige migrasjoner)", async () => {
     const rows = await q<{ relname: string; relrowsecurity: boolean }>(
       "select relname, relrowsecurity from pg_class where relnamespace = 'public'::regnamespace and relkind in ('r','p')");
-    expect(rows.map((r) => r.relname).sort()).toEqual(["dealership_members", "dealerships", "search_agents", "search_run_results", "search_runs"]);
+    expect(rows.map((r) => r.relname).sort()).toEqual(["dealership_members", "dealerships", "search_agents", "search_drafts", "search_run_results", "search_runs"]);
     for (const r of rows) expect(r.relrowsecurity, r.relname).toBe(true);
   });
 
@@ -93,7 +100,7 @@ describe("policies", () => {
   it("bare authenticated-policyer, ingen åpne (true), ingen bruk av JWT-metadata", async () => {
     const pol = await q<{ tablename: string; policyname: string; roles: string[]; cmd: string; qual: string | null; with_check: string | null }>(
       "select tablename::text, policyname::text, roles::text[], cmd::text, qual, with_check from pg_policies where schemaname = 'public'");
-    expect(pol.length).toBe(8);
+    expect(pol.length).toBe(11);
     for (const p of pol) {
       expect(p.roles, p.policyname).toEqual(["authenticated"]);
       const text = `${p.qual ?? ""} ${p.with_check ?? ""}`;
@@ -102,6 +109,7 @@ describe("policies", () => {
     }
     expect(pol.map((p) => `${p.tablename}:${p.cmd}`).sort()).toEqual([
       "dealership_members:SELECT", "dealerships:SELECT", "search_agents:INSERT", "search_agents:SELECT", "search_agents:UPDATE",
+      "search_drafts:INSERT", "search_drafts:SELECT", "search_drafts:UPDATE",
       "search_run_results:SELECT", "search_runs:INSERT", "search_runs:SELECT",
     ]);
   });
@@ -151,8 +159,11 @@ describe("funksjoner i private", () => {
       `select proname::text from pg_proc where pronamespace = 'private'::regnamespace and has_function_privilege('authenticated', oid, 'EXECUTE') order by 1`);
     expect(rows.map((r) => r.proname)).toEqual([
       "agent_assumptions_valid", "agent_filters_valid", "agent_ready", "is_money_json", "is_money_json_allow_zero", "jnull",
-      "keys_subset", "my_dealership_ids", "nok_money_or_null", "opt_enum", "opt_enum_array", "opt_int", "opt_text",
-      "rights_profile_active", "search_run_counts_valid",
+      // SEARCH-005: rene strukturvalidatorer for søkeutkast
+      "jsonb_enum_list", "jsonb_exact_keys", "jsonb_int_range", "jsonb_is_int", "jsonb_is_key", "jsonb_is_minor", "jsonb_is_text",
+      "jsonb_prioritized_list",
+      "keys_subset", "my_dealership_ids", "nok_money_or_null", "opt_enum", "opt_enum_array", "opt_int", "opt_text", "reg_bounds",
+      "rights_profile_active", "search_run_counts_valid", "search_spec_costs_valid", "search_spec_valid",
     ]);
   });
 });
@@ -214,6 +225,20 @@ describe("constraints og triggere", () => {
           expect((await q<{ ok: boolean }>("select has_table_privilege($1, $2, $3) ok", [role, `public.${t}`, priv]))[0]!.ok, `${role} ${priv} ${t}`).toBe(false);
         }
       }
+    }
+  });
+
+  it("SEARCH-005: søkeutkast har triggere for firma/versjon, RLS-policyer og ingen kobling til agenter", async () => {
+    const trg = await q<{ tgname: string; tgenabled: string }>("select tgname::text, tgenabled::text from pg_trigger where tgrelid = 'public.search_drafts'::regclass and not tgisinternal order by 1");
+    expect(trg).toEqual([{ tgname: "search_drafts_before_insert", tgenabled: "O" }, { tgname: "search_drafts_before_update", tgenabled: "O" }]);
+    const cols = (await q<{ column_name: string }>("select column_name::text from information_schema.columns where table_schema = 'public' and table_name = 'search_drafts' order by 1")).map((r) => r.column_name);
+    expect(cols).toEqual(["base_version", "created_at", "created_by", "dealership_id", "id", "name", "spec", "updated_at", "updated_by", "version"]);
+    expect(cols).not.toContain("active"); // et utkast er ikke en aktiv agent
+    // Ingen fremmednøkkel til agenter/kjøringer, og søkeutkast påvirkes ikke av ti-aktive-grensen
+    const fks = await q<{ def: string }>("select pg_get_constraintdef(oid) def from pg_constraint where conrelid = 'public.search_drafts'::regclass and contype = 'f'");
+    expect(fks.map((f) => f.def)).toEqual([expect.stringMatching(/REFERENCES (public\.)?dealerships/)]);
+    for (const priv of ["DELETE", "TRUNCATE", "INSERT", "UPDATE"]) {
+      expect((await q<{ ok: boolean }>("select has_table_privilege('authenticated', 'public.search_drafts', $1) ok", [priv]))[0]!.ok, priv).toBe(false); // bare kolonnevis insert/update
     }
   });
 

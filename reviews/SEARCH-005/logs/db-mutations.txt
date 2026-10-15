@@ -1,0 +1,12 @@
+OPPDAGET  M1 konfliktsjekk fjernet — ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  3 failed | 62 passed (65)
+OPPDAGET  M2 select-policy åpen (alle firmaer lesbare) — ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 64 passed (65)
+OPPDAGET  M3 dealership_id skrivbar for klienten — ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 64 passed (65)
+OPPDAGET  M4 strukturvalidering av — ⎯⎯⎯⎯⎯⎯ Failed Tests 50 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  50 failed | 15 passed (65)
+OPPDAGET  M5 insert-trigger setter ikke firma fra membership — ⎯⎯⎯⎯⎯⎯ Failed Tests 55 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  55 failed | 2 passed | 8 skipped (65)
+OPPDAGET  M6 version skrivbar for klienten — ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 64 passed (65)
