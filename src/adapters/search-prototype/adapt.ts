@@ -34,7 +34,7 @@ import type {
   CostLine, EquipmentCriterion, Issue, PlannedRegistrationScenario, Priority, PrioritizedList, SearchCatalog, SearchSpec, VatBasis,
 } from "@/domain/search-v2/types";
 import type { FirstRegistration } from "@/domain/types";
-import { FIXED_COST_KINDS, PRIORITY_SELECT_FIELDS, PROTOTYPE_FIELDS } from "./fields";
+import { FIELD_OPTIONS, FIXED_COST_KINDS, PRIORITY_SELECT_FIELDS, PROTOTYPE_FIELDS } from "./fields";
 import type { FieldSpec } from "./fields";
 
 export const PROTOTYPE_SCHEMA = "merovo.search-draft";
@@ -122,9 +122,21 @@ function readField(spec: FieldSpec, val: unknown, path: string, c: Ctx): Parsed 
     return n;
   };
   switch (spec.kind) {
-    case "brand": case "model": case "select": case "radio": case "towbar": case "equipSelect": {
+    case "brand": case "model": {
       if (typeof val !== "string") return bad("må være tekst.", "not_string");
       return { filled: val.trim() !== "", value: val };
+    }
+    case "select": case "radio": {
+      // Prototypens import: «alle» ("") eller et gyldig valg.
+      if (typeof val !== "string") return bad("må være tekst.", "not_string");
+      if (val !== "" && !(FIELD_OPTIONS[spec.id] ?? []).includes(val)) return bad("ukjent valg.", "unknown_option");
+      return { filled: val !== "", value: val };
+    }
+    case "towbar": case "equipSelect": {
+      // Prototypens import krever et gyldig valg (tom verdi eksporteres aldri for disse).
+      if (typeof val !== "string") return bad("må være tekst.", "not_string");
+      if (!(FIELD_OPTIONS[spec.id] ?? []).includes(val)) return bad("ukjent valg.", "unknown_option");
+      return { filled: true, value: val };
     }
     case "variant": case "text": {
       if (typeof val !== "string" || val.length > (spec.maxLength ?? 60)) return bad("ugyldig tekst.");
@@ -139,6 +151,11 @@ function readField(spec: FieldSpec, val: unknown, path: string, c: Ctx): Parsed 
       if (!Array.isArray(val) || val.length > max || !val.every((x) => typeof x === "string" && (spec.kind !== "packages" || x.length <= 60)) || new Set(val).size !== val.length) {
         return bad("ugyldig liste (tekstverdier, ingen duplikater).");
       }
+      const allowed = FIELD_OPTIONS[spec.id];
+      if (allowed) {
+        const unknown = (val as string[]).findIndex((x) => !allowed.includes(x));
+        if (unknown >= 0) { c.add(`${path}[${unknown}]`, "unknown_option", `${spec.label}: ukjent valg.`); return null; }
+      }
       return { filled: val.length > 0, value: [...val] };
     }
     case "range": {
@@ -148,6 +165,7 @@ function readField(spec: FieldSpec, val: unknown, path: string, c: Ctx): Parsed 
       const from = intOrNull(o.from, `${path}.from`, spec.min!, spec.max!);
       const to = intOrNull(o.to, `${path}.to`, spec.min!, spec.max!);
       if (from === undefined || to === undefined) return null;
+      if (from !== null && to !== null && from > to) { c.add(path, "min_above_max", `${spec.label}: «til» kan ikke være mindre enn «fra».`); return null; }
       return { filled: from !== null || to !== null, value: { from, to } };
     }
     case "max": {
@@ -181,6 +199,7 @@ function readField(spec: FieldSpec, val: unknown, path: string, c: Ctx): Parsed 
       if (o.type !== "" && o.type !== "curb" && o.type !== "gross") return bad("ukjent vekttype.");
       const max = intOrNull(o.max, `${path}.max`, 100, 10000);
       if (max === undefined) return null;
+      if (max !== null && o.type === "") { c.add(`${path}.type`, "missing_dependency", `${spec.label}: vekttype må velges når en vekt er oppgitt.`); return null; }
       return { filled: max !== null || o.type !== "", value: { type: o.type, max } };
     }
     case "consumption": {
@@ -188,7 +207,13 @@ function readField(spec: FieldSpec, val: unknown, path: string, c: Ctx): Parsed 
       if (!o) return null;
       if (o.perUnit !== "100 km") return bad("perUnit må være «100 km».", "wrong_unit");
       if (o.unit !== "" && o.unit !== "l100" && o.unit !== "kwh100") return bad("ukjent forbruksenhet.", "wrong_unit");
-      if (o.max !== null && (typeof o.max !== "string" || !/^\d{1,3}(\.\d)?$/.test(o.max))) return bad("ugyldig forbruksverdi.");
+      if (o.max !== null) {
+        const m = typeof o.max === "string" ? /^(\d{1,3})(?:\.(\d))?$/.exec(o.max) : null;
+        if (!m) return bad("ugyldig forbruksverdi.");
+        const tenths = Number(m[1]) * 10 + Number(m[2] ?? 0);
+        if (tenths < 1 || tenths > 1000) { c.add(`${path}.max`, "out_of_range", `${spec.label}: verdien må være mellom 0,1 og 100.`); return null; }
+        if (o.unit === "") { c.add(`${path}.unit`, "missing_dependency", `${spec.label}: enhet må velges når en verdi er oppgitt.`); return null; }
+      }
       return { filled: o.max !== null || o.unit !== "", value: { unit: o.unit, max: o.max } };
     }
     case "power": {
@@ -216,6 +241,7 @@ function readField(spec: FieldSpec, val: unknown, path: string, c: Ctx): Parsed 
         const kw = hp ? wToKw(hpToW(shown)) : shown;
         if (a !== kw) { c.add(`${path}.approxKw.${side}`, "inconsistent", `${spec.label}: approxKw.${side} stemmer ikke med oppgitt effekt.`); ok = false; }
       }
+      if (ok && from !== null && to !== null && from > to) { c.add(path, "min_above_max", `${spec.label}: «til» kan ikke være mindre enn «fra».`); ok = false; }
       return ok ? { filled: from !== null || to !== null, value: null } : null;
     }
     default:
@@ -309,7 +335,7 @@ function readBudget(b: unknown, c: Ctx): BudgetParts | null {
 
 // ---------------------------------------------------------------- tilleggsinput
 
-function readExtra(x: unknown, c: Ctx): { scenario: PlannedRegistrationScenario; prio: Record<string, Priority> } | null {
+function readExtra(x: unknown, c: Ctx): { scenario: PlannedRegistrationScenario | null; prio: Record<string, Priority>; bad: boolean } | null {
   if (!isPlain(x)) { c.add("extra", "missing_input", "Tilleggsinput mangler (planlagt registrering må oppgis)."); return null; }
   const before = c.issues.length;
   for (const k of Object.keys(x)) if (k !== "plannedRegistration" && k !== "listPriorities") c.add(`extra.${k}`, "unknown_key", "Ukjent nøkkel i tilleggsinput.");
@@ -326,7 +352,7 @@ function readExtra(x: unknown, c: Ctx): { scenario: PlannedRegistrationScenario;
       else prio[k] = v as Priority;
     }
   }
-  return c.issues.length > before || scenario === null ? null : { scenario, prio };
+  return { scenario, prio, bad: c.issues.length > before || scenario === null };
 }
 
 // ---------------------------------------------------------------- hovedfunksjon
@@ -353,6 +379,11 @@ export function adaptPrototypeDraft(input: unknown, catalog: SearchCatalog, extr
     const criteria = isPlain(input.criteria) ? input.criteria : null;
     const equipmentDoc = isPlain(input.equipment) ? input.equipment : null;
 
+    // «Ødelagt støttet del» = noe som hindrer at en spec kan bygges av de støttede verdiene. Feil i felt adapteren ikke kan
+    // overføre (ustøttede) hindrer IKKE validering av de støttede verdiene: alle feil skal rapporteres samlet.
+    let broken = false;
+    for (const k of ["criteria", "equipment", "budget"]) if (!isPlain(input[k])) broken = true;
+
     // ---- kriterier
     const parsed = new Map<string, Parsed>();
     if (criteria) {
@@ -360,10 +391,10 @@ export function adaptPrototypeDraft(input: unknown, catalog: SearchCatalog, extr
         const spec = FIELD_BY_ID.get(id);
         const path = `criteria.${id}`;
         if (!spec) { c.add(path, "unknown_key", "Ukjent felt."); continue; }
-        const p = readField(spec, criteria[id], path, c);
-        if (!p) continue;
         const row = mappingFor("field", id);
-        if (!row) { c.add(path, "mapping_missing", `Feltet «${spec.label}» mangler i mappingtabellen.`); continue; }
+        const p = readField(spec, criteria[id], path, c);
+        if (!p) { if (!row || row.status === "supported_now") broken = true; continue; }
+        if (!row) { c.add(path, "mapping_missing", `Feltet «${spec.label}» mangler i mappingtabellen.`); broken = true; continue; }
         if (!p.filled) continue;
         if (row.status !== "supported_now") {
           unsupported.push({ path, prototypeId: id, label: spec.label, status: row.status, reason: row.note });
@@ -373,8 +404,15 @@ export function adaptPrototypeDraft(input: unknown, catalog: SearchCatalog, extr
       }
     }
 
+    // Avhengighet (prototypens validering): utfylt pakke krever valgt modell (og dermed merke). Pakkenavn selv kan ikke
+    // valideres uten en pakkekatalog; feltet er uansett ikke overførbart.
+    if (unsupported.some((u) => u.prototypeId === "packages") && !parsed.has("model")) {
+      c.add("criteria.packages", "missing_dependency", "Utstyrspakke krever valgt modell.");
+    }
+
     // ---- utstyr (boolsk, prioritet per element)
     const equipment: EquipmentCriterion[] = [];
+    const eqBefore = issues.length;
     if (equipmentDoc) {
       for (const key of Object.keys(equipmentDoc)) {
         const path = `equipment.${key}`;
@@ -391,25 +429,26 @@ export function adaptPrototypeDraft(input: unknown, catalog: SearchCatalog, extr
       }
     }
 
+    if (issues.length > eqBefore) broken = true;
+
     // ---- budsjett og tilleggsinput
     const budget = isPlain(input.budget) ? readBudget(input.budget, c) : null;
     const ex = readExtra(extra, c);
+    if (!budget || !ex || ex.bad) broken = true;
 
     // ---- lister med eksplisitt prioritet (ingen standard)
     const list = (id: string): PrioritizedList | null => {
       const p = parsed.get(id);
       if (!p) return null;
       const prio = ex?.prio[id];
-      if (prio === undefined) { if (ex) c.add(`extra.listPriorities.${id}`, "missing_input", `Prioritet (must/nice) må oppgis for utfylt liste «${FIELD_BY_ID.get(id)!.label}».`); return null; }
+      if (prio === undefined) { broken = true; if (ex) c.add(`extra.listPriorities.${id}`, "missing_input", `Prioritet (must/nice) må oppgis for utfylt liste «${FIELD_BY_ID.get(id)!.label}».`); return null; }
       return { values: p.value as string[], priority: prio };
     };
     const exteriorColors = list("extColor");
     const interiorColors = list("intColor");
     const interiorMaterials = list("material");
 
-    if (issues.length) return invalid();
-    if (unsupported.length) return { ok: false, kind: "blocked", issues: [], unsupported };
-    if (!ex || !budget) return invalid();
+    if (broken || !ex || ex.scenario === null || !budget) return invalid();
 
     const range = (id: string) => {
       const p = parsed.get(id);
@@ -438,8 +477,10 @@ export function adaptPrototypeDraft(input: unknown, catalog: SearchCatalog, extr
       budget,
       plannedRegistration: { requested: ex.scenario },
     };
-    const domain = validateSpec(spec, catalog);
-    if (domain.length) { issues.push(...domain); return invalid(); }
+    // Støttede verdier valideres alltid mot domenet, også når dokumentet har ustøttede valg eller andre feil.
+    issues.push(...validateSpec(spec, catalog));
+    if (issues.length) return invalid();
+    if (unsupported.length) return { ok: false, kind: "blocked", issues: [], unsupported };
     const json = specToJson(spec, catalog);
     if (!json.ok) { issues.push(...json.issues); return invalid(); }
     return { ok: true, spec, json: json.value, origin };

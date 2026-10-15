@@ -260,10 +260,13 @@ describe("ustøttede, utfylte valg blokkeres systematisk mot mappingtabellen", (
     empty.criteria.owners = { value: null, unit: "eiere", bound: "max" };
     empty.criteria.doors = "";
     empty.criteria.packages = [];
-    empty.criteria.cruise = "";
     empty.criteria.damage = "";
     empty.criteria.inspection = "";
     ok(adapt(empty));
+    // hengerfeste/cruise/klima har ingen «tom» verdi i prototypens format (import avviser ""): ugyldig, ikke utfylt
+    const noCruise = clone(glsDraft());
+    noCruise.criteria.cruise = "";
+    expect(codes(adapt(noCruise))).toContain("criteria.cruise:unknown_option");
   });
 
   it("blokkert resultat gjelder også «ikke relevant for matching» (freeText)", () => {
@@ -534,13 +537,14 @@ describe("dokumentvalidering: versjon, struktur, enheter og skadet eksport", () 
     t((d) => { d.criteria.body = "suv"; }, "invalid_value", "criteria.body");
     t((d) => { d.criteria.body = ["suv", "suv"]; }, "invalid_value", "criteria.body");
     t((d) => { d.criteria.body = [1]; }, "invalid_value", "criteria.body");
-    t((d) => { d.criteria.body = ["spaceship"]; }, "invalid_value", "requirements.bodyTypes[0]");
-    t((d) => { d.criteria.fuel = ["steam"]; }, "invalid_value", "requirements.fuels[0]");
+    t((d) => { d.criteria.body = ["spaceship"]; }, "unknown_option", "criteria.body[0]");
+    t((d) => { d.criteria.fuel = ["steam"]; }, "unknown_option", "criteria.fuel[0]");
+    t((d) => { d.criteria.fuel = ["other"]; }, "unknown_option", "criteria.fuel[0]"); // domenet har «other», prototypen ikke
     t((d) => { d.criteria.brand = 5; }, "not_string", "criteria.brand");
     t((d) => { d.criteria.variant = "x".repeat(61); }, "invalid_value", "criteria.variant");
     t((d) => { d.criteria.modelYear = { from: 2021, to: null }; }, "missing_key", "criteria.modelYear.unit");
     t((d) => { d.criteria.modelYear.hacked = 1; }, "unknown_key", "criteria.modelYear.hacked");
-    t((d) => { d.criteria.seats = { from: 8, to: 7, unit: "seter" }; }, "min_above_max", "requirements.seats");
+    t((d) => { d.criteria.seats = { from: 8, to: 7, unit: "seter" }; }, "min_above_max", "criteria.seats");
     t((d) => { d.criteria.firstReg = { from: "2023", to: "2021-01", format: "ÅÅÅÅ[-MM]" }; }, "from_after_to", "requirements.firstRegistration");
   });
 

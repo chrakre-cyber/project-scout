@@ -7,9 +7,9 @@
  * (id, etikett, type, enhet, grenser), så en endring i prototypen gir en rød test i stedet for stille avvik.
  * Statusen «støttet nå / planlagt senere / ikke relevant» hentes fra domenets PROTOTYPE_MAPPING, ikke herfra.
  *
- * Valgmengder (options) er ikke kopiert for felt adapteren ikke kan overføre; for disse valideres bare formen.
- * Støttede lister (karosseri, drivstoff, gir, hjuldrift, farger, materiale, merke/modell, utstyr) valideres mot
- * domenets enums eller den injiserte katalogen.
+ * Valgmengdene (FIELD_OPTIONS) er kopiert for ALLE valgfelt, også dem adapteren ikke kan overføre, slik at et
+ * skadet dokument blir «ugyldig» og ikke «blokkert». Merke, modell og utstyr valideres mot den injiserte katalogen
+ * (og farger/materiale i tillegg mot prototypens valg); modellens pakkenavn kan ikke valideres uten pakkekatalog.
  */
 export type FieldKind =
   | "brand" | "model" | "variant" | "packages" | "range" | "regrange" | "max" | "multi" | "colors"
@@ -75,6 +75,39 @@ export const PROTOTYPE_FIELDS: readonly FieldSpec[] = [
   f("adAge", "Annonsens alder", "select"),
   f("freeText", "Søk i annonsetekst (supplerende)", "text", { maxLength: 200 }),
 ];
+
+
+/**
+ * Gyldige valgverdier (uten «alle»-valget "") for prototypens valgfelt, kopiert fra prototypens katalog og
+ * sammenlignet med den i kontrakttest. Brukes også for felt adapteren ikke kan overføre, slik at et ukjent valg gir
+ * «ugyldig dokument» og ikke «blokkert». Merke, modell, pakker og utstyr valideres ikke her (katalogen er autoritativ).
+ */
+export const FIELD_OPTIONS: Readonly<Record<string, readonly string[]>> = {
+  body: ["sedan", "estate", "suv", "hatchback", "coupe", "convertible", "van", "other"],
+  doors: ["2-3", "4-5", "6-7"],
+  fuel: ["petrol", "diesel", "electric", "hybrid", "plugin_hybrid"],
+  gear: ["automatic", "manual"],
+  drive: ["awd", "fwd", "rwd"],
+  euro: ["euro4", "euro5", "euro6"],
+  sliding: ["right", "left", "both"],
+  extColor: ["black", "white", "grey", "silver", "blue", "red", "green", "brown", "beige", "yellow", "orange", "other"],
+  extFinish: ["metallic", "matt"],
+  towbar: ["any", "fixed_removable_swivel", "removable_swivel", "swivel_only"],
+  cruise: ["any", "adaptive"],
+  intColor: ["beige", "black", "blue", "brown", "grey", "red", "other"],
+  material: ["leather", "part_leather", "faux_leather", "fabric", "alcantara", "velour", "other"],
+  climate: ["ac", "auto", "min2", "min3", "exact2", "exact3", "exact4"],
+  newUsed: ["new", "used"],
+  damage: ["exclude", "only"],
+  service: ["history", "recent"],
+  warranty: ["warranty"],
+  certification: ["audi-plus", "bmw-ps", "mb-certified", "das-weltauto"],
+  prevUse: ["demo", "taxi", "rental"],
+  seller: ["dealer", "private", "company"],
+  country: ["AT", "BE", "CH", "DE", "DK", "ES", "FR", "IT", "NL", "PL", "SE"],
+  vat: ["specifiable", "not_specifiable"],
+  adAge: ["1", "3", "7", "14"],
+};
 
 /** Felt som i prototypen har egen prioritet via `equipment`-seksjonen (ikke boolsk utstyr). */
 export const PRIORITY_SELECT_FIELDS: readonly string[] = ["towbar", "cruise", "climate"];
