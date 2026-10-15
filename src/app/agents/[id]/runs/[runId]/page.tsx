@@ -47,7 +47,7 @@ export default async function RunPage({
         <dt className="text-slate-500">Startet</dt><dd>{formatDateTime(run.startedAt)}</dd>
         <dt className="text-slate-500">Avsluttet</dt><dd>{run.finishedAt ? formatDateTime(run.finishedAt) : "ikke avsluttet"}</dd>
         <dt className="text-slate-500">Agentversjon</dt><dd>{run.agentVersion}</dd>
-        <dt className="text-slate-500">Slettes automatisk</dt><dd data-testid="run-expires">{formatDateTime(run.expiresAt)} (rettighetsprofil {run.provider} v{run.rightsProfileVersion})</dd>
+        <dt className="text-slate-500">Utløper senest</dt><dd data-testid="run-expires">{formatDateTime(run.expiresAt)} (rettighetsprofil {run.provider} v{run.rightsProfileVersion})</dd>
         {run.counts && (
           <>
             <dt className="text-slate-500">Treff</dt><dd data-testid="run-matches">{run.counts.matches}</dd>
@@ -57,6 +57,8 @@ export default async function RunPage({
           </>
         )}
       </dl>
+
+      <p className="text-sm text-slate-600">Kjøringen og resultatene skjules når lagringstiden utløper, eller tidligere hvis kildens rettigheter opphører. Fysisk sletting skjer ved opprydding. Automatisk opprydding er foreløpig ikke satt opp.</p>
 
       {run.status === "running" && <p role="status" className="rounded-md border border-slate-200 bg-slate-50 p-3 text-sm">Søket pågår. Last siden på nytt for å se status.</p>}
       {run.status === "failed" && (

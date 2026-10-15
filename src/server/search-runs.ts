@@ -31,7 +31,7 @@ export interface SearchRun {
   errorCode: SearchRunErrorCode | null;
   startedAt: string;
   finishedAt: string | null;
-  /** Når kjøringen og resultatene slettes (rettighetsprofilens retensjon, DEC-028). */
+  /** Seneste synlighetsfrist (DEC-028). Fysisk sletting skjer ved separat opprydding. */
   expiresAt: string;
   rightsProfileVersion: number;
 }

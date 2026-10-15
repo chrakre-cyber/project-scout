@@ -3,7 +3,7 @@
  * Statiske kontroller av importer og tekst i src/. Fanger regresjoner når senere oppgaver (DEV-005+) bygger videre.
  */
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
-import { join, relative } from "node:path";
+import { join, relative, sep, win32 } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const ROOT = join(__dirname, "..");
@@ -21,7 +21,8 @@ const ALL: Src[] = files(SRC).map((path) => {
   const imports: Src["imports"] = [];
   for (const m of text.matchAll(/^\s*(?:import|export)\s+(type\s+)?(?:[^;'"]*?\s+from\s+)?["']([^"']+)["']/gm)) imports.push({ spec: m[2]!, typeOnly: Boolean(m[1]) });
   for (const m of text.matchAll(/import\(\s*["']([^"']+)["']\s*\)/g)) imports.push({ spec: m[1]!, typeOnly: false });
-  return { path, rel: relative(ROOT, path), text, imports, client: /^\s*["']use client["']/m.test(text) };
+  // Samme kontrollstier på Windows og POSIX; alle sikkerhetsreglene under bruker '/'.
+  return { path, rel: relative(ROOT, path).split(sep).join("/"), text, imports, client: /^\s*["']use client["']/m.test(text) };
 });
 const under = (prefix: string) => ALL.filter((f) => f.rel.startsWith(`src/${prefix}`));
 
@@ -126,5 +127,22 @@ describe("demo og påstander", () => {
         if (/\blive\b/i.test(line) && !/^\s*(\/\/|\*|\/\*)/.test(line)) expect(line, `${f.rel}: ${line.trim()}`).toMatch(/ingen live|ikke koblet|Ikke live|ingen/i);
       }
     }
+  });
+});
+
+describe("stinormalisering (Windows-rettelse bevart, SYNC-001)", () => {
+  it("kontrollstiene bruker alltid '/': win32-stier normaliseres slik at sikkerhetsreglene treffer (inspisert uten Windows-kjøring)", () => {
+    const rel = win32.relative("C:\\proj", "C:\\proj\\src\\domain\\search-v2\\types.ts");
+    expect(rel).toBe("src\\domain\\search-v2\\types.ts");
+    expect(rel.split(win32.sep).join("/")).toBe("src/domain/search-v2/types.ts");
+    expect(rel.startsWith("src/domain/")).toBe(false); // uten normalisering ville domeneregelen stille hoppet over filen
+  });
+
+  it("sikkerhetsreglene gjennomgår faktisk domenefilene, inkludert søkemodell v1", () => {
+    const domain = under("domain/").map((f) => f.rel);
+    for (const f of ["src/domain/matching.ts", "src/domain/search-v2/types.ts", "src/domain/search-v2/validation.ts", "src/domain/search-v2/budget.ts", "src/domain/search-v2/serialization.ts"]) {
+      expect(domain, f).toContain(f);
+    }
+    expect(ALL.every((f) => !f.rel.includes("\\"))).toBe(true);
   });
 });
