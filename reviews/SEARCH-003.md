@@ -5,7 +5,7 @@ Status: **REVIEW** (ikke DONE). Utfører Claude Code, kontrollør Codex. Neste o
 ## 0. Utgangspunkt
 
 - Branch `claude/wonderful-bardeen-yussx3`, **base/HEAD før endring: `feaac30`** («legg ved review-ZIP for f7d3104», SYNC-001). Funksjonelt identisk med `f7d3104` (SYNC-001) — `feaac30` la bare SYNC-001-ZIP-en til. Arbeidstreet var rent.
-- **Commits for denne leveransen:** implementasjon `@IMPL@`; sluttcommit `@FINAL@` (kun denne rapportens commit-hash). Ingen annet arbeid nullstilt.
+- **Commits for denne leveransen:** implementasjon `7431ee4`; sluttcommit = den neste commiten (kun denne rapporten; hashen står i ZIP-ens MANIFEST og README). Ingen annet arbeid nullstilt.
 - Bevart: DEC-030/031, SEARCH-002/FIX1-koden, Windows-stinormaliseringen i arkitekturtesten og «Utløper senest»-rettelsene (alle uberørt; 328 tester fra SYNC-001 kjører fortsatt).
 - Ikke endret: prototypen (UI, eksport/import), `src/domain/**`, app, database, migrasjoner, pakker.
 
@@ -75,11 +75,11 @@ Adapteren leser et allerede parset `merovo.search-draft` **v2**-dokument og retu
 | Ukjent vs 0, valuta uten beløp, egne kostnader, avslått/0/100 % avvik, brøkøre, tomt utkast, kostnader øker ikke grensen | «budsjett og kostnadslinjer» (5 tester) |
 | Feil katalogmodell/merke/utstyr/farge, ingen fuzzy, fiendtlig tekst | «katalogreferanser» (4 tester) |
 | Ukjente nøkler/versjoner, feil containertyper, feil enheter/grenser/typer, skadet effekt/`maxAllowed`, flere feil samtidig | «dokumentvalidering» (7 tester) |
-| Ingen unntak/mutasjon/delvis spec ved skadet input | «robusthet»: hver sti (dybde ≤ 4) i et ekte dokument × 15 søppelverdier (~1 100 kombinasjoner), kastende getter, Proxy, kastende katalog |
+| Ingen unntak/mutasjon/delvis spec ved skadet input | «robusthet»: hver sti (dybde ≤ 4) i et ekte dokument × 15 søppelverdier (ca. 100 stier × 15 verdier ≈ 1 500 kombinasjoner), kastende getter, Proxy, kastende katalog |
 | Kontrakt mot ekte eksport | feltkatalog/enheter sammenlignet med `data.js`; effektkonvertering for hele hk/kW-området; 150 pseudotilfeldige ekte eksporter fra prototypens logikk gir aldri `invalid`, og «blokkert ⇔ utfylt ustøttet» |
 | Modulgrenser | domenet importerer ikke adapteren; adapteren importerer bare `@/domain/**` og relative moduler; ingen DOM/nett/klokke |
 
-**Mutasjonsprøving** (manuelt skript, én endring av gangen, ikke en del av repoet): 31 mutasjoner av `adapt.ts` — 30 drept ved første kjøring; den siste («standard scenario») var en ekvivalent/feilplassert mutant og ble gjentatt riktig (drept). Dekket bl.a.: ustøttede felt ikke blokkert, tomme felt blokkerer, v1/andre versjoner godtatt, standard fargeprioritet, standard scenario, `normalizedWatts`/`approxKw`/`maxAllowed` uten kontroll, valutafeil, ukjent→0, id-duplikater, prioritet tapt, ukjent utstyr, ukjente nøkler, månedspresisjon tapt, `try/catch` fjernet.
+**Mutasjonsprøving** (manuelt skript, én endring av gangen, ikke en del av repoet): 30 mutasjoner av `adapt.ts` — 29 drept ved første kjøring; den siste («standard scenario») var en feilplassert, ekvivalent mutant og ble gjentatt riktig plassert (drept). Dekket bl.a.: ustøttede felt ikke blokkert, tomme felt blokkerer, v1/andre versjoner godtatt, standard fargeprioritet, standard scenario, `normalizedWatts`/`approxKw`/`maxAllowed` uten kontroll, valutafeil, ukjent→0, id-duplikater, prioritet tapt, ukjent utstyr, ukjente nøkler, månedspresisjon tapt, `try/catch` fjernet.
 
 ## 5. Kontroller faktisk kjørt (Linux)
 
