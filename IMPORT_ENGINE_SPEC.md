@@ -77,3 +77,8 @@ For marginvarsel benyttes konservativt scenario innen oppgitte estimatintervalle
 Velg første profiler med forhandlercasene. Dokumenter profiler som er unsupported. Bygg minst 50 beregningstilfeller over relevante aldersgrenser, drivlinjer og prisgrunnlag, med uavhengige referanser for alle profiler som gis margin i pilot. Skatteetatens kalkulator kontrollerer avgiftsdelen, ikke hele dealer-salgs-/mva.-regnestykket.
 
 Test alle delregler og behold input/dato/kilde, output og avvik. Aksept: ingen uforklarte avvik utover dokumentert offisiell avrunding. Manglende referanser er en blocker, ikke et bestått testresultat. Ordinært bruksfradrag brukes; alternativ metode er utenfor MVP.
+
+
+## Tillegg 15.10.2026 — budsjettmodell (DEC-030)
+
+MEROVO_SEARCH_SPEC.md definerer nytt primært brukerutfall: maksimal innkjøpskostnad til Norge og valgt prosentvis slingringsmonn, før salgspris/margin. Budsjettsammenligningen inkluderer beregnet norsk import-mva. og engangsavgift etter validert profil samt eksplisitt inkluderte tilleggskostnader. Den må ikke blandes med economicCost eller fundingEstimate. Ingen konkret skatteprofil/sats er validert av dette tillegget. Den tidligere beregningsflyten beskriver fortsatt behovet for sporbare grunnlag, men margin/retail skal ikke være påkrevd i den nye søkemodellen. Ufullstendig eller uvalidert grunnlag gir ingen bekreftet budsjettsum eller kostnadsbasert varsel. Implementasjon og referansekontroll gjenstår.

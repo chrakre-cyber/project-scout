@@ -110,3 +110,8 @@ Ny migrasjon (ikke redigering av `20261008090000`, som er en gjennomgått, fast 
 DEV-002 skal levere migrasjoner, syntetisk seed for to firmaer og test av lese/skrive-isolasjon. Aktiv-agentgrensen må kontrolleres under samtidige opprettelser. Alle migrasjoner dokumenteres med rollback/gjenopprettingsplan; destruktiv sletting av reelle pilotdata krever egen beslutning.
 
 Retensjon av råannonse/bilder bestemmes av BUS-002. Man kan lagre revisionshash og nødvendige beregningssnapshot uten å anta rett til å bygge ubegrenset historisk annonsearkiv. Sletting av kundekonto krever håndtering av varsler, forutsetninger og personopplysninger etter avklart policy.
+
+
+## Planlagt modellendring 15.10.2026 — DEC-030
+
+Ny søkemodell er beskrevet i MEROVO_SEARCH_SPEC.md, ikke migrert her. Eksisterende søk/kjøringer og deres opprinnelige kriterier bevares. Budsjett i NOK må ikke utledes fra gammel maks annonsepris i lokal valuta eller retail. Overgang krever ny søkeversjon, eksplisitt brukerangitt budsjett, server-/databasevalidering og oppgraderingstester uten stille datatap eller automatisk masseaktivering/pause. Nye migrasjoner er append-only. RLS, firmatilgang, atomisk maks ti aktive og betrodd skrivevei bevares. Retensjon av nye kalkylesnapshots må avklares iht. rettighetsprofilen.

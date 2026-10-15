@@ -1,5 +1,7 @@
 # Produktspesifikasjon — MVP 0.1
 
+> Oppdatert produktretning 15.10.2026: se tillegget nederst, DEC-030 og MEROVO_SEARCH_SPEC.md. Ny budsjettmodell er spesifisert, men ikke implementert.
+
 Versjon 0.1 · 03.10.2026 · Eier: Christian Åkre. Omfanget under er vedtatt i samtalen; tekniske detaljer er arbeidsbeslutninger som kan justeres uten nye produktfunksjoner.
 
 ## 1. Problem og verdiløfte
@@ -81,3 +83,10 @@ Piloten kan støtte færre avgiftsprofiler enn demoen. Elbil, hybrid eller sært
 ## 9. Pris og måling
 
 Prishypotese: 990 kr/mnd eks. mva., 30 dager gratis, ingen binding, inntil 10 aktive agenter, manuell faktura. Minimum tre av fem skal ved pilotavslutning akseptere konkret betalt videreføring. Vi måler kontakt med selger og vurdering av kjøp, ikke bare klikk eller hyggelige tilbakemeldinger.
+
+
+## Produktendring 15.10.2026 — innkjøpsbudsjett og utvidet søk
+
+Brukeren har prioritert maksimal innkjøpskostnad til Norge over forventet norsk salgspris og minimumsbidrag, samt valgt mobile.de som hovedreferanse for felter og oppsett. Se MEROVO_SEARCH_SPEC.md (SPEC-SEARCH-001, klar for gjennomgang) og DEC-030. Dette er ny produktretning, ikke implementert funksjon. For målbildet erstatter dette retail-/minimumsbidrag som obligatoriske aktiveringskrav i §4/§5; øvrige produkt-, rettighets- og sikkerhetskrav består. Margin blir sekundær/valgfri. Ingen avgiftsregler eller uavklarte datakilder godkjennes gjennom endringen. Dagens kode og database håndhever fortsatt gamle krav inntil en versjonert overgang er implementert.
+
+Søkets målmodell omfatter bilkrav, ønsket utstyr, budsjett i NOK inklusive beregnede norske avgifter og valgte tilleggskostnader, samt valgfritt prosentvis prisavvik. Budsjettsummen skilles fra økonomisk kostnad og likviditet. Et kjøretøysøk kan aktiveres med budsjett før alle konkrete bilers kalkyler er avklart; ukjent eller uvalidert kostnad blokkerer budsjettklassifisering og kostnadsvarsler. Absolutte krav kan ikke oppheves av prisavvik. Ingen oppdatering til DONE eller ny implementering følger av spesifikasjonen alene.

@@ -53,3 +53,26 @@ Oppdatert 03.10.2026. «Vedtatt» gjengir produktvalgene i samtalen. «Arbeidsbe
 ## Ny beslutning — mal
 
 ID / dato / status / eier / beslutning / begrunnelse / konsekvens / erstatter / hva som utløser revurdering.
+
+
+## DEC-030 — søk etter bil og innkjøpsbudsjett til Norge
+
+15.10.2026. Produktretning vedtatt av Christian i samtalen. Detaljert løsningsforslag: MEROVO_SEARCH_SPEC.md, SPEC-SEARCH-001 (REVIEW).
+
+Maksimal innkjøpskostnad til Norge prioriteres over norsk salgspris og margin. Forhandleren velger bilkrav, ønsket utstyr, kostnadsforutsetninger og valgfritt prosentvis prisavvik. Budsjettsummen inkluderer beregnede norske avgifter og brukerens valgte kostnader. Lokal mva. justeres bare med dokumentert kjøpsgrunnlag; budsjettsum, økonomisk kostnad og betalingsforløp skilles. mobile.de er referanse for søkets organisering. Mulig FINN/VEND-sammenligning er fremtidig og avtalebetinget, ikke markedsverdsetting.
+
+For ny målmodell erstattes DEC-024s obligatoriske retail/minimumsbidrag av et positivt NOK-innkjøpsbudsjett og gyldige kjøretøykriterier. DEC-001s salgspris blir en valgfri senere forutsetning. Historikken i disse beslutningene beholdes, og dagens implementasjon er uendret. Krav/ønsker, kildekatalog, presise budsjettgrenser, overgang av gamle søk og byggeorden er konkretisert som forslag i spesifikasjonen. Oppfylte bilkrav uten fullstendig kostnad kan vises med kontrollbehov, aldri som bekreftet budsjettreff. Ingen nye avgiftssatser, livekilder, scraping, utsending eller partnerskap er godkjent.
+
+
+## DEC-031 — søkemodell v1 som parallell domenemodell (SEARCH-002)
+
+15.10.2026. Arbeidsbeslutning (Claude Code, SEARCH-002; til Codex-kontroll). Konkretiserer DEC-030 i `src/domain/search-v2/` uten å endre dagens `AgentFilters`/`AgentAssumptions`/`evaluateListing`. Modellen er frakoblet appen inntil lagring/migrasjon (SEARCH-001B) er avtalt.
+
+- **Format:** `merovo.search-model`, modellversjon 1, adskilt fra prototypens `merovo.search-draft` v2. Penger er `bigint` minste enhet internt og heltallsstreng ≤ 2^53-1 i JSON (følger DEC-020); valuta er egen verdi og bevares også for ukjent beløp; ukjent (`null`) og eksplisitt 0 er ulike.
+- **Krav/ønsker:** identitet, intervaller og kjøretøyvalg (karosseri, drivstoff, gir, hjuldrift) er alltid absolutte krav. Prioritet «must»/«nice» bæres bare av utstyrselementer (hvert for seg) og av farge-/interiørlister (én prioritet pr. liste). Kjent brudd på «must» → excluded (forrang), ukjent «must» → needs_review, ellers match; «nice» påvirker aldri status. Utstyr er «mangler» bare ved bekreftet fravær eller fullstendig kildeliste; pakker og registreringsår beviser verken enkeltutstyr eller modellår.
+- **Ikke støttet nå (avvises, ignoreres ikke):** alle øvrige prototypekriterier (se mappingtabell i `mapping.ts` og `reviews/SEARCH-002.md`), blant annet pakker, effekt, hengerfeste, cruise/klima, tilstand/vilkår og mva.-påstand.
+- **Planlagt norsk registrering** (personbil/varebil/uavklart) er forhandlerens ønske, adskilt fra bilens nåværende kategori og fra en bekreftet beregningsprofil. Ombygging/godkjenning er kostnadslinjer. Valget endrer aldri en total og beviser ikke godkjenning eller avgiftsfordel.
+- **Budsjett:** øvre grense = budsjett × (10 000 + bp) / 10 000, brøkøre rundes ned (BigInt). Kostnadslinjer øker aldri grensen. Klassifisering krever en uttrykkelig fullstendig/validert kostnadsvurdering i NOK, samme budsjettbasis og scenario, ikke foreldet, og dekning av inkluderte kostnadslinjer; ellers `not_calculated` med grunn. Ingen avgiftsmotor, mva., FX eller profil innføres; kontrakten er et grensesnitt for et fremtidig beregningslag (COST-001).
+- **Katalog:** injisert `SearchCatalog`; demokatalog er ikke produksjonsfasit; fritekstvariant under gyldig modell avvises aldri.
+
+Ikke endret: database, RLS, auth, serveractions, providers, prototypen. Åpent: lagring/migrasjon, kandidat-adapter (kildetekst → katalognøkler), prototype-adapter, beregningslag, regler for pakker/cruise/klima/hengerfeste.

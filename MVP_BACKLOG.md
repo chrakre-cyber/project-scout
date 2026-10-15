@@ -34,6 +34,7 @@ Status: BACKLOG / READY / IN_PROGRESS / REVIEW / DONE / BLOCKED. Prioritet: P0 n
 | DEV-005B0 | Provider Rights & Retention Foundation (DEC-028/029): versjonert rettighetsprofil per provider, default-deny, `rights_profile_version` + `expires_at`, purge-funksjon, betrodd skrivevei for autoritative resultater; ingen ekstern kilde, ingen global katalog | Hovedutvikler | REVIEW | P0 | 20–40 min | 4–6 t | DEV-005A, BUS-002-beslutningsgrunnlag |
 | DEV-005B | Delt ingestion-fundament: global/stabil annonseidentitet, `listings`, `listing_revisions`, dedup på tvers av kjøringer, revisjonshistorikk, sjekkpunkter og låsemodell (opprinnelig DEV-005-tekst). **Ikke påbegynt.** | Hovedutvikler | BLOCKED | P0 | 20–40 min | 4–6 t | DEV-005B0, BUS-002, OPEN-001, OPEN-002 |
 | SEARCH-001A-UI | Lokal, interaktiv forhåndsvisning av Merovos søkeskjema og innkjøpsbudsjett i `prototypes/merovo-search/` (HTML/CSS/JS, uten Supabase/nettverk/nye pakker); ingen endring av database, appflyt eller avgiftsberegning. Feltmodell/validering i appen og lagring kommer i senere oppgaver etter review | Claude Code (utfører) / Codex (review) | REVIEW | P1 | 20–30 min | 1 dag | DEV-005B0 |
+| SEARCH-002 | Versjonert søkemodell v1 og deterministiske regler i domenelaget (`src/domain/search-v2/`): bilidentitet, krav/ønsker (må ha/ønskelig), NOK-budsjett med prisavvik og kostnadsforutsetninger, planlagt norsk registrering som eget scenario. Parallell og frakoblet fra AgentFilters/evaluateListing; ingen DB, migrasjon, UI, avgiftsmotor eller provider | Claude Code (utfører) / Codex (review) | REVIEW | P1 | 1 dag | 1–2 dager | SEARCH-001A-UI |
 | DEV-006 | MobileDeProvider virker mot avtalt API; mapping, kvoter og rettighetsvalg kontrollert | Hovedutvikler | BLOCKED | P0 | 30–60 min | 4–6 t | BUS-002, DEV-005B |
 | DEV-007 | Kost-/mva.-motor med versjoner, manglende-data-sperrer og linjesporing | Hovedutvikler | BACKLOG | P0 | 45–90 min | 6–10 t | TAX-001, TAX-002, DEV-003 |
 | DEV-008 | Bidragsmotor skiller salgs-mva., kost og likviditet; negative/ukjente resultater håndteres | Hovedutvikler | BACKLOG | P0 | 30–60 min | 3–5 t | DEV-007 |
@@ -79,7 +80,23 @@ Skriv dato, ny status, commit/fil og testbelegg i seksjonen under. Juster estima
 - 09.10.2026: DEV-005B0 review-rettelse (P2) for `0433ccc`: trukket/utløpt rettighetsprofil skjuler nå eksisterende lagrede kjøringer og resultater umiddelbart (konservativ regel, DEC-028), `expires_at` kappes ved `effective_to`, betrodd policy nekter ikke-gjeldende profil, purge fjerner ikke lenger tillatte rader. Ny migrasjon `20261009090000_dev005b0_rights_visibility.sql`. DEV-005B0 forblir REVIEW; DEV-005B forblir BLOCKED. Ikke anvendt hosted.
 - 15.10.2026: SEARCH-001A-UI → REVIEW (ikke DONE). Isolert prototype i `prototypes/merovo-search/`; ingen endring i app, database eller avgiftsberegning. Separat review av Codex før neste oppgave (feltmodell/validering). Detaljer og avvik mot repoet: `reviews/SEARCH-001A-UI.md`.
 - 15.10.2026: SEARCH-001A-UI-FIX1 levert etter Codex-review (F1–F5, schema v2, v1 leses med merknad). Status fortsatt REVIEW, ikke DONE; venter på Codex-verifisering.
+- 15.10.2026: SEARCH-002 → REVIEW (ikke DONE). Ny, frakoblet domenemodell `src/domain/search-v2/` med validering, JSON-rundtur, krav/ønsker-vurdering og budsjettgrenser; dagens agentflyt, database, UI og prototype er uendret. Dokumenttillegg (DEC-030, MEROVO_SEARCH_SPEC.md, produktendring) synkronisert selektivt fra `reference-current-local/`. Neste mulige oppgave (ikke startet): SEARCH-001B lagring/matching, eller P3-oppfølging av v1-effektadvarsel i prototypen. Rapport: `reviews/SEARCH-002.md`.
 
 ## Dagens anbefalte rekkefølge
 
 SET-001 → BUS-001 → BUS-003 → start DEV-001. SET-002 og TAX-001 forberedes deretter. Full Sprint 0 finnes i `SPRINT_0.md`.
+
+## Sikkerhetsoppfølging 15.10.2026
+
+- QA-DEP-001 -> REVIEW: fem npm-varsler skyldes ett åpent braces-funn i utviklingsverktøyet. Produksjonsavhengigheter: 0 kjente sårbarheter. Ingen kompatibel publisert rettelse funnet. Windows-stier i arkitekturtesten rettet; typecheck, lint, 152 tester og produksjonsbygg bestått. Rapport: reviews/QA-DEP-001.md. Varslene er vurdert, ikke fjernet. Ingen publisering eller DB-endring. Neste: avstem QA-001 / DEV-005A / DEV-005B0-review og hosted testbelegg før neste avhengige oppgave.
+
+- 15.10.2026: QA-SEARCH-001 -> REVIEW. Hosted systemmetadata kontrollert read-only: RLS, firmapolicyer, rettighetsprofil/utløp, begrenset scout_ingest og brukerens kolonnerettigheter samsvarer med kontrollpunktene. Ingen DB-endring. UI-løftet om automatisk sletting rettet til utløpsfrist med korrekt forklaring. Typecheck, lint, 152 tester og bygg bestått. Ny innlogget søk/reload-test og to-firma-atferdstest gjenstår; ingen tidligere oppgave flyttet til DONE. Rapport: reviews/QA-SEARCH-001.md.
+
+- 15.10.2026: QA-SEARCH-001 hosted smoke test owner-verified: completed Volkswagen search, 18 results retained after reload, corrected expiry wording, separate testfirma B sees empty agents and not-found at Actant run URL. B -> Actant UI read isolation confirmed; not a full bidirectional/API regression. See reviews/QA-SEARCH-001.md. Next planned dependency: TAX-001/TAX-002 before DEV-007; no new product scope or deployment approved.
+
+
+## SPEC-SEARCH-001 — ny søke- og budsjettmodell (15.10.2026)
+
+Status REVIEW. Brukeren har valgt mobile.de som søkebenchmark og innkjøpsbudsjett til Norge foran salgspris/margin (DEC-030). Levert MEROVO_SEARCH_SPEC.md med feltkatalog, krav/ønsker, budsjett/avvik, ukjent-håndtering, datatilgang, overgang og ferdigkriterier. Dokumentleveranse, ikke implementasjon.
+
+Foreslått rekkefølge: SEARCH-001A (lokal skjermforhåndsvisning, feltmodell og syntetiske data) -> SEARCH-001B (versjonert lagring, validering, matching og overgang) -> COST-001 (TAX-001/TAX-002 før faktiske budsjettreff) -> videre felt/varsler. Disse nye oppgavene står som planforslag, ikke ferdige leveranser. DEV-007/008/009 må konkretiseres mot ny budsjettmodell før implementering; ingen løst antakelse om avgiftsprofil. DEV-005B/DEV-006 forblir blokkert på BUS-002. Eksisterende QA-reviewstatus består.

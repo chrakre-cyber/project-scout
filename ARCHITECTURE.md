@@ -105,3 +105,8 @@ User ID utledes fra validert sesjon. Firma utledes fra membership; browserinput 
 Monitorér siste vellykkede run, antall treff, truncation, API-/LLM-forbruk, kø, sendfeil og blokkerte kalkyler. Pause-knapp stopper neste kjøring og nye varsler; pågående jobb sjekker aktiv status før enqueue. Logg IDs/status, ikke secrets eller komplette annonse-/kundetekster.
 
 Gjenoppretting fra backup og replay av jobb er del av pilotporten. Retensjon og tilgang til bilder/tekst bestemmes av avtale og databehandlerforhold, ikke av ubegrenset teknisk lagringsmulighet.
+
+
+## Planlagt utvidelse 15.10.2026 — søk og budsjett
+
+Se DEC-030 og MEROVO_SEARCH_SPEC.md. Skill kjøretøykrav, ønsker, budsjettsum, kostnadsforutsetninger og varslingsvalg i en versjonert modell. Matching, budsjettklassifisering og økonomiske beregninger forblir deterministisk domenelogikk. Provider-kapasitet skal være eksplisitt; ukjente/ikke støttede filtre må ikke falle bort stille. UI, server, databasevalidering, provider-kontrakt og resultat-hvitelister oppdateres samlet i senere oppgaver. Gjeldende implementasjon endres ikke av spesifikasjonen.
