@@ -78,3 +78,37 @@ Nettleserkontrollen dekker: oppstart/merking/logo/font, GLS-scenarioet fylt manu
 
 ## 9. Neste mulige oppgave (ikke startet)
 Etter Codex-review: feltmodell og validering i appens domenelag (versjonerte typer), deretter kontrollert lagring (SEARCH-001B). Ikke automatisk avgiftsmotor eller publisering.
+
+---
+
+## 10. SEARCH-001A-UI-FIX1 (etter Codex-review av 7878fbf) — status fortsatt REVIEW, ikke DONE
+
+Utgangspunkt `7878fbf`, samme branch. Kun prototypen (`prototypes/merovo-search/`), testene og denne rapporten er endret. Ingen endring i app, database, avgiftsregler, pakker, auth eller providers.
+
+**Overleveringsavvik (uendret):** DEC-030, `MEROVO_SEARCH_SPEC.md` og produktendringen 15.10 finnes fortsatt ikke i repoet. De er ikke lest, og DEC-030 er ikke konstruert eller markert lest; oppdragspakkens spesifikasjon er brukt.
+
+### Rettelser
+| Funn | Årsak | Rettelse | Brukerutfall |
+|---|---|---|---|
+| F1 | Import behandlet demokatalogens varianter som fasit | Fritekstvariant er gyldig under gyldig modell; kun pakker valideres mot modell. Variant uten modell avvises. | «GLS 450 d 4MATIC» eksporteres og importeres uendret |
+| F2 | Urørt tom egendefinert linje ble eksportert | `costTouched`: urørt linje (ingen navn, beløp, mva., «inngår», NOK) eksporteres, telles og vises ikke. Linje med innhold men uten navn gir feltfeil før eksport. | Egen fil kan alltid åpnes igjen; reell informasjon slettes aldri stille |
+| F3 | Valuta lå bare i beløpsobjektet | Eksport skriver `currency` per kostnadslinje også når beløpet er `null`; import krever gyldig valuta som stemmer med beløpet. | Ukjent beløp i EUR forblir EUR; ukjent og 0 skilles fortsatt |
+| F4 | Kun «er streng» ble sjekket | Merke/modell valideres mot katalogen (ukjent modell, modell fra annet merke og modell uten merke avvises, også ved eksport). Hele importen er alt-eller-ingenting, så eksisterende utkast bevares. | «not-a-model» gir «Importen ble avbrutt» og uendret utkast |
+| F5 | Visningsverdi i hk ble re-importert | Eksport har `normalizedWatts` (kanonisk watt) per side; import kontrollerer at den stemmer med viste verdi og bruker den. | 100 kW → 136 hk → fil → import → 100 kW (100000 W, ikke 100028) |
+| (repro) | `criteria={toString:'x'}` | Oppslag via `Object.create(null)`/`Object.hasOwn` | «Ukjent felt: toString», ingen unntak |
+
+### Schemaendring og v1-utkast
+- `merovo.search-draft` **v2**: nytt `currency` på hver kostnadslinje og `power.normalizedWatts`. Versjon 1 og 2 leses; alle andre (0, 3 …) avvises.
+- **v1 leses med eksplisitt migrering og synlig merknad («Merk: …»), aldri gjetting:** valuta hentes fra beløpet når det finnes, ellers settes NOK med advarsel; en tom egendefinert linje utelates med advarsel; effekt leses fra viste verdi (med 1 hk = 0,73549875 kW, avrundingen i v1-filen kan ikke gjenopprettes).
+- Eksport skriver alltid v2.
+
+### Kontroller faktisk kjørt
+- `tests/search-prototype.test.ts`: **80/80 bestått**. Mot uendret 7878fbf-logikk (`PROTO_JS_DIR`, filene hentet med `git show 7878fbf:…`): **14 feiler** – de 12 nye FIX1-testene (F1–F5 og prototypenøkler), pluss to eldre forventninger som er oppdatert til v2. Av FIX1-describe-blokkens 14 tester feiler 12 på gammel kode; de to øvrige tester bare noe som allerede fungerte.
+- Nettleser (Playwright/Chromium 141, file://): **90/90 kontroller bestått, kjørt to ganger**. Nye: eksport → nedlasting → tøm → filimport → ny eksport (identisk bortsett fra tidsstempel) for F1, F2, F3 og F5 på **1440 px og 390 px**; F4 ukjent modell avvist med utkastet uendret; v1-fil med merknad; alle eksterne forespørsler blokkert og telt = 0; ingen konsoll-/sidefeil. Mot gammel kode stopper den samme nettleserkjøringen allerede ved første v2-forventning (import av fil med `currency` feiler), så den er ikke bestått der; funn-for-funn-bevis på gammel kode er logikktestene.
+- Hele repoet: `tsc --noEmit` og `eslint .` uten feil, `vitest run` 232/232 (15 filer), `qa-secret-scan` ingen funn, `npm run build` OK. Ingen hosted DB-tester, reset eller purge.
+- Codex' reproduksjonsskript mot fikset kode: alle fem scenarier og nøkkeltesten gir forventet utfall.
+
+### Begrensninger
+- Skjermbilder 02 og 05 er regenerert; øvrige er uendret.
+- Variantforslag er fortsatt et demonstrasjonsutvalg; fritekst er tillatt, modellbytte varsler som før.
+- Ikke etterkjørt av Codex ennå. Ingen ny oppgave startet.

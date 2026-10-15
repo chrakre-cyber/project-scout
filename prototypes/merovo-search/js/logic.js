@@ -141,7 +141,8 @@
   const wToKw = (w) => Math.floor((w + 500) / 1000);
 
   // ---------------------------------------------------------------- lister og oppslag
-  const fieldIndex = {};
+  // Oppslag med null-prototype: nøkler fra importerte filer («toString», «constructor», «__proto__») er aldri felt.
+  const fieldIndex = Object.create(null);
   const allFields = [];
   for (const s of Data.SECTIONS) {
     for (const f of s.fields.concat(s.advanced ? s.advanced.fields : [])) {
@@ -149,7 +150,7 @@
       allFields.push(fieldIndex[f.id]);
     }
   }
-  const equipIndex = {};
+  const equipIndex = Object.create(null);
   for (const g of Data.EQUIPMENT_GROUPS) for (const it of g.items) equipIndex[it[0]] = { key: it[0], label: it[1], group: g.id, section: g.section };
   const label = (opts, v) => (opts.find((o) => o.v === v) || { l: String(v) }).l;
   const PRIO_FIELDS = allFields.filter((f) => f.kind === "equipSelect" || f.kind === "towbar").map((f) => f.id);
@@ -260,6 +261,9 @@
   /** Måned som tall; en «til»-verdi uten måned gjelder hele året, en «fra»-verdi uten måned begynner i januar. */
   const ymIndex = (ym, isEnd) => ym.y * 12 + (ym.m === null ? (isEnd ? 11 : 0) : ym.m - 1);
 
+  /** Har brukeren fylt inn noe på linjen (navn, beløp, valuta, mva.-grunnlag eller «inngår»)? Urørte egendefinerte linjer eksporteres ikke. */
+  const costTouched = (c) => (!c.fixed && c.label.trim() !== "") || c.amount.trim() !== "" || c.vat !== "" || Boolean(c.included) || c.currency !== "NOK";
+
   /** Alle feil: {fieldId: {sub: melding}}, budget og kostnader under nøklene «budget.*» og «cost.<id>.*». */
   function validate(state) {
     const errors = {};
@@ -270,6 +274,7 @@
     const v = state.values;
     if (v.variant && !v.model) errors.variant = Object.assign({}, errors.variant, { value: "Variant krever valgt modell." });
     if (v.model && !v.brand) errors.model = { value: "Modell krever valgt merke." };
+    else if (v.model && !modelInfo(v.brand, v.model)) errors.model = { value: "Ukjent modell for valgt merke." };
     const b = state.budget;
     const amt = parseMoney(b.amount);
     if (amt.error) errors["budget.amount"] = { value: amt.error };
@@ -285,7 +290,7 @@
       if (a.error) e.amount = a.error;
       if (!c.fixed) {
         if (c.label.length > Data.LIMITS.labelMax) e.label = "Maks " + Data.LIMITS.labelMax + " tegn.";
-        else if (c.label.trim() === "" && (c.amount.trim() !== "" || c.vat !== "" || c.included)) e.label = "Gi kostnaden et navn.";
+        else if (c.label.trim() === "" && costTouched(c)) e.label = "Gi kostnaden et navn.";
       }
       if (Object.keys(e).length) errors["cost." + c.id] = e;
     }
@@ -329,7 +334,7 @@
     const join = (arr, opts) => arr.map((v) => label(opts, v)).join(" ELLER ");
     switch (f.kind) {
       case "brand": return label(Data.BRANDS, raw);
-      case "model": return ((Data.MODELS[state.values.brand] || []).find((m) => m.v === raw) || { l: raw }).l;
+      case "model": return (modelsOf(state.values.brand).find((m) => m.v === raw) || { l: raw }).l;
       case "variant": return raw.trim();
       case "packages": return raw.join(" ELLER ");
       case "multi": return join(raw, f.options);
@@ -410,7 +415,8 @@
   }
 
   // ---------------------------------------------------------------- modellavhengige valg
-  const modelInfo = (brand, model) => (Data.MODELS[brand] || []).find((m) => m.v === model) || null;
+  const modelsOf = (brand) => (typeof brand === "string" && Object.hasOwn(Data.MODELS, brand) ? Data.MODELS[brand] : []);
+  const modelInfo = (brand, model) => modelsOf(brand).find((m) => m.v === model) || null;
 
   /**
    * Bytte av merke/modell: fjerner variant og pakker som ikke hører til. Returnerer det som ble fjernet, slik at
@@ -458,7 +464,12 @@
         const a = intOrNull(raw.from, 1, 100000);
         const b = intOrNull(raw.to, 1, 100000);
         const toKw = raw.unit === "hp" ? (x) => wToKw(hpToW(x)) : (x) => x;
-        return { unit: raw.unit === "hp" ? "hk" : "kW", from: a, to: b, approxKw: { from: a === null ? null : toKw(a), to: b === null ? null : toKw(b) } };
+        const conv = raw.unit === "hp" ? hpToW : kwToW;
+        const back = raw.unit === "hp" ? wToHp : wToKw;
+        // Kanonisk verdi i watt bevares, men bare når den fortsatt stemmer med verdien som vises; ellers regnes den fra visningsverdien.
+        const canon = (v, w) => (v === null ? null : w !== null && w !== undefined && back(w) === v ? w : conv(v));
+        return { unit: raw.unit === "hp" ? "hk" : "kW", from: a, to: b, approxKw: { from: a === null ? null : toKw(a), to: b === null ? null : toKw(b) },
+          normalizedWatts: { from: canon(a, raw.fromW), to: canon(b, raw.toW) } };
       }
       default: return null;
     }
@@ -488,11 +499,12 @@
         basisPoints: dev && dev.bp !== undefined ? Number(dev.bp) : null,
         maxAllowed: state.budget.deviationOn && lim.state === "ok" ? moneyOut(lim.limitMinor, "NOK") : null,
       },
-      costs: state.budget.costs.map((c) => {
+      costs: state.budget.costs.filter((c) => c.fixed || costTouched(c)).map((c) => {
         const a = parseMoney(c.amount, { allowZero: true });
         return {
           kind: c.fixed ? c.id : "custom",
           label: c.fixed ? (Data.FIXED_COSTS.find((x) => x.key === c.id) || {}).label : c.label.trim(),
+          currency: c.currency, // også når beløpet er ukjent
           amount: a.minor === undefined ? null : moneyOut(a.minor, c.currency),
           vatBasis: c.vat,
           includedInBudget: Boolean(c.included),
@@ -519,7 +531,7 @@
   const short = (s) => String(s).slice(0, 40);
   const TOP_KEYS = new Set(["schema", "schemaVersion", "exportedAt", "origin", "notice", "criteria", "equipment", "budget"]);
 
-  function importValue(f, val, errs) {
+  function importValue(f, val, errs, ver) {
     const bad = (why) => errs.push(f.label + ": " + why);
     const optIn = (opts, v) => typeof v === "string" && opts.some((o) => o.v === v);
     const intRaw = (n, min, max) => {
@@ -568,8 +580,24 @@
         const lim = unit === "hp" ? [1, 3000] : [1, 2200];
         const from = intRaw(val.from, lim[0], lim[1]);
         const to = intRaw(val.to, lim[0], lim[1]);
-        const w = (x) => (x === "" ? null : unit === "hp" ? hpToW(Number(x.replace(/ /g, ""))) : kwToW(Number(x.replace(/ /g, ""))));
-        return { unit, from, to, fromW: w(from), toW: w(to) };
+        const num = (x) => Number(x.replace(/ /g, ""));
+        const conv = unit === "hp" ? hpToW : kwToW;
+        const back = unit === "hp" ? wToHp : wToKw;
+        let fromW = from === "" ? null : conv(num(from));
+        let toW = to === "" ? null : conv(num(to));
+        if (ver >= 2) {
+          // v2 bærer kanonisk effekt i watt; den må stemme med verdien som vises (ellers er filen selvmotsigende).
+          const nw = val.normalizedWatts;
+          if (!isObj(nw)) { bad("mangler normalizedWatts."); return emptyValue(f); }
+          const side = (shown, w, name) => {
+            if (shown === "") { if (w !== null) bad("normalizedWatts." + name + " uten verdi."); return null; }
+            if (!Number.isInteger(w) || w < 1 || w > 4000000 || back(w) !== num(shown)) { bad("normalizedWatts." + name + " stemmer ikke med oppgitt effekt."); return null; }
+            return w;
+          };
+          fromW = side(from, nw.from, "from");
+          toW = side(to, nw.to, "to");
+        }
+        return { unit, from, to, fromW, toW };
       }
       default: bad("ukjent felttype."); return emptyValue(f);
     }
@@ -584,8 +612,8 @@
     try { doc = JSON.parse(text); } catch { return { ok: false, errors: ["Filen er ikke gyldig JSON."] }; }
     if (!isObj(doc)) return { ok: false, errors: ["Filen har ikke riktig oppbygning (forventet et JSON-objekt)."] };
     if (doc.schema !== Data.SCHEMA) return { ok: false, errors: ["Dette er ikke et Merovo-søkeutkast (schema mangler eller er feil)."] };
-    if (doc.schemaVersion !== Data.SCHEMA_VERSION) {
-      return { ok: false, errors: ["Ukjent schema-versjon: " + short(doc.schemaVersion) + ". Denne forhåndsvisningen støtter bare versjon " + Data.SCHEMA_VERSION + "."] };
+    if (!Data.SUPPORTED_VERSIONS.includes(doc.schemaVersion)) {
+      return { ok: false, errors: ["Ukjent schema-versjon: " + short(doc.schemaVersion) + ". Denne forhåndsvisningen støtter versjon 2 og leser versjon 1 (med migrering og advarsler)."] };
     }
     for (const k of Object.keys(doc)) if (!TOP_KEYS.has(k)) errors.push("Ukjent toppnivånøkkel: " + short(k));
     if (doc.origin !== undefined && doc.origin !== "user" && doc.origin !== "demo-example") errors.push("Ugyldig origin.");
@@ -594,12 +622,14 @@
     if (!isObj(doc.budget)) errors.push("Mangler «budget».");
     if (errors.length) return { ok: false, errors };
 
+    const ver = doc.schemaVersion;
+    const warnings = [];
     const state = emptyState();
     state.origin = doc.origin || "user";
     for (const [id, val] of Object.entries(doc.criteria)) {
       const f = fieldIndex[id];
       if (!f) { errors.push("Ukjent felt: " + short(id)); continue; }
-      state.values[id] = importValue(f, val, errors);
+      state.values[id] = importValue(f, val, errors, ver);
     }
     for (const [k, v] of Object.entries(doc.equipment)) {
       if (!isObj(v) || (v.priority !== "must" && v.priority !== "nice")) { errors.push("Ugyldig prioritet for " + short(k) + "."); continue; }
@@ -609,20 +639,21 @@
         else state.eq[k] = v.priority;
       } else errors.push("Ukjent utstyrsnøkkel: " + short(k));
     }
-    importBudget(doc.budget, state, errors);
+    importBudget(doc.budget, state, errors, ver, warnings);
     if (errors.length) return { ok: false, errors };
-    const reconciled = clone(state);
-    const removed = reconcileModelDependent(reconciled);
-    if (removed.variant || removed.packages.length) errors.push("Variant/pakke hører ikke til valgt modell.");
+    // Merke/modell valideres mot katalogen (validate() under). Fritekstvariant er gyldig under en gyldig modell;
+    // forslagene i demokatalogen er ikke uttømmende. Pakker er katalogvalg og må høre til modellen.
+    const info = modelInfo(state.values.brand, state.values.model);
+    if (state.values.packages.length && !(info && state.values.packages.every((p) => info.packages.includes(p)))) errors.push("Utstyrspakke: hører ikke til valgt modell.");
     const verr = validate(state);
     if (errorCount(verr)) {
       for (const [id, e] of Object.entries(verr)) for (const m of Object.values(e)) errors.push((fieldIndex[id] ? fieldIndex[id].label : id) + ": " + m);
     }
     if (errors.length) return { ok: false, errors };
-    return { ok: true, state };
+    return { ok: true, state, warnings };
   }
 
-  function importBudget(b, state, errors) {
+  function importBudget(b, state, errors, ver, warnings) {
     const money = (m, what, allowNull) => {
       if (m === null && allowNull) return "";
       if (!isObj(m) || typeof m.amountMinor !== "string" || !/^\d{1,13}$/.test(m.amountMinor) || typeof m.currency !== "string") { errors.push(what + ": ugyldig beløp."); return ""; }
@@ -645,21 +676,37 @@
     const fixed = new Set(Data.FIXED_COSTS.map((c) => c.key));
     const seenFixed = new Set();
     const costs = [];
+    const v1NoAmount = [];
     for (const c of b.costs) {
       if (!isObj(c) || typeof c.includedInBudget !== "boolean" || !Data.VAT_BASIS.some((o) => o.v === c.vatBasis)) { errors.push("Kostnadslinje: ugyldig oppbygning."); continue; }
       const amt = c.amount === null ? null : money(c.amount, "Kostnadslinje", false);
       if (amt && !Data.CURRENCIES.includes(amt.currency)) { errors.push("Kostnadslinje: valuta støttes ikke."); continue; }
+      // v2 har valuta på linjen også uten beløp. v1 hadde den bare inne i beløpet.
+      let currency;
+      if (ver >= 2) {
+        if (typeof c.currency !== "string" || !Data.CURRENCIES.includes(c.currency)) { errors.push("Kostnadslinje: mangler gyldig valuta."); continue; }
+        if (amt && amt.currency !== c.currency) { errors.push("Kostnadslinje: valuta på linjen og i beløpet er ulike."); continue; }
+        currency = c.currency;
+      } else currency = amt ? amt.currency : "NOK";
       const isFixed = fixed.has(c.kind);
       if (isFixed && seenFixed.has(c.kind)) { errors.push("Kostnadslinje: duplikat."); continue; }
       if (!isFixed && c.kind !== "custom") { errors.push("Kostnadslinje: ukjent type."); continue; }
+      if (!isFixed && typeof c.label === "string" && c.label.trim() === "" && !amt && c.vatBasis === "" && !c.includedInBudget && currency === "NOK") {
+        warnings.push("En tom, urørt egendefinert kostnadslinje ble utelatt.");
+        continue;
+      }
       if (!isFixed && (typeof c.label !== "string" || c.label.trim() === "" || c.label.length > Data.LIMITS.labelMax)) { errors.push("Kostnadslinje: ugyldig navn."); continue; }
       if (isFixed) seenFixed.add(c.kind);
       const cost = newCost(isFixed ? "" : c.label, isFixed ? c.kind : "");
       cost.amount = amt ? rawMinor(amt.amountMinor) : "";
-      cost.currency = amt ? amt.currency : "NOK";
+      cost.currency = currency;
+      if (ver < 2 && !amt) v1NoAmount.push(isFixed ? (Data.FIXED_COSTS.find((x) => x.key === c.kind) || {}).label : c.label.trim());
       cost.vat = c.vatBasis;
       cost.included = c.includedInBudget;
       costs.push(cost);
+    }
+    if (v1NoAmount.length) {
+      warnings.push("Versjon 1-filer lagret ikke valuta for kostnadslinjer uten beløp. Valutaen er satt til NOK for: " + v1NoAmount.join(", ") + ". Kontroller valutaen.");
     }
     for (const k of fixed) if (!seenFixed.has(k)) costs.unshift(newCost("", k));
     const order = Data.FIXED_COSTS.map((x) => x.key);
@@ -695,13 +742,13 @@
     if (Object.keys(state.eq).length) return true;
     const b = state.budget;
     if (b.amount.trim() !== "" || b.deviationOn || b.deviation.trim() !== "") return true;
-    return b.costs.some((c) => !c.fixed || c.amount.trim() !== "" || c.vat !== "" || c.included || c.currency !== "NOK");
+    return b.costs.some(costTouched);
   }
 
   return {
     parseDecimal, parseMoney, parseIntBounded, parseFixedDecimal, parsePercentBp, maxAllowedMinor, fmtMinor, fmtBp, rawMinor,
     hpToW, wToHp, kwToW, wToKw, parseYm, ymIndex, fieldIndex, equipIndex, allFields, PRIO_FIELDS, PRIO_REQUIRED, WEIGHT_TYPES, CONSUMPTION_UNITS,
-    emptyState, emptyValue, newCost, clone, validate, validateField, errorCount, budgetLimit, summarize, criterionText, isEmptyValue, clearField,
+    emptyState, emptyValue, newCost, costTouched, clone, validate, validateField, errorCount, budgetLimit, summarize, criterionText, isEmptyValue, clearField,
     modelInfo, reconcileModelDependent, exportDraft, importDraft, exampleState, hasContent, fmtInt, rawInt, label,
   };
 });

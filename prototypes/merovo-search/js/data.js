@@ -225,8 +225,9 @@
   const VAT_BASIS = [opt("", "Ikke oppgitt"), opt("incl", "Inkl. mva."), opt("excl", "Ekskl. mva."), opt("none", "Ingen mva.")];
 
   const SCHEMA = "merovo.search-draft";
-  const SCHEMA_VERSION = 1;
+  const SCHEMA_VERSION = 2; // v2: valuta per kostnadslinje også uten beløp, kanonisk effekt i watt. v1 migreres eksplisitt ved import.
+  const SUPPORTED_VERSIONS = [1, 2];
   const LIMITS = { importBytes: 200000, maxCosts: 30, labelMax: 60, maxBudgetMinor: 100000000000n, maxCostMinor: 100000000000n };
 
-  return { opt, BRANDS, MODELS, COUNTRIES, CERTIFICATIONS, CURRENCIES, EXT_COLORS, INT_COLORS, EQUIPMENT_GROUPS, PRIORITY, SECTIONS, FIXED_COSTS, VAT_BASIS, SCHEMA, SCHEMA_VERSION, LIMITS };
+  return { opt, BRANDS, MODELS, COUNTRIES, CERTIFICATIONS, CURRENCIES, EXT_COLORS, INT_COLORS, EQUIPMENT_GROUPS, PRIORITY, SECTIONS, FIXED_COSTS, VAT_BASIS, SCHEMA, SCHEMA_VERSION, SUPPORTED_VERSIONS, LIMITS };
 });

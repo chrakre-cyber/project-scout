@@ -569,7 +569,7 @@
     if (lim.state === "ok" && lim.bp !== null) kv("Høyeste budsjettgrense", L.fmtMinor(lim.limitMinor));
     root.push(dl);
     const costs = h("ul", { class: "cost-list" });
-    for (const c of state.budget.costs) {
+    for (const c of state.budget.costs.filter((x) => x.fixed || L.costTouched(x))) {
       const name = c.fixed ? (D.FIXED_COSTS.find((x) => x.key === c.id) || {}).label : c.label.trim() || "(uten navn)";
       const a = L.parseMoney(c.amount, { allowZero: true });
       let t;
@@ -659,7 +659,7 @@
     syncAll();
     openAdvancedIfFilled();
     dirty = false;
-    say("Utkast importert. Det er ikke lagret i appens database.", "ok");
+    say("Utkast importert. Det er ikke lagret i appens database." + (r.warnings && r.warnings.length ? " Merk: " + r.warnings.join(" ") : ""), r.warnings && r.warnings.length ? "" : "ok");
   }
 
   function doImportFile(file) {

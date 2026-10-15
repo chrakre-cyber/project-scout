@@ -7,8 +7,10 @@ import { describe, expect, it } from "vitest";
 
 const require = createRequire(import.meta.url);
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const L: any = require("../prototypes/merovo-search/js/logic.js");
-const D: any = require("../prototypes/merovo-search/js/data.js");
+// PROTO_JS_DIR lar oss kjøre samme tester mot en eldre versjon (brukes til å bevise at regresjonstestene feiler på 7878fbf).
+const DIR = process.env.PROTO_JS_DIR ?? "../prototypes/merovo-search/js";
+const L: any = require(`${DIR}/logic.js`);
+const D: any = require(`${DIR}/data.js`);
 const NOW = new Date("2026-10-15T10:00:00Z");
 
 const limit = (amount: string, pct: string) => L.fmtMinor(L.maxAllowedMinor(L.parseMoney(amount).minor, L.parsePercentBp(pct).bp)).replace(/ /g, " ");
@@ -234,9 +236,9 @@ describe("eksport og import", () => {
     const r = L.exportDraft(build(), NOW);
     expect(r.ok).toBe(true);
     const d = r.draft;
-    expect(d).toMatchObject({ schema: "merovo.search-draft", schemaVersion: 1, origin: "demo-example" });
+    expect(d).toMatchObject({ schema: "merovo.search-draft", schemaVersion: 2, origin: "demo-example" });
     expect(d.criteria.mileage).toEqual({ value: 150000, unit: "km", bound: "max" });
-    expect(d.criteria.power).toEqual({ unit: "hk", from: 300, to: null, approxKw: { from: 221, to: null } });
+    expect(d.criteria.power).toEqual({ unit: "hk", from: 300, to: null, approxKw: { from: 221, to: null }, normalizedWatts: { from: 220650, to: null } });
     expect(d.criteria.weight).toEqual({ type: "gross", max: 3500, unit: "kg" });
     expect(d.criteria.consumption).toEqual({ unit: "l100", max: "9.5", perUnit: "100 km" });
     expect(d.criteria.firstReg).toEqual({ from: "2021-03", to: null, format: "ÅÅÅÅ[-MM]" });
@@ -282,7 +284,8 @@ describe("eksport og import", () => {
   };
 
   it("avviser ukjent schema-versjon, feil schema, ugyldig JSON og ikke-objekt med forståelige feil", () => {
-    expect(tweak((d) => { d.schemaVersion = 2; }).errors[0]).toMatch(/Ukjent schema-versjon: 2/);
+    expect(tweak((d) => { d.schemaVersion = 3; }).errors[0]).toMatch(/Ukjent schema-versjon: 3/);
+    expect(tweak((d) => { d.schemaVersion = 0; }).ok).toBe(false);
     expect(tweak((d) => { d.schema = "annet"; }).errors[0]).toMatch(/ikke et Merovo-søkeutkast/);
     expect(L.importDraft("{ikke json").errors[0]).toMatch(/ikke gyldig JSON/);
     expect(L.importDraft("[]").errors[0]).toMatch(/JSON-objekt/);
@@ -306,7 +309,7 @@ describe("eksport og import", () => {
     expect(tweak((d) => { d.budget.costs[0].amount = { amountMinor: "100", currency: "XXX" }; }).ok).toBe(false);
     expect(tweak((d) => { d.budget.costs = Array.from({ length: 40 }, () => d.budget.costs[0]); }).ok).toBe(false);
     expect(tweak((d) => { d.criteria.model = "gle"; }).ok).toBe(true);
-    expect(tweak((d) => { d.criteria.variant = "GLS 450 4MATIC"; d.criteria.model = "gle"; }).ok).toBe(false); // variant hører ikke til modellen
+    expect(tweak((d) => { d.criteria.packages = ["Premium Plus-pakke"]; d.criteria.model = "gle"; }).ok).toBe(false); // pakken hører ikke til modellen
   });
   it("ugyldig import gir aldri delvis tilstand", () => {
     const bad = tweak((d) => { d.criteria.modelYear.from = 1800; d.budget.maxPurchaseCost.amountMinor = "1"; });
@@ -331,10 +334,194 @@ describe("tom/ikke tom", () => {
     s.budget.costs[0].amount = "0";
     expect(L.hasContent(s)).toBe(true);
     const t = L.emptyState();
-    t.budget.costs.push(L.newCost("", ""));
+    t.budget.costs.push(L.newCost("", "")); // urørt tom linje er ikke innhold
+    expect(L.hasContent(t)).toBe(false);
+    t.budget.costs.at(-1).currency = "EUR";
     expect(L.hasContent(t)).toBe(true);
     const u = L.emptyState();
     u.eq.carplay = "nice";
     expect(L.hasContent(u)).toBe(true);
+  });
+});
+
+describe("FIX1 — Codex-funn F1–F5 (regresjoner som feiler på 7878fbf)", () => {
+  const rt = (state: any, now = NOW) => {
+    const out = L.exportDraft(state, now);
+    return { out, back: out.ok ? L.importDraft(JSON.stringify(out.draft)) : out };
+  };
+  const costOf = (state: any, id: string) => state.budget.costs.find((c: any) => c.id === id);
+
+  it("F1: fritekstvariant under gyldig modell eksporteres og importeres med samme tekst", () => {
+    const s = L.emptyState();
+    Object.assign(s.values, { brand: "mercedes-benz", model: "gls", variant: "GLS 450 d 4MATIC" });
+    const { out, back } = rt(s);
+    expect(out.ok).toBe(true);
+    expect(back.ok).toBe(true);
+    expect(back.state.values.variant).toBe("GLS 450 d 4MATIC");
+    expect(back.state.values.model).toBe("gls");
+  });
+  it("F1: variant uten modell avvises fortsatt (både eksport og import)", () => {
+    const s = L.emptyState();
+    s.values.variant = "AMG Line";
+    expect(L.exportDraft(s, NOW).ok).toBe(false);
+    const d = L.exportDraft(L.exampleState(), NOW).draft;
+    delete d.criteria.model;
+    d.criteria.variant = "AMG Line";
+    expect(L.importDraft(JSON.stringify(d)).ok).toBe(false);
+  });
+
+  it("F2: urørt tom egendefinert linje eksporteres ikke og gir en importerbar fil", () => {
+    const s = L.emptyState();
+    s.budget.costs.push(L.newCost("", ""));
+    const { out, back } = rt(s);
+    expect(out.ok).toBe(true);
+    expect(out.draft.budget.costs.filter((c: any) => c.kind === "custom")).toHaveLength(0);
+    expect(back.ok).toBe(true);
+    expect(back.state.budget.costs.filter((c: any) => !c.fixed)).toHaveLength(0);
+  });
+  it("F2: egendefinert linje med innhold men uten navn gir feil i stedet for en uimporterbar fil", () => {
+    for (const touch of [(c: any) => { c.currency = "EUR"; }, (c: any) => { c.amount = "100"; }, (c: any) => { c.vat = "excl"; }, (c: any) => { c.included = true; }]) {
+      const s = L.emptyState();
+      const c = L.newCost("", "");
+      touch(c);
+      s.budget.costs.push(c);
+      const r = L.exportDraft(s, NOW);
+      expect(r.ok).toBe(false);
+      expect(r.errors["cost." + c.id].label).toMatch(/navn/);
+    }
+  });
+  it("F2: bare navn, og fullt utfylt linje, bevares gjennom eksport/import", () => {
+    const s = L.emptyState();
+    const named = L.newCost("Tollagring", "");
+    const full = L.newCost("Frakt Rotterdam", "");
+    Object.assign(full, { amount: "1 234,50", currency: "EUR", vat: "excl", included: true });
+    s.budget.costs.push(named, full);
+    const { back } = rt(s);
+    expect(back.ok).toBe(true);
+    const [a, b] = back.state.budget.costs.filter((c: any) => !c.fixed);
+    expect([a.label, a.amount, a.currency, a.vat, a.included]).toEqual(["Tollagring", "", "NOK", "", false]);
+    expect([b.label, b.amount, b.currency, b.vat, b.included]).toEqual(["Frakt Rotterdam", "1 234,50", "EUR", "excl", true]);
+  });
+
+  it("F3: valuta på ukjent beløp bevares (faste og egne linjer, NOK og EUR), sammen med mva.-grunnlag og «inngår»", () => {
+    const s = L.emptyState();
+    Object.assign(costOf(s, "transport"), { currency: "EUR", included: true, vat: "incl" });
+    const own = L.newCost("Egen", "");
+    Object.assign(own, { currency: "SEK", included: false, vat: "none" });
+    s.budget.costs.push(own);
+    const { out, back } = rt(s);
+    expect(out.draft.budget.costs.find((c: any) => c.kind === "transport")).toMatchObject({ amount: null, currency: "EUR", vatBasis: "incl", includedInBudget: true });
+    expect(back.ok).toBe(true);
+    const t = costOf(back.state, "transport");
+    expect([t.amount, t.currency, t.vat, t.included]).toEqual(["", "EUR", "incl", true]);
+    expect(back.state.budget.costs.find((c: any) => c.label === "Egen").currency).toBe("SEK");
+  });
+  it("F3: ukjent og 0 kr skilles, i NOK og EUR", () => {
+    const s = L.emptyState();
+    Object.assign(costOf(s, "transport"), { amount: "0", currency: "EUR" });
+    Object.assign(costOf(s, "travel"), { amount: "0", currency: "NOK" });
+    costOf(s, "insurance").currency = "EUR";
+    const { back } = rt(s);
+    const get = (id: string) => ((c) => [c.amount, c.currency])(costOf(back.state, id));
+    expect(get("transport")).toEqual(["0", "EUR"]);
+    expect(get("travel")).toEqual(["0", "NOK"]);
+    expect(get("insurance")).toEqual(["", "EUR"]);
+    expect(get("prep")).toEqual(["", "NOK"]);
+  });
+  it("F3: v2 krever gyldig, konsistent valuta; ukjent versjon avvises", () => {
+    const base = () => L.exportDraft(L.exampleState(), NOW).draft;
+    const d1 = base(); delete d1.budget.costs[0].currency;
+    expect(L.importDraft(JSON.stringify(d1)).ok).toBe(false);
+    const d2 = base(); d2.budget.costs[0].currency = "XXX";
+    expect(L.importDraft(JSON.stringify(d2)).ok).toBe(false);
+    const d3 = base(); d3.budget.costs[1].amount = { amountMinor: "100", currency: "EUR" }; d3.budget.costs[1].currency = "NOK";
+    expect(L.importDraft(JSON.stringify(d3)).errors.join()).toMatch(/ulike/);
+  });
+  it("F3: v1-filer leses eksplisitt: valuta fra beløpet når det finnes, ellers NOK med tydelig advarsel (aldri stille)", () => {
+    const s = L.emptyState();
+    Object.assign(costOf(s, "transport"), { amount: "500", currency: "EUR" });
+    costOf(s, "travel").currency = "EUR"; // ukjent beløp: v1 kunne ikke lagre dette
+    const v1 = L.exportDraft(s, NOW).draft;
+    v1.schemaVersion = 1;
+    for (const c of v1.budget.costs) delete c.currency;
+    const r = L.importDraft(JSON.stringify(v1));
+    expect(r.ok).toBe(true);
+    expect(costOf(r.state, "transport").currency).toBe("EUR");
+    expect(costOf(r.state, "travel").currency).toBe("NOK");
+    expect(r.warnings.join(" ")).toMatch(/Versjon 1.*ikke valuta.*Reise \/ henting/);
+    // v1 med tom urørt egendefinert linje (slik 7878fbf eksporterte): utelates med advarsel i stedet for å bli avvist
+    v1.budget.costs.push({ kind: "custom", label: "", amount: null, vatBasis: "", includedInBudget: false });
+    const r2 = L.importDraft(JSON.stringify(v1));
+    expect(r2.ok).toBe(true);
+    expect(r2.warnings.join(" ")).toMatch(/tom, urørt/);
+  });
+
+  it("F4: ukjent modell, modell fra annet merke og modell uten merke avvises; gyldig modell godtas", () => {
+    const mk = (brand: string | undefined, model: string) => {
+      const d = L.exportDraft(L.exampleState(), NOW).draft;
+      if (brand === undefined) delete d.criteria.brand; else d.criteria.brand = brand;
+      d.criteria.model = model;
+      return L.importDraft(JSON.stringify(d));
+    };
+    expect(mk("mercedes-benz", "not-a-model").ok).toBe(false);
+    expect(mk("mercedes-benz", "golf").ok).toBe(false); // finnes under Volkswagen
+    expect(mk(undefined, "gls").ok).toBe(false);
+    expect(mk("volkswagen", "golf").ok).toBe(true);
+    expect(mk("mercedes-benz", "gle").ok).toBe(true);
+    expect(mk("mercedes-benz", "not-a-model").errors.join()).toMatch(/Ukjent modell/);
+  });
+  it("F4: ugyldig modell kan heller ikke eksporteres", () => {
+    const s = L.exampleState();
+    s.values.model = "not-a-model";
+    expect(L.exportDraft(s, NOW).ok).toBe(false);
+  });
+
+  it("F5: kanonisk effekt i watt bevares gjennom enhetsbytte, eksport, import og bytte tilbake (100 kW → 136 hk → 100 kW)", () => {
+    const s = L.emptyState();
+    s.values.power = { unit: "kw", from: "100", to: "", fromW: L.kwToW(100), toW: null };
+    // UI-logikk for enhetsbytte: visning fra kanonisk verdi, kanonisk verdi uendret
+    s.values.power.unit = "hp";
+    s.values.power.from = String(L.wToHp(s.values.power.fromW));
+    expect(s.values.power.from).toBe("136");
+    const { out, back } = rt(s);
+    expect(out.draft.criteria.power).toMatchObject({ unit: "hk", from: 136, normalizedWatts: { from: 100000, to: null } });
+    expect(back.state.values.power.fromW).toBe(100000);
+    const p = back.state.values.power;
+    p.unit = "kw";
+    p.from = String(L.wToKw(p.fromW));
+    expect(p.from).toBe("100");
+    expect(p.fromW).toBe(100000);
+  });
+  it("F5: selvmotsigende effektgrunnlag avvises, og v1-fil uten watt leses fra viste verdier", () => {
+    const s = L.emptyState();
+    s.values.power = { unit: "hp", from: "300", to: "400", fromW: L.hpToW(300), toW: L.hpToW(400) };
+    const good = L.exportDraft(s, NOW).draft;
+    const bad = JSON.parse(JSON.stringify(good)); bad.criteria.power.normalizedWatts.from = 100000;
+    expect(L.importDraft(JSON.stringify(bad)).errors.join()).toMatch(/stemmer ikke/);
+    const missing = JSON.parse(JSON.stringify(good)); delete missing.criteria.power.normalizedWatts;
+    expect(L.importDraft(JSON.stringify(missing)).ok).toBe(false);
+    const v1 = JSON.parse(JSON.stringify(good)); v1.schemaVersion = 1; delete v1.criteria.power.normalizedWatts;
+    for (const c of v1.budget.costs) delete c.currency;
+    const r = L.importDraft(JSON.stringify(v1));
+    expect(r.ok).toBe(true);
+    expect(r.state.values.power.fromW).toBe(L.hpToW(300));
+  });
+
+  it("nøkler som arves fra Object.prototype er aldri felt, modeller eller utstyr (ingen unntak, ingen innsmuglet tilstand)", () => {
+    const base = () => L.exportDraft(L.emptyState(), NOW).draft;
+    for (const key of ["toString", "constructor", "hasOwnProperty", "__proto__", "valueOf"]) {
+      const a = base(); a.criteria = JSON.parse(`{"${key}":"x"}`);
+      const b = base(); b.equipment = JSON.parse(`{"${key}":{"priority":"must"}}`);
+      for (const d of [a, b]) {
+        const r = L.importDraft(JSON.stringify(d));
+        expect(r.ok, key).toBe(false);
+        expect(r.errors.join(), key).toMatch(/Ukjent/);
+      }
+    }
+    const c = L.exportDraft(L.exampleState(), NOW).draft; c.criteria.brand = "constructor";
+    expect(L.importDraft(JSON.stringify(c)).ok).toBe(false);
+    const d = L.exportDraft(L.exampleState(), NOW).draft; d.criteria.model = "toString";
+    expect(L.importDraft(JSON.stringify(d)).ok).toBe(false);
+    expect(({} as any).polluted).toBeUndefined();
   });
 });

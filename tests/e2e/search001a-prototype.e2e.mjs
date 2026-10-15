@@ -148,7 +148,7 @@ const [dl] = await Promise.all([page.waitForEvent("download"), page.click("#btn-
 const file1 = join(tmp, "utkast.json");
 await dl.saveAs(file1);
 const exp1 = JSON.parse(readFileSync(file1, "utf8"));
-check("eksportfil har schema, versjon og eksplisitte enheter/basis", exp1.schema === "merovo.search-draft" && exp1.schemaVersion === 1 && exp1.criteria.modelYear.unit === "år" && exp1.criteria.seats.unit === "seter" && exp1.budget.maxPurchaseCost.amountMinor === "75000000" && exp1.budget.deviation.basisPoints === 1000 && exp1.budget.costs[2].amount.amountMinor === "123450", JSON.stringify(exp1.budget).slice(0, 300));
+check("eksportfil har schema, versjon og eksplisitte enheter/basis", exp1.schema === "merovo.search-draft" && exp1.schemaVersion === 2 && exp1.criteria.modelYear.unit === "år" && exp1.criteria.seats.unit === "seter" && exp1.budget.maxPurchaseCost.amountMinor === "75000000" && exp1.budget.deviation.basisPoints === 1000 && exp1.budget.costs[2].amount.amountMinor === "123450", JSON.stringify(exp1.budget).slice(0, 300));
 check("eksport sier tydelig at utkastet ikke er lagret i appens database", /Ikke lagret i appens database/.test(exp1.notice) && /ikke lagret i appens database/i.test(await page.locator("#sec-save").locator("..").innerText()));
 const before = await summaryText();
 dialogMsg = [];
@@ -170,7 +170,7 @@ const stable = await summaryText();
 const budgetBefore = await page.locator("#budget-amount").inputValue();
 const badFiles = {
   "ugyldig-json.json": "{ikke json",
-  "ukjent-versjon.json": JSON.stringify({ ...exp1, schemaVersion: 2 }),
+  "ukjent-versjon.json": JSON.stringify({ ...exp1, schemaVersion: 3 }),
   "ugyldig-verdi.json": JSON.stringify({ ...exp1, criteria: { ...exp1.criteria, modelYear: { from: 1800, to: null, unit: "år" } } }),
   "ukjent-felt.json": JSON.stringify({ ...exp1, criteria: { ...exp1.criteria, hacked: "x" } }),
   "array.json": "[]",
@@ -182,14 +182,14 @@ for (const [name, body] of Object.entries(badFiles)) {
   await page.waitForSelector(".import-errors:not([hidden])");
   const msg = await page.locator(".import-errors").innerText();
   check(`import ${name}: forståelig feil og uendret utkast`, /Importen ble avbrutt/.test(msg) && (await summaryText()) === stable && (await page.locator("#budget-amount").inputValue()) === budgetBefore, msg.slice(0, 120));
-  if (name === "ukjent-versjon.json") check("ukjent schema-versjon nevnes", /schema-versjon: 2/.test(msg));
+  if (name === "ukjent-versjon.json") check("ukjent schema-versjon nevnes", /schema-versjon: 3/.test(msg));
 }
 await page.screenshot({ path: `${shots}/05-import-feil.png`, fullPage: false });
 
 // ---- 9. HTML i importert tekst blir aldri aktiv
 const hostile = JSON.parse(JSON.stringify(exp1));
 hostile.criteria.freeText = '<img src=x onerror="window.__pwned=1"><script>window.__pwned=2</script>';
-hostile.budget.costs.push({ kind: "custom", label: '<b id="injected">fet</b><img src=y onerror=window.__pwned=3>', amount: { amountMinor: "100", currency: "NOK" }, vatBasis: "", includedInBudget: false });
+hostile.budget.costs.push({ kind: "custom", label: '<b id="injected">fet</b><img src=y onerror=window.__pwned=3>', currency: "NOK", amount: { amountMinor: "100", currency: "NOK" }, vatBasis: "", includedInBudget: false });
 const hf = join(tmp, "hostil.json");
 writeFileSync(hf, JSON.stringify(hostile));
 await page.setInputFiles("#import-file", hf);
@@ -265,6 +265,91 @@ check("mobil: et felt som rulles til midten er ikke dekket av den faste linjen",
 await page.getByLabel("Fra modellår").fill("abc");
 await page.screenshot({ path: `${shots}/09-mobil-feiltilstand.png` });
 check("mobil: feilmelding vises under feltet", (await page.locator(".error:visible").first().innerText()).includes("Ugyldig tall"));
+
+
+// ---- 13b. FIX1: faktisk filflyt (eksport → nedlasting → tøm → filimport) på desktop og mobil
+const exportFile = async (name) => {
+  const [d] = await Promise.all([page.waitForEvent("download"), page.click("#btn-export")]);
+  const f = join(tmp, name);
+  await d.saveAs(f);
+  return { f, json: JSON.parse(readFileSync(f, "utf8")) };
+};
+const roundtrip = async (tag, name) => {
+  const e = await exportFile(name + ".json");
+  await page.click("#btn-clear");
+  await page.setInputFiles("#import-file", e.f);
+  await page.waitForFunction(() => /importert/i.test(document.querySelector(".status").textContent));
+  const e2 = await exportFile(name + "-2.json");
+  delete e.json.exportedAt; const e2c = { ...e2.json }; delete e2c.exportedAt;
+  check(`${tag}: eksport → tøm → filimport → eksport gir identisk fil`, JSON.stringify(e.json) === JSON.stringify(e2c));
+  return e2.json;
+};
+for (const vp of [{ w: 1440, h: 900, t: "desktop" }, { w: 390, h: 844, t: "mobil" }]) {
+  await page.setViewportSize({ width: vp.w, height: vp.h });
+  await page.reload();
+  const T = `FIX1 ${vp.t}`;
+
+  // F1: fritekstvariant under gyldig modell
+  await page.locator("select").nth(0).selectOption("mercedes-benz");
+  await page.locator("select").nth(1).selectOption("gls");
+  await page.getByLabel("Variant", { exact: true }).fill("GLS 450 d 4MATIC");
+  const f1 = await roundtrip(`${T} F1`, `f1-${vp.t}`);
+  check(`${T} F1: fritekstvariant er tilbake i feltet og i filen`, (await page.getByLabel("Variant", { exact: true }).inputValue()) === "GLS 450 d 4MATIC" && f1.criteria.variant === "GLS 450 d 4MATIC", JSON.stringify(f1.criteria.variant));
+  await page.click("#btn-clear");
+
+  // F2: urørt tom egendefinert linje
+  await page.click("#btn-add-cost");
+  await page.locator("select").nth(0).selectOption("mercedes-benz");
+  const f2 = await roundtrip(`${T} F2`, `f2-${vp.t}`);
+  check(`${T} F2: urørt tom egen kostnadslinje er ikke med i filen, og importen lykkes`, !f2.budget.costs.some((c) => c.kind === "custom"));
+  await page.click("#btn-clear");
+
+  // F3: valuta på ukjent beløp
+  await page.getByLabel("Valuta for Transport").selectOption("EUR");
+  const f3 = await roundtrip(`${T} F3`, `f3-${vp.t}`);
+  const tr = f3.budget.costs.find((c) => c.kind === "transport");
+  check(`${T} F3: EUR på ukjent transportbeløp bevares i fil og skjema`, tr.currency === "EUR" && tr.amount === null && (await page.getByLabel("Valuta for Transport").inputValue()) === "EUR", JSON.stringify(tr));
+  await page.click("#btn-clear");
+
+  // F5: 100 kW → hk → fil → tilbake
+  await page.getByLabel("kW", { exact: true }).check();
+  await page.getByLabel("Effekt fra", { exact: true }).fill("100");
+  await page.getByLabel("hk", { exact: true }).check();
+  check(`${T} F5: 100 kW vises som 136 hk`, (await page.getByLabel("Effekt fra", { exact: true }).inputValue()) === "136");
+  const f5 = await roundtrip(`${T} F5`, `f5-${vp.t}`);
+  check(`${T} F5: kanonisk 100000 W bevares gjennom filen (ikke 100028)`, String(f5.criteria.power.normalizedWatts.from) === "100000", JSON.stringify(f5.criteria.power));
+  await page.getByLabel("kW", { exact: true }).check();
+  check(`${T} F5: bytte tilbake til kW gir 100`, (await page.getByLabel("Effekt fra", { exact: true }).inputValue()) === "100");
+  await page.click("#btn-clear");
+
+  // F4: ukjent modell avvises og utkastet bevares
+  await page.click("#btn-example");
+  const good = await exportFile(`f4-good-${vp.t}.json`);
+  const bad = JSON.parse(JSON.stringify(good.json));
+  bad.criteria.model = "not-a-model";
+  const bf = join(tmp, `f4-bad-${vp.t}.json`);
+  writeFileSync(bf, JSON.stringify(bad));
+  const keep = await summaryText();
+  await page.setInputFiles("#import-file", bf);
+  await page.waitForSelector(".import-errors:not([hidden])");
+  const emsg = await page.locator(".import-errors").innerText();
+  check(`${T} F4: ukjent modell avvises med forståelig feil, og gyldig utkast er uendret`, /Importen ble avbrutt/.test(emsg) && /modell/i.test(emsg) && (await summaryText()) === keep, emsg.slice(0, 160));
+  await page.click("#btn-clear");
+
+  // v1-fil: eksplisitt migrering med merknad
+  const v1 = JSON.parse(JSON.stringify(good.json));
+  v1.schemaVersion = 1;
+  for (const c of v1.budget.costs) delete c.currency;
+  const v1f = join(tmp, `v1-${vp.t}.json`);
+  writeFileSync(v1f, JSON.stringify(v1));
+  await page.setInputFiles("#import-file", v1f);
+  await page.waitForFunction(() => /importert/i.test(document.querySelector(".status").textContent));
+  const st = await page.locator(".status").innerText();
+  check(`${T}: v1-fil importeres med synlig merknad`, /Merk:/.test(st), st.slice(0, 200));
+  await page.click("#btn-clear");
+}
+await page.setViewportSize({ width: 1440, height: 900 });
+await page.reload();
 
 // ---- 14. Nettverk og feil
 check("ingen nettverksforespørsler utover file:/data:/blob:", blocked.length === 0, blocked.join(", "));
