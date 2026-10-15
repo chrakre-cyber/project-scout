@@ -33,7 +33,8 @@
     "R-IMP-FX-001",
     "R-IMP-OTH-001",
     "R-IMP-OTH-002",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -108,7 +109,8 @@
     "R-IMP-FX-001",
     "R-IMP-OTH-001",
     "R-IMP-OTH-002",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -184,7 +186,8 @@
     "R-IMP-FX-001",
     "R-IMP-OTH-001",
     "R-IMP-OTH-002",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -259,7 +262,8 @@
     "R-IMP-FX-001",
     "R-IMP-OTH-001",
     "R-IMP-OTH-002",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -336,7 +340,8 @@
     "R-IMP-VAT-003",
     "R-IMP-FX-001",
     "R-IMP-OTH-001",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -415,7 +420,8 @@
     "R-IMP-FX-001",
     "R-IMP-OTH-001",
     "R-IMP-OTH-002",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -496,7 +502,8 @@
     "R-IMP-FX-001",
     "R-IMP-OTH-001",
     "R-IMP-OTH-002",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -552,7 +559,7 @@
     "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
     "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
     "Som VB-BEN",
-    "1.9.2026-endring av § 3 kan gjelde gruppe b"
+    "uavklart kildeopplysning U-001 (påstått endring 1.9.2026) – ikke kontrollert"
    ]
   },
   {
@@ -576,7 +583,9 @@
     "R-OTA-011",
     "R-IMP-VAT-001",
     "R-IMP-VAT-002",
-    "R-IMP-FX-001"
+    "R-IMP-FX-001",
+    "R-IMP-REF-001",
+    "R-IMP-OTH-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -652,7 +661,9 @@
     "R-OTA-011",
     "R-IMP-VAT-001",
     "R-IMP-VAT-002",
-    "R-IMP-FX-001"
+    "R-IMP-FX-001",
+    "R-IMP-REF-001",
+    "R-IMP-OTH-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",
@@ -731,7 +742,9 @@
     "R-IMP-VAT-002",
     "R-IMP-VAT-003",
     "R-IMP-FX-001",
-    "R-DED-001"
+    "R-DED-001",
+    "R-IMP-REF-001",
+    "R-IMP-OTH-001"
    ],
    "requiredInputs": [
     "planlagt norsk registreringsdato (dato)",

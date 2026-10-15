@@ -1,8 +1,8 @@
 {
  "schema": "merovo.tax.sources",
- "version": "TAX-001A/1",
+ "version": "TAX-001B/1",
  "researchDate": "2026-10-15",
- "coverage": "Søk 15.10.2026 med søkeverktøy (standard/extended) begrenset til offisielle domener. Direkte henting (WebFetch/curl) av skatteetaten.no, toll.no, lovdata.no, regjeringen.no feilet i nettverket (DNS/403). INGEN primærkilde er lest direkte.",
+ "coverage": "TAX-001B 15.10.2026: seks originale kildefiler hentet av Codex og lest lokalt av Claude (kildepakke TAX-001B-handoff, hash i MANIFEST). Kilder merket E1 er lest i hele eller relevante deler; E1 betyr lest primærkilde, ikke godkjent regelparameter. Direkte nettverkstilgang til norske verter er fortsatt blokkert; øvrige kilder står uendret på E2/E0. Stortingsvedtak, forskrift (§ 3-1, § 3-3), Lovdata og tollkurs er IKKE lest.",
  "sources": [
   {
    "id": "T01",
@@ -51,13 +51,13 @@
   },
   {
    "id": "T03",
-   "title": "Årsrundskriv for engangsavgift 2026",
+   "title": "Årsrundskriv for engangsavgift 2026 (PDF, 57 sider, datert 1. januar 2026)",
    "publisher": "Skatteetaten (Skattedirektoratet)",
-   "url": "https://www.skatteetaten.no/rettskilder/type/rundskriv-retningslinjer-og-andre-rettskilder/avgiftsrundskriv/engangsavgift-2026/",
+   "url": "https://www.skatteetaten.no/globalassets/rettskilder/avgiftsrundskriv/engangsavgift-2026.pdf",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
-   "directReadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-15",
    "searchLeadDate": "2026-10-15",
    "whatToExtract": [
     "Beregningsregler og tabeller 2026 for avgiftsgruppe a, b, c … med eksempler",
@@ -74,7 +74,26 @@
     "R-OTA-008",
     "R-OTA-009"
    ],
-   "note": ""
+   "note": "",
+   "retrievedBy": "Codex (kildepakke TAX-001B-handoff)",
+   "packageFile": "primarkilder/engangsavgift-2026.pdf",
+   "packageSha256": "08296e9a32afb53fae95ae99bc961d485f01c139a68bdbb31ef6eb89bd6dea23",
+   "publishedVersion": "Skattedirektoratet, årsrundskriv engangsavgift 2026, datert 1. januar 2026",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "1.3",
+    "2.1.1",
+    "3.1",
+    "3.2.1–3.2.6",
+    "3.3.1–3.3.3",
+    "3.3.11",
+    "3.4",
+    "4.1–4.3",
+    "6.12",
+    "6.21",
+    "13.1"
+   ],
+   "limitations": "Januarversjon. Dokumenterer ikke endringer senere i 2026. Inneholder ikke satstabellene i stortingsvedtaket § 2/§ 3 og ikke bruksfradragstabellen (viser til forskrift § 3-3)."
   },
   {
    "id": "T04",
@@ -99,7 +118,7 @@
     "R-OTA-010",
     "R-OTA-013"
    ],
-   "note": "Lovdata-oppføringen viste ifølge søkeverktøyet en endring av 19.6.2026 med virkning fra 1.9.2026 for § 3. Innholdet er ukjent."
+   "note": "Lovdata-oppføringen viste ifølge søkeverktøyet en endring av 19.6.2026 med virkning fra 1.9.2026 for § 3. Innholdet er ukjent. | Uavklart kildeopplysning U-001: søkesammendrag nevnte endring med virkning 1.9.2026; ikke bekreftet i lest materiale og ikke brukt som regelgrunnlag."
   },
   {
    "id": "T05",
@@ -153,9 +172,9 @@
    "publisher": "Skatteetaten",
    "url": "https://www.skatteetaten.no/en/rates/car-rates---deduction-for-use-table/",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
-   "directReadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-15",
    "searchLeadDate": "2026-10-15",
    "whatToExtract": [
     "Hele tabellen: aldersintervall → prosent",
@@ -166,7 +185,17 @@
     "R-OTA-010",
     "R-OTA-011"
    ],
-   "note": "Søkeverktøyet nevnte kun ankerpunkter (2 % ved 1 måned, 19 % ved 1 år, 94 % ved 14 år, 100 % ved 20 år); ikke hele tabellen."
+   "note": "Søkeverktøyet nevnte kun ankerpunkter (2 % ved 1 måned, 19 % ved 1 år, 94 % ved 14 år, 100 % ved 20 år); ikke hele tabellen.",
+   "retrievedBy": "Codex (kildepakke TAX-001B-handoff)",
+   "packageFile": "primarkilder/bruksfradragstabell.html",
+   "packageSha256": "f91e8040d3443901a009abaa1320868c4f623be0622d6c71da7104edb575b8fd",
+   "publishedVersion": "Skatteetaten, «Deduction for use table» (engelsk sats-side), ukjent sidedato i filen",
+   "effectiveDate": null,
+   "readSections": [
+    "hele tabellen",
+    "forklaringstekst om 2024-endring og siste trinn"
+   ],
+   "limitations": "Engelsk sats-side. Ingen publiseringsdato i filen. Tabelltrinn og datoforklaring («production») er ikke avstemt mot forskrift § 3-3 (ikke lest). Tabellen er transkribert i bruksfradrag-tabell-T07.json."
   },
   {
    "id": "T08",
@@ -193,21 +222,31 @@
   },
   {
    "id": "T09",
-   "title": "Vrakpant (en: Scrap deposit) – satser",
+   "title": "Vrakpant (en: Scrap deposit) – UTBETALING ved skroting (ikke innbetalingen ved registrering)",
    "publisher": "Skatteetaten",
    "url": "https://www.skatteetaten.no/en/rates/scrap-deposit/",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
-   "directReadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-15",
    "searchLeadDate": "2026-10-15",
    "whatToExtract": [
-    "Beløp per kjøretøytype og gyldig dato"
+    "Bare for begrepsskillet: utbetaling er ikke en importkostnad og ikke et fradrag i kjøpspris"
    ],
    "rules": [
-    "R-IMP-OTH-001"
+    "R-SCR-PAY-001"
    ],
-   "note": "Kildekonflikt i sammendragene: 2 400 kr (2018-rundskriv) mot 3 000 kr (nyere side)."
+   "note": "TAX-001A feilet ved å bruke denne siden som kilde til importens vrakpantavgift. Siden gjelder utbetaling til biloppsamlingsplass (3 000 kr for personbil mv.), et annet begrep enn vrakpantavgiften (2 400 kr). Ingen satskonflikt.",
+   "retrievedBy": "Codex (kildepakke TAX-001B-handoff)",
+   "packageFile": "primarkilder/vrakpant-utbetaling.html",
+   "packageSha256": "97103b849c8dac65507bb3136acd17bda0e68625b43071baadced41ca9144dc1",
+   "publishedVersion": "Skatteetaten, «Scrap deposit», år 2026 valgt i sidens årsvelger",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "Oppsummert",
+    "Detaljert oversikt"
+   ],
+   "limitations": "Årsvelger viser 2026 som første år; filen er en HTML-kopi, datogyldighet utover årsvalg ikke dokumentert."
   },
   {
    "id": "T10",
@@ -453,6 +492,91 @@
    "whatToExtract": [],
    "rules": [],
    "note": "Avvist: omtaler budsjettforslag, ikke vedtatte regler."
+  },
+  {
+   "id": "T20",
+   "title": "Vrakpantavgift (INNBETALING ved første gangs registrering) – satser",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/satser/vrakpantavgift/",
+   "kind": "primary",
+   "whatToExtract": [
+    "Beløp per kjøretøytype",
+    "Forklaring: del av engangsavgiften, betales sammen med denne"
+   ],
+   "rules": [
+    "R-IMP-OTH-001"
+   ],
+   "note": "Korrekt sats-side for vrakpantavgift. Årsvelger: 2026 er valgt i filen (selected value=2026).",
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-15",
+   "retrievedBy": "Codex (kildepakke TAX-001B-handoff)",
+   "packageFile": "primarkilder/vrakpantavgift.html",
+   "packageSha256": "1199368756d6df63df37ade9a28f012d3cfb170eb3f981744f4bdb08283d5141",
+   "publishedVersion": "Skatteetaten, «Vrakpantavgift», 2026 valgt",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "hele satssiden"
+   ],
+   "limitations": "HTML-kopi uten publiseringsdato; 2026 er valgt år. Bekreftes av rundskriv punkt 3.4 (T03)."
+  },
+  {
+   "id": "T21",
+   "title": "Import av bil og andre kjøretøy (Tolletaten, oversikt for privatperson)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport",
+   "kind": "primary",
+   "whatToExtract": [
+    "Betalingsrekkefølge Tolletaten → Skatteetaten → Statens vegvesen",
+    "Grunnlag for innførselsavgift for nylig kjøpt bil",
+    "Refusjon av utenlandsk mva. = sak mellom kjøper og selger"
+   ],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-REF-001"
+   ],
+   "note": "Siden henvender seg til privatpersoner («som privatperson»). Gir ikke sats, tollkurs, fraktsjablong eller regel for næringsdrivende forhandler.",
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-15",
+   "retrievedBy": "Codex (kildepakke TAX-001B-handoff)",
+   "packageFile": "primarkilder/toll-bilimport.html",
+   "packageSha256": "fbb5c5fb52406f16cba66a14f42d8eaa913ad5fd00ecf16d81e97b1124b3655b",
+   "publishedVersion": "Tolletaten, «Import av bil og andre kjøretøy», «Oppdatert: 5.2.2026»",
+   "effectiveDate": null,
+   "readSections": [
+    "Avgifter du må betale til Tolletaten",
+    "Merk om refusjon av utenlandsk merverdiavgift",
+    "Betal engangsavgift hos Skatteetaten"
+   ],
+   "limitations": "Generell oversiktsside, rettet mot privatpersoner. Ingen mva.-sats, tollkurs, sjablongfrakt eller forhandlerregler. Underordnede sider (T10) er ikke lest."
+  },
+  {
+   "id": "T22",
+   "title": "Merverdiavgiftshåndboken 8-4.3 (fradragsrett for personkjøretøy ved nærmere bestemt bruk)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/en/rettskilder/type/handboker/merverdiavgiftshandboken/gjeldende/M-8/M-8-4/M-8-4.3/",
+   "kind": "primary",
+   "whatToExtract": [
+    "Unntak fra hovedregelen: videresalg (§ 8-4 første ledd annet punktum bokstav a)"
+   ],
+   "rules": [
+    "R-DED-001"
+   ],
+   "note": "URL sier «gjeldende», men sidens egen tittel i filen er «Merverdiavgiftshåndboken 2025». Siteres som 2025-utgave; dekning per ønsket 2026-dato er ikke kontrollert.",
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-15",
+   "retrievedBy": "Codex (kildepakke TAX-001B-handoff)",
+   "packageFile": "primarkilder/mva-handbok-8-4-3.html",
+   "packageSha256": "deff20eba1d073c094fee8f5e8bdd2219f366565491a88217c4496642bd81a35",
+   "publishedVersion": "Merverdiavgiftshåndboken 2025 (sidens tittel i filen)",
+   "effectiveDate": null,
+   "readSections": [
+    "8-4.3 Unntak fra hovedregelen – Videresalg; Vedlikehold, reparasjoner, klargjøring; Forflytning som salgsvare"
+   ],
+   "limitations": "Håndbok (rettskildeinformasjon), ikke lovtekst. Bekrefter ikke den konkrete importørens fradragsrett, innførselsmva., dokumentasjonskrav eller bindingstid (§ 9-6). 2025-utgave."
   }
  ]
 }

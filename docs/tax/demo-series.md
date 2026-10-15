@@ -38,7 +38,9 @@ Merknader:
 
 **Hva kan være komplett:** kjøpsgrunnlag (A) og tollverdi (A), under syntetiske antagelser og en SYNTETISK demobekreftelse. **Hva er uavklart:** engangsavgift (alle profiler), bruksfradrag, import-mva. (sats/grunnlag/elbil-grense), fradragsbehandling og dermed de tre sluttresultatene (budsjettsum, økonomisk kost, kapitalbehov). Ingen av radene er en offisiell avgiftsfasit.
 
-## C. De tre resultatene (kun definisjon her)
-1. **Budsjettsum til Norge** på avtalt basis = kjøpsgrunnlag i NOK + beregnede norske avgifter (engangsavgift, import-mva. …) + brukerens valgte tillegg (`includedInBudget`). Fradragsberettiget mva. trekkes **ikke** fra (DEC-030).
-2. **Økonomisk anskaffelseskost** = budsjettsum − dokumentert fradragsberettiget inngående mva. (kun med bekreftet fradragsprofil, R-DED-001) + ikke-fradragsberettiget del.
-3. **Betalings-/kapitalbehov** = faktiske betalingsstrømmer (brutto betaling/depositum, import-mva. ved grensen, senere refusjon/fradrag) over tid.
+## C. De tre resultatene (kun definisjon her – se purchase-basis.md §6)
+Retting i TAX-001B: tidligere formel «økonomisk kost = budsjettsum − fradrag pluss en ikke-fradragsberettiget del» er trukket tilbake (økonomisk kost er ikke en funksjon av valgfri budsjettsum, og ikke-fradragsberettiget mva. ligger allerede i brutto beløp).
+1. **Budsjettsum til Norge** = Σ brutto `amountNok` for komponenter valgt i budsjettet (`includedInBudget`). Fradragsberettiget mva. trekkes **ikke** fra (DEC-030).
+2. **Økonomisk anskaffelseskost** = Σ (`amountNok` − fradragsberettiget mva.) for komponenter som er reell kostnad (`includedInEconomicCost`), uavhengig av budsjettvalg; ukjent fradragsandel gir `not_calculated`.
+3. **Betalings-/kapitalbehov** = Σ brutto betalinger; bekreftet og scenario-inndekning (refusjon, fradrag) vises separat.
+Eksplisitt regnede syntetiske referanser: C3-031 … C3-038.

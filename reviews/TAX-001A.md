@@ -1,5 +1,8 @@
 # TAX-001A — avgiftsregler, kjøpsgrunnlag og uavhengige kontrolltilfeller · leveranserapport
 
+> **TAX-001B (15.10.2026) – rettelser til denne rapporten:** (1) F1: «vrakpant 2 400 mot 3 000 – kildekonflikt» var feil; T09 gjelder vrakpant*utbetaling*, vrakpantavgiften er 2 400 kr (rundskriv 3.4, T20). (2) F2: «økonomisk kost = budsjettsum − fradrag» er trukket tilbake. (3) «0 E1-regler / 0 klasse 2» gjelder ikke lenger; se `reviews/TAX-001B.md`. Resten av denne rapporten er historikk fra TAX-001A.
+
+
 Status: **REVIEW** (ikke DONE). Utfører Claude Code, kontrollør Codex. Dette er et dokument-/referanseoppdrag. Ingen beregningskode, ingen satser i kjørende app, ingen endring i eksisterende kode, UI, pipeline, pakker, database, auth, miljøfiler, sertifikater eller deploy. Ingen kontakt med myndigheter eller selgere.
 
 ## 0. Viktigste resultat og blokker (les først)

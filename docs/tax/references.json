@@ -1,8 +1,8 @@
 {
  "schema": "merovo.tax.reference-cases",
- "version": "TAX-001A/1",
+ "version": "TAX-001B/1",
  "researchDate": "2026-10-15",
- "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig kontrollert) og klasse 2 (manuelt kildeutledet) er TOMME fordi ingen primærkilde eller kalkulator kunne nås. Klasse 3 er syntetisk aritmetikk/regelkontrakt. Klasse 4 har ingen forventet totalsum.",
+ "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig offisiell referanse/kalkulator) er TOM: ingen kalkulator er kjørt. Klasse 2 = manuell håndregning fra lest primærkilde (E1-kilder), med dokumentert utregning; det er IKKE klasse 1. Klasse 3 = syntetisk aritmetikk/regelkontrakt, ikke bekreftelse av faktiske regler. Klasse 4 har ingen forventet totalsum.",
  "classes": {
   "1": "uavhengig kontrollert referanse",
   "2": "manuelt kildeutledet forventning",
@@ -413,10 +413,10 @@
    "id": "C3-018",
    "evidenceClass": 3,
    "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
-   "title": "Brutto betalt 100 000 EUR med betinget refusjon: kapitalbehov (C) = 100 000 til refusjon er mottatt; økonomisk base (netto) = 84 033,61",
+   "title": "Brutto betalt 100 000 EUR med betinget refusjon: kapitalbehov = 100 000 til refusjon er mottatt; netto 84 033,61 er KUN scenario",
    "profileId": null,
    "ruleIds": [
-    "R-FOR-001"
+    "R-IMP-REF-001"
    ],
    "inputs": {
     "paidGross": "100000",
@@ -424,13 +424,15 @@
    },
    "expected": {
     "kind": "value",
-    "value": "capital=100000.00 ; economicBase=84033.61",
+    "value": "capitalRequired=100000.00 ; scenarioNetIfRefunded=84033.61 (scenario, ikke bekreftet kjøpsgrunnlag eller budsjettfordel)",
     "unit": "EUR",
     "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
    },
    "requiredToUpgrade": [],
-   "sources": [],
-   "notes": "Refusjonstidspunkt ukjent → kapitalbehov kan ikke avsluttes."
+   "sources": [
+    "T21"
+   ],
+   "notes": "Refusjon av utenlandsk mva. er en sak mellom kjøper og selger (T21). Netto brukes bare når en dokumentert kjøpsbekreftelse (avtalt depositum/tilbakebetalingskrav eller netto faktura) foreligger."
   },
   {
    "id": "C3-019",
@@ -1131,9 +1133,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1141,11 +1143,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-AGE-PB-BEN-1Y",
@@ -1165,9 +1168,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1175,11 +1178,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-AGE-PB-BEN-14Y",
@@ -1199,9 +1203,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1209,11 +1213,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-AGE-PB-BEN-20Y",
@@ -1233,9 +1238,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1243,11 +1248,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-AGE-VB-DIE-1M",
@@ -1267,9 +1273,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1277,11 +1283,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-AGE-VB-DIE-1Y",
@@ -1301,9 +1308,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1311,11 +1318,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-AGE-VB-DIE-14Y",
@@ -1335,9 +1343,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1345,11 +1353,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-AGE-VB-DIE-20Y",
@@ -1369,9 +1378,9 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "hele bruksfradragstabellen (T07, E1)",
-     "hva fradraget regnes av (R-OTA-010)",
-     "avrunding av alder"
+     "NOK-grunnlag: utregnet engangsavgift før bruksfradrag (satser i T04 ikke lest)",
+     "avstemming av tabell mot forskrift § 3-3 (ikke lest)",
+     "avklaring U-002 (production vs første registrering)"
     ]
    },
    "requiredToUpgrade": [
@@ -1379,11 +1388,12 @@
     "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
    ],
    "sources": [
+    "S07",
+    "T03",
     "T06",
-    "T07",
-    "S07"
+    "T07"
    ],
-   "notes": ""
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
   },
   {
    "id": "C4-CO2-minus",
@@ -1948,7 +1958,7 @@
    "id": "C4-VER-0831",
    "evidenceClass": 4,
    "classLabel": "planlagt eller blokkert tilfelle",
-   "title": "Registrering 2026-08-31 – regelversjon før eventuell endring 1.9.2026",
+   "title": "Registrering 2026-08-31 – regelversjon (påstått endring 1.9.2026 er uavklart kildeopplysning U-001)",
    "profileId": "PB-BEN",
    "ruleIds": [
     "R-OTA-001",
@@ -1962,7 +1972,8 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "innhold i endringen 19.6.2026 / virkning 1.9.2026 (T04)"
+     "bekreftelse av om en endring finnes og hva den gjelder (U-001; T04 ikke lest)",
+     "satser i stortingsvedtaket §§ 2–3 (T04)"
     ]
    },
    "requiredToUpgrade": [
@@ -1972,13 +1983,13 @@
    "sources": [
     "T04"
    ],
-   "notes": ""
+   "notes": "Ingen regel eller fasit bygger på den påståtte endringen."
   },
   {
    "id": "C4-VER-0901",
    "evidenceClass": 4,
    "classLabel": "planlagt eller blokkert tilfelle",
-   "title": "Registrering 2026-09-01 – regelversjon etter eventuell endring",
+   "title": "Registrering 2026-09-01 – regelversjon (påstått endring 1.9.2026 er uavklart kildeopplysning U-001)",
    "profileId": "PB-BEN",
    "ruleIds": [
     "R-OTA-001",
@@ -1992,7 +2003,8 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "samme som over"
+     "bekreftelse av om en endring finnes og hva den gjelder (U-001; T04 ikke lest)",
+     "satser i stortingsvedtaket §§ 2–3 (T04)"
     ]
    },
    "requiredToUpgrade": [
@@ -2002,35 +2014,7 @@
    "sources": [
     "T04"
    ],
-   "notes": ""
-  },
-  {
-   "id": "C4-SCRAP",
-   "evidenceClass": 4,
-   "classLabel": "planlagt eller blokkert tilfelle",
-   "title": "Vrakpant: 2 400 vs 3 000 kr – hvilken gjelder ved planlagt registreringsdato",
-   "profileId": "PB-BEN",
-   "ruleIds": [
-    "R-IMP-OTH-001"
-   ],
-   "inputs": {
-    "plannedRegistration": "2026-11-02"
-   },
-   "expected": {
-    "kind": "none",
-    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
-    "missing": [
-     "gjeldende beløp og dato (E1)"
-    ]
-   },
-   "requiredToUpgrade": [
-    "Les T09/T08 direkte"
-   ],
-   "sources": [
-    "T08",
-    "T09"
-   ],
-   "notes": ""
+   "notes": "Ingen regel eller fasit bygger på den påståtte endringen."
   },
   {
    "id": "C4-GHG",
@@ -2438,6 +2422,908 @@
     "T03"
    ],
    "notes": ""
+  },
+  {
+   "id": "C2-SCRAP-A",
+   "title": "Vrakpantavgift 2026 for personbil (gruppe a)",
+   "ruleIds": [
+    "R-IMP-OTH-001"
+   ],
+   "inputs": {
+    "avgiftsgruppe": "a",
+    "registrering": "2026 (første gangs registrering)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "2400",
+    "unit": "NOK",
+    "rounding": "heltall"
+   },
+   "sources": [
+    "T03",
+    "T20"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": "PB-BEN",
+   "notes": "Håndregning fra lest primærkilde; ikke uavhengig kontrollert. Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "Rundskriv 3.4: gruppe a, b, c, g, j, k = kr 2 400",
+    "Satsside T20 (2026 valgt): person-, vare- og campingbiler = 2 400 kroner"
+   ]
+  },
+  {
+   "id": "C2-SCRAP-B",
+   "title": "Vrakpantavgift 2026 for varebil klasse 2 (gruppe b)",
+   "ruleIds": [
+    "R-IMP-OTH-001"
+   ],
+   "inputs": {
+    "avgiftsgruppe": "b",
+    "registrering": "2026 (første gangs registrering)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "2400",
+    "unit": "NOK",
+    "rounding": "heltall"
+   },
+   "sources": [
+    "T03",
+    "T20"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": "VB-DIE",
+   "notes": "Håndregning fra lest primærkilde; ikke uavhengig kontrollert. Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "Rundskriv 3.4: gruppe a, b, c, g, j, k = kr 2 400",
+    "Satsside T20 (2026 valgt): person-, vare- og campingbiler = 2 400 kroner"
+   ]
+  },
+  {
+   "id": "C2-SCRAP-PAYOUT",
+   "title": "Vrakpantutbetaling (3 000 kr) skal ikke inngå i importkostnaden eller trekkes fra kjøpspris",
+   "ruleIds": [
+    "R-SCR-PAY-001",
+    "R-IMP-OTH-001"
+   ],
+   "inputs": {
+    "begrep": "vrakpantutbetaling ved skroting"
+   },
+   "expected": {
+    "kind": "status",
+    "value": "ekskludert fra budsjett, økonomisk kost og kapitalbehov for import"
+   },
+   "sources": [
+    "T09",
+    "T20"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Begrepsskille – ikke en beregnet sum.",
+   "handCalculation": [
+    "T09: utbetaling mottas av biloppsamlingsplass ved skroting",
+    "T20 + T03 3.4: innbetalingen ved registrering er vrakpantavgiften (2 400)"
+   ]
+  },
+  {
+   "id": "C2-AGE-01",
+   "title": "Bruksfradrag-prosent: første registrering utlandet 2025-01-15, norsk registrering 2026-01-15",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2025-01-15",
+    "norwegianRegistration": "2026-01-15"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "19",
+    "unit": "prosent av utregnet engangsavgift",
+    "rounding": "heltall (tabell)"
+   },
+   "sources": [
+    "T03",
+    "T07"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Gjelder prosent, ikke NOK. Månedstrinn antas å følge dato-til-dato-prinsippet (rundskriv eksemplifiserer bare årstrinn). Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "Ett-års bruksfradrag innrømmes på årsdagen (rundskriv 4.2-eksempel: 15. januar → 15. januar året etter)",
+    "Tabell: bruksfradrag-tabell-T07.json (checkeren regner ut prosenten uavhengig av verdien i forventningen)"
+   ]
+  },
+  {
+   "id": "C2-AGE-02",
+   "title": "Bruksfradrag-prosent: første registrering utlandet 2025-01-15, norsk registrering 2026-01-14",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2025-01-15",
+    "norwegianRegistration": "2026-01-14"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "18",
+    "unit": "prosent av utregnet engangsavgift",
+    "rounding": "heltall (tabell)"
+   },
+   "sources": [
+    "T03",
+    "T07"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Gjelder prosent, ikke NOK. Månedstrinn antas å følge dato-til-dato-prinsippet (rundskriv eksemplifiserer bare årstrinn). Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "Dagen før årsdagen: 11 måneder fullført (2025-12-15), ikke 12",
+    "Tabell: bruksfradrag-tabell-T07.json (checkeren regner ut prosenten uavhengig av verdien i forventningen)"
+   ]
+  },
+  {
+   "id": "C2-AGE-03",
+   "title": "Bruksfradrag-prosent: første registrering utlandet 2020-03-10, norsk registrering 2026-10-20",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2020-03-10",
+    "norwegianRegistration": "2026-10-20"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "62",
+    "unit": "prosent av utregnet engangsavgift",
+    "rounding": "heltall (tabell)"
+   },
+   "sources": [
+    "T03",
+    "T07"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Gjelder prosent, ikke NOK. Månedstrinn antas å følge dato-til-dato-prinsippet (rundskriv eksemplifiserer bare årstrinn). Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "6 år 7 mnd: høyeste trinn ≤ alder er 6 år 6 mnd",
+    "Tabell: bruksfradrag-tabell-T07.json (checkeren regner ut prosenten uavhengig av verdien i forventningen)"
+   ]
+  },
+  {
+   "id": "C2-AGE-04",
+   "title": "Bruksfradrag-prosent: første registrering utlandet 2012-02-10, norsk registrering 2026-10-15",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2012-02-10",
+    "norwegianRegistration": "2026-10-15"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "94",
+    "unit": "prosent av utregnet engangsavgift",
+    "rounding": "heltall (tabell)"
+   },
+   "sources": [
+    "T03",
+    "T07"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Gjelder prosent, ikke NOK. Månedstrinn antas å følge dato-til-dato-prinsippet (rundskriv eksemplifiserer bare årstrinn). Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "14 år 8 mnd: trinn 14 år",
+    "Tabell: bruksfradrag-tabell-T07.json (checkeren regner ut prosenten uavhengig av verdien i forventningen)"
+   ]
+  },
+  {
+   "id": "C2-AGE-05",
+   "title": "Bruksfradrag-prosent: første registrering utlandet 2006-06-15, norsk registrering 2025-12-31",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2006-06-15",
+    "norwegianRegistration": "2025-12-31"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "98",
+    "unit": "prosent av utregnet engangsavgift",
+    "rounding": "heltall (tabell)"
+   },
+   "sources": [
+    "T03",
+    "T07"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Gjelder prosent, ikke NOK. Månedstrinn antas å følge dato-til-dato-prinsippet (rundskriv eksemplifiserer bare årstrinn). Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "19 år 6 mnd: 20 år ikke nådd i 2025 (rundskriv 6.21: 20 år 1. januar i året 20 år passerer = 2026) → trinn 18 år",
+    "Tabell: bruksfradrag-tabell-T07.json (checkeren regner ut prosenten uavhengig av verdien i forventningen)"
+   ]
+  },
+  {
+   "id": "C2-AGE-06",
+   "title": "Bruksfradrag-prosent: første registrering utlandet 2006-06-15, norsk registrering 2026-01-01",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2006-06-15",
+    "norwegianRegistration": "2026-01-01"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "100",
+    "unit": "prosent av utregnet engangsavgift",
+    "rounding": "heltall (tabell)"
+   },
+   "sources": [
+    "T03",
+    "T07"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Gjelder prosent, ikke NOK. Månedstrinn antas å følge dato-til-dato-prinsippet (rundskriv eksemplifiserer bare årstrinn). Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "2026 er året 20 år passerer (2026-06-15) → anses 20 år fra 1. januar 2026 → 100 % (rundskriv 6.21)",
+    "Tabell: bruksfradrag-tabell-T07.json (checkeren regner ut prosenten uavhengig av verdien i forventningen)"
+   ]
+  },
+  {
+   "id": "C2-AGE-07",
+   "title": "Bruksfradrag-prosent: første registrering utlandet 2005-12-31, norsk registrering 2025-12-31",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2005-12-31",
+    "norwegianRegistration": "2025-12-31"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "100",
+    "unit": "prosent av utregnet engangsavgift",
+    "rounding": "heltall (tabell)"
+   },
+   "sources": [
+    "T03",
+    "T07"
+   ],
+   "evidenceClass": 2,
+   "classLabel": "manuelt kildeutledet forventning",
+   "requiredToUpgrade": [
+    "Uavhengig kontroll mot Skatteetatens kalkulator eller vedtak (klasse 1)"
+   ],
+   "profileId": null,
+   "notes": "Gjelder prosent, ikke NOK. Månedstrinn antas å følge dato-til-dato-prinsippet (rundskriv eksemplifiserer bare årstrinn). Tabell ikke avstemt mot forskrift § 3-3.",
+   "handCalculation": [
+    "20 år passerer 2025-12-31 i 2025 → anses 20 år fra 1. januar 2025 → 100 %",
+    "Tabell: bruksfradrag-tabell-T07.json (checkeren regner ut prosenten uavhengig av verdien i forventningen)"
+   ]
+  },
+  {
+   "id": "C3-031",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "(a) Reell kostnad (K4 transport) er ikke valgt i budsjettet, men inngår økonomisk; full fradragsrett",
+   "profileId": null,
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil (kjøpsgrunnlag, ingen mva. i beløpet)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase"
+     },
+     {
+      "id": "K2",
+      "label": "Import-mva. (hele beløpet er inngående mva.)",
+      "amountNok": "250000.00",
+      "vatIncludedNok": "250000.00",
+      "deductibleSharePercent": "100",
+      "legalBasis": "importVat",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "border"
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     },
+     {
+      "id": "K4",
+      "label": "Transport etter grensen inkl. 25 % mva. (20 000 brutto, 4 000 mva.)",
+      "amountNok": "20000.00",
+      "vatIncludedNok": "4000.00",
+      "deductibleSharePercent": "100",
+      "legalBasis": "domestic",
+      "includedInBudget": false,
+      "includedInEconomicCost": true,
+      "paymentTiming": "later"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1350000.00",
+     "economicCostNok": "1116000.00",
+     "cashRequiredNok": "1370000.00",
+     "confirmedRecoveryNok": "0.00",
+     "scenarioRecoveryNok": "254000.00"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Økonomisk kost er uavhengig av budsjettvalget for K4. Budsjettet trekker ikke fradrag (DEC-030)."
+  },
+  {
+   "id": "C3-032",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "(b) Ingen fradragsrett: ikke-fradragsberettiget mva. telles nøyaktig én gang",
+   "profileId": null,
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil (kjøpsgrunnlag, ingen mva. i beløpet)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase"
+     },
+     {
+      "id": "K2",
+      "label": "Import-mva. (hele beløpet er inngående mva.)",
+      "amountNok": "250000.00",
+      "vatIncludedNok": "250000.00",
+      "deductibleSharePercent": "0",
+      "legalBasis": "importVat",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "border"
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     },
+     {
+      "id": "K4",
+      "label": "Transport etter grensen inkl. 25 % mva. (20 000 brutto, 4 000 mva.)",
+      "amountNok": "20000.00",
+      "vatIncludedNok": "4000.00",
+      "deductibleSharePercent": "0",
+      "legalBasis": "domestic",
+      "includedInBudget": false,
+      "includedInEconomicCost": true,
+      "paymentTiming": "later"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1350000.00",
+     "economicCostNok": "1370000.00",
+     "cashRequiredNok": "1370000.00",
+     "confirmedRecoveryNok": "0.00",
+     "scenarioRecoveryNok": "0.00"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Den gamle formelen (budsjett pluss en ikke-fradragsberettiget del) ville gitt 1 350 000 + 254 000 = 1 604 000 (dobbelttelling av 250 000 mva. i K2) – feil. Mva. ligger allerede i beløpet."
+  },
+  {
+   "id": "C3-033",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "(c) Full fradragsrett, alle linjer i budsjettet",
+   "profileId": null,
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil (kjøpsgrunnlag, ingen mva. i beløpet)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase"
+     },
+     {
+      "id": "K2",
+      "label": "Import-mva. (hele beløpet er inngående mva.)",
+      "amountNok": "250000.00",
+      "vatIncludedNok": "250000.00",
+      "deductibleSharePercent": "100",
+      "legalBasis": "importVat",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "border"
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     },
+     {
+      "id": "K4",
+      "label": "Transport etter grensen inkl. 25 % mva. (20 000 brutto, 4 000 mva.)",
+      "amountNok": "20000.00",
+      "vatIncludedNok": "4000.00",
+      "deductibleSharePercent": "100",
+      "legalBasis": "domestic",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "later"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1370000.00",
+     "economicCostNok": "1116000.00",
+     "cashRequiredNok": "1370000.00",
+     "confirmedRecoveryNok": "0.00",
+     "scenarioRecoveryNok": "254000.00"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Samme økonomiske kost som C3-031: økonomisk kost avhenger ikke av om K4 er valgt i budsjettet. Fradraget er scenario inntil importørprofil er bekreftet; ingen bekreftet inndekning."
+  },
+  {
+   "id": "C3-034",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "(d) Delvis fradragsrett 60 % på K2 og K4",
+   "profileId": null,
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil (kjøpsgrunnlag, ingen mva. i beløpet)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase"
+     },
+     {
+      "id": "K2",
+      "label": "Import-mva. (hele beløpet er inngående mva.)",
+      "amountNok": "250000.00",
+      "vatIncludedNok": "250000.00",
+      "deductibleSharePercent": "60",
+      "legalBasis": "importVat",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "border"
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     },
+     {
+      "id": "K4",
+      "label": "Transport etter grensen inkl. 25 % mva. (20 000 brutto, 4 000 mva.)",
+      "amountNok": "20000.00",
+      "vatIncludedNok": "4000.00",
+      "deductibleSharePercent": "60",
+      "legalBasis": "domestic",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "later"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1370000.00",
+     "economicCostNok": "1217600.00",
+     "cashRequiredNok": "1370000.00",
+     "confirmedRecoveryNok": "0.00",
+     "scenarioRecoveryNok": "152400.00"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "K2: 250 000×60 % = 150 000 fradrag; K4: 4 000×60 % = 2 400. Økonomisk kost = 1 000 000 + 100 000 + 100 000 + 17 600."
+  },
+  {
+   "id": "C3-035",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Budsjettbuffer (K5) inngår i budsjett, men er ikke reell kostnad og ikke betaling",
+   "profileId": null,
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil (kjøpsgrunnlag, ingen mva. i beløpet)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase"
+     },
+     {
+      "id": "K2",
+      "label": "Import-mva. (hele beløpet er inngående mva.)",
+      "amountNok": "250000.00",
+      "vatIncludedNok": "250000.00",
+      "deductibleSharePercent": "100",
+      "legalBasis": "importVat",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "border"
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     },
+     {
+      "id": "K4",
+      "label": "Transport etter grensen inkl. 25 % mva. (20 000 brutto, 4 000 mva.)",
+      "amountNok": "20000.00",
+      "vatIncludedNok": "4000.00",
+      "deductibleSharePercent": "100",
+      "legalBasis": "domestic",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "later"
+     },
+     {
+      "id": "K5",
+      "label": "Brukervalgt buffer/slingringsmonn (ikke en kostnad)",
+      "amountNok": "30000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "none",
+      "includedInBudget": true,
+      "includedInEconomicCost": false,
+      "paymentTiming": "none"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1400000.00",
+     "economicCostNok": "1116000.00",
+     "cashRequiredNok": "1370000.00",
+     "confirmedRecoveryNok": "0.00",
+     "scenarioRecoveryNok": "254000.00"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Budsjettvalg er ikke lovgrunnlag og ikke økonomisk kost."
+  },
+  {
+   "id": "C3-036",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Ukjent fradragsandel: økonomisk kost og scenariofradrag kan ikke beregnes (ikke 0)",
+   "profileId": null,
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil (kjøpsgrunnlag, ingen mva. i beløpet)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase"
+     },
+     {
+      "id": "K2",
+      "label": "Import-mva. (hele beløpet er inngående mva.)",
+      "amountNok": "250000.00",
+      "vatIncludedNok": "250000.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "importVat",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "border"
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     },
+     {
+      "id": "K4",
+      "label": "Transport etter grensen inkl. 25 % mva. (20 000 brutto, 4 000 mva.)",
+      "amountNok": "20000.00",
+      "vatIncludedNok": "4000.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "domestic",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "later"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1370000.00",
+     "economicCostNok": "not_calculated",
+     "cashRequiredNok": "1370000.00",
+     "confirmedRecoveryNok": "0.00",
+     "scenarioRecoveryNok": "not_calculated"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Ukjent = null, aldri 0. Budsjett og kapitalbehov er uavhengige og kan beregnes."
+  },
+  {
+   "id": "C3-037",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Avtalt depositum/tilbakebetalingskrav (status agreed): bekreftet inndekning i kapitalbehov, men budsjett og økonomisk kost endres ikke",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-REF-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil kjøpt brutto med refusjonskrav (kjøpsgrunnlag = betalt)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase",
+      "refund": {
+       "amountNok": "100000.00",
+       "status": "agreed"
+      }
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1100000.00",
+     "economicCostNok": "1100000.00",
+     "cashRequiredNok": "1100000.00",
+     "confirmedRecoveryNok": "100000.00",
+     "scenarioRecoveryNok": "0.00",
+     "netCashAfterConfirmedRecoveryNok": "1000000.00"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Kjøpsgrunnlaget forblir betalt beløp; netto kjøpsgrunnlag krever dokumentert netto faktura/kjøpsbekreftelse (purchase-basis.md L2). Tolletaten: refusjon er sak mellom kjøper og selger (T21)."
+  },
+  {
+   "id": "C3-038",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Betinget refusjon (status conditional): kun scenario, ingen bekreftet fordel",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-REF-001"
+   ],
+   "inputs": {
+    "components": [
+     {
+      "id": "K1",
+      "label": "Bil kjøpt brutto med refusjonskrav (kjøpsgrunnlag = betalt)",
+      "amountNok": "1000000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "customsValue",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "purchase",
+      "refund": {
+       "amountNok": "100000.00",
+       "status": "conditional"
+      }
+     },
+     {
+      "id": "K3",
+      "label": "Engangsavgift (ingen mva.)",
+      "amountNok": "100000.00",
+      "vatIncludedNok": "0.00",
+      "deductibleSharePercent": null,
+      "legalBasis": "engangsavgift",
+      "includedInBudget": true,
+      "includedInEconomicCost": true,
+      "paymentTiming": "registration"
+     }
+    ],
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel)",
+    "currency": "NOK (alle beløp syntetiske)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": {
+     "budgetTotalNok": "1100000.00",
+     "economicCostNok": "1100000.00",
+     "cashRequiredNok": "1100000.00",
+     "confirmedRecoveryNok": "0.00",
+     "scenarioRecoveryNok": "100000.00",
+     "netCashAfterConfirmedRecoveryNok": "1100000.00"
+    },
+    "unit": "NOK",
+    "rounding": "demo-regel"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Uavklart refusjon vises som scenario, ikke som bekreftet budsjettfordel."
   }
  ]
 }

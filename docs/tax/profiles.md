@@ -1,4 +1,4 @@
-# TAX-001A — profilmatrise og forslag til datakontrakt
+# TAX-001A/B — profilmatrise og forslag til datakontrakt
 
 Forskningsdato 15.10.2026. **Forslag/dokumentasjon**; ingen profil er støttet. Alle profiler står som `krever_avklaring`.
 
@@ -13,16 +13,16 @@ SUV-/van-karosseri alene beviser ikke lag 2–4. Valg av «varebil» alene endre
 ## 2. Matrise 2 × 5
 | Profil | Kjøretøy | Drivlinje | Relevans | Gruppe | Regler | Status |
 |---|---|---|---|---|---|---|
-| PB-BEN | personbil | bensin | relevant | a | R-OTA-001, R-OTA-002, R-OTA-003, R-OTA-004, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001 | krever_avklaring |
-| PB-DIE | personbil | diesel | relevant | a | R-OTA-001, R-OTA-002, R-OTA-003, R-OTA-004, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001 | krever_avklaring |
-| PB-HEV | personbil | ikke-ladbar hybrid | relevant | a (antatt behandlet som forbrenningsbil – uavklart) | R-OTA-001, R-OTA-002, R-OTA-006, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001 | krever_avklaring |
-| PB-PHEV | personbil | ladbar hybrid | relevant | a | R-OTA-001, R-OTA-002, R-OTA-005, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001 | krever_avklaring |
-| PB-BEV | personbil | batterielektrisk | relevant | a | R-OTA-001, R-OTA-007, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-VAT-003, R-IMP-FX-001, R-IMP-OTH-001, R-DED-001 | krever_avklaring |
-| VB-BEN | varebil | bensin | relevant | a (klasse 1) eller b (klasse 2) | R-OTA-001, R-OTA-002, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001 | krever_avklaring |
-| VB-DIE | varebil | diesel | relevant | a eller b | R-OTA-001, R-OTA-002, R-OTA-003, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001 | krever_avklaring |
-| VB-HEV | varebil | ikke-ladbar hybrid | krever_avklaring_av_relevans | a eller b | R-OTA-001, R-OTA-002, R-OTA-006, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001 | krever_avklaring |
-| VB-PHEV | varebil | ladbar hybrid | krever_avklaring_av_relevans | a eller b | R-OTA-001, R-OTA-002, R-OTA-005, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001 | krever_avklaring |
-| VB-BEV | varebil | batterielektrisk | relevant | a eller b | R-OTA-001, R-OTA-007, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-VAT-003, R-IMP-FX-001, R-DED-001 | krever_avklaring |
+| PB-BEN | personbil | bensin | relevant | a | R-OTA-001, R-OTA-002, R-OTA-003, R-OTA-004, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001, R-IMP-REF-001 | krever_avklaring |
+| PB-DIE | personbil | diesel | relevant | a | R-OTA-001, R-OTA-002, R-OTA-003, R-OTA-004, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001, R-IMP-REF-001 | krever_avklaring |
+| PB-HEV | personbil | ikke-ladbar hybrid | relevant | a (antatt behandlet som forbrenningsbil – uavklart) | R-OTA-001, R-OTA-002, R-OTA-006, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001, R-IMP-REF-001 | krever_avklaring |
+| PB-PHEV | personbil | ladbar hybrid | relevant | a | R-OTA-001, R-OTA-002, R-OTA-005, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001, R-IMP-REF-001 | krever_avklaring |
+| PB-BEV | personbil | batterielektrisk | relevant | a | R-OTA-001, R-OTA-007, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-VAT-003, R-IMP-FX-001, R-IMP-OTH-001, R-DED-001, R-IMP-REF-001 | krever_avklaring |
+| VB-BEN | varebil | bensin | relevant | a (klasse 1) eller b (klasse 2) | R-OTA-001, R-OTA-002, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001, R-IMP-REF-001 | krever_avklaring |
+| VB-DIE | varebil | diesel | relevant | a eller b | R-OTA-001, R-OTA-002, R-OTA-003, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-OTH-001, R-IMP-OTH-002, R-DED-001, R-IMP-REF-001 | krever_avklaring |
+| VB-HEV | varebil | ikke-ladbar hybrid | krever_avklaring_av_relevans | a eller b | R-OTA-001, R-OTA-002, R-OTA-006, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-REF-001, R-IMP-OTH-001 | krever_avklaring |
+| VB-PHEV | varebil | ladbar hybrid | krever_avklaring_av_relevans | a eller b | R-OTA-001, R-OTA-002, R-OTA-005, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-FX-001, R-IMP-REF-001, R-IMP-OTH-001 | krever_avklaring |
+| VB-BEV | varebil | batterielektrisk | relevant | a eller b | R-OTA-001, R-OTA-007, R-OTA-008, R-OTA-009, R-OTA-010, R-OTA-011, R-IMP-VAT-001, R-IMP-VAT-002, R-IMP-VAT-003, R-IMP-FX-001, R-DED-001, R-IMP-REF-001, R-IMP-OTH-001 | krever_avklaring |
 
 Detaljer per profil (nødvendig input, hva kilden har/mangler, demo-bekreftelser og blokkeringer) står i `profiles.json`.
 
@@ -33,7 +33,7 @@ Detaljer per profil (nødvendig input, hva kilden har/mangler, demo-bekreftelser
 - **Ingen kandidatadapter skal omskrives for å gi falsk datadekning.** Manglende felt gir blokkering, ikke gjetting.
 
 ## 4. Registreringsdato og presisjon
-Bruksfradrag og regelversjon avhenger av dato. Hvis år eller måned ikke avgjør et tabelltrinn eller en regelgrense (inkl. 1.9.2026), kreves tilstrekkelig presisjon (dag) eller så blokkeres beregningen (`C3-021`, `C3-022`).
+Bruksfradrag og regelversjon avhenger av dato. Hvis år eller måned ikke avgjør et tabelltrinn eller en regelgrense (inkl. en eventuell regelendringsdato; påstått 1.9.2026 er uavklart, U-001), kreves tilstrekkelig presisjon (dag) eller så blokkeres beregningen (`C3-021`, `C3-022`).
 
 ## 5. Forslag: separate, versjonerte inndata (`TaxInputV1`, forslag)
 Endrer ingen eksisterende typer. Kobles til kandidat og kostnadsgrunnlag som i SEARCH-002-FIX1.
@@ -46,7 +46,12 @@ Endrer ingen eksisterende typer. Kobles til kandidat og kostnadsgrunnlag som i S
     "candidateId": "<CandidateV2.id>", "candidateVersion": "<CandidateV2.version>",
     "costBasis": "<costBasisOf(spec)>"                                       // SEARCH-002-FIX1
   },
-  "plannedRegistration": { "scenario": "passenger|van|unspecified", "date": "YYYY-MM-DD" },   // dato kreves
+  "plannedRegistration": { "scenario": "passenger|van|unspecified", "date": "YYYY-MM-DD" },   // ønske, ikke bekreftet klasse
+  "events": {                                                                   // se event-dates.md – regelversjon velges per komponent
+    "firstRegistrationAbroad": { "date": "YYYY-MM-DD", "precision": "year|month|date" },
+    "importDeclaration": "YYYY-MM-DD|null", "customsValuation": "YYYY-MM-DD|null",
+    "norwegianRegistration": "YYYY-MM-DD|null", "enkeltgodkjenning": "YYYY-MM-DD|null"
+  },
   "vehicle": {
     "powertrain": "petrol|diesel|bev|hev|phev", "documentedClass": { "value": "M1|N1|…", "evidence": "ref" },
     "taxGroup": { "value": "a|b|…", "determinedBy": "Statens vegvesen|Skatteetaten", "evidence": "ref" },
@@ -60,8 +65,15 @@ Endrer ingen eksisterende typer. Kobles til kandidat og kostnadsgrunnlag som i S
     "price": { "amountMinor": "…", "currency": "EUR" },
     "basis": "gross|net|unknown", "regime": "ordinary|margin|private|unknown",
     "confirmation": { "kind": "document|synthetic_demo", "ref": "…" },      // synthetic_demo må vises som syntetisk
-    "paidGross": null, "refundExpected": null
+    "paidGross": null,
+    "refund": { "amount": null, "status": "agreed|conditional|none|unknown" }   // betinget refusjon er scenario, aldri netto grunnlag
   },
+  "components": [                                                               // felles grunnlag for tre separate summeringer, se purchase-basis.md §6
+    { "id": "…", "amountNok": null, "legalBasis": "customsValue|importVat|engangsavgift|domestic|none",
+      "vatIncludedNok": null, "deductibleSharePercent": null,
+      "includedInBudget": true, "includedInEconomicCost": true, "paymentTiming": "purchase|border|registration|later|none",
+      "refund": null }
+  ],
   "fx": { "customs": { "rate": "…", "source": "Tolletaten", "validFrom": "…" }, "payment": { "rate": "…", "buffer": null } },
   "transport": { "toBorder": { "amountMinor": null, "currency": null }, "afterBorder": { "amountMinor": null }, "insuranceToBorder": { "amountMinor": null } },
   "importer": { "vatRegistered": null, "deductionProfile": null },

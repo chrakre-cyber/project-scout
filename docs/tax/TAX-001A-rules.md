@@ -1,40 +1,43 @@
-# TAX-001A — regel- og kilderegister (dokumentasjon, ikke regelsett)
+# TAX-001A/B — regel- og kilderegister (dokumentasjon, ikke regelsett)
 
-Forskningsdato **15.10.2026**. Status: **REVIEW**. Dette dokumentet er et *kartleggingsregister*. Det inneholder **ingen** godkjente satser, og ingen regel her skal brukes som parameter i kode.
+Oppdatert **15.10.2026** (TAX-001B). Status: **REVIEW**. Generert fra `rules.json` og `sources.json`. Dette er et *kartleggingsregister*. Ingen regel her er godkjent som parameter i kode (`usableAsRuleParameter=false` for alle); «dokumentert E1» betyr lest primærkilde, ikke godkjent regelprofil.
 
-## 1. Viktigste funn om kontrollgrunnlaget
+## 1. Status for kontrollgrunnlaget
 
-**Ingen primærkilde er lest direkte.** Skatteetaten, Tolletaten, Lovdata og Regjeringen (`www.skatteetaten.no`, `www.toll.no`, `lovdata.no`, `www.regjeringen.no`, `oppslag.rettskilder.skatteetaten.no`) var **ikke tilgjengelige** fra utviklingsmiljøet (DNS-/proxy-feil ved direkte henting). Skatteetatens kalkulator er ikke forsøkt kjørt. Det som er samlet kommer fra **søkeverktøyets sammendrag av offisielle sider** (evidensnivå **E2**), begrenset til offisielle domener. Slike sammendrag er *ledetråder*, ikke kontrollerte kilder: de er korte, kan være utdaterte (flere er fra 2018–2023) og motsier hverandre i enkelte tilfeller.
+**Seks originale kildefiler** (kildepakke `TAX-001B-handoff`, hentet av Codex 15.10.2026, SHA-256 i `sources.json`) er lest lokalt av Claude: rundskriv for engangsavgift 2026 (T03), bruksfradragstabell (T07), vrakpantutbetaling (T09), vrakpantavgift (T20), Tolletatens bilimportside (T21) og Merverdiavgiftshåndboken 8-4.3 (T22, **2025-utgave**). Nettverket mot norske verter er fortsatt blokkert for Claude; det er ikke lest noe utover pakken.
 
-Følgelig er **alle** regler under merket `ikke_primærkontrollert`, `kildekonflikt`, `fremtidig_ikke_i_kraft`, `utenfor_første_motor`, `ikke_undersøkt` eller `prosjektregel`. Ingen satser er fastsatt. For å gjennomføre kontrollen kreves ett av:
-
-1. at miljøets nettverk åpnes for de navngitte vertene (Edit environment → Network access → Allowed domains), slik at kilden kan leses og settes til E1; eller
-2. at Christian/Codex leser kildene i `sources.json` (`whatToExtract`) og kjører kalkulatoren med inputene i `references.json` (klasse 4).
-
-Se `reviews/TAX-001A.md` for den presise kontrolllisten.
+**Ikke lest:** stortingsvedtaket om engangsavgift (T04, satstabellene for vekt og CO2), forskrift om engangsavgift (T05, §§ 3-1 og 3-3), Tolletatens underordnede sider (T10: tollkurs, sjablongfrakt), Skatteetatens guide til innførselsmva. (T11), elbil-mva. (T14), Statens vegvesen-kodeverk (T15) og tyske kilder (T16/T17). **Ingen satstabell for engangsavgift eller mva.-sats er derfor kontrollert**, og ingen offisiell kalkulator er kjørt.
 
 ### Evidensnivåer
 | Nivå | Betydning | Brukes som grunnlag? |
 |---|---|---|
 | E0 | ikke undersøkt | nei |
-| E1 | primærkilde direkte lest og kontrollert | ja (**ingen oppnådd**) |
-| E2 | sammendrag fra søkeverktøy av offisiell side, ikke direkte lest | nei – lead |
-| E3 | sekundærkilde (blogg/aggregator) | **avvist** (Smarte Penger, Crowe) |
+| E1 | primærkilde lest; regelens `e1Findings` dekkes av lest tekst (kilde, versjon, avsnitt, dato) | dokumentert regel – **ikke** automatisk godkjent parameter |
+| E1P | delvis: avgrensede påstander er E1, resten uavklart | bare de enkelte `e1Findings` |
+| E2 | sammendrag fra søkeverktøy, ikke lest | nei – lead |
+| E3 | sekundærkilde | **avvist** (Smarte Penger, Crowe) |
 
-### Viktige ledetråder (E2) som Codex bør kontrollere først
-- **Mulig regelendring midt i 2026:** Lovdata-oppføringen for Stortingsvedtaket om engangsavgift 2026 (FOR-2025-12-18-2755) skal ifølge søkeverktøyet være endret 19.6.2026 med virkning fra **1.9.2026** for § 3. Planlagt registreringsdato før/etter 1.9.2026 kan dermed gi ulik regelversjon. Innholdet er ukjent.
-- **NOx-komponenten:** Skatteetaten oppgir at NOx er avviklet fra 1.1.2026, mens samme side fortsatt nevner NOx i oversiktsteksten (kildekonflikt).
-- **Ny vektkomponent fra 2026** gjelder ifølge Skatteetaten alle drivlinjer (elbil bare vektkomponent).
-- **Bruksfradrag:** alder regnes fra første *utenlandske* registrering til første norske; tabellen utvidet 1.1.2024 med trinn for 20 år (ankerpunkter ca. 2 % / 19 % / 94 % / 100 % ved 1 mnd / 1 år / 14 år / 20 år – ikke brukbare som parametere).
-- **Elbil-mva.:** Stortingets lovvedtak 18.12.2025 setter fritaksgrensen til 300 000 kr fra 1.1.2026; videre nedtrapping (2027/2028) er omtalt som uenighet/forslag og er **fremtidig** (ikke i kraft).
-- **Vrakpant:** 2 400 kr (2018-rundskriv) mot 3 000 kr (nyere side) – kildekonflikt.
-- **Tollkurs:** kildene er uenige om hvilken dato som styrer Tolletatens kurs (deklarasjon eller frigivelse).
-- **Fradragsrett:** Mva.-håndboken beskriver § 8-4 første ledd bokstav a (personkjøretøy som salgsvare) – gjelder også innførselsmva. (sammendrag).
-- **Tyskland:** skattefri utførsel (§ 6 UStG) og differansebeskatning (§ 25a UStG) er funnet som lead; **ingen andre land** er dekket.
+**Krav før en regel kan godkjennes som parameter** (`approvalRequirements`, håndheves av `check-docs.mjs`): evidenceLevel E1 (ikke E1P) med controlledDate; alle kilder i sources er E1 med publishedVersion og packageSha256; validity.from og governingEvent er satt og begrunnet mot rettskilden; minst ett uavhengig klasse 1-referansetilfelle (offisiell kalkulator/vedtak) eller godkjent dokumentert klasse 2-håndregning; parameterApproval.approved=true med approvedBy og approvedDate (Christian eller delegert) – ikke satt av utvikler alene.
 
-## 2. Regelregister (generert fra `rules.json`)
+Antall regler: 30 (E1 4, E1P 13, E2 13). Ingen er godkjent.
 
-Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert. `Lead` er det søkeverktøyet sa, ikke en regel.
+### Uavklarte kildeopplysninger
+- **U-001** (uavklart kildeopplysning): Søkesammendrag av stortingsvedtaket (T04) nevnte en endring med virkning 1.9.2026 (vedtak 19.6.2026). Rundskriv 2026 er datert 1. januar og dokumenterer ikke endringer senere i året. T04 (Lovdata) kunne ikke leses. Ingen regel eller testfasit bygger på påstanden; regler gjelder som versjon pr. 1.1.2026, ikke bekreftet gyldig senere. _(berører: R-OTA-001, R-OTA-002, R-OTA-008)_
+- **U-002** (uavklart språkforskjell): Engelsk bruksfradragsside sier at neste trinn nås på 'date of the vehicle's production', mens rundskriv 4.2/6.21 regner fra første gangs registrering i utlandet, dato til dato. Forskrift § 3-3 er ikke lest. Ikke gjettet. _(berører: R-OTA-010, R-OTA-011)_
+- **U-003** (versjon avklart: 2025-utgave): Merverdiavgiftshåndbok-siden med URL 'gjeldende' er faktisk merket 2025. Dekning for 2026 ikke kontrollert. _(berører: R-DED-001)_
+
+### Viktigste dokumenterte funn (E1, lest 15.10.2026)
+- **Vrakpantavgift** (innbetaling ved registrering) er **2 400 kr** for gruppe a, b, c, g, j, k (rundskriv 3.4, side 17; satsside T20, 2026 valgt). Vrakpant**utbetaling** (3 000 kr, T09) er et annet begrep ved skroting og ikke en kostnad ved import – **ikke en satskonflikt** (TAX-001A feilet her).
+- **NOx-komponenten** er fjernet fra 1.1.2026; **slagvolum** er ikke lenger alternativt grunnlag i gruppe a/b/j fra 1.1.2026 (anslått CO2 = egenvekt/10).
+- **Ladbar hybrid:** vektfradraget er opphevet fra 1.1.2024 (3.3.11) – motsier TAX-001A-leadet om 10 % fradrag.
+- **Elbil:** fritaket opphevet 1.1.2023; el i gruppe a betaler vektkomponent; el i andre grupper enn a betaler ikke engangsavgift (6.12).
+- **Bruksfradrag:** alder fra første registrering i utlandet til norsk registrering, dato til dato; tabellen (41 trinn) er transkribert; 20-årstrinnet følger 1. januar-regelen (6.21). Forskjell mot engelsk sidetekst («production») er uavklart (U-002).
+- **Import:** mva. betales til Tolletaten ved grensen før engangsavgift; refusjon av utenlandsk mva. er sak mellom kjøper og selger (T21). Siden gjelder privatpersoner.
+- **Fradragsrett:** unntaket for personkjøretøy til videresalg beskrives i Merverdiavgiftshåndboken (2025-utgave); ikke verifisert for 2026 eller innførselsmva.
+
+## 2. Regelregister
+
+Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søkeverktøyets sammendrag, ikke en regel. `E1-funn` er lest i primærkilde.
 
 ### R-OTA-000 — Rekkefølge og sammensetning av avgifter ved import
 
@@ -45,7 +48,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ukjent. Virkningsdatoer må leses per komponent.  
 - **Kilder:** T01, T08  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Import av kjøretøy gir engangsavgift, merverdiavgift, vrakpant og klimagassavgift (sammendrag av Skatteetaten-sider). _(kilde T01/T08; Tollsats ikke undersøkt.)_
 - **Uløste spørsmål:**
@@ -60,13 +63,17 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** mva = sats × grunnlag; sats og grunnlagets sammensetning skal leses fra primærkilde  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Sats-/grunnlagsdato ikke lest.  
-- **Kilder:** T01, T08 (import-mva.), T11  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Styrende hendelse:** Innførsel/deklarasjon til Tolletaten  
+- **Kilder:** T01, T08, T11, T21  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_sats_og_grunnlag_mangler` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Kjøretøy innført av privatperson deklareres og merverdiavgift betales til Tolletaten (ved grensen); deretter engangsavgift til Skatteetaten etter godkjenning; til slutt registrering hos Statens vegvesen. (Betalingsrekkefølge – ikke beregningsrekkefølge eller grunnlag.) _(kilde T21, innledning, «Avgifter du må betale til Tolletaten», lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Sammendrag: mva. 25 % av tollverdien for importerte kjøretøy. _(kilde T08; Universell 25 % skal ikke innføres uten kildekontroll (IMPORT_ENGINE_SPEC); elbil har egen regel (R-IMP-VAT-003).)_
 - **Uløste spørsmål:**
   - Inngår engangsavgift i mva.-grunnlaget ved import? (må leses)
   - Rekkefølge: tollverdi → toll → engangsavgift → mva.?
+  - Siden gjelder privatpersoner. Næringsdrivende forhandlers deklarasjon/mva.-oppgjør er ikke dokumentert (T11 ikke lest).
 
 ### R-IMP-VAT-002 — Tollverdi: kjøpspris + frakt + forsikring til norsk grense
 
@@ -76,14 +83,18 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** tollverdi = kjøpspris + frakt til grensen + forsikring til grensen (sammendrag); frakt etter grensen inngår ikke  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ikke lest.  
-- **Kilder:** T08, T10  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Styrende hendelse:** Innførsel/deklarasjon til Tolletaten (dato for tollkurs og tollverdi uavklart, se R-IMP-FX-001)  
+- **Kilder:** T08, T10, T21  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_grunnlag_overordnet` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - For nylig kjøpt bil beregnes avgiften ut fra kjøpesummen, frakt og forsikring; ellers må bilens verdi dokumenteres, og noen ganger kreves takst. _(kilde T21, «Avgifter du må betale til Tolletaten», lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Tollverdi bygges av kjøpspris, frakt og forsikring til norsk grense (Skatteetaten og Tolletaten, sammendrag). _(kilde T08/T10)_
   - For biler kjørt inn på egne hjul brukes Tolletatens sjablongfrakt per land, med rett til å dokumentere faktisk frakt (sammendrag). _(kilde T10)_
 - **Uløste spørsmål:**
   - Beløp for sjablongfrakt (land, bilkategori, gyldig dato).
   - Skal kostnader som ikke er del av prisen (f.eks. transaksjonsgebyr, provisjon) inn i tollverdien?
+  - Sjablongfrakt, tollkurs og transaksjonsgebyr er ikke lest (T10).
 
 ### R-IMP-FX-001 — Tollkurs (Tolletatens kurs) kontra betalingskurs
 
@@ -94,7 +105,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ukjent.  
 - **Kilder:** T10  
-- **Evidensnivå:** E2 · **Status:** `kildekonflikt` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `kildekonflikt` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Tolletaten fastsetter kurs for én uke om gangen (sammendrag). _(kilde T10)_
   - Kildene er uenige om hvilken dato som styrer kursen: tidspunkt tolldeklarasjon godtas, eller frigivelsestidspunkt. _(kilde T10; KILDEKONFLIKT i sammendragene.)_
@@ -111,7 +122,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** 2026-01-01 (lead: 300 000 kr) / ukjent — Videre nedtrapping 2027/2028 er omtalt som beslutning/ønske; status må avklares – FREMTIDIG, ikke i kraft per 2026-10-15.  
 - **Kilder:** T14  
-- **Evidensnivå:** E2 · **Status:** `fremtidig_ikke_i_kraft` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `fremtidig_ikke_i_kraft` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Stortingets lovvedtak (18.12.2025): fritak for første 300 000 kr av vederlaget fra 1.1.2026 (ned fra 500 000 kr). _(kilde T14)_
   - Videre nedtrapping (150 000 kr per år i 2027 og 2028 forutsatt ESA-godkjenning; regjeringen foreslo full mva. fra 2027) er FREMTIDIG/uenighet. _(kilde T14)_
@@ -127,13 +138,15 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** komponent = sats × (vekt over terskel) per sats-trinn; ny komponent for alle drivlinjer inkl. elbil fra 2026  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** 2026-01-01 (lead) / ukjent — Endring i § 3 av 19.6.2026 med virkning 1.9.2026 funnet som lead (innhold ukjent) → minst to regelversjoner i 2026.  
-- **Kilder:** T02, T03, T04 (§ 3)  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Kilder:** T02, T03, T04  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_satser_mangler` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Avgiften beregnes for personbil og varebil i gruppe a og b på grunnlag av egenvekt og CO2-utslipp; satsendringer og omstrukturering av satstabellene i § 3 ble gjort 1.1.2026. _(kilde T03, 3.1, 13.1.1, lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Bil med forbrenningsmotor: ny vektkomponent + generell engangsavgift (CO2/egenvekt); elbil: bare vektkomponent (Skatteetaten, sammendrag). _(kilde T02)_
 - **Uløste spørsmål:**
-  - Satser, terskler og trinn for 2026 – og etter 1.9.2026.
-  - Gjelder samme vektkomponent for elbil og hybrid?
+  - Satser, terskler og trinn står i stortingsvedtaket §§ 2–3 (T04) – ikke lest.
+  - Uavklart kildeopplysning U-001 (påstått endring 1.9.2026) er ikke kontrollert.
 
 ### R-OTA-002 — CO2-komponent
 
@@ -143,45 +156,50 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** komponent = sats-trapp over CO2-bånd; CO2 fra registrert verdi, ellers anslag  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** 2026-01-01 (lead) / ukjent — Se R-OTA-001 for 1.9.2026.  
-- **Kilder:** T02, T03, T04 (§ 3)  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Kilder:** T02, T03, T04  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_satser_mangler` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - CO2 hentes for WLTP-kjøretøy fra samsvarssertifikat (CoC); satstabellen i stortingsvedtaket brukes direkte for WLTP. _(kilde T03, 3.2.5, lest 2026-10-15)_
+  - NEDC-godkjente kjøretøy: registrert CO2 justeres opp med fast faktor, 24 % i gruppe a og j og 22 % i gruppe b, før satstabellen. _(kilde T03, 3.2.5, lest 2026-10-15)_
+  - EPA/NRCan-målt CO2 beregnes som WLTP. _(kilde T03, 3.2.5, lest 2026-10-15)_
+  - Målemetode ukjent: første registrering i utlandet før 1.9.2018 → NEDC-behandling; fra og med 1.9.2018 eller ikke tidligere registrert → WLTP. _(kilde T03, 3.2.5, lest 2026-10-15)_
+  - Uten plikt til å oppgi CO2: anslått CO2 = egenvekt/10 (se R-OTA-004). _(kilde T03, 3.2.6, lest 2026-10-15)_
 - **Lead (ikke regel):**
-  - Fra 1.1.2026 anslås CO2 fra egenvekt (egenvekt/10) når CO2-data mangler (Skatteetaten, sammendrag). _(kilde T02)_
   - Hvis Statens vegvesen har registrert CO2, brukes den som hovedregel. _(kilde T02)_
 - **Uløste spørsmål:**
-  - Bånd og beløp.
-  - Presis anslagsregel (egenvekt/10) og om den gjelder både ny og brukt import.
-  - Hvordan håndteres NEDC vs WLTP?
+  - Satsbånd og beløp for CO2-komponenten står i stortingsvedtaket §§ 2–3 (T04, ikke lest); rundskrivet inneholder ikke satstabellene.
+  - Overgangsregler ved registrering nær årsskifte.
 
-### R-OTA-003 — NOx-komponent
+### R-OTA-003 — NOx-komponenten er fjernet fra 1.1.2026
 
 - **Komponent:** Engangsavgift  
 - **Profiler:** PB-BEN, PB-DIE, PB-HEV, PB-PHEV, PB-BEV, VB-BEN, VB-DIE, VB-HEV, VB-PHEV, VB-BEV  
 - **Nødvendig input:** NOx mg/km  
 - **Formel/trinn (struktur):** ikke aktuelt hvis komponenten er avviklet  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
-- **Dato fra/til:** ukjent / 2025-12-31 (lead) — Lead: NOx avviklet fra 1.1.2026.  
-- **Kilder:** T02  
-- **Evidensnivå:** E2 · **Status:** `kildekonflikt` · **Kontrollert dato (E1):** ingen
-- **Lead (ikke regel):**
-  - Skatteetaten: NOx-avgiften er avviklet fra og med 1.1.2026, NOx inngår ikke lenger i engangsavgiften. _(kilde T02; Samme side nevner fortsatt NOx i oversiktsteksten: sannsynlig utdatert tekst, MÅ avklares.)_
+- **Dato fra/til:** 2026-01-01 / ukjent — Overgang rundt årsskiftet ikke avklart.  
+- **Kilder:** T03, T02  
+- **Evidensnivå:** E1 · **Status:** `dokumentert_E1_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - «NOx-komponenten er fjernet med virkning fra 1. januar 2026.» _(kilde T03, 3.2.4 og 13.1.2, lest 2026-10-15)_
 - **Uløste spørsmål:**
-  - Er NOx fjernet også for varebil gruppe b og for brukt import?
+  - T02 (oversiktsside) er ikke lest; sammendraget nevnte NOx i oversiktsteksten. Rundskrivet er entydig; T02 må avstemmes ved senere lesing.
 
-### R-OTA-004 — Fallback når CO2 mangler: slagvolum (eldre regel)
+### R-OTA-004 — Slagvolum som grunnlag er avviklet for gruppe a, b, j fra 1.1.2026; erstattet av anslått CO2 = egenvekt/10
 
 - **Komponent:** Engangsavgift  
 - **Profiler:** PB-BEN, PB-DIE, PB-HEV, PB-PHEV, PB-BEV, VB-BEN, VB-DIE, VB-HEV, VB-PHEV, VB-BEV  
 - **Nødvendig input:** slagvolum; CO2 registrert?  
 - **Formel/trinn (struktur):** eldre regel: slagvolum når CO2 ikke er registrert  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
-- **Dato fra/til:** ukjent / ukjent — Ukjent om gjelder 2026.  
-- **Kilder:** T02, T03  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
-- **Lead (ikke regel):**
-  - Eldre rundskriv: slagvolum kan brukes der CO2 ikke er registrert. _(kilde T03; Kan være erstattet av egenvekt/10-anslaget.)_
+- **Dato fra/til:** 2026-01-01 / ukjent — Rundskriv 2026.  
+- **Kilder:** T03  
+- **Evidensnivå:** E1 · **Status:** `dokumentert_E1_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Fra 1.1.2026 brukes ikke slagvolum som alternativt grunnlag for motorvogner i gruppe a, b og j uten plikt til å dokumentere CO2; i stedet anslått CO2 (g/km) = egenvekt i kg / 10. _(kilde T03, 3.2.6, lest 2026-10-15)_
+  - Slagvolum brukes fortsatt for campingbiler i gruppe c. _(kilde T03, 3.2.6, lest 2026-10-15)_
 - **Uløste spørsmål:**
-  - Er slagvolumregelen opphevet 2026?
+  - Avrunding av egenvekt/10, og hva «egenvekt» er for utenlandsk bil (3.2.2: minimumsvekt fra europeisk typegodkjenning) – forskrift § 3-1 ikke lest.
 
 ### R-OTA-005 — Ladbar hybrid: CO2-grunnlag og fradrag for elektrisk rekkevidde
 
@@ -192,13 +210,16 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** 2022 (historisk lead) / ukjent — 2026-gyldighet ukjent.  
 - **Kilder:** T05, T19, T03  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_lead_motsagt` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Vektfradraget for ladbare hybridbiler er opphevet med virkning fra 1. januar 2024. _(kilde T03, 3.3.11, lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Eldre forskriftstekst: CO2 for ladbar hybrid tas fra «vektet kombinert»; for gruppe a og j multipliseres med 1,24. _(kilde T05; Kan være utdatert.)_
   - 2022-forskrift: 10 % fradrag i vektgrunnlag ved ≥ 100 km elektrisk rekkevidde, proporsjonalt lavere under. _(kilde T19; 2026-status ukjent.)_
+  - Lead om 10 % fradrag i vektgrunnlag ved ≥ 100 km elektrisk rekkevidde (2022-forskrift) er MOTSAGT for 2026 av rundskriv 3.3.11 (opphevet 1.1.2024). _(kilde T03/T19; Ikke bruk fradraget.)_
 - **Uløste spørsmål:**
-  - Gjelder faktor og fradrag fortsatt?
-  - Hva er «vektet kombinert» på utenlandsk typegodkjenning/COC?
+  - Hvilket CO2-tall brukes for ladbar hybrid («vektet kombinert»?) – forskrift § 3-1 ikke lest.
+  - Leadet «×1,24 for gruppe a og j» ligner NEDC-justeringsfaktoren i rundskriv 3.2.5 (24 % gruppe a/j); mulig forveksling, IKKE avgjort uten forskriftstekst.
 
 ### R-OTA-006 — Ikke-ladbar hybrid: behandlet som forbrenningsbil?
 
@@ -209,12 +230,15 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ukjent.  
 - **Kilder:** T03, T05  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_ingen_regeltekst_funnet` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Rundskrivet 2026 har ingen egen omtale av ikke-ladbar hybrid; ordet «hybrid» forekommer ellers bare i 3.3.11 (ladbar hybridbil). _(kilde T03, tekstsøk i hele PDF, lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Eldre regjeringsnotat (2019): ikke-ladbare hybrider behandles som forbrenningsbiler. _(kilde T05; Gammel kilde.)_
 - **Uløste spørsmål:**
   - Egne regler 2026 for mild/full hybrid?
   - Hvordan skilles ikke-ladbar hybrid fra plug-in i Statens vegvesen-data?
+  - Behandling av ikke-ladbar hybrid er ikke dokumentert i lest materiale; antagelsen «som forbrenningsbil» (2019-lead) står ubekreftet.
 
 ### R-OTA-007 — Batterielektrisk: kun vektkomponent
 
@@ -224,13 +248,16 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** vektkomponent uten CO2-komponent  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** 2026-01-01 (lead) / ukjent — Se R-OTA-001.  
-- **Kilder:** T02, T04  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Kilder:** T02, T04, T03  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_satser_mangler` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Fritaket for elektriske motorvogner er opphevet fra 1.1.2023; elektriske motorvogner i avgiftsgruppe a betaler engangsavgift etter stortingsvedtaket § 2. _(kilde T03, 6.12, lest 2026-10-15)_
+  - Elektriske motorvogner i andre grupper enn a betaler ikke engangsavgift, fordi § 3 bare ilegges motorvogner med stempeldrevet forbrenningsmotor. _(kilde T03, 6.12, lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Elbiler omfattes bare av vektkomponenten (sammendrag). _(kilde T02)_
 - **Uløste spørsmål:**
-  - Fritak/reduksjon for elbil i gruppe b?
-  - Egne regler for brukte elbiler?
+  - Vektkomponentens satser (stortingsvedtaket § 2) ikke lest.
+  - Konsekvens av lest tekst: elektrisk varebil klasse 2 (gruppe b) → ingen engangsavgift; elektrisk personbil og varebil klasse 1 (gruppe a) → engangsavgift. Avhenger av korrekt klassifisering (SVV).
 
 ### R-OTA-008 — Varebil klasse 2: sammensetning og satser
 
@@ -240,13 +267,15 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** b: vektkomponent + CO2-komponent (sammendrag av § 3 b i stortingsvedtaket)  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** 2026-01-01 (lead) / ukjent — § 3 endret 19.6.2026, virkning 1.9.2026: innhold ukjent. Lead-tallene under kan tilhøre FØR-versjonen.  
-- **Kilder:** T04 (§ 3 b)  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Kilder:** T04, T03  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_satser_mangler` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Varebil klasse 2 er en ren avgiftsmessig definisjon (gruppe b) med lavere avgift; vilkår i forskrift § 2-3 (lasterom, beskyttelsesvegg); Statens vegvesen avgjør klassifiseringen. _(kilde T03, 3.3.3.1–3.3.3.2, lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Lead (Lovdata-snutt, ikke lest direkte): gruppe b har vekt 30 kr per kg over 1 200 kg og CO2-trapp 450/600/1 200 kr for 0–100 / 101–150 / >150 g/km. _(kilde T04; SKAL IKKE BRUKES SOM REGELPARAMETER før primærkilden er lest og datoversjon er avklart.)_
 - **Uløste spørsmål:**
-  - Er tallene fra før eller etter endringen 1.9.2026?
-  - Gjelder gruppe b også elbil/hybrid-varebil?
+  - Satser i stortingsvedtaket § 3 (T04) ikke lest; lead i leads er ikke brukbart.
+  - Uavklart kildeopplysning U-001.
 
 ### R-OTA-009 — Varebil klasse 1/2, avgiftsgruppe og hvem som avgjør
 
@@ -257,7 +286,12 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Definisjonene fra eldre versjon; gjeldende tekst må leses.  
 - **Kilder:** T05, T15, T03  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_forskrift_ikke_lest` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Statens vegvesen avgjør i første instans avgiftsmessig klassifisering (forskrift § 2-1); kan påklages til Skattedirektoratet via SVV. _(kilde T03, 3.3.1, lest 2026-10-15)_
+  - Varebil klasse 1 er N1 som ikke oppfyller kravene til varebil klasse 2; personbil (M1) har inntil åtte seter i tillegg til fører. Busser under 6 m med inntil 17 seter hører til gruppe a (klasse 1) eller j (klasse 2). _(kilde T03, 3.3.2, lest 2026-10-15)_
+  - Obligatorisk enkeltgodkjenning på trafikkstasjon av bruktimporterte kjøretøy før beregning og forhåndsbetaling av engangsavgiften; SVV leverer tekniske grunnlagsdata. _(kilde T03, 3.1, lest 2026-10-15)_
+  - Avgiftsplikt oppstår primært ved første gangs registrering i Kjøretøyregisteret. _(kilde T03, 2.1.1, lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Varebil klasse 2: N1 uten sete/sitteanordning bak føreren; pick-up-regel om lasteplan; klasse 1 faller i gruppe a. Statens vegvesen avgjør klassifiseringen og vedtaket kan påklages. _(kilde T05/T15; Sammendrag av eldre rundskriv og forskrift.)_
 - **Uløste spørsmål:**
@@ -272,16 +306,19 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Nødvendig input:** første utenlandske registreringsdato (dag/måned); planlagt norsk registreringsdato; grunnlaget fradraget gjelder  
 - **Formel/trinn (struktur):** fradrag = prosent (alder) av beregnet engangsavgift; alder = tid fra første utenlandske registrering til første norske registrering  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
-- **Dato fra/til:** 2024-01-01 (tabell utvidet med 20 år) / ukjent — Nåværende tabell og eventuell endring 2026 ikke lest.  
-- **Kilder:** T06, T07, T04 (§ 4)  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Dato fra/til:** ukjent / ukjent — Tabellens ikrafttredelse ikke dokumentert i filen; endret 1.1.2024 (ett ekstra trinn).  
+- **Kilder:** T06, T07, T04, T03  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_tabell_ikke_avstemt_mot_forskrift` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Ordinært bruksfradrag gis som prosentvis fradrag i den utregnede avgiften etter tabell i forskrift § 3-3 (4.3). Alder regnes fra første gangs registrering i utlandet til registrering i Norge, dato til dato (4.2). _(kilde T03, 4.2–4.3, lest 2026-10-15)_
+  - Tabellen (41 trinn) fra 2 % ved 1 måned til 100 % ved 20 år er transkribert fra Skatteetatens engelske satsside (bruksfradrag-tabell-T07.json). _(kilde T07, tabell, lest 2026-10-15)_
 - **Lead (ikke regel):**
   - Standardiserte prosentsatser etter alder; alternativ individuell metode finnes (utenfor første motor). _(kilde T06)_
-  - Ankerpunkter i tabellen: ca. 2 % ved 1 mnd, 19 % ved 1 år, 94 % ved 14 år, 100 % ved 20 år. _(kilde T07; Ikke hele tabellen; ikke brukbart som parameter.)_
 - **Uløste spørsmål:**
-  - Hele tabellen og om trinn er månedlige.
-  - Gjelder fradraget alle komponenter, inkl. vektkomponent?
-  - Avrunding av alder og av beløp.
+  - Forskrift § 3-3 ikke lest: tabellen er ikke avstemt mot forskriftstekst.
+  - Uavklart språkforskjell U-002 (production vs første registrering).
+  - Gjelder månedstrinn samme dato-til-dato-prinsipp som rundskrivets årseksempel?
+  - Reduseres vrakpantavgift av bruksfradrag? (se R-IMP-OTH-001)
 
 ### R-OTA-011 — Aldersgrense 20 år / fritak
 
@@ -291,12 +328,15 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** kjøretøy ≥ 20 år: ingen engangsavgift (sammendrag)  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** 2024-01-01 (lead) / ukjent — Sammenheng med Stortingsvedtakets pkt. 9 bokstav p (avvikling) uklar.  
-- **Kilder:** T06, T07  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
-- **Lead (ikke regel):**
-  - Tabellen ble utvidet med trinn for 20 år for å avvikle fritaket for kjøretøy ≥ 20 år (sammendrag). _(kilde T07; Kan bety 100 % fradrag ved 20 år i stedet for et eget fritak.)_
+- **Kilder:** T06, T07, T03  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_forskrift_ikke_lest` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Fritaket for kjøretøy ≥ 20 år i stortingsvedtaket er opphevet fra 1.1.2024; kjøretøyet innvilges i stedet 100 % bruksfradrag (forskrift § 3-3). _(kilde T03, 6.21, lest 2026-10-15)_
+  - En motorvogn anses 20 år 1. januar i det året det har gått 20 år siden første gangs registrering; åpenbart ≥ 20 år gamle kjøretøy kan behandles etter produksjonsår. _(kilde T03, 6.21, lest 2026-10-15)_
+  - Tabellen er utvidet med 20-årstrinn (100 %) fra 1.1.2024; siste trinn nås etter 1. januar-regelen, øvrige trinn på datoen (sideteksten bruker ordet «production»). _(kilde T07, forklaringstekst, lest 2026-10-15)_
 - **Uløste spørsmål:**
-  - Er 20-årsgrensen et fritak eller 100 % bruksfradrag?
+  - Språkforskjell U-002.
+  - Forskrift § 3-3 tredje ledd ikke lest.
 
 ### R-OTA-012 — Alternativ metode (individuell, pris og km)
 
@@ -307,7 +347,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — UTENFOR første motor.  
 - **Kilder:** T06  
-- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Alternativ metode er individuell og dokumentkrevende. _(kilde T06)_
 
@@ -319,27 +359,32 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** ingen særordninger støttes i første motor  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ikke kartlagt.  
-- **Kilder:** T05 (kap. IV), T04  
-- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato (E1):** ingen
+- **Kilder:** T05, T04  
+- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Fritak finnes (forskrift kap. IV); innhold ikke lest. _(kilde T05)_
 - **Uløste spørsmål:**
   - Hvilke fritak er relevante for forhandlerimport?
 
-### R-IMP-OTH-001 — Vrakpantavgift
+### R-IMP-OTH-001 — Vrakpantavgift – del av engangsavgiften, betales ved registrering
 
-- **Komponent:** Vrakpant  
+- **Komponent:** Vrakpantavgift (innbetaling ved første gangs registrering)  
 - **Profiler:** PB-BEN, PB-DIE, PB-HEV, PB-PHEV, PB-BEV, VB-BEN, VB-DIE, VB-HEV, VB-PHEV, VB-BEV  
 - **Nødvendig input:** kjøretøytype  
-- **Formel/trinn (struktur):** fast beløp per kjøretøytype  
-- **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
-- **Dato fra/til:** ukjent / ukjent — Beløp og dato ukjent.  
-- **Kilder:** T08, T09  
-- **Evidensnivå:** E2 · **Status:** `kildekonflikt` · **Kontrollert dato (E1):** ingen
-- **Lead (ikke regel):**
-  - Én side: 2 400 kr (rundskriv 2018); en annen: 3 000 kr (personbil, varebil, bobil, minibuss). _(kilde T08/T09; KILDEKONFLIKT – ingen verdi kan brukes.)_
+- **Formel/trinn (struktur):** Fast beløp pr. kjøretøy etter avgiftsgruppe. Lette lastebiler som blir avgiftspliktige i gruppe b (a/c) svarer 2 400.  
+- **Beløp/enhet/avrunding:** 2 400 kr, fast beløp per kjøretøy i avgiftsgruppe a, b, c, g, j og k (rundskriv 3.4); 500 kr moped/motorsykkel; 3 000 kr campingvogn; 5 000 kr lastebil som ikke er avgiftspliktig i gruppe b. Heltall, ingen avrunding.  
+- **Dato fra/til:** 2026-01-01 / ukjent — Rundskriv 2026 (1. januar). Skatteetaten-siden viser 2026 valgt. Endring senere i 2026 ikke dokumentert.  
+- **Styrende hendelse:** Første gangs registrering i Kjøretøyregisteret (rundskriv 2.1.1 og 3.4); betales sammen med engangsavgiften (T20)  
+- **Kilder:** T03, T20  
+- **Evidensnivå:** E1 · **Status:** `dokumentert_E1_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Vrakpantavgift 2 400 kr ved første gangs registrering for motorvogner i avgiftsgruppe a, b, c, g, j, k. _(kilde T03, 3.4 (PDF-side 17), lest 2026-10-15)_
+  - Satsside for vrakpantavgift viser 2 400 kr for person-, vare- og campingbiler og busser under 6 m; 500 mopeder/motorsykler; 3 000 campingvogner; 5 000 lastebiler. Årsvelger 2026 valgt. _(kilde T20, satsside, lest 2026-10-15)_
+  - Vrakpantavgiften er en del av engangsavgiften og betales sammen med den etter godkjenning hos Statens vegvesen. _(kilde T20, innledning, lest 2026-10-15)_
 - **Uløste spørsmål:**
-  - Gjeldende beløp og virkningsdato for personbil og varebil.
+  - Reduseres vrakpantavgiften av bruksfradrag for brukte kjøretøy? Lest tekst sier bruksfradrag gis «i den utregnede engangsavgiften» (4.1/4.3); vrakpantavgiften omtales som del av engangsavgiften, men at den omfattes av bruksfradrag er IKKE lest. Ikke avgjort.
+  - Fritak etter stortingsvedtaket § 9 a–c gir også fritak for vrakpantavgift; relevans for forhandler ikke vurdert.
+  - Uavhengig kalkulatorreferanse mangler.
 
 ### R-IMP-OTH-002 — Avgift på klimagass i kjøretøyets klimaanlegg
 
@@ -350,7 +395,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ukjent.  
 - **Kilder:** T08  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Avgift på klimagass; mengde ca. 1 kg for typisk personbil (sammendrag). _(kilde T08)_
 - **Uløste spørsmål:**
@@ -366,7 +411,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ikke undersøkt.  
 - **Kilder:** ingen  
-- **Evidensnivå:** E2 · **Status:** `ikke_undersøkt` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `ikke_undersøkt` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Uløste spørsmål:**
   - Hvilke gebyrer hos Statens vegvesen er obligatoriske ved førstegangsregistrering?
   - Omregistreringsavgift er en annen avgift og er ikke antatt relevant ved førstegangsregistrering.
@@ -379,14 +424,16 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** fradrag etter mval. § 8-4 første ledd bokstav a (unntak fra personkjøretøyforbudet) – gjelder også innførselsmva. (sammendrag)  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ikke kontrollert.  
-- **Kilder:** T12, T11  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
-- **Lead (ikke regel):**
-  - Fradragsretten omfatter ikke personkjøretøy, men unntaket for salgsvarer gjør at innførselsmva. kan fradragsføres ved videresalg (Mva.-håndboken, sammendrag). _(kilde T12)_
+- **Kilder:** T12, T11, T22  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_2025_utgave` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Hovedregel: ingen fradragsrett for inngående avgift på personkjøretøy. Unntak etter mval. § 8-4 første ledd annet punktum bokstav a: anskaffelse av personkjøretøy for videresalg (kodifisert fra 1.3.2004). _(kilde T22, «Unntak fra hovedregelen» – Videresalg, lest 2026-10-15)_
+  - Fradragsretten omfatter vedlikehold, reparasjoner og klargjøring, og drivstoff ved forflytning av salgsvarer fra lager/importsted til utsalgssted. _(kilde T22, «Vedlikehold, reparasjoner, klargjøring», lest 2026-10-15)_
 - **Uløste spørsmål:**
-  - Gjelder det samme for varebil?
-  - Dokumentasjonskrav; brukt som demo/leasing; tilbakeføring etter § 9-6 (åtte år).
-  - Hvilken forhandlerprofil gjelder (mva.-registrert, lagerbil)? Brukes aldri antatt.
+  - Siden er Merverdiavgiftshåndboken 2025, ikke verifisert for 2026.
+  - Håndbokssiden dekker «anskaffelse»; om innførselsmva. fradragsføres på samme måte, dokumentasjonskrav og bindingstid (§ 9-6) er ikke lest (kap. 3-29, 9-6, T11).
+  - Importørens faktiske fradragsrett (mva.-registrert, lagerbil vs. bruk) avgjøres ikke av håndboken; krever importørprofil.
+  - Om det gjelder varebil er ikke lest.
 
 ### R-DED-002 — Tilbakeføring av fradragsført mva. (åtte år)
 
@@ -396,8 +443,8 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Formel/trinn (struktur):** tilbakeføring ved omdisponering de første åtte år  
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Utenfor første motor.  
-- **Kilder:** T12 (M-9-6)  
-- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato (E1):** ingen
+- **Kilder:** T12  
+- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - § 9-6: tilbakeføring ved omdisponering de første åtte årene. _(kilde T12)_
 
@@ -410,7 +457,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Utenfor.  
 - **Kilder:** T13  
-- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `utenfor_første_motor` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 
 ### R-FOR-001 — Tyskland: skattefri utførsel til tredjeland (Norge)
 
@@ -421,7 +468,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Tysk rettsstilling per 2026 ikke kontrollert.  
 - **Kilder:** T16  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Skattefri utførsel avhenger av hvem som flytter varen; ved selvhenting kreves utenlandsk kjøper. Utførselsbevis for registreringspliktige kjøretøy må inneholde VIN; vanligvis tollbekreftet utgang. _(kilde T16)_
 - **Uløste spørsmål:**
@@ -437,7 +484,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Ikke kontrollert.  
 - **Kilder:** T17  
-- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `ikke_primærkontrollert` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Lead (ikke regel):**
   - Utførselsfritak består under differansebeskatning (sammendrag); vilkår: gjenselger av brukte gjenstander. _(kilde T17; Hva dette betyr for faktisk fakturabeløp er ikke avklart.)_
 - **Uløste spørsmål:**
@@ -452,7 +499,7 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Prosjektregel (CLAUDE.md pkt. 4, DEC-019).  
 - **Kilder:** ingen  
-- **Evidensnivå:** E2 · **Status:** `prosjektregel` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `prosjektregel` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Uløste spørsmål:**
   - Tilstrekkelig dokumentasjon for privat salg.
 
@@ -465,41 +512,76 @@ Kolonnene `Satser/avrunding` er **tomme med vilje**: ingen verdi er kontrollert.
 - **Beløp/enhet/avrunding:** IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)  
 - **Dato fra/til:** ukjent / ukjent — Bare Tyskland har lead-kilder (T16/T17).  
 - **Kilder:** T16  
-- **Evidensnivå:** E2 · **Status:** `ikke_undersøkt` · **Kontrollert dato (E1):** ingen
+- **Evidensnivå:** E2 · **Status:** `ikke_undersøkt` · **Kontrollert dato:** ingen · **Godkjent parameter:** nei
 - **Uløste spørsmål:**
   - Hvilke land skal støttes først (Østerrike, Nederland, Belgia, Frankrike …)?
   - Bekreftede enkelttilbud fra andre land kan representeres som dokumentert tilbud uten landregel (se purchase-basis.md).
 
-## 3. Kildefortegnelse (generert fra `sources.json`)
+### R-SCR-PAY-001 — Vrakpant som utbetales til biloppsamlingsplass ved skroting – UTENFOR importkostnaden
 
-| ID | Kilde | Utgiver | Nivå | Hentestatus |
-|---|---|---|---|---|
-| T01 | [Importere bil og andre kjøretøy (oversikt)](https://www.skatteetaten.no/person/avgifter/bil/importere/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T02 | [Hva er engangsavgiften? (en: What is the one-off registration tax?)](https://www.skatteetaten.no/person/avgifter/bil/importere/engangsavgift/hva-er-engangsavgiften/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T03 | [Årsrundskriv for engangsavgift 2026](https://www.skatteetaten.no/rettskilder/type/rundskriv-retningslinjer-og-andre-rettskilder/avgiftsrundskriv/engangsavgift-2026/) | Skatteetaten (Skattedirektoratet) | E2 | ikke_hentet_nettverk_blokkert |
-| T04 | [Stortingsvedtak om engangsavgift på motorvogner mv. for 2026 (FOR-2025-12-18-2755)](https://lovdata.no/dokument/STV/forskrift/2025-12-18-2755) | Lovdata / Stortinget | E2 | ikke_hentet_nettverk_blokkert |
-| T05 | [Forskrift om engangsavgift på motorvogner (FOR-2001-03-19-268)](https://lovdata.no/dokument/SF/forskrift/2001-03-19-268) | Lovdata / Finansdepartementet | E2 | ikke_hentet_nettverk_blokkert |
-| T06 | [Bruksfradrag (engangsavgift)](https://www.skatteetaten.no/person/avgifter/bil/importere/engangsavgift/bruksfradrag/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T07 | [Bruksfradragstabell (en: Deduction for use table)](https://www.skatteetaten.no/en/rates/car-rates---deduction-for-use-table/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T08 | [Andre avgifter ved import (en: Other taxes when importing a vehicle)](https://www.skatteetaten.no/person/avgifter/bil/importere/andre-avgifter/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T09 | [Vrakpant (en: Scrap deposit) – satser](https://www.skatteetaten.no/en/rates/scrap-deposit/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T10 | [Beregning av tollavgift og andre avgifter / Betaling av mva. ved import av bil / Fastsettelse av fraktkostnader (sjablong)](https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport/betaling-av-avgifter) | Tolletaten | E2 | ikke_hentet_nettverk_blokkert |
-| T11 | [Beregning og rapportering av innførselsmva. (guide og PDF)](https://www.skatteetaten.no/globalassets/bedrift-og-organisasjon/avgifter/merverdiavgift/import-mva/beregning-og-bokforing-innforselsmva.pdf) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T12 | [Merverdiavgiftshåndboken kap. 8-4 (personkjøretøy for videresalg) og mval. § 8-1/§ 8-4; kap. 9-6 (tilbakeføring)](https://www.skatteetaten.no/en/rettskilder/type/handboker/merverdiavgiftshandboken/gjeldende/M-8/M-8-4/M-8-4.3/) | Skatteetaten / Lovdata | E2 | ikke_hentet_nettverk_blokkert |
-| T13 | [Merverdiavgiftshåndboken kap. 6 (importørens salg av bruktimportert bil)](https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende/MVA2025_M-6) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert |
-| T14 | [Lovvedtak 14 (2025–2026) om endringer i merverdiavgiftsloven (elbilfritaket) og Innst. 4 L / Skatter og avgifter 2026](https://stortinget.no/no/saker-og-publikasjoner/vedtak/beslutninger/lovvedtak/2025-2026/vedtak-202526-014/) | Stortinget | E2 | ikke_hentet_nettverk_blokkert |
-| T15 | [Kodeverk «Kjøretøygruppe avgift» (AVGIFT)](https://autosys-kjoretoy-api.atlas.vegvesen.no/kodeverk-ui/index-kodeverk.html?kodeverkId=AVGIFT) | Statens vegvesen | E2 | ikke_hentet_nettverk_blokkert |
-| T16 | [BMF Umsatzsteuer-Handausgabe § 6 UStG Ausfuhrlieferung (inkl. 6.5 Ausfuhrnachweis)](https://usth.bundesfinanzministerium.de/usth/2023/A-Umsatzsteuergesetz/II-Steuerbefreiungen-und-Steuerverguetungen/Paragraf-6/inhalt.html) | Bundesfinanzministerium (DE) | E2 | ikke_hentet_nettverk_blokkert |
-| T17 | [§ 25a UStG Differenzbesteuerung](https://www.gesetze-im-internet.de/ustg_1980/__25a.html) | gesetze-im-internet.de (DE) | E2 | ikke_hentet_nettverk_blokkert |
-| T18 | [Avgiftssatser 2026 (oversikt)](https://www.regjeringen.no/no/tema/okonomi-og-budsjett/skatter-og-avgifter/skatte-og-avgiftssatser/avgiftssatser-2026/id3121982/) | Regjeringen | E2 | ikke_hentet_nettverk_blokkert |
-| T19 | [Forskrift om endring i forskrift om engangsavgift på motorvogner (FOR-2022-12-16-2271)](https://lovdata.no/dokument/LTI/forskrift/2022-12-16-2271) | Lovdata | E2 | ikke_hentet_nettverk_blokkert |
-| S07 | [Skatteetatens importkalkulator (fra SOURCES.md)](https://www.skatteetaten.no/person/avgifter/bil/importere/regn-ut/) | Skatteetaten | E0 | ikke_hentet_nettverk_blokkert |
-| X01 | [Smarte Penger – engangsavgifter på bil (aggregator)](https://www.smartepenger.no/bilokonomi/354-engangsavgifter-pa-bil) | smartepenger.no | E3 | avvist_som_grunnlag |
-| X02 | [Crowe – Statsbudsjettet for 2026](https://www.crowe.com/no/nyheter/statsbudsjettet-for-2026) | crowe.com | E3 | avvist_som_grunnlag |
+- **Komponent:** Vrakpantutbetaling (ved skroting)  
+- **Profiler:** ingen (utenfor beregning)  
+- **Nødvendig input:** —  
+- **Formel/trinn (struktur):** Ingen: utbetaling ved skroting er ikke et element i innkjøps- eller importkostnad og trekkes ikke fra kjøpspris.  
+- **Beløp/enhet/avrunding:** 3 000 kr for personbil, varebil, campingbil, campingvogn, snøscooter og minibuss/buss under 6 m; 500 kr moped/motorsykkel (utbetaling, 2026 valgt i lest side).  
+- **Dato fra/til:** 2026-01-01 / ukjent — Årsvelger 2026; irrelevant for beregningen.  
+- **Styrende hendelse:** Skroting/avregistrering – irrelevant for innkjøpsberegning  
+- **Kilder:** T09  
+- **Evidensnivå:** E1 · **Status:** `utenfor_beregning_begrepsskille` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - Vrakpant er beløpet som mottas av biloppsamlingsplassen ved skroting (3 000 kr for flere kjøretøytyper). Beløpsforskjellen mot vrakpantavgift (2 400) er ikke en satskonflikt. _(kilde T09, ingress og Oppsummert, lest 2026-10-15)_
 
-`S07`/`S0x` viser til SOURCES.md. `whatToExtract` per kilde er sjekklisten for en direkte lesning.
+### R-IMP-REF-001 — Refusjon av utenlandsk mva. er en sak mellom kjøper og selger – ikke et sikkert netto kjøpsgrunnlag
+
+- **Komponent:** Refusjon av utenlandsk mva.  
+- **Profiler:** PB-BEN, PB-DIE, PB-HEV, PB-PHEV, PB-BEV, VB-BEN, VB-DIE, VB-HEV, VB-PHEV, VB-BEV  
+- **Nødvendig input:** kjøpsbekreftelse (brutto/netto); refusjonsstatus (agreed|conditional)  
+- **Formel/trinn (struktur):** Tolletaten behandler ikke refusjonen. Brutto betalt med senere refusjon: kjøpsgrunnlag = betalt beløp, med mindre dokumentert netto faktura/kjøpsbekreftelse foreligger; avtalt tilbakebetalingskrav → bekreftet inndekning i betalingsforløp; betinget refusjon → bare scenario.  
+- **Beløp/enhet/avrunding:** Ingen beløp (strukturell regel). Refusjonsbeløp kommer fra kjøpsbekreftelsen.  
+- **Dato fra/til:** ukjent / ukjent — Tolletatens side oppdatert 5.2.2026 (privatperson-side).  
+- **Styrende hendelse:** Kjøpsbekreftelse (avtalens innhold)  
+- **Kilder:** T21  
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_tolletatens_posisjon` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **E1-funn (lest primærkilde):**
+  - «Refusjon av utenlandsk merverdiavgift er en sak mellom kjøper og selger. Tolletaten har ingenting med dette å gjøre.» _(kilde T21, Merk-boks før «Ankomst grensen», lest 2026-10-15)_
+- **Uløste spørsmål:**
+  - Selgerlandets regler for utbetaling/refusjon er ikke lest (T16/T17).
+  - Om en konkret avtale er depositum/tilbakebetalingskrav eller betinget refusjon må dokumenteres per tilbud.
+  - Siden gjelder privatpersoner; forhandlerens stilling overfor Tolletaten er ikke lest.
+
+## 3. Kildefortegnelse
+
+| ID | Kilde | Utgiver | Nivå | Lest / status | Versjon | Pakkehash (SHA-256) |
+|---|---|---|---|---|---|---|
+| T01 | [Importere bil og andre kjøretøy (oversikt)](https://www.skatteetaten.no/person/avgifter/bil/importere/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T02 | [Hva er engangsavgiften? (en: What is the one-off registration tax?)](https://www.skatteetaten.no/person/avgifter/bil/importere/engangsavgift/hva-er-engangsavgiften/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T03 | [Årsrundskriv for engangsavgift 2026 (PDF, 57 sider, datert 1. januar 2026)](https://www.skatteetaten.no/globalassets/rettskilder/avgiftsrundskriv/engangsavgift-2026.pdf) | Skatteetaten (Skattedirektoratet) | E1 | lest 2026-10-15 | Skattedirektoratet, årsrundskriv engangsavgift 2026, datert 1. januar 2026 | 08296e9a32afb53f… |
+| T04 | [Stortingsvedtak om engangsavgift på motorvogner mv. for 2026 (FOR-2025-12-18-2755)](https://lovdata.no/dokument/STV/forskrift/2025-12-18-2755) | Lovdata / Stortinget | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T05 | [Forskrift om engangsavgift på motorvogner (FOR-2001-03-19-268)](https://lovdata.no/dokument/SF/forskrift/2001-03-19-268) | Lovdata / Finansdepartementet | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T06 | [Bruksfradrag (engangsavgift)](https://www.skatteetaten.no/person/avgifter/bil/importere/engangsavgift/bruksfradrag/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T07 | [Bruksfradragstabell (en: Deduction for use table)](https://www.skatteetaten.no/en/rates/car-rates---deduction-for-use-table/) | Skatteetaten | E1 | lest 2026-10-15 | Skatteetaten, «Deduction for use table» (engelsk sats-side), ukjent sidedato i filen | f91e8040d3443901… |
+| T08 | [Andre avgifter ved import (en: Other taxes when importing a vehicle)](https://www.skatteetaten.no/person/avgifter/bil/importere/andre-avgifter/) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T09 | [Vrakpant (en: Scrap deposit) – UTBETALING ved skroting (ikke innbetalingen ved registrering)](https://www.skatteetaten.no/en/rates/scrap-deposit/) | Skatteetaten | E1 | lest 2026-10-15 | Skatteetaten, «Scrap deposit», år 2026 valgt i sidens årsvelger | 97103b849c8dac65… |
+| T10 | [Beregning av tollavgift og andre avgifter / Betaling av mva. ved import av bil / Fastsettelse av fraktkostnader (sjablong)](https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport/betaling-av-avgifter) | Tolletaten | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T11 | [Beregning og rapportering av innførselsmva. (guide og PDF)](https://www.skatteetaten.no/globalassets/bedrift-og-organisasjon/avgifter/merverdiavgift/import-mva/beregning-og-bokforing-innforselsmva.pdf) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T12 | [Merverdiavgiftshåndboken kap. 8-4 (personkjøretøy for videresalg) og mval. § 8-1/§ 8-4; kap. 9-6 (tilbakeføring)](https://www.skatteetaten.no/en/rettskilder/type/handboker/merverdiavgiftshandboken/gjeldende/M-8/M-8-4/M-8-4.3/) | Skatteetaten / Lovdata | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T13 | [Merverdiavgiftshåndboken kap. 6 (importørens salg av bruktimportert bil)](https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende/MVA2025_M-6) | Skatteetaten | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T14 | [Lovvedtak 14 (2025–2026) om endringer i merverdiavgiftsloven (elbilfritaket) og Innst. 4 L / Skatter og avgifter 2026](https://stortinget.no/no/saker-og-publikasjoner/vedtak/beslutninger/lovvedtak/2025-2026/vedtak-202526-014/) | Stortinget | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T15 | [Kodeverk «Kjøretøygruppe avgift» (AVGIFT)](https://autosys-kjoretoy-api.atlas.vegvesen.no/kodeverk-ui/index-kodeverk.html?kodeverkId=AVGIFT) | Statens vegvesen | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T16 | [BMF Umsatzsteuer-Handausgabe § 6 UStG Ausfuhrlieferung (inkl. 6.5 Ausfuhrnachweis)](https://usth.bundesfinanzministerium.de/usth/2023/A-Umsatzsteuergesetz/II-Steuerbefreiungen-und-Steuerverguetungen/Paragraf-6/inhalt.html) | Bundesfinanzministerium (DE) | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T17 | [§ 25a UStG Differenzbesteuerung](https://www.gesetze-im-internet.de/ustg_1980/__25a.html) | gesetze-im-internet.de (DE) | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T18 | [Avgiftssatser 2026 (oversikt)](https://www.regjeringen.no/no/tema/okonomi-og-budsjett/skatter-og-avgifter/skatte-og-avgiftssatser/avgiftssatser-2026/id3121982/) | Regjeringen | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| T19 | [Forskrift om endring i forskrift om engangsavgift på motorvogner (FOR-2022-12-16-2271)](https://lovdata.no/dokument/LTI/forskrift/2022-12-16-2271) | Lovdata | E2 | ikke_hentet_nettverk_blokkert | — | — |
+| S07 | [Skatteetatens importkalkulator (fra SOURCES.md)](https://www.skatteetaten.no/person/avgifter/bil/importere/regn-ut/) | Skatteetaten | E0 | ikke_hentet_nettverk_blokkert | — | — |
+| X01 | [Smarte Penger – engangsavgifter på bil (aggregator)](https://www.smartepenger.no/bilokonomi/354-engangsavgifter-pa-bil) | smartepenger.no | E3 | avvist_som_grunnlag | — | — |
+| X02 | [Crowe – Statsbudsjettet for 2026](https://www.crowe.com/no/nyheter/statsbudsjettet-for-2026) | crowe.com | E3 | avvist_som_grunnlag | — | — |
+| T20 | [Vrakpantavgift (INNBETALING ved første gangs registrering) – satser](https://www.skatteetaten.no/satser/vrakpantavgift/) | Skatteetaten | E1 | lest 2026-10-15 | Skatteetaten, «Vrakpantavgift», 2026 valgt | 1199368756d6df63… |
+| T21 | [Import av bil og andre kjøretøy (Tolletaten, oversikt for privatperson)](https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport) | Tolletaten | E1 | lest 2026-10-15 | Tolletaten, «Import av bil og andre kjøretøy», «Oppdatert: 5.2.2026» | fbb5c5fb52406f16… |
+| T22 | [Merverdiavgiftshåndboken 8-4.3 (fradragsrett for personkjøretøy ved nærmere bestemt bruk)](https://www.skatteetaten.no/en/rettskilder/type/handboker/merverdiavgiftshandboken/gjeldende/M-8/M-8-4/M-8-4.3/) | Skatteetaten | E1 | lest 2026-10-15 | Merverdiavgiftshåndboken 2025 (sidens tittel i filen) | deff20eba1d073c0… |
+
+`S07`/`S0x` viser til SOURCES.md. `whatToExtract` per kilde er sjekklisten for en direkte lesning. Kilder med nivå E1 har fullstendig hash i `sources.json`; filene ligger i kildepakken, ikke i Git.
 
 ## 4. Avgrensninger
 - Første motor: ordinært bruksfradrag. Alternativ metode, fritak/særordninger, tilbakeføring av fradrag og salgs-mva. er utenfor.
 - Landdekning: bare Tyskland har lead-kilder; ingen annen utenlandsk regel er påstått.
-- DEC-030 gjelder: budsjettsummen skal ikke trekke fra fradragsberettiget mva.; salgspris/margin er ikke påkrevd.
+- DEC-030 gjelder: budsjettsummen skal ikke trekke fra fradragsberettiget mva.; salgspris/margin er ikke påkrevd. Økonomisk kost og kapitalbehov er egne summeringer fra et felles komponentgrunnlag (`purchase-basis.md` §6).

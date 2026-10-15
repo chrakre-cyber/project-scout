@@ -1,0 +1,227 @@
+{
+ "schema": "merovo.tax.extracted-table",
+ "table": "bruksfradrag-ordinaert",
+ "version": "TAX-001B/1",
+ "source": "T07",
+ "sourceFile": "primarkilder/bruksfradragstabell.html",
+ "sourceSha256": "f91e8040d3443901a009abaa1320868c4f623be0622d6c71da7104edb575b8fd",
+ "extractedDate": "2026-10-15",
+ "status": "TRANSKRIPSJON av lest primærkilde (E1). IKKE godkjent regelparameter: ikke avstemt mot forskrift om engangsavgift § 3-3 og ikke uavhengig kalkulatorreferanse.",
+ "semantics": {
+  "columnHeading": "Age over...",
+  "ageDefinition": "Fra første gangs registrering i utlandet til første gangs registrering i Norge (T07 og rundskriv T03 4.2).",
+  "dateToDate": "Rundskriv 4.2: bruksfradraget regnes fra dato til dato; kjøretøy førstegangsregistrert 15. januar kan innrømmes ett-års bruksfradrag 15. januar påfølgende år.",
+  "lastStep": "Rundskriv 6.21: kjøretøyet anses 20 år 1. januar i det året det har gått 20 år siden første gangs registrering (100 %). Engelsk sidetekst sier «date of the vehicle's production» for neste trinn – uavklart språkforskjell, ikke avgjort her.",
+  "unclear": [
+   "Om månedstrinn følger samme dato-til-dato-prinsipp som årseksempelet (rundskrivet eksemplifiserer bare årstrinn).",
+   "Om forskrift § 3-3 har andre grenseverdier enn denne engelske siden."
+  ]
+ },
+ "steps": [
+  {
+   "label": "1 month",
+   "ageMonths": 1,
+   "percent": 2
+  },
+  {
+   "label": "2 months",
+   "ageMonths": 2,
+   "percent": 4
+  },
+  {
+   "label": "3 months",
+   "ageMonths": 3,
+   "percent": 6
+  },
+  {
+   "label": "4 months",
+   "ageMonths": 4,
+   "percent": 8
+  },
+  {
+   "label": "5 months",
+   "ageMonths": 5,
+   "percent": 10
+  },
+  {
+   "label": "6 months",
+   "ageMonths": 6,
+   "percent": 12
+  },
+  {
+   "label": "7 months",
+   "ageMonths": 7,
+   "percent": 14
+  },
+  {
+   "label": "8 months",
+   "ageMonths": 8,
+   "percent": 15
+  },
+  {
+   "label": "9 months",
+   "ageMonths": 9,
+   "percent": 16
+  },
+  {
+   "label": "10 months",
+   "ageMonths": 10,
+   "percent": 17
+  },
+  {
+   "label": "11 months",
+   "ageMonths": 11,
+   "percent": 18
+  },
+  {
+   "label": "1 year",
+   "ageMonths": 12,
+   "percent": 19
+  },
+  {
+   "label": "1 year og 2 months",
+   "ageMonths": 14,
+   "percent": 20
+  },
+  {
+   "label": "1 year og 4 months",
+   "ageMonths": 16,
+   "percent": 21
+  },
+  {
+   "label": "1 year og 6 months",
+   "ageMonths": 18,
+   "percent": 22
+  },
+  {
+   "label": "1 year og 8 months",
+   "ageMonths": 20,
+   "percent": 23
+  },
+  {
+   "label": "1 year og 10 months",
+   "ageMonths": 22,
+   "percent": 24
+  },
+  {
+   "label": "2 year",
+   "ageMonths": 24,
+   "percent": 26
+  },
+  {
+   "label": "2 year og 6 months",
+   "ageMonths": 30,
+   "percent": 30
+  },
+  {
+   "label": "3 year",
+   "ageMonths": 36,
+   "percent": 33
+  },
+  {
+   "label": "3 year og 6 months",
+   "ageMonths": 42,
+   "percent": 37
+  },
+  {
+   "label": "4 year",
+   "ageMonths": 48,
+   "percent": 40
+  },
+  {
+   "label": "4 year og 6 months",
+   "ageMonths": 54,
+   "percent": 44
+  },
+  {
+   "label": "5 year",
+   "ageMonths": 60,
+   "percent": 50
+  },
+  {
+   "label": "5 year og 6 months",
+   "ageMonths": 66,
+   "percent": 54
+  },
+  {
+   "label": "6 year",
+   "ageMonths": 72,
+   "percent": 58
+  },
+  {
+   "label": "6 year og 6 months",
+   "ageMonths": 78,
+   "percent": 62
+  },
+  {
+   "label": "7 year",
+   "ageMonths": 84,
+   "percent": 66
+  },
+  {
+   "label": "7 year og 6 months",
+   "ageMonths": 90,
+   "percent": 70
+  },
+  {
+   "label": "8 year",
+   "ageMonths": 96,
+   "percent": 74
+  },
+  {
+   "label": "8 year og 6 months",
+   "ageMonths": 102,
+   "percent": 78
+  },
+  {
+   "label": "9 year",
+   "ageMonths": 108,
+   "percent": 82
+  },
+  {
+   "label": "10 year",
+   "ageMonths": 120,
+   "percent": 90
+  },
+  {
+   "label": "11 year",
+   "ageMonths": 132,
+   "percent": 91
+  },
+  {
+   "label": "12 year",
+   "ageMonths": 144,
+   "percent": 92
+  },
+  {
+   "label": "13 year",
+   "ageMonths": 156,
+   "percent": 93
+  },
+  {
+   "label": "14 year",
+   "ageMonths": 168,
+   "percent": 94
+  },
+  {
+   "label": "15 year",
+   "ageMonths": 180,
+   "percent": 95
+  },
+  {
+   "label": "16 year",
+   "ageMonths": 192,
+   "percent": 96
+  },
+  {
+   "label": "18 year",
+   "ageMonths": 216,
+   "percent": 98
+  },
+  {
+   "label": "20 year",
+   "ageMonths": 240,
+   "percent": 100
+  }
+ ]
+}
