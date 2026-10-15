@@ -89,6 +89,15 @@ async function saveAndWait(page, urlRe, ms = 20000) {
     throw e;
   }
 }
+// Klikker lagre og venter på feiloversikt med bestemt tekst (avvist lagring).
+async function saveFail(page, text) {
+  await page.click('[data-testid="search-form"] button[type="submit"]');
+  try { await page.waitForFunction((x) => document.querySelector('[data-testid="error-summary"]')?.textContent?.includes(x), text, { timeout: 15000 }); } catch (e) {
+    await page.screenshot({ path: `${SHOTS}/_feil.png`, fullPage: true }).catch(() => {});
+    console.error(`FORVENTET FEIL «${text}» uteble på ${page.url()}\n${(await page.locator("body").innerText().catch(() => "")).slice(0, 1200)}`);
+    throw e;
+  }
+}
 const shot = (page, name) => page.screenshot({ path: `${SHOTS}/${name}.png`, fullPage: true });
 const specOf = async (id) => (await db.query("select spec, version, name, dealership_id from public.search_drafts where id=$1", [id])).rows[0];
 
@@ -258,6 +267,45 @@ try {
   await pA2.goto(`${BASE}/searches/${bmwId}/preview?v=2`);
   check("forhåndsvisning av foreldet versjon viser ingen resultater", (await pA2.locator('[data-testid="stale-version"]').count()) === 1 && (await pA2.locator("[data-listing]").count()) === 0);
   await pA2.close();
+
+  // ===== SEARCH-005-FIX1: kostnadsvalg faller aldri stille bort (tom egen rad med bare valuta/mva./inkludering)
+  await pA.goto(`${BASE}/searches/new?example=demo-bmw`);
+  await pA.fill('input[name="name"]', "FIX1 kostnadsvalg");
+  await pA.selectOption('select[name="custom.0.currency"]', "EUR");
+  await saveFail(pA, "Gi kostnadslinjen en beskrivelse");
+  check("FIX1: EUR uten beskrivelse gir feilen «Gi kostnadslinjen en beskrivelse» og ingenting lagres",
+    (await db.query("select count(*)::int n from public.search_drafts where name=$1", ["FIX1 kostnadsvalg"])).rows[0].n === 0);
+  check("FIX1: valgt EUR er beholdt i skjemaet etter avvist lagring", (await pA.inputValue('select[name="custom.0.currency"]')) === "EUR");
+  await pA.selectOption('select[name="custom.1.vat"]', "incl");
+  await pA.check('input[name="custom.1.included"]');
+  await saveFail(pA, "Gi kostnadslinjen en beskrivelse");
+  check("FIX1: mva.-grunnlag og «Inngår i budsjettet» uten beskrivelse gir også feil, og valgene beholdes",
+    (await pA.inputValue('select[name="custom.1.vat"]')) === "incl" && (await pA.isChecked('input[name="custom.1.included"]')) && (await pA.inputValue('select[name="custom.0.currency"]')) === "EUR");
+  await shot(pA, "14-fix1-kostnadsvalg-feil");
+  await pA.fill('input[name="custom.0.label"]', "Tollagring");
+  await pA.fill('input[name="custom.1.label"]', "Frakt hjem");
+  await saveAndWait(pA, /\?msg=created/);
+  const fixId = pA.url().match(/searches\/([0-9a-f-]{36})/)[1];
+  const fx = (await specOf(fixId)).spec.budget.costs.filter((c) => c.kind === "custom");
+  check("FIX1: etter beskrivelse lagres ukjent EUR (null) med valuta, og rad 2 med mva./budsjettvalg; stabile id-er",
+    fx.length === 2 && fx[0].label === "Tollagring" && fx[0].currency === "EUR" && fx[0].amountMinor === null && fx[0].includedInBudget === false
+    && fx[1].label === "Frakt hjem" && fx[1].vatBasis === "incl" && fx[1].includedInBudget === true && fx[1].currency === "NOK" && fx.every((c) => /^c-[0-9a-f]{12}$/.test(c.id)));
+  await pA.goto(`${BASE}/searches/${fixId}`);
+  check("FIX1: gjenåpnet skjema viser ukjent EUR (tomt beløp, EUR valgt)", (await pA.inputValue('input[name="custom.0.amount"]')) === "" && (await pA.inputValue('select[name="custom.0.currency"]')) === "EUR");
+  // fast linje: feltene er avslått til linjen tas med; uttrykkelig deaktivering er fortsatt mulig
+  check("FIX1: fast linje uten avkrysning har avslåtte felt og forklarende tekst", await pA.locator('input[name="cost.insurance.amount"]').isDisabled() && (await pA.locator('#h-cost\\.insurance').innerText()).includes("Linjen er ikke med"));
+  await pA.check('input[name="cost.insurance.use"]');
+  check("FIX1: avkrysning aktiverer feltene", !(await pA.locator('input[name="cost.insurance.amount"]').isDisabled()));
+  await pA.fill('input[name="cost.insurance.amount"]', "99");
+  await pA.uncheck('input[name="cost.insurance.use"]');
+  check("FIX1: avhuking avslår feltene igjen (verdier sendes ikke)", await pA.locator('input[name="cost.insurance.amount"]').isDisabled());
+  await saveAndWait(pA, /\?msg=saved/);
+  check("FIX1: uttrykkelig deaktivering lagres uten feil (ingen forsikringslinje)", !(await specOf(fixId)).spec.budget.costs.some((c) => c.id === "insurance"));
+  const verBefore = (await specOf(fixId)).version;
+  // direkte post av fast linje uten avkrysning: feil i stedet for stille bortfall
+  await pA.evaluate(() => { const f = document.querySelector('[data-testid="search-form"]'); const el = document.createElement("input"); el.type = "hidden"; el.name = "cost.travel.amount"; el.value = "123"; f.appendChild(el); });
+  await saveFail(pA, "men linjen er ikke tatt med");
+  check("FIX1: verdi på fast linje uten avkrysning (direkte post) gir feil og endrer ikke lagret søk", (await specOf(fixId)).version === verBefore);
 
   // ===== ulagrede endringer
   await pA.goto(`${BASE}/searches/${bmwId}`);

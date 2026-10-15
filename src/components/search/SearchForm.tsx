@@ -63,10 +63,14 @@ export function SearchForm({ id, version, initial, note }: { id?: string; versio
   const models = brand ? DEMO_MODELS[brand] ?? [] : [];
   const selectedModel = val("model");
   const variantSuggestions = models.find((m) => m.key === selectedModel)?.variants ?? [];
-  const customCount = Math.min(
-    MAX_CUSTOM_INDEX + 1,
-    Math.max(0, ...Object.keys(values).flatMap((k) => { const m = /^custom\.(\d{1,2})\./.exec(k); return m ? [Number(m[1]) + 1] : []; })) + BLANK_CUSTOM_ROWS,
-  );
+  // Antall egendefinerte rader: til og med siste rad med innhold + tomme plasser (vokser ikke for hver avviste lagring).
+  const usedCustom = Object.keys(values).flatMap((k) => {
+    const m = /^custom\.(\d{1,2})\.(id|label|amount|vat|included|remove|currency)$/.exec(k);
+    if (!m) return [];
+    const val = typeof values[k] === "string" ? (values[k] as string) : "";
+    return val !== "" && !(m[2] === "currency" && val === "NOK") ? [Number(m[1]) + 1] : [];
+  });
+  const customCount = Math.min(MAX_CUSTOM_INDEX + 1, Math.max(0, ...usedCustom) + BLANK_CUSTOM_ROWS);
 
   return (
     // `action` er reserveveien uten JavaScript. Med JavaScript sendes skjemaet manuelt, slik at React ikke nullstiller feltene etter en
@@ -334,16 +338,27 @@ function CostRow({ prefix, title, fixed, values, errors }: { prefix: string; tit
   const v = (k: string) => (typeof values[`${prefix}.${k}`] === "string" ? (values[`${prefix}.${k}`] as string) : "");
   const e = (k: string) => errors[`${prefix}.${k}`];
   const stored = !fixed && v("id") !== "";
+  // Fast linje: feltene er av (og sendes ikke) til linjen er tatt med, så verdier aldri skrives inn på en linje som blir utelatt.
+  const [use, setUse] = useState(v("use") === "true");
+  const off = fixed && !use;
   return (
     <div className="rounded-xl border border-sand p-3" data-cost={prefix}>
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
         {fixed
-          ? <label className="flex items-center gap-2 font-bold"><input type="checkbox" name={`${prefix}.use`} value="true" defaultChecked={v("use") === "true"} className="h-5 w-5 accent-forest" />{title}</label>
+          ? <label className="flex items-center gap-2 font-bold"><input type="checkbox" name={`${prefix}.use`} value="true" checked={use} onChange={(ev) => setUse(ev.target.checked)} aria-describedby={`h-${prefix}`} className="h-5 w-5 accent-forest" />Ta med: {title}</label>
           : <span className="font-bold">{title}{stored && <span className="ml-2 text-xs font-normal text-muted">lagret linje</span>}</span>}
         {!fixed && stored && (
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name={`${prefix}.remove`} value="true" className="h-5 w-5 accent-danger" />Fjern linjen</label>
         )}
       </div>
+      {fixed && (
+        <p id={`h-${prefix}`} className={`mb-2 text-xs ${e("use") ? "font-semibold text-danger" : "text-muted"}`}>
+          {e("use") ?? (use ? "Linjen tas med. Tomt beløp betyr ukjent." : "Linjen er ikke med. Kryss av for å fylle ut beløp, valuta, mva. og budsjettvalg.")}
+        </p>
+      )}
+      {!fixed && (
+        <p className="mb-2 text-xs text-muted">En rad der du bare velger valuta, mva. eller «Inngår i budsjettet» må også ha en beskrivelse.</p>
+      )}
       {!fixed && (
         <div className="mb-2" id={`f-${prefix}.label`}>
           <input type="hidden" name={`${prefix}.id`} value={v("id")} />
@@ -353,17 +368,17 @@ function CostRow({ prefix, title, fixed, values, errors }: { prefix: string; tit
       )}
       <div className="grid gap-2 sm:grid-cols-[1fr_6rem_9rem_auto] sm:items-start">
         <div id={`f-${prefix}.amount`}>
-          <input type="text" inputMode="decimal" name={`${prefix}.amount`} defaultValue={v("amount")} placeholder="Beløp (tomt = ukjent)" aria-label={`${title}: beløp`} aria-invalid={e("amount") ? true : undefined} />
+          <input type="text" inputMode="decimal" name={`${prefix}.amount`} defaultValue={v("amount")} disabled={off} placeholder="Beløp (tomt = ukjent)" aria-label={`${title}: beløp`} aria-invalid={e("amount") ? true : undefined} />
           {e("amount") && <p className="mt-1 text-sm font-semibold text-danger">{e("amount")}</p>}
         </div>
-        <select name={`${prefix}.currency`} defaultValue={v("currency") || "NOK"} aria-label={`${title}: valuta`}>
+        <select name={`${prefix}.currency`} defaultValue={v("currency") || "NOK"} disabled={off} aria-label={`${title}: valuta`}>
           {CURRENCIES.map((c) => <option key={c} value={c}>{c}</option>)}
         </select>
-        <select name={`${prefix}.vat`} defaultValue={v("vat")} aria-label={`${title}: mva.-grunnlag`}>
+        <select name={`${prefix}.vat`} defaultValue={v("vat")} disabled={off} aria-label={`${title}: mva.-grunnlag`}>
           {VAT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
         <label className="flex min-h-11 items-center gap-2 text-sm">
-          <input type="checkbox" name={`${prefix}.included`} value="true" defaultChecked={v("included") === "true"} className="h-5 w-5 accent-forest" />
+          <input type="checkbox" name={`${prefix}.included`} value="true" defaultChecked={v("included") === "true"} disabled={off} className="h-5 w-5 accent-forest" />
           Inngår i budsjettet
         </label>
       </div>

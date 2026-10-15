@@ -1,4 +1,4 @@
-OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret (c3b0020d39274f2405a4f733c391c7fa)
+OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret (f74d996079a1bd3e398d3c3368b6f76b)
 bygger appen mot testemulatoren …
 OK   anonym /searches/new omdirigeres
 OK   anonym /searches/<uuid> omdirigeres
@@ -34,6 +34,16 @@ OK   gjenåpnet skjema viser lagret rad med skjult id, uten at id vises som teks
 OK   sletting/omrekkefølge: gjenværende linje beholder id; ny linje får ny id; slettet id gjenbrukes ikke
 OK   foreldet versjon gir forståelig konflikt; vinneren overskrives ikke; taperens tekst beholdes i skjemaet
 OK   forhåndsvisning av foreldet versjon viser ingen resultater
+OK   FIX1: EUR uten beskrivelse gir feilen «Gi kostnadslinjen en beskrivelse» og ingenting lagres
+OK   FIX1: valgt EUR er beholdt i skjemaet etter avvist lagring
+OK   FIX1: mva.-grunnlag og «Inngår i budsjettet» uten beskrivelse gir også feil, og valgene beholdes
+OK   FIX1: etter beskrivelse lagres ukjent EUR (null) med valuta, og rad 2 med mva./budsjettvalg; stabile id-er
+OK   FIX1: gjenåpnet skjema viser ukjent EUR (tomt beløp, EUR valgt)
+OK   FIX1: fast linje uten avkrysning har avslåtte felt og forklarende tekst
+OK   FIX1: avkrysning aktiverer feltene
+OK   FIX1: avhuking avslår feltene igjen (verdier sendes ikke)
+OK   FIX1: uttrykkelig deaktivering lagres uten feil (ingen forsikringslinje)
+OK   FIX1: verdi på fast linje uten avkrysning (direkte post) gir feil og endrer ikke lagret søk
 OK   ulagrede endringer: forhåndsvisning er skjult og bruker får beskjed
 OK   kildefeil: tydelig melding, ingen resultater, ingen påstand om dekning
 OK   firma B ser ingen av firma A sine utkast
@@ -44,7 +54,7 @@ OK   firma B kan ikke overskrive A sitt utkast via manipulert id/versjon (avvist
 OK   nytt utkast i firma B: firma fra membership (ikke skjemafeltet), versjon 1, ikke aktiv-felt
 OK   appen sendte aldri dealership_id i skrivekall mot databasen
 OK   tastatur: fokus i søkeflaten har synlig markering (≥ 2 px)
-OK   tastatur: lagre-knappen kan nås med Tab alene (137 stopp i søkeflaten)
+OK   tastatur: lagre-knappen kan nås med Tab alene (113 stopp i søkeflaten)
 OK   skjema (skrivebord): ingen horisontal rulling (1280 ≤ 1280)
 OK   mobil: lagret søk/skjema: ingen horisontal rulling (390 ≤ 390)
 OK   mobil: resultat: ingen horisontal rulling (390 ≤ 390)
@@ -52,4 +62,4 @@ OK   mobil: handlinger er synlige og ikke tildekket (første handlingsknapp i vi
 OK   mobil: oversikt: ingen horisontal rulling (390 ≤ 390)
 OK   ingen JavaScript-feil i konsollen under hele flyten
 
-51/51 sjekker OK
+61/61 sjekker OK

@@ -5,11 +5,11 @@ Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
  RUN  v5.0.3 /home/user/project-scout
 
 
- Test Files  22 passed (22)
-      Tests  540 passed (540)
-   Start at  15:54:07
-   Duration  2.01s (tests 47%, transform 37%, import 14%, worker 2%)
+ Test Files  23 passed (23)
+      Tests  547 passed (547)
+   Start at  16:20:09
+   Duration  2.39s (tests 47%, transform 37%, import 14%, worker 2%)
 
-    Isolate  22 workers spawned · ~93ms startup each (spawn + environment, per file)
-             at least ~589ms faster with isolate: false — reuses workers across files instead of one per file
+    Isolate  23 workers spawned · ~107ms startup each (spawn + environment, per file)
+             at least ~714ms faster with isolate: false — reuses workers across files instead of one per file
 

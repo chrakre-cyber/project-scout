@@ -282,6 +282,9 @@ export function parseSearchFormValues(values: FormValues, catalog: SearchCatalog
   };
   for (const { kind, label } of FIXED_COSTS) {
     if (asStr(values, `cost.${kind}.use`) === "true") costLine(`cost.${kind}`, kind, kind, label);
+    // Verdier på en linje som ikke er huket av gå ikke tapt i det stille. (Skjemaet deaktiverer feltene når linjen er av, så en
+    // uttrykkelig avhuking sender ingen verdier; dette fanger direkte poster og skjema uten JavaScript.)
+    else if (rowTouched(values, `cost.${kind}`, "", "")) err(`cost.${kind}.use`, `Du har fylt ut ${label.toLowerCase()}, men linjen er ikke tatt med. Kryss av for å ta den med, eller tøm feltene.`);
   }
   const customIdx = [...new Set(Object.keys(values).flatMap((k) => { const m = /^custom\.(\d{1,2})\./.exec(k); return m ? [Number(m[1])] : []; }))]
     .filter((n) => n <= MAX_CUSTOM_INDEX).sort((a, b) => a - b);
@@ -291,8 +294,9 @@ export function parseSearchFormValues(values: FormValues, catalog: SearchCatalog
     if (asStr(values, `${p}.remove`) === "true") continue;
     const rawId = asStr(values, `${p}.id`).trim();
     const label = asStr(values, `${p}.label`).trim();
-    const touched = rawId !== "" || label !== "" || asStr(values, `${p}.amount`).trim() !== "";
-    if (!touched) continue; // tom, ubrukt rad
+    // En rad er urørt bare når ALT er i standardtilstand (NOK, mva. ikke oppgitt, ikke inkludert). Valuta, mva.-grunnlag og
+    // «Inngår i budsjettet» er meningsfulle valg: de skal enten bevares komplett eller gi feltfeil, aldri stille falle bort.
+    if (!rowTouched(values, p, rawId, label)) continue;
     if (label === "") { err(`${p}.label`, "Gi kostnadslinjen en beskrivelse."); continue; }
     if (label.length > COST_LABEL_MAX) { err(`${p}.label`, `Beskrivelsen kan ha høyst ${COST_LABEL_MAX} tegn.`); continue; }
     if (/[\u0000-\u001f\u007f]/.test(label)) { err(`${p}.label`, "Beskrivelsen inneholder ugyldige tegn."); continue; }
@@ -338,6 +342,13 @@ export function parseSearchFormValues(values: FormValues, catalog: SearchCatalog
   }
   const ok = spec !== null && json !== null && Object.keys(errors).length === 0 && general.length === 0;
   return { ok, name: ok ? name : null, spec: ok ? spec : null, json: ok ? json : null, errors, general, values };
+}
+
+/** Har raden noe meningsfullt innhold? Standardtilstand er NOK, mva. ikke oppgitt, ikke inkludert, ingen id/beskrivelse/beløp. */
+function rowTouched(values: FormValues, prefix: string, id: string, label: string): boolean {
+  const cur = asStr(values, `${prefix}.currency`).trim();
+  return id !== "" || label !== "" || asStr(values, `${prefix}.amount`).trim() !== ""
+    || (cur !== "" && cur !== "NOK") || asStr(values, `${prefix}.vat`) !== "" || asStr(values, `${prefix}.included`) === "true";
 }
 
 /** Domenets feilsti → skjemafelt (så feilen vises ved riktig felt). */

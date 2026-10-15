@@ -190,6 +190,58 @@ describe("stabile kostnads-id-er", () => {
   });
 });
 
+describe("SEARCH-005-FIX1: kostnadsvalg faller aldri stille bort", () => {
+  it("helt urørt tom rad (NOK, ikke oppgitt mva., ikke inkludert) utelates uten feil", () => {
+    const r = ok(demo("demo-bmw", { "custom.0.label": "", "custom.0.amount": "", "custom.0.currency": "NOK", "custom.0.vat": "", "custom.0.included": "" }));
+    expect(r.spec!.budget.costs.filter((c) => c.kind === "custom")).toEqual([]);
+  });
+  it("valuta, mva.-grunnlag eller «Inngår i budsjettet» uten beskrivelse gir feltfeil og ingen spec; råverdiene beholdes", () => {
+    const cases: [string, FormValues][] = [
+      ["valuta", { "custom.0.currency": "EUR" }], ["mva", { "custom.0.vat": "excl" }], ["inkludert", { "custom.0.included": "true" }],
+      ["alt", { "custom.0.currency": "SEK", "custom.0.vat": "none", "custom.0.included": "true" }],
+    ];
+    for (const [name, patch] of cases) {
+      const r = parse(demo("demo-bmw", { "custom.0.label": "", "custom.0.amount": "", ...patch }));
+      expect(r.ok, name).toBe(false);
+      expect(r.errors["custom.0.label"], name).toBe("Gi kostnadslinjen en beskrivelse.");
+      expect(r.spec).toBeNull();
+      expect(r.json).toBeNull();
+      for (const [k, v] of Object.entries(patch)) expect(r.values[k], `${name} ${k}`).toBe(v); // brukeren kan fullføre raden
+    }
+  });
+  it("beskrevet rad med tomt beløp og EUR bevares som ukjent EUR med mva./budsjettvalg og stabil id — også etter lagre → åpne → lagre", () => {
+    const r1 = ok(demo("demo-bmw", { "custom.0.label": "Tollagring", "custom.0.amount": "", "custom.0.currency": "EUR", "custom.0.vat": "excl", "custom.0.included": "true" }));
+    const c = r1.spec!.budget.costs.find((x) => x.kind === "custom")!;
+    expect(c).toMatchObject({ label: "Tollagring", amountMinor: null, currency: "EUR", vatBasis: "excl", includedInBudget: true });
+    expect(c.id).toMatch(/^c-[0-9a-f]{12}$/);
+    const r2 = ok(specToFormValues(r1.name!, r1.spec!));
+    expect(r2.spec!.budget.costs.find((x) => x.kind === "custom")).toEqual(c);
+  });
+  it("«Fjern linjen» fjerner raden selv om gamle feltverdier følger med; id-ene til de andre er uendret", () => {
+    const first = ok(demo("demo-bmw", { "custom.0.label": "A", "custom.0.amount": "1", "custom.0.currency": "EUR", "custom.0.included": "true", "custom.1.label": "B", "custom.1.amount": "2" }));
+    const [a, b] = first.spec!.budget.costs.filter((x) => x.kind === "custom");
+    const form: FormValues = { ...specToFormValues(first.name!, first.spec!), "custom.0.remove": "true" };
+    expect(form["custom.0.currency"]).toBe("EUR"); // gamle verdier følger med
+    const second = ok(form);
+    expect(second.spec!.budget.costs.filter((x) => x.kind === "custom").map((x) => x.id)).toEqual([b!.id]);
+    expect(second.spec!.budget.costs.map((x) => x.id)).not.toContain(a!.id);
+  });
+  it("fast linje med verdier, men uten avkrysning, gir feil i stedet for å bli utelatt; uten verdier er avslått linje uproblematisk", () => {
+    for (const patch of <FormValues[]>[{ "cost.insurance.amount": "500" }, { "cost.insurance.included": "true" }, { "cost.insurance.currency": "EUR" }, { "cost.insurance.vat": "incl" }]) {
+      const r = parse(demo("demo-bmw", patch));
+      expect(r.ok, JSON.stringify(patch)).toBe(false);
+      expect(r.errors["cost.insurance.use"]).toMatch(/Kryss av/);
+    }
+    const off = ok(demo("demo-bmw", { "cost.insurance.use": "", "cost.insurance.currency": "NOK" })); // standardverdier = urørt
+    expect(off.spec!.budget.costs.some((x) => x.id === "insurance")).toBe(false);
+    // uttrykkelig deaktivering av en tidligere lagret fast linje (feltene er deaktivert i skjemaet, så ingen verdier følger med)
+    const stored = ok(demo("demo-bmw", { "cost.insurance.use": "true", "cost.insurance.amount": "500", "cost.insurance.currency": "EUR", "cost.insurance.included": "true" }));
+    const fv = specToFormValues(stored.name!, stored.spec!);
+    const deact: FormValues = Object.fromEntries(Object.entries(fv).filter(([k]) => !k.startsWith("cost.insurance.")));
+    expect(ok(deact).spec!.budget.costs.some((x) => x.id === "insurance")).toBe(false);
+  });
+});
+
 describe("forhåndsvisning mot syntetiske annonser", () => {
   const prov = () => new SyntheticMarketplaceProvider();
   it("GLS-eksempelet gir null fullstendige treff og forklarer hva kilden ikke kan oppgi", async () => {
