@@ -78,3 +78,8 @@ For ny målmodell erstattes DEC-024s obligatoriske retail/minimumsbidrag av et p
 Ikke endret: database, RLS, auth, serveractions, providers, prototypen. Åpent: lagring/migrasjon, kandidat-adapter (kildetekst → katalognøkler), prototype-adapter, beregningslag, regler for pakker/cruise/klima/hengerfeste.
 
 **Tillegg 15.10.2026 (SEARCH-002-FIX1, etter Codex-review).** En kostnadsvurdering er bundet til kandidat-id, kandidatrevisjon og et kanonisk kostnadsgrunnlag (`costBasisOf`: inkluderte linjer med id, type, valuta, beløp, mva.-grunnlag); endring av disse gir `not_calculated`, mens budsjettbeløp, prisavvik, visningstekst og ikke-inkluderte linjer kan endres uten ny vurdering. Intern validering og eksport kontrollerer struktur og eksakte nøkler (ukjente/ikke-støttede felt avvises med feilsti, aldri stille bortfall) og kaster ikke.
+
+
+## DEC-032 — FORSLAG: kontrollgrunnlag for avgiftsregler (TAX-001A)
+
+15.10.2026. **Forslag, ikke godkjent av Christian.** (1) Regler får evidensnivå E0–E3; bare E1 (primærkilde lest direkte, med dato) kan bli regelparameter. (2) Referansetilfeller deles i klasse 1 (uavhengig offisiell), 2 (manuelt kildeutledet), 3 (syntetisk aritmetikk/demo), 4 (planlagt/blokkert uten forventet sum). (3) `TaxInputV1` bindes til kandidat-id, revisjon og costBasis. (4) Kjøpsgrunnlag skilles i lag L0–L4; mva. trekkes aldri ut to ganger; «MwSt. ausweisbar»/land alene gir ikke netto. (5) Budsjettsum (DEC-030), økonomisk anskaffelseskost og betalingsbehov er tre separate resultater. Ingen kode eller satser innført.

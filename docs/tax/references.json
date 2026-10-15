@@ -1,0 +1,2443 @@
+{
+ "schema": "merovo.tax.reference-cases",
+ "version": "TAX-001A/1",
+ "researchDate": "2026-10-15",
+ "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig kontrollert) og klasse 2 (manuelt kildeutledet) er TOMME fordi ingen primærkilde eller kalkulator kunne nås. Klasse 3 er syntetisk aritmetikk/regelkontrakt. Klasse 4 har ingen forventet totalsum.",
+ "classes": {
+  "1": "uavhengig kontrollert referanse",
+  "2": "manuelt kildeutledet forventning",
+  "3": "syntetisk aritmetikk/demo/regelkontrakt",
+  "4": "planlagt eller blokkert tilfelle"
+ },
+ "cases": [
+  {
+   "id": "C3-001",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Brutto 100 000 EUR → netto ved dokumentert 19 % inkl. mva.",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "gross": "100000 EUR",
+    "rate": "19 % inkludert i brutto"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "84033.61",
+    "unit": "EUR",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-002",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Brutto 100 000 EUR → netto ved dokumentert 25 % inkl. mva.",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "gross": "100000 EUR",
+    "rate": "25 % inkludert i brutto"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "80000.00",
+    "unit": "EUR",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-003",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Allerede annonsert/bekreftet netto 100 000 EUR → ingen mva.-uttrekk",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "net": "100000 EUR"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "100000.00",
+    "unit": "EUR",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Regel: nettopris får aldri mva. trukket ut på nytt."
+  },
+  {
+   "id": "C3-004",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Netto-annonse med påstått 19 % → fortsatt 100 000 EUR (ingen dobbel uttrekk)",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-001",
+    "R-FOR-003"
+   ],
+   "inputs": {
+    "listedNet": "100000 EUR",
+    "claimedRate": "19 %"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "100000.00",
+    "unit": "EUR",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-005",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "84 033,61 EUR × demo-kurs 11,50 NOK/EUR",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-FX-001"
+   ],
+   "inputs": {
+    "eur": "84033.61",
+    "fxDemo": "11.50 NOK/EUR (SYNTETISK, ikke Tolletatens kurs)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "966386.52",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-006",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "80 000 EUR × demo-kurs 11,50",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-FX-001"
+   ],
+   "inputs": {
+    "eur": "80000.00",
+    "fxDemo": "11.50"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "920000.00",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-007",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "100 000 EUR × demo-kurs 11,50",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-FX-001"
+   ],
+   "inputs": {
+    "eur": "100000.00",
+    "fxDemo": "11.50"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "1150000.00",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-008",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Tollverdi (EUR) = netto 80 000 + frakt til grensen 1 200 + forsikring til grensen 150",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "price": "80000",
+    "freightToBorder": "1200",
+    "insuranceToBorder": "150",
+    "currency": "EUR"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "81350.00",
+    "unit": "EUR",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-009",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Frakt ukjent (null) → tollverdi kan ikke beregnes (ikke 0)",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "price": "80000",
+    "freightToBorder": null,
+    "insuranceToBorder": "150"
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "freight_unknown"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-010",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Frakt eksplisitt 0 → tollverdi = 80 000 + 0 + 150",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "price": "80000",
+    "freightToBorder": "0",
+    "insuranceToBorder": "150"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "80150.00",
+    "unit": "EUR",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-011",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Innenlands transport etter grensen (900 NOK) endrer ikke tollverdien",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "customsValueEur": "81350",
+    "domesticAfterBorderNok": "900"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "81350.00",
+    "unit": "EUR",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-012",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Pris som allerede inkluderer frakt (82 000 inkl. 1 200): frakt legges ikke til én gang til",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "packagePrice": "82000",
+    "includesFreight": "1200",
+    "insuranceToBorder": "150"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "82150.00",
+    "unit": "EUR",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Forutsetter dokumentert at pakkeprisen dekker frakt."
+  },
+  {
+   "id": "C3-013",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Budsjettvalg «ikke inkludert» for faktisk frakt før grensen endrer ikke lovens tollverdigrunnlag",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "budgetLineIncluded": false,
+    "actualFreightToBorder": "1200",
+    "price": "80000",
+    "insuranceToBorder": "150"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "81350.00",
+    "unit": "EUR",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-014",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "SYNTETISK: import-mva. = r_demo (25 % – IKKE primærkontrollert) × tollverdi i NOK 935 525,00",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-001"
+   ],
+   "inputs": {
+    "customsValueNok": "935525.00",
+    "r_demo": "0.25 (syntetisk parameter)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "233881.25",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Parameteren er et aritmetisk demovalg; ingen sats er kontrollert (R-IMP-VAT-001 er E2)."
+  },
+  {
+   "id": "C3-015",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "SYNTETISK: som C3-014 men med netto 84 033,61 EUR + 1 350 = 85 383,61 EUR",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-001"
+   ],
+   "inputs": {
+    "customsValueEur": "85383.61",
+    "fxDemo": "11.50",
+    "r_demo": "0.25"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "245477.88",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-016",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Betalingskurs med 1 % buffer (11,615) skilles fra tollkurs (11,50): 80 000 EUR",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-FX-001"
+   ],
+   "inputs": {
+    "eur": "80000",
+    "paymentRate": "11.615",
+    "customsRate": "11.50"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "929200.00",
+    "unit": "NOK",
+    "rounding": "ingen"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Viser at kurser holdes adskilt; bufferprosenten er syntetisk."
+  },
+  {
+   "id": "C3-017",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Avrundingsregel må være eksplisitt: 99 999,99/1,19 avrundet halv-opp vs ned",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "gross": "99999.99",
+    "rate": "19 %"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "84033.61 (halv-opp) vs 84033.60 (ned)",
+    "unit": "EUR",
+    "rounding": "begge vist"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-018",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Brutto betalt 100 000 EUR med betinget refusjon: kapitalbehov (C) = 100 000 til refusjon er mottatt; økonomisk base (netto) = 84 033,61",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "paidGross": "100000",
+    "refundExpectedNet19": "15966.39"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "capital=100000.00 ; economicBase=84033.61",
+    "unit": "EUR",
+    "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Refusjonstidspunkt ukjent → kapitalbehov kan ikke avsluttes."
+  },
+  {
+   "id": "C3-019",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Delsum under budsjett (825 000 kr) uten engangsavgift er ikke et budsjettreff",
+   "profileId": null,
+   "ruleIds": [
+    "R-OTA-001"
+   ],
+   "inputs": {
+    "partialSumNok": "700000",
+    "limitNok": "825000",
+    "oneOffTax": null
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "not_calculated",
+    "reason": "included_cost_not_covered/no_assessment (SEARCH-002 classifyBudget)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Eksisterende domenekontrakt."
+  },
+  {
+   "id": "C3-020",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Alder: første reg. 2021-10-05, planlagt norsk reg. 2026-10-20 → 5 år 0 mnd 15 dager (kalenderaritmetikk)",
+   "profileId": null,
+   "ruleIds": [
+    "R-OTA-010"
+   ],
+   "inputs": {
+    "firstRegistration": "2021-10-05",
+    "plannedRegistration": "2026-10-20"
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "age",
+    "reason": "5y 0m 15d"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Hvilket tabelltrinn dette gir er ukjent før T07 er lest."
+  },
+  {
+   "id": "C3-021",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Alder med bare år (2021) og planlagt 2026-10-20 → alder 4 år 9 mnd 19 d til 5 år 9 mnd 19 d: kan ikke avgjøre tabelltrinn",
+   "profileId": null,
+   "ruleIds": [
+    "R-OTA-010"
+   ],
+   "inputs": {
+    "firstRegistration": "2021",
+    "plannedRegistration": "2026-10-20"
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "precision_insufficient_for_deduction_step"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-022",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Alder med år-måned (2021-10) og planlagt 2026-10-20 → 4 år 11 mnd 20 d til 5 år 0 mnd 19 d: ligger over 5-årsgrensen → blokkert uten dag",
+   "profileId": null,
+   "ruleIds": [
+    "R-OTA-010"
+   ],
+   "inputs": {
+    "firstRegistration": "2021-10",
+    "plannedRegistration": "2026-10-20"
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "precision_insufficient_at_step_boundary"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-023",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Planlagt norsk registreringsdato mangler → ingen engangsavgift/bruksfradrag kan beregnes",
+   "profileId": null,
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-001"
+   ],
+   "inputs": {
+    "plannedRegistration": null
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "planned_registration_date_missing"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-024",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Første utenlandske registrering mangler/ukjent → bruksfradrag kan ikke beregnes (ikke 0 %)",
+   "profileId": null,
+   "ruleIds": [
+    "R-OTA-010"
+   ],
+   "inputs": {
+    "firstRegistration": null
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "first_registration_unknown"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Ukjent er ikke ‘ny bil’ og ikke 0 % fradrag."
+  },
+  {
+   "id": "C3-025",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Kjøpsgrunnlag ukjent (brutto/netto ukjent) → ingen mva.-justering og ingen total",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-003"
+   ],
+   "inputs": {
+    "basis": "unknown"
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "purchase_basis_unknown"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-026",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Marginbeskatning: normal lokal mva. deles ikke mekanisk ut av 100 000 EUR",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-002"
+   ],
+   "inputs": {
+    "regime": "margin",
+    "listPrice": "100000 EUR"
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "margin_regime_net_price_not_derivable"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-027",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "«MwSt. ausweisbar» alene er ikke bekreftet netto eksportkjøp",
+   "profileId": null,
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "claim": "MwSt. ausweisbar",
+    "documentedOffer": null
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "net_export_not_confirmed"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C3-028",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Kostnadsvurdering bundet til kandidatrevisjon: endret pris → ny vurdering kreves",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "candidateVersionChanged": true
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "not_calculated",
+    "reason": "candidate_version_mismatch (SEARCH-002-FIX1)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Eksisterende domenekontrakt."
+  },
+  {
+   "id": "C3-029",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Kostnadsgrunnlag (budsjettlinjer) endret → ny vurdering kreves",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "costBasisChanged": true
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "not_calculated",
+    "reason": "cost_basis_changed (SEARCH-002-FIX1)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Eksisterende domenekontrakt."
+  },
+  {
+   "id": "C3-030",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Varebil som ønsket scenario uten dokumentert N1/klasse → ingen varebilprofil og ingen avgiftsfordel",
+   "profileId": null,
+   "ruleIds": [
+    "R-OTA-009"
+   ],
+   "inputs": {
+    "plannedRegistration": "van",
+    "bodyType": "van",
+    "documentedClass": null
+   },
+   "expected": {
+    "kind": "status",
+    "outcome": "blocked",
+    "reason": "vehicle_class_not_documented"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-PB-BEN",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil PB-BEN: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-003",
+    "R-OTA-004",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-PB-DIE",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil PB-DIE: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "PB-DIE",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-003",
+    "R-OTA-004",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-PB-HEV",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil PB-HEV: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "PB-HEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-006",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-PB-PHEV",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil PB-PHEV: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "PB-PHEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-PB-BEV",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil PB-BEV: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "PB-BEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-007",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-VB-BEN",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil VB-BEN: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "VB-BEN",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-VB-DIE",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil VB-DIE: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-003",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-VB-HEV",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil VB-HEV: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "VB-HEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-006",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-VB-PHEV",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil VB-PHEV: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "VB-PHEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BASE-VB-BEV",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Grunnprofil VB-BEV: typisk bil med full input – sammenlign engangsavgift mot kalkulator",
+   "profileId": "VB-BEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-007",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "registrationDate": "2026-11-02 (planlagt)",
+    "firstRegistration": "2022-05-10",
+    "kerbWeightKg": "må oppgis",
+    "co2": "må oppgis",
+    "testMethod": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser/tabell 2026 (E1)",
+     "konkret vekt/CO2/testmetode for en reell typegodkjenning",
+     "kalkulatorresultat"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T03",
+    "T04",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-PB-BEN-1M",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 1 måned (PB-BEN)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2026-09-20",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-PB-BEN-1Y",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 1 år (PB-BEN)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2025-10-25",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-PB-BEN-14Y",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 14 år (PB-BEN)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2012-10-25",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-PB-BEN-20Y",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 20 år (19 år 11 mnd vs 20 år) (PB-BEN)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2006-10-25 / 2006-11-25",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-VB-DIE-1M",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 1 måned (VB-DIE)",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2026-09-20",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-VB-DIE-1Y",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 1 år (VB-DIE)",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2025-10-25",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-VB-DIE-14Y",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 14 år (VB-DIE)",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2012-10-25",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-AGE-VB-DIE-20Y",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruksfradrag-trinn ved 20 år (19 år 11 mnd vs 20 år) (VB-DIE)",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "inputs": {
+    "firstRegistrationAbroad": "2006-10-25 / 2006-11-25",
+    "plannedRegistration": "2026-10-25"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hele bruksfradragstabellen (T07, E1)",
+     "hva fradraget regnes av (R-OTA-010)",
+     "avrunding av alder"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T06",
+    "T07",
+    "S07"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-CO2-minus",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "CO2-bånd (forbrenning, personbil): CO2 én enhet under båndgrensen",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-002"
+   ],
+   "inputs": {
+    "co2": "grensen fra T04 (ikke lest)"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "CO2-båndgrenser og beløp (E1)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T03",
+    "T04"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-CO2-lik",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "CO2-bånd (forbrenning, personbil): CO2 lik båndgrensen",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-002"
+   ],
+   "inputs": {
+    "co2": "grensen fra T04 (ikke lest)"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "CO2-båndgrenser og beløp (E1)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T03",
+    "T04"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-CO2-pluss",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "CO2-bånd (forbrenning, personbil): CO2 én enhet over båndgrensen",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-002"
+   ],
+   "inputs": {
+    "co2": "grensen fra T04 (ikke lest)"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "CO2-båndgrenser og beløp (E1)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T03",
+    "T04"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-CO2-MISSING",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "CO2 mangler: anslag fra egenvekt (egenvekt/10 fra 2026?)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-002"
+   ],
+   "inputs": {
+    "co2": null,
+    "kerbWeightKg": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "bekreftet anslagsregel og dato"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-CO2-NONE",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Både CO2 og egenvekt mangler → blokkert (ingen gjetting)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-002",
+    "R-OTA-001"
+   ],
+   "inputs": {
+    "co2": null,
+    "kerbWeightKg": null
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "alle felt ukjent"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Forventet utfall: blokkert (regel); ingen total"
+   ],
+   "sources": [
+    "T02"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-NEDC-WLTP",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Testmetode ukjent eller NEDC mot WLTP: ingen omregning uten dokumentert regel",
+   "profileId": "PB-DIE",
+   "ruleIds": [
+    "R-OTA-002"
+   ],
+   "inputs": {
+    "co2": "må oppgis",
+    "testMethod": "unknown"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "regel for testmetode ved import"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T03"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-NOX",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "NOx-komponent for diesel: finnes den i 2026?",
+   "profileId": "PB-DIE",
+   "ruleIds": [
+    "R-OTA-003"
+   ],
+   "inputs": {
+    "nox": "må oppgis hvis komponenten finnes"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "avklaring av kildekonflikt (T02)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-PHEV-RANGE-MISSING",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Ladbar hybrid uten elektrisk rekkevidde → blokkert",
+   "profileId": "PB-PHEV",
+   "ruleIds": [
+    "R-OTA-005"
+   ],
+   "inputs": {
+    "electricRangeKm": null
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "rekkevidde, vektet kombinert CO2"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Forventet utfall: blokkert (kontrakt); ingen total"
+   ],
+   "sources": [
+    "T05",
+    "T19"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-PHEV-FACTOR",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Ladbar hybrid: CO2 vektet kombinert og eventuell faktor 1,24 / vektfradrag 2026",
+   "profileId": "PB-PHEV",
+   "ruleIds": [
+    "R-OTA-005"
+   ],
+   "inputs": {
+    "co2Weighted": "må oppgis",
+    "electricRangeKm": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "gjeldende faktor og fradrag 2026 (E1)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T05",
+    "T19"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-HEV-AS-ICE",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Ikke-ladbar hybrid: behandles som forbrenningsbil?",
+   "profileId": "PB-HEV",
+   "ruleIds": [
+    "R-OTA-006"
+   ],
+   "inputs": {
+    "fuel": "hybrid",
+    "pluginConfirmed": false
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "gjeldende regel (E1) og bekreftelse at bilen ikke er ladbar"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T03",
+    "T05"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BEV-WEIGHT",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Elbil: kun vektkomponent",
+   "profileId": "PB-BEV",
+   "ruleIds": [
+    "R-OTA-007",
+    "R-OTA-001"
+   ],
+   "inputs": {
+    "kerbWeightKg": "må oppgis"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "vektkomponentens sats (E1)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T02",
+    "T04"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BEVVAT-under",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Elbil import-mva.: kjøpesum/vederlag under mva.-fritaksgrensen",
+   "profileId": "PB-BEV",
+   "ruleIds": [
+    "R-IMP-VAT-003",
+    "R-IMP-VAT-001"
+   ],
+   "inputs": {
+    "amount": "nær 300 000 kr (lead)"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hva grensen regnes av (tollverdi/vederlag)",
+     "anvendelse ved innførsel",
+     "om gjeldende per registreringsdato"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning",
+    "Avklar fremtidig nedtrapping (ikke i kraft)"
+   ],
+   "sources": [
+    "T14"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BEVVAT-lik",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Elbil import-mva.: lik grensen",
+   "profileId": "PB-BEV",
+   "ruleIds": [
+    "R-IMP-VAT-003",
+    "R-IMP-VAT-001"
+   ],
+   "inputs": {
+    "amount": "nær 300 000 kr (lead)"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hva grensen regnes av (tollverdi/vederlag)",
+     "anvendelse ved innførsel",
+     "om gjeldende per registreringsdato"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning",
+    "Avklar fremtidig nedtrapping (ikke i kraft)"
+   ],
+   "sources": [
+    "T14"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-BEVVAT-over",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Elbil import-mva.: over grensen",
+   "profileId": "PB-BEV",
+   "ruleIds": [
+    "R-IMP-VAT-003",
+    "R-IMP-VAT-001"
+   ],
+   "inputs": {
+    "amount": "nær 300 000 kr (lead)"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hva grensen regnes av (tollverdi/vederlag)",
+     "anvendelse ved innførsel",
+     "om gjeldende per registreringsdato"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning",
+    "Avklar fremtidig nedtrapping (ikke i kraft)"
+   ],
+   "sources": [
+    "T14"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-VAN-CLASS-UNKNOWN",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Varebil: klasse 1/2 ukjent → profilen blokkeres",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-009"
+   ],
+   "inputs": {
+    "documentedClass": null
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "Statens vegvesens klassifisering/dokumentasjon"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Dokumentere klasse (vedtak/vognkort) eller blokkere"
+   ],
+   "sources": [
+    "T05",
+    "T15"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-VAN-K1-K2",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Varebil klasse 1 (gruppe a) kontra klasse 2 (gruppe b) for samme bil",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-001"
+   ],
+   "inputs": {
+    "class": "1 vs 2"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser for begge grupper (E1)",
+     "definisjon"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T04",
+    "T05"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-VAN-CONVERSION",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Varebil med ombygging (seter fjernet/skillevegg) og godkjenning – kostnadslinjer og klassifisering",
+   "profileId": "VB-BEN",
+   "ruleIds": [
+    "R-OTA-009"
+   ],
+   "inputs": {
+    "conversionCost": "må oppgis av bruker",
+    "approval": "må dokumenteres"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "bekreftet godkjenning/klassifisering etter ombygging"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kostnadslinjer conversion/approval er brukerforutsetninger; avgiftsklasse krever vedtak"
+   ],
+   "sources": [
+    "T05",
+    "T15"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-VAN-N1-SEATS",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "N1 med sete bak fører → ikke klasse 2",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-009"
+   ],
+   "inputs": {
+    "seatBehindDriver": true
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "gjeldende definisjon"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Les T05/T03"
+   ],
+   "sources": [
+    "T05"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-VAN-BODYTYPE",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Karosseri «van»/SUV alene gir ikke varebilprofil",
+   "profileId": "VB-BEN",
+   "ruleIds": [
+    "R-OTA-009"
+   ],
+   "inputs": {
+    "bodyType": "van"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "dokumentert klasse"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Forventet utfall: blokkert"
+   ],
+   "sources": [
+    "T15"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-VER-0831",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Registrering 2026-08-31 – regelversjon før eventuell endring 1.9.2026",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008"
+   ],
+   "inputs": {
+    "plannedRegistration": "2026-08-31"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "innhold i endringen 19.6.2026 / virkning 1.9.2026 (T04)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T04"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-VER-0901",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Registrering 2026-09-01 – regelversjon etter eventuell endring",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008"
+   ],
+   "inputs": {
+    "plannedRegistration": "2026-09-01"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "samme som over"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T04"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-SCRAP",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Vrakpant: 2 400 vs 3 000 kr – hvilken gjelder ved planlagt registreringsdato",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-IMP-OTH-001"
+   ],
+   "inputs": {
+    "plannedRegistration": "2026-11-02"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "gjeldende beløp og dato (E1)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Les T09/T08 direkte"
+   ],
+   "sources": [
+    "T08",
+    "T09"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-GHG",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Klimagassavgift: gasstype/mengde ukjent → blokkert",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-IMP-OTH-002"
+   ],
+   "inputs": {
+    "acRefrigerant": null
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "gasstype og mengde (typeskilt/typegodkjenning)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Dokumentere gass eller akseptere blokkering"
+   ],
+   "sources": [
+    "T08"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-FREIGHT-STD",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bil kjørt inn på egne hjul: sjablongfrakt kontra dokumentert faktisk frakt",
+   "profileId": "PB-DIE",
+   "ruleIds": [
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "drivenOwnWheels": true,
+    "country": "DE"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "sjablongbeløp og dato (T10)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Les T10 (Tolletaten tollverdi sjablongsatser)"
+   ],
+   "sources": [
+    "T10"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-FX-DATE",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Tollkurs: tidspunkt for deklarasjon kontra frigivelse",
+   "profileId": "PB-DIE",
+   "ruleIds": [
+    "R-IMP-FX-001"
+   ],
+   "inputs": {
+    "declarationDate": "2026-11-05",
+    "releaseDate": "2026-11-06"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hvilken dato som styrer kursen",
+     "Tolletatens ukekurser"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Les T10 og kursfeed"
+   ],
+   "sources": [
+    "T10"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-REG-MARGIN",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Tysk marginordning: faktisk eksportfakturert nettopris må dokumenteres",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-FOR-002"
+   ],
+   "inputs": {
+    "regime": "margin",
+    "invoiceShowsVat": false
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "konkret tilbud/faktura"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Dokumentert tilbud fra selger (ikke regel)"
+   ],
+   "sources": [
+    "T17"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-REG-PRIVATE",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Privat selger i utlandet: ingen mva.-uttrekk",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-FOR-003"
+   ],
+   "inputs": {
+    "sellerType": "private"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "dokumentasjon av regime"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Dokumentert faktura/kjøpskontrakt"
+   ],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C4-REG-UNKNOWN",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Ukjent regime",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-FOR-003"
+   ],
+   "inputs": {
+    "regime": "unknown"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "alt om regime"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Forventet utfall: blokkert"
+   ],
+   "sources": [],
+   "notes": ""
+  },
+  {
+   "id": "C4-REG-OTHERCOUNTRY",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Selger i annet land enn Tyskland (AT/NL/BE/FR): ingen landregel",
+   "profileId": "PB-DIE",
+   "ruleIds": [
+    "R-FOR-004"
+   ],
+   "inputs": {
+    "country": "AT"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "landspesifikk kilde eller dokumentert enkelttilbud"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Dokumentert tilbud + lokal faglig avklaring"
+   ],
+   "sources": [
+    "T16"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-DE-EXPORT-PROOF",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Tyskland: netto eksport krever utførselsbevis (VIN, tollbekreftet utgang)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "country": "DE",
+    "proofOfExport": "må dokumenteres"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "krav i UStG/UStH og praksis med norsk grense"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Les T16 direkte, avklar med lokal rådgiver"
+   ],
+   "sources": [
+    "T16"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-DE-PICKUP",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Tyskland: selvhenting krever utenlandsk (ikke-EU-)kjøper – er Merovos kunde kvalifisert?",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "transport": "buyer pickup"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "hvem som er kjøper (forhandler i Norge)",
+     "hvem som transporterer"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Lokal faglig avklaring"
+   ],
+   "sources": [
+    "T16"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-GROSS-REFUND",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Bruttobetaling/depositum med senere refusjon: kapitalbehov kontra økonomisk kost",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-FOR-001"
+   ],
+   "inputs": {
+    "paidGross": "100000 EUR",
+    "refund": "senere, betinget"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "refusjonsvilkår og tidspunkt"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Dokumentert avtale"
+   ],
+   "sources": [
+    "T16"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-DED-REG",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Importør mva.-registrert med salgsvare-profil: innførselsmva. fradragsberettiget?",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "importerProfile": "registrert, lagerbil"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "bekreftet fradragsprofil (aldri antatt)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Les T12; bekreft profil med forhandler/revisor"
+   ],
+   "sources": [
+    "T12"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-DED-UNREG",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Ikke registrert importør: ingen fradrag",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "importerProfile": "ikke registrert"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "—"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Forventet utfall: ingen fradragsføring (kontrakt), økonomisk kost = budsjettsum på avgiftsdelen"
+   ],
+   "sources": [
+    "T12"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-DED-VAN",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Fradragsrett for varebil kontra personkjøretøy",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-DED-001"
+   ],
+   "inputs": {
+    "vehicle": "varebil"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "regel for varebil (ikke personkjøretøy?)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Les T12"
+   ],
+   "sources": [
+    "T12"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-DED-RECLAIM8",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Tilbakeføring etter åtte år (utenfor første motor)",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-DED-002"
+   ],
+   "inputs": {
+    "resaleWithin8y": true
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "—"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Utenfor første motor"
+   ],
+   "sources": [
+    "T12"
+   ],
+   "notes": ""
+  },
+  {
+   "id": "C4-ROUND",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Avrunding av engangsavgift per komponent kontra sum",
+   "profileId": "PB-BEN",
+   "ruleIds": [
+    "R-OTA-001"
+   ],
+   "inputs": {},
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "offisiell avrundingsregel"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les gjeldende satser/tabell direkte i T03/T04 (E1) og før mellomregning"
+   ],
+   "sources": [
+    "T03"
+   ],
+   "notes": ""
+  }
+ ]
+}

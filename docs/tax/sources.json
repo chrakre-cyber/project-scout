@@ -1,0 +1,458 @@
+{
+ "schema": "merovo.tax.sources",
+ "version": "TAX-001A/1",
+ "researchDate": "2026-10-15",
+ "coverage": "Søk 15.10.2026 med søkeverktøy (standard/extended) begrenset til offisielle domener. Direkte henting (WebFetch/curl) av skatteetaten.no, toll.no, lovdata.no, regjeringen.no feilet i nettverket (DNS/403). INGEN primærkilde er lest direkte.",
+ "sources": [
+  {
+   "id": "T01",
+   "title": "Importere bil og andre kjøretøy (oversikt)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/person/avgifter/bil/importere/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Hvilke avgifter som gjelder ved import og rekkefølge",
+    "Dato for siste oppdatering"
+   ],
+   "rules": [
+    "R-OTA-000",
+    "R-IMP-VAT-001"
+   ],
+   "note": ""
+  },
+  {
+   "id": "T02",
+   "title": "Hva er engangsavgiften? (en: What is the one-off registration tax?)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/person/avgifter/bil/importere/engangsavgift/hva-er-engangsavgiften/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Komponenter per avgiftsgruppe og drivlinje (vekt, CO2, NOx, slagvolum, motoreffekt)",
+    "Regel når CO2 mangler (anslag fra egenvekt fra 1.1.2026?)",
+    "Om NOx er avviklet 1.1.2026",
+    "Sidens oppdateringsdato"
+   ],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-003",
+    "R-OTA-004",
+    "R-OTA-007"
+   ],
+   "note": "Engelsk variant ble returnert av søkeverktøyet og sa selv at NOx-teksten var avviklet fra 1.1.2026, mens en annen del av samme side fortsatt nevnte NOx: internt motsigende i sammendraget."
+  },
+  {
+   "id": "T03",
+   "title": "Årsrundskriv for engangsavgift 2026",
+   "publisher": "Skatteetaten (Skattedirektoratet)",
+   "url": "https://www.skatteetaten.no/rettskilder/type/rundskriv-retningslinjer-og-andre-rettskilder/avgiftsrundskriv/engangsavgift-2026/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Beregningsregler og tabeller 2026 for avgiftsgruppe a, b, c … med eksempler",
+    "Hybrid-/ladbar hybrid-regler",
+    "Definisjon av egenvekt, CO2-kilde (vektet kombinert), testmetode",
+    "Avrunding",
+    "Overgangsregler ved endringer 2026"
+   ],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-006",
+    "R-OTA-008",
+    "R-OTA-009"
+   ],
+   "note": ""
+  },
+  {
+   "id": "T04",
+   "title": "Stortingsvedtak om engangsavgift på motorvogner mv. for 2026 (FOR-2025-12-18-2755)",
+   "publisher": "Lovdata / Stortinget",
+   "url": "https://lovdata.no/dokument/STV/forskrift/2025-12-18-2755",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "§ 3 satser per avgiftsgruppe (vekt, CO2) og eventuelle fradrag",
+    "Endringsvedtak 19.6.2026 med virkning 1.9.2026 for § 3: innhold og ikrafttredelse",
+    "§ 4 bruksfradrag",
+    "Fritak (elbil, andre)"
+   ],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008",
+    "R-OTA-010",
+    "R-OTA-013"
+   ],
+   "note": "Lovdata-oppføringen viste ifølge søkeverktøyet en endring av 19.6.2026 med virkning fra 1.9.2026 for § 3. Innholdet er ukjent."
+  },
+  {
+   "id": "T05",
+   "title": "Forskrift om engangsavgift på motorvogner (FOR-2001-03-19-268)",
+   "publisher": "Lovdata / Finansdepartementet",
+   "url": "https://lovdata.no/dokument/SF/forskrift/2001-03-19-268",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Definisjoner: varebil klasse 1/2, avgiftsgrupper",
+    "Hybrid/ladbar hybrid: CO2-grunnlag (vektet kombinert, faktor 1,24?), fradrag ved elektrisk rekkevidde",
+    "Kapittel IV fritak",
+    "Gjeldende versjon per 2026-10-15"
+   ],
+   "rules": [
+    "R-OTA-005",
+    "R-OTA-006",
+    "R-OTA-009",
+    "R-OTA-013"
+   ],
+   "note": ""
+  },
+  {
+   "id": "T06",
+   "title": "Bruksfradrag (engangsavgift)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/person/avgifter/bil/importere/engangsavgift/bruksfradrag/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Ordinær metode: aldersberegning (første utenlandske registrering → norsk registrering), grunnlag fradraget gjelder",
+    "Alternativ metode (utenfor første motor)",
+    "Datagrunnlag og presisjon"
+   ],
+   "rules": [
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-OTA-012"
+   ],
+   "note": ""
+  },
+  {
+   "id": "T07",
+   "title": "Bruksfradragstabell (en: Deduction for use table)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/en/rates/car-rates---deduction-for-use-table/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Hele tabellen: aldersintervall → prosent",
+    "Gyldig fra-dato for tabellen (endret 1.1.2024 med trinn for 20 år)",
+    "Om trinnene er månedlige eller årlige"
+   ],
+   "rules": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "note": "Søkeverktøyet nevnte kun ankerpunkter (2 % ved 1 måned, 19 % ved 1 år, 94 % ved 14 år, 100 % ved 20 år); ikke hele tabellen."
+  },
+  {
+   "id": "T08",
+   "title": "Andre avgifter ved import (en: Other taxes when importing a vehicle)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/person/avgifter/bil/importere/andre-avgifter/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Import-mva. og tollverdigrunnlag",
+    "Vrakpant: beløp og gyldig dato",
+    "Klimagassavgift: type og mengde"
+   ],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-OTH-001",
+    "R-IMP-OTH-002"
+   ],
+   "note": "Samme som S03 i SOURCES.md."
+  },
+  {
+   "id": "T09",
+   "title": "Vrakpant (en: Scrap deposit) – satser",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/en/rates/scrap-deposit/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Beløp per kjøretøytype og gyldig dato"
+   ],
+   "rules": [
+    "R-IMP-OTH-001"
+   ],
+   "note": "Kildekonflikt i sammendragene: 2 400 kr (2018-rundskriv) mot 3 000 kr (nyere side)."
+  },
+  {
+   "id": "T10",
+   "title": "Beregning av tollavgift og andre avgifter / Betaling av mva. ved import av bil / Fastsettelse av fraktkostnader (sjablong)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport/betaling-av-avgifter",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Tollverdi = kjøpspris + frakt + forsikring til norsk grense",
+    "Valutakurs: Tolletatens ukekurs og hvilken dato som gjelder",
+    "Sjablongfrakt for biler som kjøres inn på egne hjul (land, beløp, gyldig dato)"
+   ],
+   "rules": [
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001"
+   ],
+   "note": "Tilleggsurler: https://www.toll.no/no/bedrift/import/beregning, https://www.toll.no/no/verktoy/regelverk/tollverdi/fastsettelse-av-tollverdi-sjablongsatser"
+  },
+  {
+   "id": "T11",
+   "title": "Beregning og rapportering av innførselsmva. (guide og PDF)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/globalassets/bedrift-og-organisasjon/avgifter/merverdiavgift/import-mva/beregning-og-bokforing-innforselsmva.pdf",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Beregningsgrunnlag for innførselsmva.",
+    "Hvilke tillegg som inngår i grunnlaget (frakt, forsikring, avgifter)",
+    "Bokføring/fradrag og betalingsforløp"
+   ],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-DED-001"
+   ],
+   "note": ""
+  },
+  {
+   "id": "T12",
+   "title": "Merverdiavgiftshåndboken kap. 8-4 (personkjøretøy for videresalg) og mval. § 8-1/§ 8-4; kap. 9-6 (tilbakeføring)",
+   "publisher": "Skatteetaten / Lovdata",
+   "url": "https://www.skatteetaten.no/en/rettskilder/type/handboker/merverdiavgiftshandboken/gjeldende/M-8/M-8-4/M-8-4.3/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "§ 8-4 første ledd bokstav a: unntak for personkjøretøy som er salgsvare",
+    "Gjelder fradrag også for innførselsmva.?",
+    "§ 9-6: tilbakeføring ved omdisponering de første åtte årene",
+    "Dokumentasjonskrav"
+   ],
+   "rules": [
+    "R-DED-001",
+    "R-DED-002"
+   ],
+   "note": ""
+  },
+  {
+   "id": "T13",
+   "title": "Merverdiavgiftshåndboken kap. 6 (importørens salg av bruktimportert bil)",
+   "publisher": "Skatteetaten",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende/MVA2025_M-6",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Salgs-mva. grunnlag for bruktimportert bil (utenfor budsjettmodellen; dokumentert for grense)"
+   ],
+   "rules": [
+    "R-DED-003"
+   ],
+   "note": "Samme som S06 i SOURCES.md. Utenfor DEC-030-budsjettsummen."
+  },
+  {
+   "id": "T14",
+   "title": "Lovvedtak 14 (2025–2026) om endringer i merverdiavgiftsloven (elbilfritaket) og Innst. 4 L / Skatter og avgifter 2026",
+   "publisher": "Stortinget",
+   "url": "https://stortinget.no/no/saker-og-publikasjoner/vedtak/beslutninger/lovvedtak/2025-2026/vedtak-202526-014/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "mval. § 4-7: beløpsgrense (300 000 fra 1.1.2026?) og hva grensen regnes av (vederlag/tollverdi)",
+    "Ikrafttredelse og trapp ned 2027/2028 (vedtatt eller forslag?)",
+    "Anvendelse ved innførsel (mval. kap. 7)"
+   ],
+   "rules": [
+    "R-IMP-VAT-003"
+   ],
+   "note": "Søkeverktøyet: grense 300 000 fra 1.1.2026; videre nedtrapping beskrevet som uenighet mellom regjeringsforslag og Stortingets ønske, forutsatt ESA-godkjenning."
+  },
+  {
+   "id": "T15",
+   "title": "Kodeverk «Kjøretøygruppe avgift» (AVGIFT)",
+   "publisher": "Statens vegvesen",
+   "url": "https://autosys-kjoretoy-api.atlas.vegvesen.no/kodeverk-ui/index-kodeverk.html?kodeverkId=AVGIFT",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Koder og betydning (gruppe a/b/…, varebil klasse 1/2)",
+    "Hvem som fastsetter klassifiseringen og hvordan dokumentert"
+   ],
+   "rules": [
+    "R-OTA-009"
+   ],
+   "note": ""
+  },
+  {
+   "id": "T16",
+   "title": "BMF Umsatzsteuer-Handausgabe § 6 UStG Ausfuhrlieferung (inkl. 6.5 Ausfuhrnachweis)",
+   "publisher": "Bundesfinanzministerium (DE)",
+   "url": "https://usth.bundesfinanzministerium.de/usth/2023/A-Umsatzsteuergesetz/II-Steuerbefreiungen-und-Steuerverguetungen/Paragraf-6/inhalt.html",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Vilkår for skattefri utførsel til tredjeland (Norge)",
+    "Krav til selger- vs kjøperbefordring (utenlandsk kjøper ved selvhenting)",
+    "Utførselsbevis for registreringspliktige kjøretøy (VIN)"
+   ],
+   "rules": [
+    "R-FOR-001",
+    "R-FOR-004"
+   ],
+   "note": "Dekker bare Tyskland."
+  },
+  {
+   "id": "T17",
+   "title": "§ 25a UStG Differenzbesteuerung",
+   "publisher": "gesetze-im-internet.de (DE)",
+   "url": "https://www.gesetze-im-internet.de/ustg_1980/__25a.html",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Vilkår for differansebeskatning (marginordning)",
+    "Samspill med utførselsfritak og fakturering (mva. ikke utskilt?)"
+   ],
+   "rules": [
+    "R-FOR-002"
+   ],
+   "note": "Dekker bare Tyskland."
+  },
+  {
+   "id": "T18",
+   "title": "Avgiftssatser 2026 (oversikt)",
+   "publisher": "Regjeringen",
+   "url": "https://www.regjeringen.no/no/tema/okonomi-og-budsjett/skatter-og-avgifter/skatte-og-avgiftssatser/avgiftssatser-2026/id3121982/",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Vedtatte (ikke foreslåtte) satser for 2026 som kryssjekk mot Lovdata"
+   ],
+   "rules": [
+    "R-OTA-001"
+   ],
+   "note": "Dukket opp som treff, innhold ikke lest."
+  },
+  {
+   "id": "T19",
+   "title": "Forskrift om endring i forskrift om engangsavgift på motorvogner (FOR-2022-12-16-2271)",
+   "publisher": "Lovdata",
+   "url": "https://lovdata.no/dokument/LTI/forskrift/2022-12-16-2271",
+   "kind": "primary",
+   "evidenceLevel": "E2",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [
+    "Historisk: fradrag i vektgrunnlag for ladbar hybrid etter elektrisk rekkevidde (10 % ved ≥ 100 km)",
+    "Om bestemmelsen gjelder i 2026"
+   ],
+   "rules": [
+    "R-OTA-005"
+   ],
+   "note": "2022-versjon; 2026-status ukjent."
+  },
+  {
+   "id": "S07",
+   "title": "Skatteetatens importkalkulator (fra SOURCES.md)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/person/avgifter/bil/importere/regn-ut/",
+   "kind": "primary",
+   "evidenceLevel": "E0",
+   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "directReadDate": null,
+   "searchLeadDate": null,
+   "whatToExtract": [
+    "Kjør kalkulatoren med inputene i references.json (klasse 4-tilfeller) og lagre input, dato, resultat og skjermbilde uten persondata"
+   ],
+   "rules": [
+    "R-OTA-001"
+   ],
+   "note": "Kalkulatoren er interaktiv og er ikke forsøkt kjørt i denne oppgaven."
+  },
+  {
+   "id": "X01",
+   "title": "Smarte Penger – engangsavgifter på bil (aggregator)",
+   "publisher": "smartepenger.no",
+   "url": "https://www.smartepenger.no/bilokonomi/354-engangsavgifter-pa-bil",
+   "kind": "secondary",
+   "evidenceLevel": "E3",
+   "fetchStatus": "avvist_som_grunnlag",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [],
+   "rules": [],
+   "note": "Avvist: sekundærkilde med interne motsigelser (260 kr/kg vs 270,35 kr/kg; overlappende CO2-bånd). Ingen satser hentet herfra."
+  },
+  {
+   "id": "X02",
+   "title": "Crowe – Statsbudsjettet for 2026",
+   "publisher": "crowe.com",
+   "url": "https://www.crowe.com/no/nyheter/statsbudsjettet-for-2026",
+   "kind": "secondary",
+   "evidenceLevel": "E3",
+   "fetchStatus": "avvist_som_grunnlag",
+   "directReadDate": null,
+   "searchLeadDate": "2026-10-15",
+   "whatToExtract": [],
+   "rules": [],
+   "note": "Avvist: omtaler budsjettforslag, ikke vedtatte regler."
+  }
+ ]
+}

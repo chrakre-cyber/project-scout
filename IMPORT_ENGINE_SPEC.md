@@ -82,3 +82,8 @@ Test alle delregler og behold input/dato/kilde, output og avvik. Aksept: ingen u
 ## Tillegg 15.10.2026 — budsjettmodell (DEC-030)
 
 MEROVO_SEARCH_SPEC.md definerer nytt primært brukerutfall: maksimal innkjøpskostnad til Norge og valgt prosentvis slingringsmonn, før salgspris/margin. Budsjettsammenligningen inkluderer beregnet norsk import-mva. og engangsavgift etter validert profil samt eksplisitt inkluderte tilleggskostnader. Den må ikke blandes med economicCost eller fundingEstimate. Ingen konkret skatteprofil/sats er validert av dette tillegget. Den tidligere beregningsflyten beskriver fortsatt behovet for sporbare grunnlag, men margin/retail skal ikke være påkrevd i den nye søkemodellen. Ufullstendig eller uvalidert grunnlag gir ingen bekreftet budsjettsum eller kostnadsbasert varsel. Implementasjon og referansekontroll gjenstår.
+
+
+## Tillegg 15.10.2026 — kartlegging av regelgrunnlag (TAX-001A)
+
+Dokumentasjon (ikke kode) i `docs/tax/`: regel- og kilderegister, profilmatrise, kjøpsgrunnlag/brutto-netto-beslutning, forslag til versjonert avgiftsinput (`TaxInputV1`), 85 referansetilfeller i fire klasser og syntetisk demoserie. **Ingen primærkilde ble lest direkte (nettverk mot norske kilder blokkert), derfor 0 regler på E1 og 0 klasse 1–2-tilfeller.** Ingen sats, grense eller avgiftsbeløp er validert av dette tillegget; alle beløp er «IKKE KONTROLLERT». Tillegget endrer ingen produktvalg. Se `reviews/TAX-001A.md`.

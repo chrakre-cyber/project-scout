@@ -1,0 +1,117 @@
+{
+ "schema": "merovo.tax.demo-series",
+ "version": "TAX-001A/1",
+ "researchDate": "2026-10-15",
+ "banner": "SYNTETISK DEMO – ikke tilbud, ikke offisiell avgiftsfasit, ikke verifisert norsk total. Alle kurser, frakter og bekreftelser er demoantagelser.",
+ "assumptions": {
+  "fxNokPerEur": "11.50 (SYNTETISK, dato 2026-10-15; ikke Tolletatens kurs)",
+  "freightToBorderEur": "1200 (SYNTETISK)",
+  "insuranceToBorderEur": "150 (SYNTETISK)",
+  "rounding": "ROUND_HALF_UP til 2 desimaler (demo-regel, ikke offisiell avrunding)",
+  "importVatParam": "25 % kun som aritmetisk demoparameter (R-IMP-VAT-001 er ikke primærkontrollert)"
+ },
+ "scenarios": [
+  {
+   "scenario": "S1 ingen dokumentert nettojustering",
+   "purchaseBasisEur": "100000.00",
+   "customsValueEur": "101350.00",
+   "customsValueNokDemo": "1165525.00",
+   "importVatDemoParam25": "291381.25",
+   "purchaseBasisStatus": "komplett (syntetisk): brutto betalt, ingen justering",
+   "note": "Lokal mva. er ikke dokumentert utelatt; hele 100 000 EUR er kjøpsgrunnlag.",
+   "completeness": "kjøpsgrunnlag og tollverdi kan vises (syntetiske antagelser); engangsavgift og total UAVKLART"
+  },
+  {
+   "scenario": "S2 dokumentert nettoeksport, 19 % inkl.",
+   "purchaseBasisEur": "84033.61",
+   "customsValueEur": "85383.61",
+   "customsValueNokDemo": "981911.52",
+   "importVatDemoParam25": "245477.88",
+   "purchaseBasisStatus": "komplett (SYNTETISK demobekreftelse)",
+   "note": "100 000/1,19 = 84 033,61 EUR. Bekreftelsen er syntetisk, ikke et faktisk tilbud.",
+   "completeness": "som S1"
+  },
+  {
+   "scenario": "S3 dokumentert nettoeksport, 25 % inkl.",
+   "purchaseBasisEur": "80000.00",
+   "customsValueEur": "81350.00",
+   "customsValueNokDemo": "935525.00",
+   "importVatDemoParam25": "233881.25",
+   "purchaseBasisStatus": "komplett (SYNTETISK demobekreftelse)",
+   "note": "100 000/1,25 = 80 000 EUR. Ingen lokal sats bestemmes av land.",
+   "completeness": "som S1"
+  },
+  {
+   "scenario": "S4 allerede annonsert netto 100 000",
+   "purchaseBasisEur": "100000.00",
+   "customsValueEur": "101350.00",
+   "customsValueNokDemo": "1165525.00",
+   "importVatDemoParam25": "291381.25",
+   "purchaseBasisStatus": "komplett kun hvis nettoen er bekreftet i dokumentert tilbud; ellers uavklart",
+   "note": "Ingen uttrekk. Annonsert netto er ikke bekreftet eksportkjøp før dokumentert.",
+   "completeness": "som S1, men kjøpsgrunnlaget forutsetter bekreftelse"
+  },
+  {
+   "scenario": "S5 marginbeskatning",
+   "purchaseBasisEur": null,
+   "customsValueEur": null,
+   "customsValueNokDemo": null,
+   "importVatDemoParam25": null,
+   "purchaseBasisStatus": "UAVKLART",
+   "note": "Normal mva. deles ikke mekanisk ut. Faktisk eksportfakturert nettopris krever dokumentert tilbud/faktura.",
+   "completeness": "kan ikke vises"
+  },
+  {
+   "scenario": "S6 uavklart mva.",
+   "purchaseBasisEur": null,
+   "customsValueEur": null,
+   "customsValueNokDemo": null,
+   "importVatDemoParam25": null,
+   "purchaseBasisStatus": "UAVKLART",
+   "note": "Ukjent prisgrunnlag/regime → ingen justering og ingen total.",
+   "completeness": "kan ikke vises"
+  }
+ ],
+ "vehicleExamplesAtS2": [
+  {
+   "profile": "PB-BEN",
+   "label": "Personbil bensin",
+   "purchaseBasisEur(S2)": "84033.61",
+   "customsValueNokDemo": "981911.52",
+   "engangsavgift": "IKKE BEREGNET – regler ikke primærkontrollert; krever: planlagt norsk registreringsdato (dato); første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn); egenvekt (kg, norsk definisjon) …",
+   "importVat": "kun syntetisk parameter 25 %",
+   "total": "kan ikke vises",
+   "completeness": "delvis (kjøpsgrunnlag og tollverdi)"
+  },
+  {
+   "profile": "VB-DIE",
+   "label": "Varebil diesel (klasse uavklart)",
+   "purchaseBasisEur(S2)": "84033.61",
+   "customsValueNokDemo": "981911.52",
+   "engangsavgift": "IKKE BEREGNET – regler ikke primærkontrollert; krever: planlagt norsk registreringsdato (dato); første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn); egenvekt (kg, norsk definisjon) …",
+   "importVat": "kun syntetisk parameter 25 %",
+   "total": "kan ikke vises",
+   "completeness": "delvis (kjøpsgrunnlag og tollverdi)"
+  },
+  {
+   "profile": "PB-BEV",
+   "label": "Elbil (personbil)",
+   "purchaseBasisEur(S2)": "84033.61",
+   "customsValueNokDemo": "981911.52",
+   "engangsavgift": "IKKE BEREGNET – regler ikke primærkontrollert; krever: planlagt norsk registreringsdato (dato); første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn); egenvekt (kg, norsk definisjon) …",
+   "importVat": "kun synthetic parameter 25 % (C3-014); for elbil avhenger den av uavklart fritaksgrense",
+   "total": "kan ikke vises",
+   "completeness": "delvis (kjøpsgrunnlag og tollverdi)"
+  },
+  {
+   "profile": "PB-PHEV",
+   "label": "Ladbar hybrid (personbil)",
+   "purchaseBasisEur(S2)": "84033.61",
+   "customsValueNokDemo": "981911.52",
+   "engangsavgift": "IKKE BEREGNET – regler ikke primærkontrollert; krever: planlagt norsk registreringsdato (dato); første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn); egenvekt (kg, norsk definisjon) …",
+   "importVat": "kun syntetisk parameter 25 %",
+   "total": "kan ikke vises",
+   "completeness": "delvis (kjøpsgrunnlag og tollverdi)"
+  }
+ ]
+}
