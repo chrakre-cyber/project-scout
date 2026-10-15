@@ -109,6 +109,6 @@ Utgangspunkt `7878fbf`, samme branch. Kun prototypen (`prototypes/merovo-search/
 - Codex' reproduksjonsskript mot fikset kode: alle fem scenarier og nøkkeltesten gir forventet utfall.
 
 ### Begrensninger
-- Skjermbilder 02 og 05 er regenerert; øvrige er uendret.
+- Skjermbilde 02 er regenerert (byte-forskjell); øvrige er uendret.
 - Variantforslag er fortsatt et demonstrasjonsutvalg; fritekst er tillatt, modellbytte varsler som før.
 - Ikke etterkjørt av Codex ennå. Ingen ny oppgave startet.
