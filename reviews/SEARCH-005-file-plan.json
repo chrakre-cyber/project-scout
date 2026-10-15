@@ -1,7 +1,7 @@
 {
- "task": "SEARCH-005",
+ "task": "SEARCH-005 + FIX1",
  "base": "8401dea",
- "note": "Selektiv plan. Aldri blind overskriving. Ny SHA gjelder commit 11d6543 + rapport. Genererte ZIP-er og skjermbilder/logger er ikke med.",
+ "note": "Selektiv plan. Aldri blind overskriving. Oppdatert for FIX1 (commit 1595005 + denne filen). ZIP-er, skjermbilder og logger er ikke med.",
  "files": [
   {
    "path": "ARCHITECTURE.md",
@@ -25,7 +25,7 @@
    "path": "MVP_BACKLOG.md",
    "action": "merge_sections_do_not_overwrite",
    "expectedLocalSha256": "851328fcb4ab2213651003e613714650d60e102cf94845ad04e3a66e03fa1bf6",
-   "newSha256": "5b0a632f68e035bcc239d61c8c9052918f74e5d6eff2415f978dc3370a324372"
+   "newSha256": "89b50ecbb7f1661ad0ead469a63c136b3048741c13d3e63751c0e633645075e0"
   },
   {
    "path": "TEST_PLAN.md",
@@ -67,7 +67,7 @@
    "path": "reviews/SEARCH-005.md",
    "action": "add_new_file",
    "expectedLocalSha256": null,
-   "newSha256": "1b231d0a708e0864e649df9969da83e1517a2746be6e711ef9b2f447b39a30dd"
+   "newSha256": "fdb629ee1fe3c56429719ac663b4d26277772c3e539cd049b939159eca765e39"
   },
   {
    "path": "scripts/test-db-isolated.sh",
@@ -181,7 +181,7 @@
    "path": "src/components/search/SearchForm.tsx",
    "action": "add_new_file",
    "expectedLocalSha256": null,
-   "newSha256": "0edad0c39eb1a857fd8dac9907e057ecf164dd0b22f5521e35cf4a88450f234c"
+   "newSha256": "298c22adde45dc99a4effe0b8cb27f27b8dd264cf6f3de7f3d8ee650037c133d"
   },
   {
    "path": "src/components/search/SpecSummary.tsx",
@@ -223,7 +223,7 @@
    "path": "src/server/search-form.ts",
    "action": "add_new_file",
    "expectedLocalSha256": null,
-   "newSha256": "fbc83e3c7380493fb9156cfc577fc5abf44276b045dd07503293ef45bdafbe38"
+   "newSha256": "aa45b580d98b77342b054365939bf47f736e0e1ca8f3f2d26f3bc5de3aa9ec8c"
   },
   {
    "path": "src/server/search-preview.ts",
@@ -242,6 +242,12 @@
    "action": "replace_if_local_hash_matches",
    "expectedLocalSha256": "c14787ffc95b35492cf6d390d5fd242953c83fd23c2d358991976564f33554c2",
    "newSha256": "47ab8a66386a6d3d7a4df4ccf5948246dc11046b194a7c8aee911217653764cb"
+  },
+  {
+   "path": "tests/codex-search005-review.test.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "c62b20f53185cb83bd9f83b281b29fd0d4d174e40e2b0dc70d2110fa321be4be"
   },
   {
    "path": "tests/db/harness.ts",
@@ -271,7 +277,7 @@
    "path": "tests/e2e/search005.e2e.mjs",
    "action": "add_new_file",
    "expectedLocalSha256": null,
-   "newSha256": "f37e92aef2e6a9ce3b95b89474921897538a39d9510cf6b74de9a6608ed74aef"
+   "newSha256": "814e3a3cf045967db34d3838dc3e57d28cb11c5717bee9e3b0dda597431ac7b0"
   },
   {
    "path": "tests/e2e/support/mini-supabase.mjs",
@@ -283,7 +289,7 @@
    "path": "tests/search-005-form.test.ts",
    "action": "add_new_file",
    "expectedLocalSha256": null,
-   "newSha256": "a4dcbb29c6df45746e50c9a616e47744492824a7b96c704c5bd8e246f15ecc3c"
+   "newSha256": "3484796e1ee220cba4d5a0595660fb6be2ee23bdf5e33c9dccba3b7fdecd4b1f"
   }
  ]
 }
