@@ -76,3 +76,5 @@ For ny målmodell erstattes DEC-024s obligatoriske retail/minimumsbidrag av et p
 - **Katalog:** injisert `SearchCatalog`; demokatalog er ikke produksjonsfasit; fritekstvariant under gyldig modell avvises aldri.
 
 Ikke endret: database, RLS, auth, serveractions, providers, prototypen. Åpent: lagring/migrasjon, kandidat-adapter (kildetekst → katalognøkler), prototype-adapter, beregningslag, regler for pakker/cruise/klima/hengerfeste.
+
+**Tillegg 15.10.2026 (SEARCH-002-FIX1, etter Codex-review).** En kostnadsvurdering er bundet til kandidat-id, kandidatrevisjon og et kanonisk kostnadsgrunnlag (`costBasisOf`: inkluderte linjer med id, type, valuta, beløp, mva.-grunnlag); endring av disse gir `not_calculated`, mens budsjettbeløp, prisavvik, visningstekst og ikke-inkluderte linjer kan endres uten ny vurdering. Intern validering og eksport kontrollerer struktur og eksakte nøkler (ukjente/ikke-støttede felt avvises med feilsti, aldri stille bortfall) og kaster ikke.

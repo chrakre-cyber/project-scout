@@ -10,12 +10,13 @@
  *  - Valg av registreringsscenario (varebil) endrer aldri en total eller gir noen avgiftsfordel; scenarioet
  *    brukes bare til å kreve at vurderingen gjelder samme scenario som søket.
  *  - Ingen positiv budsjettstatus uten en uttrykkelig fullstendig og validert vurdering i NOK, samme basis,
- *    samme scenario og ikke foreldet. Alt annet gir `not_calculated` med grunn.
+ *    samme scenario, ikke foreldet, laget for samme kandidat (id + revisjon) og for samme kostnadsgrunnlag
+ *    (`costBasisOf`). Alt annet gir `not_calculated` med grunn.
  *  - Prisstatus opphever aldri excluded/needs_review fra bilkrav (se combineAssessment).
  */
 import { BUDGET_BASIS } from "./types";
 import type {
-  BudgetClassification, BudgetSpec, CandidateAssessment, CostAssessment, NotCalculatedReason, SearchSpec, VehicleEvaluation,
+  BudgetClassification, BudgetSpec, CandidateAssessment, CandidateRef, CostAssessment, NotCalculatedReason, SearchSpec, VehicleEvaluation,
 } from "./types";
 
 const BP_DENOMINATOR = 10_000n;
@@ -43,12 +44,33 @@ export function parseUtcInstant(s: unknown): number | null {
   return Date.UTC(y, mo - 1, d, h, mi, se, ms);
 }
 
+/**
+ * Beregningsgrunnlag for kostnadsforutsetningene (identitet og versjon av det en total bygger på).
+ *
+ * Det som PÅVIRKER gyldigheten av en kandidattotal og derfor inngår (kun linjer med `includedInBudget`):
+ * linjens `id`, `kind`, `currency`, `amountMinor` (null = ukjent) og `vatBasis` (null = ikke oppgitt).
+ * Å slå en linje av/på `includedInBudget` endrer mengden linjer og dermed grunnlaget.
+ * Det som IKKE inngår: `label` (visningstekst), linjer som ikke er inkludert (de ligger utenfor totalen),
+ * rekkefølgen på linjene (sortert på id), budsjettet og prisavviket (grensen kan endres uten at en uendret
+ * kandidattotal må beregnes på nytt), bilkrav/ønsker og planlagt registrering (scenarioet kontrolleres separat).
+ *
+ * Resultatet er en kanonisk, lesbar streng (ingen hash, ingen kryptografi i domenet). Likhet er eksakt strenglikhet.
+ */
+export function costBasisOf(spec: SearchSpec): string {
+  const rows = spec.budget.costs
+    .filter((c) => c.includedInBudget)
+    .map((c) => [c.id, c.kind, c.currency, c.amountMinor === null ? null : c.amountMinor.toString(), c.vatBasis] as const)
+    .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0));
+  return JSON.stringify(rows);
+}
+
 const notCalculated = (reason: NotCalculatedReason, budget: bigint | null, upper: bigint | null): BudgetClassification => ({ status: "not_calculated", reason, budgetMinor: budget, upperLimitMinor: upper });
 
 /**
+ * @param candidate  Kandidaten (id + revisjon) totalen skal brukes for; vurderingen må være laget for nøyaktig denne.
  * @param now  Nåtidspunkt som UTC ISO 8601 — injiseres (domenet leser ikke klokken).
  */
-export function classifyBudget(spec: SearchSpec, assessment: CostAssessment | null | undefined, now: string): BudgetClassification {
+export function classifyBudget(spec: SearchSpec, candidate: CandidateRef, assessment: CostAssessment | null | undefined, now: string): BudgetClassification {
   const budget = spec.budget.maxTotalNokMinor;
   const upper = upperLimitMinor(spec.budget);
   const fail = (reason: NotCalculatedReason) => notCalculated(reason, budget, upper);
@@ -61,6 +83,8 @@ export function classifyBudget(spec: SearchSpec, assessment: CostAssessment | nu
   const validUntilMs = parseUtcInstant(a.validUntil);
   if (
     typeof a.totalMinor !== "bigint" || a.totalMinor < 0n || typeof a.currency !== "string" || typeof a.basis !== "string" ||
+    typeof a.candidateId !== "string" || a.candidateId === "" || typeof a.candidateVersion !== "string" || a.candidateVersion === "" ||
+    typeof a.costBasis !== "string" ||
     typeof a.profileRef !== "string" || a.profileRef.trim() === "" || validUntilMs === null || nowMs === null ||
     !Array.isArray(a.coveredCostLineIds) || a.coveredCostLineIds.some((x) => typeof x !== "string") ||
     (a.registrationScenario !== "passenger" && a.registrationScenario !== "van") ||
@@ -75,6 +99,8 @@ export function classifyBudget(spec: SearchSpec, assessment: CostAssessment | nu
   if (wanted === "unspecified") return fail("scenario_unspecified");
   if (wanted !== a.registrationScenario) return fail("scenario_mismatch");
   if (nowMs >= validUntilMs) return fail("assessment_stale");
+  if (a.candidateId !== candidate.id) return fail("candidate_mismatch");
+  if (a.candidateVersion !== candidate.version) return fail("candidate_version_mismatch");
 
   const covered = new Set(a.coveredCostLineIds as string[]);
   for (const c of spec.budget.costs) {
@@ -82,6 +108,9 @@ export function classifyBudget(spec: SearchSpec, assessment: CostAssessment | nu
     if (c.amountMinor === null) return fail("included_cost_unknown");
     if (!covered.has(c.id)) return fail("included_cost_not_covered");
   }
+
+  // Beløp, valuta, mva.-grunnlag, type eller inkludering endret etter at totalen ble laget → gammel total kan ikke brukes.
+  if (a.costBasis !== costBasisOf(spec)) return fail("cost_basis_changed");
 
   const total = a.totalMinor;
   const status = total <= budget ? "within_budget" : total <= upper ? "within_deviation" : "over_limit";

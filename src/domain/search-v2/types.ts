@@ -191,6 +191,8 @@ export interface EquipmentFacts {
 /** Kandidat (annonse) normalisert til katalognøkler. Mapping fra kildens tekst er en senere adapter. */
 export interface CandidateV2 {
   id: string;
+  /** Revisjon av kandidaten (f.eks. annonserevisjon). En vurdering gjelder én bestemt id + versjon. */
+  version: string;
   /** Katalognøkkel; `null` = ikke oppgitt eller ikke mappet. */
   brandKey: string | null;
   modelKey: string | null;
@@ -263,7 +265,16 @@ export type NotCalculatedReason =
   | "scenario_unspecified"
   | "scenario_mismatch"
   | "included_cost_unknown"
-  | "included_cost_not_covered";
+  | "included_cost_not_covered"
+  | "cost_basis_changed"
+  | "candidate_mismatch"
+  | "candidate_version_mismatch";
+
+/** Identitet og revisjon for kandidaten en kostnadsvurdering skal brukes for. */
+export interface CandidateRef {
+  id: string;
+  version: string;
+}
 
 /**
  * Forhåndsvurdert kandidatkostnad fra et FREMTIDIG beregningslag (finnes ikke ennå). Domenet her
@@ -283,6 +294,17 @@ export interface CostAssessment {
   validUntil: string;
   /** Id-ene til kostnadslinjene (med includedInBudget) som totalen faktisk dekker. */
   coveredCostLineIds: string[];
+  /**
+   * Kandidaten totalen er beregnet for (id + revisjon). En annen bils total, eller en annen revisjon av samme
+   * annonse, er ikke «samme vurdering» og gir `candidate_mismatch` / `candidate_version_mismatch`.
+   */
+  candidateId: string;
+  candidateVersion: string;
+  /**
+   * Beregningsgrunnlaget for kostnadsforutsetningene totalen bygger på: nøyaktig strengen `costBasisOf(spec)`
+   * ga da vurderingen ble laget (se budget.ts). Avviker den fra gjeldende søk → `cost_basis_changed`.
+   */
+  costBasis: string;
 }
 
 export interface BudgetClassification {

@@ -7,7 +7,7 @@ import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { classifyBudget, combineAssessment, upperLimitMinor, parseUtcInstant } from "@/domain/search-v2/budget";
+import { classifyBudget, combineAssessment, costBasisOf, upperLimitMinor, parseUtcInstant } from "@/domain/search-v2/budget";
 import { emptyCandidate, emptySpec } from "@/domain/search-v2/factory";
 import { criteriaSourceCannotSupply, evaluateCandidate } from "@/domain/search-v2/evaluation";
 import { PROTOTYPE_MAPPING, mappingFor } from "@/domain/search-v2/mapping";
@@ -15,7 +15,7 @@ import { specFromJson, specToJson } from "@/domain/search-v2/serialization";
 import { BUDGET_BASIS, MAX_MINOR } from "@/domain/search-v2/types";
 import type { CandidateV2, CostLine, SearchSpec, SourceCapabilities } from "@/domain/search-v2/types";
 import { validateSpec } from "@/domain/search-v2/validation";
-import { NOW, TEST_CATALOG, glsCandidate, glsSpec, synthAssessment } from "./fixtures/search-v2";
+import { CAND, NOW, TEST_CATALOG, glsCandidate, glsSpec, synthAssessment } from "./fixtures/search-v2";
 
 const cost = (over: Partial<CostLine> & { id: string }): CostLine => ({
   kind: "custom", label: "Tollagring", currency: "NOK", amountMinor: null, vatBasis: null, includedInBudget: false, ...over,
@@ -657,7 +657,7 @@ describe("budsjettgrense i eksakte øre/basispunkter", () => {
 
   it("grenser: ett øre under/lik/over budsjettet og øvre grense (lik grense er inkludert)", () => {
     const s = withBudget(75_000_000n, 1000);
-    const cls = (total: bigint) => classifyBudget(s, synthAssessment(total), NOW).status;
+    const cls = (total: bigint) => classifyBudget(s, CAND, synthAssessment(total), NOW).status;
     expect(cls(74_999_999n)).toBe("within_budget");
     expect(cls(75_000_000n)).toBe("within_budget");
     expect(cls(75_000_001n)).toBe("within_deviation");
@@ -669,15 +669,15 @@ describe("budsjettgrense i eksakte øre/basispunkter", () => {
 
   it("ingen avvik: alt over budsjettet er over_limit", () => {
     const s = withBudget(75_000_000n, null);
-    expect(classifyBudget(s, synthAssessment(75_000_000n), NOW).status).toBe("within_budget");
-    expect(classifyBudget(s, synthAssessment(75_000_001n), NOW).status).toBe("over_limit");
-    expect(classifyBudget(s, synthAssessment(75_000_001n), NOW).upperLimitMinor).toBe(75_000_000n);
+    expect(classifyBudget(s, CAND, synthAssessment(75_000_000n), NOW).status).toBe("within_budget");
+    expect(classifyBudget(s, CAND, synthAssessment(75_000_001n), NOW).status).toBe("over_limit");
+    expect(classifyBudget(s, CAND, synthAssessment(75_000_001n), NOW).upperLimitMinor).toBe(75_000_000n);
   });
 
   it("grenser ved brøkøre-avrunding: ett øre over rundet grense er over_limit", () => {
     const s = withBudget(10_001n, 1234);
-    expect(classifyBudget(s, synthAssessment(11_235n), NOW).status).toBe("within_deviation");
-    expect(classifyBudget(s, synthAssessment(11_236n), NOW).status).toBe("over_limit");
+    expect(classifyBudget(s, CAND, synthAssessment(11_235n), NOW).status).toBe("within_deviation");
+    expect(classifyBudget(s, CAND, synthAssessment(11_236n), NOW).status).toBe("over_limit");
   });
 
   it("kostnadslinjer er forutsetninger og øker aldri budsjett eller øvre grense", () => {
@@ -691,15 +691,15 @@ describe("budsjettgrense i eksakte øre/basispunkter", () => {
     const offPlain = withBudget(75_000_000n, null);
     const offLoaded = withBudget(75_000_000n, null, [cost({ id: "c1", currency: "NOK", amountMinor: 5_000_000n, includedInBudget: true })]);
     expect(upperLimitMinor(offLoaded.budget)).toBe(upperLimitMinor(offPlain.budget));
-    expect(classifyBudget(offLoaded, synthAssessment(75_000_001n, { coveredCostLineIds: ["c1"] }), NOW).status).toBe("over_limit");
-    const a = synthAssessment(82_500_001n, { coveredCostLineIds: ["transport", "c1"] });
-    expect(classifyBudget(loaded, a, NOW)).toMatchObject({ status: "over_limit", budgetMinor: 75_000_000n, upperLimitMinor: 82_500_000n });
+    expect(classifyBudget(offLoaded, CAND, synthAssessment(75_000_001n, { coveredCostLineIds: ["c1"], costBasis: costBasisOf(offLoaded) }), NOW).status).toBe("over_limit");
+    const a = synthAssessment(82_500_001n, { coveredCostLineIds: ["transport", "c1"], costBasis: costBasisOf(loaded) });
+    expect(classifyBudget(loaded, CAND, a, NOW)).toMatchObject({ status: "over_limit", budgetMinor: 75_000_000n, upperLimitMinor: 82_500_000n });
   });
 
   describe("not_calculated: ingen bekreftet budsjettstatus uten gyldig vurdering", () => {
     const s = withBudget(75_000_000n, 1000);
-    const reason = (a: Parameters<typeof classifyBudget>[1], spec = s, now = NOW) => {
-      const r = classifyBudget(spec, a, now);
+    const reason = (a: Parameters<typeof classifyBudget>[2], spec = s, now = NOW) => {
+      const r = classifyBudget(spec, CAND, a, now);
       expect(r.status).toBe(r.reason === null ? r.status : "not_calculated");
       return r.reason;
     };
@@ -708,7 +708,7 @@ describe("budsjettgrense i eksakte øre/basispunkter", () => {
       expect(reason(null)).toBe("no_assessment");
       expect(reason(undefined)).toBe("no_assessment");
       expect(reason(synthAssessment(1n), withBudget(null, null))).toBe("no_budget");
-      expect(classifyBudget(withBudget(null, null), synthAssessment(1n), NOW)).toMatchObject({ status: "not_calculated", budgetMinor: null, upperLimitMinor: null });
+      expect(classifyBudget(withBudget(null, null), CAND, synthAssessment(1n), NOW)).toMatchObject({ status: "not_calculated", budgetMinor: null, upperLimitMinor: null });
     });
     it("uvalidert, ufullstendig og ugyldig status", () => {
       expect(reason(synthAssessment(1n, { status: "unvalidated" }))).toBe("assessment_not_validated");
@@ -745,13 +745,13 @@ describe("budsjettgrense i eksakte øre/basispunkter", () => {
       expect(reason(synthAssessment(1n, { coveredCostLineIds: ["c1"] }), inc)).toBe("included_cost_unknown");
       const known = withBudget(75_000_000n, 1000, [cost({ id: "c1", amountMinor: 0n, includedInBudget: true })]);
       expect(reason(synthAssessment(1n), known)).toBe("included_cost_not_covered");
-      expect(reason(synthAssessment(1n, { coveredCostLineIds: ["c1"] }), known)).toBeNull();
+      expect(reason(synthAssessment(1n, { coveredCostLineIds: ["c1"], costBasis: costBasisOf(known) }), known)).toBeNull();
       // ikke-inkluderte linjer (også ukjente) blokkerer ikke
       const excluded = withBudget(75_000_000n, 1000, [cost({ id: "c1", amountMinor: null, includedInBudget: false })]);
       expect(reason(synthAssessment(1n), excluded)).toBeNull();
     });
     it("ved not_calculated finnes aldri en positiv budsjettstatus", () => {
-      const r = classifyBudget(s, synthAssessment(1n, { status: "unvalidated" }), NOW);
+      const r = classifyBudget(s, CAND, synthAssessment(1n, { status: "unvalidated" }), NOW);
       expect(["within_budget", "within_deviation"]).not.toContain(r.status);
     });
   });
@@ -762,17 +762,17 @@ describe("budsjettgrense i eksakte øre/basispunkter", () => {
     const car = withBudget(75_000_000n, 1000, [], "passenger");
     expect(upperLimitMinor(van.budget)).toBe(upperLimitMinor(car.budget));
     // vurderingens total er uendret og klassifiseres likt uansett hvilket scenario søket ber om, når scenarioet samsvarer
-    const rVan = classifyBudget(van, a, NOW);
-    const rCar = classifyBudget(car, synthAssessment(80_000_000n, { registrationScenario: "passenger" }), NOW);
+    const rVan = classifyBudget(van, CAND, a, NOW);
+    const rCar = classifyBudget(car, CAND, synthAssessment(80_000_000n, { registrationScenario: "passenger" }), NOW);
     expect(rVan).toEqual(rCar);
     expect(rVan.status).toBe("within_deviation");
     // et varebilsønske gir aldri positiv status på en personbil-total
-    expect(classifyBudget(van, synthAssessment(1n, { registrationScenario: "passenger" }), NOW).status).toBe("not_calculated");
+    expect(classifyBudget(van, CAND, synthAssessment(1n, { registrationScenario: "passenger" }), NOW).status).toBe("not_calculated");
   });
 
   it("pris opphever aldri kravbrudd: excluded/needs_review forblir selv om totalen er innenfor budsjett", () => {
     const s = withBudget(75_000_000n, 1000);
-    const budget = classifyBudget(s, synthAssessment(1_000_000n), NOW);
+    const budget = classifyBudget(s, CAND, synthAssessment(1_000_000n), NOW);
     expect(budget.status).toBe("within_budget");
     const hit = combineAssessment(evaluateCandidate(s, glsCandidate("a")), budget);
     expect(hit.isFullHit).toBe(true);
@@ -783,9 +783,9 @@ describe("budsjettgrense i eksakte øre/basispunkter", () => {
     expect(review.vehicle.status).toBe("needs_review");
     expect(review.isFullHit).toBe(false);
     // og et fullt kjøretøytreff over grensen eller uten beregning er ikke fullt treff
-    expect(combineAssessment(evaluateCandidate(s, glsCandidate("d")), classifyBudget(s, synthAssessment(99_000_000n), NOW)).isFullHit).toBe(false);
-    expect(combineAssessment(evaluateCandidate(s, glsCandidate("e")), classifyBudget(s, null, NOW)).isFullHit).toBe(false);
-    expect(combineAssessment(evaluateCandidate(s, glsCandidate("f")), classifyBudget(s, synthAssessment(80_000_000n), NOW)).isFullHit).toBe(true);
+    expect(combineAssessment(evaluateCandidate(s, glsCandidate("d")), classifyBudget(s, CAND, synthAssessment(99_000_000n), NOW)).isFullHit).toBe(false);
+    expect(combineAssessment(evaluateCandidate(s, glsCandidate("e")), classifyBudget(s, CAND, null, NOW)).isFullHit).toBe(false);
+    expect(combineAssessment(evaluateCandidate(s, glsCandidate("f")), classifyBudget(s, CAND, synthAssessment(80_000_000n), NOW)).isFullHit).toBe(true);
   });
 
   it("parseUtcInstant: streng UTC, kalenderkontroll", () => {

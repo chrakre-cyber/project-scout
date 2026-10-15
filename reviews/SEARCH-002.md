@@ -92,3 +92,47 @@ Nye: `src/domain/search-v2/{types,validation,serialization,evaluation,budget,map
 ## 8. Neste mulige oppgave (ikke startet)
 
 SEARCH-001B (versjonert lagring, server-/DB-validering, kandidatadapter og matching mot denne modellen, kontrollert overgang) — krever først avstemming av kodeforskjell mot Christians lokale kopi. Parallelt og uavhengig: P3-oppfølging av v1-effektadvarselen i prototypen.
+
+---
+
+## 9. SEARCH-002-FIX1 (etter Codex-review av 7ccb2f2) — status REVIEW, ikke DONE
+
+Utgangspunkt `7ccb2f2` (+ `b7c127b` som bare la ZIP-filen til), samme branch. Kun domenemodellen `src/domain/search-v2/`, testene og dokumentasjonen er endret. Ingen kobling til app, lagring, beregningsmotor eller SEARCH-001B. Ingen database, API, avgiftssats, pakkeoppgradering eller deploy. Krav/ønsker-vurderingen, ukjent vs. 0, datohåndteringen, budsjettgrensene, skillet mellom ønsket registrering og godkjenning/avgiftsgrunnlag og de konservative kostnadssperrene (`included_cost_unknown`, `included_cost_not_covered`) er beholdt uendret.
+
+### F1 — gammel kostnadsvurdering kunne passere etter endrede forutsetninger
+
+**Årsak:** `classifyBudget` sjekket bare linje-ID-ene i `coveredCostLineIds`.
+
+**Rettelse (kontraktsendring, `types.ts`/`budget.ts`):**
+- `CostAssessment` har tre nye påkrevde felt: `candidateId`, `candidateVersion`, `costBasis`. `CandidateV2` har fått `version` (revisjon, f.eks. annonserevisjon). Alle er påkrevde; en vurdering uten dem (7ccb2f2-formen) gir `assessment_invalid`.
+- `classifyBudget(spec, candidate: {id, version}, assessment, now)` — signaturen har fått kandidatparameteren (ny rekkefølge). Nye `not_calculated`-grunner: `candidate_mismatch`, `candidate_version_mismatch`, `cost_basis_changed`.
+- `costBasisOf(spec)` gir en kanonisk, lesbar streng (ingen hash/kryptografi i domenet) og er eksakt likhet mot `assessment.costBasis`.
+
+**Hva som påvirker gyldigheten (dokumentert i `budget.ts`):** bare kostnadslinjer med `includedInBudget`, med `id`, `kind`, `currency`, `amountMinor` (null = ukjent) og `vatBasis` (null = ikke oppgitt), sortert på id. Å slå inkludering av/på endrer mengden linjer og dermed grunnlaget; en ny eller fjernet inkludert linje likeså.
+**Hva som IKKE krever ny vurdering:** `label`, linjer som ikke er inkludert, rekkefølgen på linjene, budsjettbeløpet og prisavviket (grensen kan endres uten at en uendret kandidattotal må beregnes på nytt — derfor hashes ikke hele søket), bilkrav/ønsker. Registreringsscenarioet kontrolleres fortsatt separat (`scenario_mismatch`).
+**Sjekkrekkefølge:** ugyldig → status → valuta → basis → scenario → foreldet → kandidat-id → kandidatversjon → ukjent inkludert kostnad → ikke dekket → kostnadsgrunnlag → klassifisering. Første feil gir grunnen.
+
+### F2 — stille bortfall av ukjente felt og unntak på misformet input
+
+**Årsak:** `validateSpec` sjekket bare kjente felt (TypeScript-form), og `specToJson` bygde et nytt objekt av kjente felt; `null`/`equipment:[null]` kastet.
+
+**Rettelse (`validation.ts`, `serialization.ts`):**
+- `validateSpec(input: unknown, catalog)` kjører først en strukturkontroll (`structureIssues`): eksakte nøkler på rot, `vehicle`, `requirements` (og `modelYear`/`seats`/`firstRegistration`), `appearance` (og listene), hvert `equipment`-element, `budget`, hvert `budget.costs`-element og `plannedRegistration`; riktige containertyper; vanlige objekter (ikke klasseinstanser). Ukjente nøkler → `unknown_key` med feltsti; kjente, foreløpig ikke-støttede prototypekriterier (f.eks. `country`, `power`, utstyrsnøkkel `cruise`) → `criterion_not_supported`; manglende nøkkel → `missing_key`. Alle strukturfeil rapporteres samtidig. Først når strukturen er i orden kjøres semantikken.
+- Hele funksjonen er pakket i `try/catch` som siste sikring (f.eks. kastende getter): returnerer da `invalid_structure`. Kaster aldri.
+- `specToJson` kaller `validateSpec` først, så den ikke lenger er en vei rundt importens strengere regler; feil gir `ok:false` uten `value`, og originalinput endres ikke.
+- Den delte nøkkelsjekken (`strictObject`) brukes nå av både intern validering og JSON-parseren, så de to veiene ikke kan divergere.
+
+### Tester (`tests/search-v2-fix1.test.ts`, 29 nye; `tests/search-v2.test.ts` justert for ny signatur)
+
+F1: Codex' reproduksjon (749 000 kr; transport 1 000 → 100 000 kr), dokumentert kanonisk streng (eksakt forventet verdi), endret beløp / beløp 0 / valuta / mva.-grunnlag / type, inkludering av og på, ny og fjernet linje, uendret grunnlag, endret rekkefølge, endret label, ikke-inkludert linje, ren budsjettendring (inkl. avvik av/på), annen kandidat, annen revisjon, vurdering uten de nye feltene, og at de gamle sperrene består.
+F2: `country` (Codex' reproduksjon), ukjente nøkler på 11 nivåer, ikke-støttede kriterier, utstyrsnøkler `cruise`/`climate`/`towbar`, 27 misformede inndata (null, undefined, tall, tekst, liste, funksjon, null/feil form i vehicle/requirements/equipment/costs/appearance/plannedRegistration, manglende nøkkel, klasseinstans, kastende getter) for både `validateSpec` og `specToJson`, ingen delvis eksport og uendret originalinput, og gyldig tapsfri rundtur med alle felt.
+
+**Bevis for at regresjonene fanger feilene på 7ccb2f2:** i en separat checkout av `7ccb2f2` (med nye tester og fixtur kopiert inn) feiler 28 av 29. F2-testene feiler på atferd (`country` godtas og forsvinner, `equipment:[null]` kaster osv.). F1-testene feiler der fordi `costBasisOf` og de nye feltene ikke finnes (API-nivå). F1-atferden på gammel kode er i tillegg kjørt direkte med gammelt API: `within_budget -> within_budget` etter at transportlinjen ble endret (beløp og valuta). Den 29. testen (gyldig rundtur) består også på gammel kode, som forventet.
+
+**Mutasjonsprøving av rettelsene:** 20 mutasjoner, 19 drept. Den ene overlevende (`ok = false` fjernet for ukjente nøkler) er ekvivalent: feilen er allerede registrert og ingen kaller bruker returverdien ved feil.
+
+### Kontroller faktisk kjørt (hele repoet)
+`tsc --noEmit` ren · `eslint .` ren · `vitest run` **326/326** (17 filer; 297 før FIX1, +29) · `qa-secret-scan` ingen funn · `npm run build` OK. Ingen database-, nettleser- eller hosted-handling.
+
+### Endringer i kontrakten Codex bør merke seg
+`classifyBudget` har ny parameter og `CostAssessment`/`CandidateV2` har nye påkrevde felt (brytende, men modellen er frakoblet og har ingen brukere). `validateSpec` tar `unknown` i stedet for `SearchSpec`. Kandidatversjon er et ugjennomsiktig tekstfelt; hva den betyr (annonserevisjon, innhentingstidspunkt) avgjøres ved integrasjon.

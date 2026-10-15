@@ -5,9 +5,10 @@
  */
 import type { FirstRegistration } from "../types";
 import { isSupportedCurrency } from "../currency";
+import { unsupportedPrototypeField } from "./mapping";
 import {
   BODY_TYPES, COST_KINDS, COST_LABEL_MAX, DRIVE_TRAINS, FUELS, MAX_COST_LINES, MAX_MINOR, PLANNED_SCENARIOS, PRIORITIES,
-  SINGLE_COST_KINDS, TRANSMISSIONS, VAT_BASES,
+  SEARCH_MODEL_VERSION, SINGLE_COST_KINDS, TRANSMISSIONS, VAT_BASES,
 } from "./types";
 import type { Issue, SearchCatalog, SearchSpec } from "./types";
 
@@ -86,7 +87,93 @@ function dupes(values: readonly string[]): string[] {
   return out;
 }
 
-export function validateSpec(spec: SearchSpec, catalog: SearchCatalog): Issue[] {
+type Rec = Record<string, unknown>;
+type AddIssue = (path: string, code: string, message: string) => void;
+
+export const isPlainObject = (x: unknown): x is Rec => {
+  if (typeof x !== "object" || x === null || Array.isArray(x)) return false;
+  const proto = Object.getPrototypeOf(x);
+  return proto === Object.prototype || proto === null;
+};
+
+/**
+ * Strengt objekt: nøyaktig disse nøklene, ellers feil med feltsti. Kjente prototypekriterier som ikke er
+ * støttet i modellversjon 1 får egen kode (`criterion_not_supported`) i stedet for generisk `unknown_key`.
+ * Returnerer objektet ved suksess, ellers `null` (og feil er lagt til). Med `keepOnError` returneres et vanlig objekt
+ * også ved nøkkelfeil, slik at underobjekter kan kontrolleres og alle feil rapporteres samtidig.
+ */
+export function strictObject(v: unknown, path: string, keys: readonly string[], add: AddIssue, keepOnError = false): Rec | null {
+  if (!isPlainObject(v)) { add(path, "not_object", "Må være et objekt."); return null; }
+  let ok = true;
+  const at = (k: string) => (path ? `${path}.${k}` : k);
+  for (const k of Object.keys(v)) {
+    if (keys.includes(k)) continue;
+    ok = false;
+    const row = unsupportedPrototypeField(k);
+    if (row) add(at(k), "criterion_not_supported", `Kriteriet «${k}» er ${row.status === "planned_later" ? "planlagt senere" : "ikke relevant for matching"} og støttes ikke i søkemodell ${SEARCH_MODEL_VERSION}.`);
+    else add(at(k), "unknown_key", "Ukjent nøkkel.");
+  }
+  for (const k of keys) if (!Object.hasOwn(v, k)) { add(at(k), "missing_key", "Påkrevd nøkkel mangler (bruk null eller [] for «ikke satt»)."); ok = false; }
+  return ok || keepOnError ? v : null;
+}
+
+/**
+ * Strukturkontroll av en intern SearchSpec (runtime — TypeScript garanterer ikke formen): eksakte nøkler på alle
+ * nivåer, riktige containertyper. Går først; semantikk kjøres bare når strukturen er i orden, så validatoren
+ * aldri kaster på misformet input.
+ */
+function structureIssues(spec: unknown): Issue[] {
+  const issues: Issue[] = [];
+  const add: AddIssue = (path, code, message) => issues.push({ path, code, message });
+  const top = strictObject(spec, "", ["vehicle", "requirements", "appearance", "equipment", "budget", "plannedRegistration"], add, true);
+  if (!top) return issues;
+  strictObject(top.vehicle, "vehicle", ["brand", "model", "variant"], add, true);
+  const req = strictObject(top.requirements, "requirements", ["modelYear", "firstRegistration", "maxMileageKm", "seats", "bodyTypes", "fuels", "transmissions", "driveTrains"], add, true);
+  if (req) {
+    for (const k of ["modelYear", "seats"]) if (req[k] !== null) strictObject(req[k], `requirements.${k}`, ["min", "max"], add, true);
+    if (req.firstRegistration !== null) {
+      const fr = strictObject(req.firstRegistration, "requirements.firstRegistration", ["from", "to"], add, true);
+      if (fr) for (const side of ["from", "to"]) if (fr[side] !== null && !isPlainObject(fr[side])) add(`requirements.firstRegistration.${side}`, "not_object", "Må være en dato med presisjon eller null.");
+    }
+    for (const k of ["bodyTypes", "fuels", "transmissions", "driveTrains"]) if (!Array.isArray(req[k])) add(`requirements.${k}`, "not_array", "Må være en liste.");
+  }
+  const app = strictObject(top.appearance, "appearance", ["exteriorColors", "interiorColors", "interiorMaterials"], add, true);
+  if (app) {
+    for (const k of ["exteriorColors", "interiorColors", "interiorMaterials"]) {
+      if (app[k] === null) continue;
+      const l = strictObject(app[k], `appearance.${k}`, ["values", "priority"], add, true);
+      if (l && !Array.isArray(l.values)) add(`appearance.${k}.values`, "not_array", "Må være en liste.");
+    }
+  }
+  if (!Array.isArray(top.equipment)) add("equipment", "not_array", "Må være en liste.");
+  else top.equipment.forEach((e, i) => {
+    const eo = strictObject(e, `equipment[${i}]`, ["key", "priority"], add, true);
+    if (eo && typeof eo.key === "string" && unsupportedPrototypeField(eo.key)) add(`equipment[${i}].key`, "criterion_not_supported", `Kriteriet «${eo.key}» er ikke et boolsk utstyrskriterium og støttes ikke i søkemodell ${SEARCH_MODEL_VERSION}.`);
+  });
+  const bud = strictObject(top.budget, "budget", ["maxTotalNokMinor", "deviationBasisPoints", "costs"], add, true);
+  if (bud) {
+    if (!Array.isArray(bud.costs)) add("budget.costs", "not_array", "Må være en liste.");
+    else bud.costs.forEach((c, i) => { strictObject(c, `budget.costs[${i}]`, ["id", "kind", "label", "currency", "amountMinor", "vatBasis", "includedInBudget"], add, true); });
+  }
+  strictObject(top.plannedRegistration, "plannedRegistration", ["requested"], add, true);
+  return issues;
+}
+
+/**
+ * Validerer en intern søkespec: først struktur (ukjente/manglende nøkler, containertyper), så semantikk mot katalogen.
+ * Tar `unknown` fordi formen ikke kan stoles på ved kjøring. Kaster aldri; ingen delvis resultat.
+ */
+export function validateSpec(input: unknown, catalog: SearchCatalog): Issue[] {
+  try {
+    const structural = structureIssues(input);
+    if (structural.length) return structural;
+    return semanticIssues(input as SearchSpec, catalog);
+  } catch {
+    return [{ path: "", code: "invalid_structure", message: "Ugyldig struktur." }];
+  }
+}
+
+function semanticIssues(spec: SearchSpec, catalog: SearchCatalog): Issue[] {
   const issues: Issue[] = [];
   const add = (path: string, code: string, message: string) => issues.push({ path, code, message });
   const text = (path: string, value: unknown, max: number) => {

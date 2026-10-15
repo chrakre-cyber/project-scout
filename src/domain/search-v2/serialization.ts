@@ -16,7 +16,7 @@ import type {
   Appearance, CostLine, EquipmentCriterion, FirstRegistrationRange, Issue, IntRange, PrioritizedList, Result, SearchCatalog, SearchSpec,
 } from "./types";
 import type { FirstRegistration } from "../types";
-import { firstRegistrationIssue, validateSpec } from "./validation";
+import { firstRegistrationIssue, isPlainObject, strictObject, validateSpec } from "./validation";
 import { unsupportedPrototypeField } from "./mapping";
 
 export interface SearchSpecJson {
@@ -96,12 +96,6 @@ export function specToJson(spec: SearchSpec, catalog: SearchCatalog): Result<Sea
 
 type Rec = Record<string, unknown>;
 
-const isPlainObject = (x: unknown): x is Rec => {
-  if (typeof x !== "object" || x === null || Array.isArray(x)) return false;
-  const proto = Object.getPrototypeOf(x);
-  return proto === Object.prototype || proto === null;
-};
-
 const MONEY_STRING = /^(0|[1-9][0-9]{0,15})$/;
 
 export function specFromJson(input: unknown, catalog: SearchCatalog): Result<SearchSpec> {
@@ -115,20 +109,7 @@ export function specFromJson(input: unknown, catalog: SearchCatalog): Result<Sea
     return { ok: false, issues: [{ path: "modelVersion", code: "unsupported_version", message: `Ikke støttet modellversjon (${typeof input.modelVersion === "number" ? input.modelVersion : "ugyldig"}); støttet: ${SEARCH_MODEL_VERSION}.` }] };
   }
 
-  /** Strengt objekt: nøyaktig disse nøklene. Kjente, ikke-støttede prototypekriterier får egen kode. */
-  const strict = (v: unknown, path: string, keys: readonly string[]): Rec | null => {
-    if (!isPlainObject(v)) { add(path, "not_object", "Må være et objekt."); return null; }
-    let ok = true;
-    for (const k of Object.keys(v)) {
-      if (keys.includes(k)) continue;
-      ok = false;
-      const row = unsupportedPrototypeField(k);
-      if (row) add(path ? `${path}.${k}` : k, "criterion_not_supported", `Kriteriet «${k}» er ${row.status === "planned_later" ? "planlagt senere" : "ikke relevant for matching"} og støttes ikke i søkemodell ${SEARCH_MODEL_VERSION}.`);
-      else add(path ? `${path}.${k}` : k, "unknown_key", "Ukjent nøkkel.");
-    }
-    for (const k of keys) if (!Object.hasOwn(v, k)) { add(`${path ? path + "." : ""}${k}`, "missing_key", "Påkrevd nøkkel mangler (bruk null eller [] for «ikke satt»)."); ok = false; }
-    return ok ? v : null;
-  };
+  const strict = (v: unknown, path: string, keys: readonly string[]) => strictObject(v, path, keys, add);
   const str = (v: unknown, path: string): string | null => { if (typeof v === "string") return v; add(path, "not_string", "Må være tekst."); return null; };
   const strOrNull = (v: unknown, path: string): string | null => (v === null ? null : str(v, path));
   const int = (v: unknown, path: string): number | null => { if (typeof v === "number" && Number.isSafeInteger(v)) return v; add(path, "not_integer", "Må være et heltall."); return null; };

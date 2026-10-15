@@ -16,9 +16,9 @@ export function emptySpec(): SearchSpec {
 }
 
 /** Kandidat der alt er ukjent (null). Ukjent er aldri 0, tom streng eller «skadefri»/«uten utstyr». */
-export function emptyCandidate(id: string): CandidateV2 {
+export function emptyCandidate(id: string, version = "rev-1"): CandidateV2 {
   return {
-    id, brandKey: null, modelKey: null, variant: null, modelYear: null, firstRegistration: null, mileageKm: null,
+    id, version, brandKey: null, modelKey: null, variant: null, modelYear: null, firstRegistration: null, mileageKm: null,
     seats: null, bodyType: null, fuel: null, transmission: null, driveTrain: null,
     exteriorColor: null, interiorColor: null, interiorMaterial: null, equipment: null, packages: null, currentCategory: null,
   };

@@ -81,6 +81,7 @@ Skriv dato, ny status, commit/fil og testbelegg i seksjonen under. Juster estima
 - 15.10.2026: SEARCH-001A-UI → REVIEW (ikke DONE). Isolert prototype i `prototypes/merovo-search/`; ingen endring i app, database eller avgiftsberegning. Separat review av Codex før neste oppgave (feltmodell/validering). Detaljer og avvik mot repoet: `reviews/SEARCH-001A-UI.md`.
 - 15.10.2026: SEARCH-001A-UI-FIX1 levert etter Codex-review (F1–F5, schema v2, v1 leses med merknad). Status fortsatt REVIEW, ikke DONE; venter på Codex-verifisering.
 - 15.10.2026: SEARCH-002 → REVIEW (ikke DONE). Ny, frakoblet domenemodell `src/domain/search-v2/` med validering, JSON-rundtur, krav/ønsker-vurdering og budsjettgrenser; dagens agentflyt, database, UI og prototype er uendret. Dokumenttillegg (DEC-030, MEROVO_SEARCH_SPEC.md, produktendring) synkronisert selektivt fra `reference-current-local/`. Neste mulige oppgave (ikke startet): SEARCH-001B lagring/matching, eller P3-oppfølging av v1-effektadvarsel i prototypen. Rapport: `reviews/SEARCH-002.md`.
+- 15.10.2026: SEARCH-002-FIX1 levert etter Codex-review av 7ccb2f2 (F1 kostnadsvurdering bundet til kandidat og kostnadsgrunnlag, F2 strukturkontroll av intern input). SEARCH-002 står fortsatt i REVIEW, ikke DONE; ingen ny oppgave startet. Se `reviews/SEARCH-002.md` §9.
 
 ## Dagens anbefalte rekkefølge
 

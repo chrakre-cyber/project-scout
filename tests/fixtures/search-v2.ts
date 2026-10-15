@@ -48,8 +48,11 @@ export function glsCandidate(id: string, over: Partial<CandidateV2> = {}): Candi
 export function synthAssessment(totalMinor: bigint, over: Partial<CostAssessment> = {}): CostAssessment {
   return {
     totalMinor, currency: "NOK", basis: BUDGET_BASIS, registrationScenario: "passenger", status: "complete_validated",
-    profileRef: "SYNTHETIC-TEST-PROFILE-NOT-A-TAX-REFERENCE", validUntil: "2026-12-31T23:59:59Z", coveredCostLineIds: [], ...over,
+    profileRef: "SYNTHETIC-TEST-PROFILE-NOT-A-TAX-REFERENCE", validUntil: "2026-12-31T23:59:59Z", coveredCostLineIds: [],
+    candidateId: CAND.id, candidateVersion: CAND.version, costBasis: "[]", ...over,
   };
 }
 
+/** Kandidaten syntetiske vurderinger er laget for som standard. */
+export const CAND = { id: "cand-1", version: "rev-1" } as const;
 export const NOW = "2026-10-15T12:00:00Z";
