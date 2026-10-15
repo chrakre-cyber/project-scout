@@ -42,7 +42,7 @@ Utstyr/hengerfeste/cruise/klima får synlig «Må ha» (standard) eller «Ønske
 - **Modellbytte:** variant og pakker som ikke hører til ny modell fjernes med synlig melding og «Angre modellbyttet» / «Behold fjerningen»; merkebytte tømmer modell.
 - **Effekt:** lagres kanonisk i watt, så hk↔kW-bytte er tapsfritt; visning avrundet til hele tall.
 - **Eksempelknappen** setter demoverdier (Mercedes-Benz GLS, modellår fra 2021, 7 seter, svart/hvit, noen utstyrsvalg, 750 000 kr + 10 %) og merker utkastet «Basert på demoeksempelet»; km er bevisst tom, og salgspris/margin finnes ikke.
-- **Tapsvern:** bekreftelse (nettleserdialog) før tøm/import/eksempel overskriver et utkast; advarsel ved lukking av fanen når utkastet har uthentet endringer; eksport stoppes mens feil finnes; ugyldig import er alt-eller-ingenting.
+- **Tapsvern:** bekreftelse (nettleserdialog) før tøm/import/eksempel overskriver et utkast; advarsel ved lukking av fanen når utkastet har ueksporterte endringer; eksport stoppes mens feil finnes; ugyldig import er alt-eller-ingenting.
 - **Eksportformat** `merovo.search-draft` v1: `criteria` (felt-ID → verdi med eksplisitt enhet, f.eks. `{"value":150000,"unit":"km","bound":"max"}`, effekt med `unit` og `approxKw`), `equipment` (nøkkel → `must`/`nice`), `budget` (beløp som `amountMinor`-tekst + valuta, prisavvik som basispunkter, kostnadslinjer med mva.-grunnlag og `includedInBudget`), `origin`, `notice`. Import avviser ukjent versjon/felt/nøkkel, feil enhet, verdier utenfor grenser, variant som ikke hører til modell og filer over 200 000 tegn.
 - All bruker-/importtekst settes med `textContent`/`value`, aldri som HTML.
 
