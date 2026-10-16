@@ -90,3 +90,5 @@ Ikke kjørt: DB-/RLS-suitene og eldre e2e-skript mot faktisk Supabase (ingen DB-
 
 ### 2.6 Status
 **DATA-002A = REVIEW.** Kodemessig komplett for syntetisk provider og syntetiske profiler; Codex-review gjenstår. Ingen ekte leverandørdata er aktivert.
+
+**Kode-commit:** `6c38f49`.
