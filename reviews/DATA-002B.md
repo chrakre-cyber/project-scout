@@ -74,3 +74,5 @@ Visningsnøkler: `seller_identity` → `sellerType`, `provider_identity` → `pr
 
 ### 5.8 Status
 **DATA-002B = REVIEW.** Ingen ekstern leverandør er koblet til, ingen credentials brukt, ingen live data, ingen bilder, ingen VIN, TAX/auth/tenant/deploy uendret.
+
+**Kode-commit:** `1ad2596`.
