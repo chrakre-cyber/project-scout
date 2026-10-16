@@ -1,0 +1,990 @@
+{
+  "task": "SYNC-001",
+  "baseHead": "46d395e",
+  "localManifest": "LOCAL-MANIFEST.json (createdAt 2026-10-15T12:22:14Z, 145 filer)",
+  "hashAlgorithm": "sha256",
+  "rules": {
+    "add": "Kopier bare hvis målfilen IKKE finnes lokalt; ellers stopp for den filen.",
+    "replace": "Kopier bare hvis lokal SHA-256 == expectedLocalSha256; ellers stopp for den filen og rapporter. Ta sikkerhetskopi først.",
+    "preserve": "Ikke rør.",
+    "skipped": "Utenfor planen.",
+    "deletions": "Ingen sletting.",
+    "neverTouch": [
+      ".env*",
+      "certs/",
+      "node_modules/",
+      ".next/",
+      "databasedata"
+    ]
+  },
+  "add": [
+    {
+      "path": "prototypes/merovo-search/README.md",
+      "sha256": "8563e5b2dc2273c4ea69889d279dfb015deec2c1393618fe67f6bb7cf1440e22",
+      "size": 1284,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/assets/Figtree-OFL.txt",
+      "sha256": "140d37233e7f3ce7313798befa9600893bcceaf41a55fa0fa5ad52f7f657a268",
+      "size": 4388,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/assets/figtree.ttf",
+      "sha256": "26ad3db9b31ff7dde67a91ff515d022d2f495cd506590699cf264f0bfe6fb714",
+      "size": 62712,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/assets/merovo-logo-horizontal-original.svg",
+      "sha256": "14f825e36d011d7f13e422a63f7b2d26eb323b6e96e9700f66fccfab8a2f5088",
+      "size": 35554,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/assets/merovo-symbol-original.svg",
+      "sha256": "73646bf04d85104594e4f07f8e8830723554df1c102435f19db7804301b1a3c6",
+      "size": 22508,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/assets/merovo-symbol-reversed.svg",
+      "sha256": "4997485651cfdb82c40d8aa35fd273596824ef1d279dad8d305dcb11c4b24765",
+      "size": 22819,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/css/style.css",
+      "sha256": "ad21280c1c1ccd3b1c906e4fe85fc68e5029ade2462d45ac339a113a19e6b0aa",
+      "size": 13468,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/index.html",
+      "sha256": "38d7359d5c9313842ef68a2e222d4292bc6903b2d5db85ea0a2873bcb8edb28f",
+      "size": 2685,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/js/app.js",
+      "sha256": "98adec99a35519cc456e42bee7914f74667359c876a15893d6a01a224f32b678",
+      "size": 43020,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/js/data.js",
+      "sha256": "c19fba3d0743da3987b182a098db91c23f1869501d8c21a694e21d5c728a3b2b",
+      "size": 17541,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "prototypes/merovo-search/js/logic.js",
+      "sha256": "aaa06c27730d62fb7816009e94e2cb66b31262f84e09f562cdb4acd5dc82ac9c",
+      "size": 39296,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI.md",
+      "sha256": "123be2d2e4695977bffb47f5780f17a0b4273833f9bb5b96dec790e2b060d1fc",
+      "size": 15162,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/01-desktop-topp.png",
+      "sha256": "d9d5ed24acd87b22f573579d18c08d39ce008eb3fef62f8fcf29147e7014fe27",
+      "size": 159629,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/02-desktop-gls-fylt.png",
+      "sha256": "f0f528ae278fbbb58fef97469297e5f7892cd7ad76909b79b3d819cb8cfb7e8a",
+      "size": 683341,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/03-desktop-budsjett.png",
+      "sha256": "260950dfc12ec0594964df5d7541279755312ee06b1d36dac1188d492df76a9e",
+      "size": 155907,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/04-desktop-lagring.png",
+      "sha256": "318e4c4d768199d20bbfd673f875eee902a1045e76d12b0a2afd0086bc2d74e0",
+      "size": 126003,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/05-import-feil.png",
+      "sha256": "b3a68d9a05255ab69bf46fec833d33bb57bc516f533f60dc821dc65e08ef4e46",
+      "size": 138290,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/06-mobil-topp.png",
+      "sha256": "144e4c95815de86486037672b24ea5dea1d17d0e1e5c72c4929fd16106fe8e2b",
+      "size": 62056,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/07-mobil-lagring.png",
+      "sha256": "54b6122e7173004e4649b5794bb76dcbc51c01d35fde463a565c39ee5588a259",
+      "size": 42864,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/08-mobil-oppsummering.png",
+      "sha256": "87334a70933f168ed1081922827cbeac8e5768181e2de465d95fc6dd0c10e2d6",
+      "size": 56679,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-001A-UI/screenshots/09-mobil-feiltilstand.png",
+      "sha256": "6747e66771214f7781e386e96d65f22d7888250df607943933d3d3c3666f487f",
+      "size": 40930,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SEARCH-002.md",
+      "sha256": "e618d0562bfde66efa55e6909e36fa202dd667015dcc4412213939c5c377633e",
+      "size": 18291,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "reviews/SYNC-001.md",
+      "sha256": "84c1af9713df7afd3147d9e7ea46432160dc47d404127931bbea2ecbae6bc6d5",
+      "size": 9970,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/budget.ts",
+      "sha256": "59678cd366dae014634fedfe68f0f82be680517ea46b6ba32d291205ef3ea8a9",
+      "size": 7516,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/catalog.ts",
+      "sha256": "90cbe7e09d61d145b6f75bac9fd9e7c4b34f12f6982107a29faf0d06bfba2924",
+      "size": 1382,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/evaluation.ts",
+      "sha256": "09910d4125a4704ca76ffa9033839ed7f86d28defa90340771ed9f6a36e52a29",
+      "size": 8182,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/factory.ts",
+      "sha256": "af806fe010ab9365e4e89b559797df88b1af68a320ba5889b936ba59dccf93b3",
+      "size": 1225,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/mapping.ts",
+      "sha256": "ba4b5b4a68c974c9cccdcc6b6c233550ea98b10ffda1130e3aa7953bc7e25f19",
+      "size": 8383,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/serialization.ts",
+      "sha256": "0d00bd88a49ae04570ad28d14858dd149b8a67f6507eefac25b995106878d874",
+      "size": 15078,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/types.ts",
+      "sha256": "cd0ab7ca677decb75a4be40b967f684d3c5a77aee6028621fce1e2d994ccd18c",
+      "size": 13227,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "src/domain/search-v2/validation.ts",
+      "sha256": "b7d30c4d122c461d15d31eaf87960f1c7ca4f51288b86f54eec283669a452345",
+      "size": 17307,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "tests/e2e/search001a-prototype.e2e.mjs",
+      "sha256": "10dc64abe0ad0517b0daed999c285de731755bb3e1cead5beaf9357b9d689e3f",
+      "size": 27156,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "tests/fixtures/search-v2.ts",
+      "sha256": "26e6fdee64b00dca3f9f9b5b7af05ce91401535b13c654f023f4aad9e7504bea",
+      "size": 2930,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "tests/search-prototype.test.ts",
+      "sha256": "734ad119c16c3a8a88e09206ba6e322fd234e820349d0c317b295f19714a16ab",
+      "size": 27275,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "tests/search-v2-fix1.test.ts",
+      "sha256": "82e22984fd3317bdf6f4ff4776ca6ffaff0ac6dff3186adfa985421cf5f141e5",
+      "size": 17028,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    },
+    {
+      "path": "tests/search-v2.test.ts",
+      "sha256": "30f25746572cbfa9c6f34cd0e1c9626dd65ad95f308677a16c95c1d212a8882a",
+      "size": 52961,
+      "note": "Finnes ikke i lokal manifest. Hvis filen allerede finnes lokalt: stopp for denne filen, ikke overskriv."
+    }
+  ],
+  "replace": [
+    {
+      "path": "DECISIONS.md",
+      "expectedLocalSha256": "2b2ad9b3d4997c2a94d4a69d4f1ee342eb0e37d6f280eba85139e26e2fbfb517",
+      "sha256": "47c1277cf362cc410ea23e89e5682826c15fd582e81d7055ac82bde95ffded8e",
+      "reason": "Repoet er superset av lokal (lokal + DEC-031 og FIX1-tillegg). Ingen lokal beslutning går tapt."
+    },
+    {
+      "path": "MVP_BACKLOG.md",
+      "expectedLocalSha256": "62e6f2db15f8cdae7e35656692a6961508fa981ceccec9274137a6f5627ec36a",
+      "sha256": "851328fcb4ab2213651003e613714650d60e102cf94845ad04e3a66e03fa1bf6",
+      "reason": "Repoet er superset (lokal innhold + SEARCH-001A-UI, SEARCH-002, FIX1, SYNC-001). Lokale QA-linjer er innholdslike; kun CRLF-forskjell på tre linjer."
+    },
+    {
+      "path": "tests/architecture.test.ts",
+      "expectedLocalSha256": "5225bd3e7ee12820a2c8c5afa6675909a35e217e64cd1f5c57e6bbb5c5b3b887",
+      "sha256": "c14787ffc95b35492cf6d390d5fd242953c83fd23c2d358991976564f33554c2",
+      "reason": "Lokal Windows-normalisering bevart i sluttfilen; to nye tester lagt til (stinormalisering og at domenefilene gjennomgås)."
+    }
+  ],
+  "preserve": [
+    {
+      "path": ".gitignore",
+      "sha256": "3dc7cf3b88ebd9245bee9b2b15c5306915c89de3a763c39ec58a97151dc35ef4",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": ".nvmrc",
+      "sha256": "f14b4987904bcb5814e4459a057ed4d20f58a633152288a761214dcd28780b56",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "9ac3be13bd33615b7e1e014ba98b37a19db85e162a6c39a5f5fc79a1eb212202",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "AI_ANALYSIS_SPEC.md",
+      "sha256": "0f30087c4a4bff397c2985719e0f7c4313df846a35b39db47a296ad12d7b8e75",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "AI_TEAM_ROLES.md",
+      "sha256": "8700340cf84e008aa3febd0b1128f13e20166cc4d1b313f6b505ee4d5a082c1d",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "ARCHITECTURE.md",
+      "sha256": "3f9d77574c49f6b8610346b3ad7db00cb4277c7df0ae2e413367d2c67243c699",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "BUS-002_DECISION_SUPPORT.md",
+      "sha256": "51a6277620f8ea1bd00bbb5ec7ff0e739256cdc7e45c21a255e179f7c1efefd3",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "CLAUDE.md",
+      "sha256": "9ac3be13bd33615b7e1e014ba98b37a19db85e162a6c39a5f5fc79a1eb212202",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "DATABASE_SCHEMA.md",
+      "sha256": "34c714f00f2d797a6a53774c302f15f1768bce2f28644abaa7da5a1cc9008256",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "IMPORT_ENGINE_SPEC.md",
+      "sha256": "41ace89aceaf26fd79a8ecf9af1a11e76ab03d88702565e54a0d757f3717c836",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "MEROVO_SEARCH_SPEC.md",
+      "sha256": "6e3355758becda2762a06a925a371bf847bb7c1279a58a2761dddf5cb3bce8f6",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "MOBILE_DE_INTEGRATION.md",
+      "sha256": "46b25268e6b1ef06e9266004f3d33c437cfa1e435e5f1fc0a1c67b691f4eac57",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "MOBILE_DE_REQUEST.md",
+      "sha256": "bc6dd104cdb83001b5f3eb3084860e60b20c5df6ea7159fd374828b58ff7cae0",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "OPPORTUNITY_SCORE.md",
+      "sha256": "481583e1fd2861d64567c87519c9f6320f4659ba33b6841d616f18e5c1efe918",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "PILOT_INTERVIEW.md",
+      "sha256": "690f49805c783c56ebbdfc92eb22723491aca7775278cabaa2bac155df1586c6",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "PILOT_PLAN.md",
+      "sha256": "4ba7cf6c5596a42e56344ba558ce848f9f99e700ef009ad45dc03101890cc250",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "PRODUCT_SPEC.md",
+      "sha256": "410a956ae2663b1fbb7d6fd34e2f467d0845354b168b4e3cad466f0564e71a4e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "README.md",
+      "sha256": "a0cd0da4927157530f4b9194158c2d2b7aadc1d42c50aa48da63f59ad10bf458",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "ROADMAP.md",
+      "sha256": "67dd0552993b3f866ac777d028b0c7d6b3cbacd4b992a402469fc53aae280a94",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "SOURCES.md",
+      "sha256": "f523b7aa5830736ee29c4af872501f2c9d6ab4b22535426673c9c6b7add10d97",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "SPRINT_0.md",
+      "sha256": "e25d09929a10da8178ff793a9b6c379d9a0668c124cff2842d9290fcffe83dfe",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "SPRINT_1_HANDOFF.md",
+      "sha256": "b2950ecffe601fe83a4fe299075b0889cf6829c555d356b469aee17c616f8537",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "START_HER.md",
+      "sha256": "9505eff15c3719b5226bd4360bfe1e6108c54c01d2c09a4f00ba5d759cf7f22e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "SWOT_AND_RISKS.md",
+      "sha256": "b73b58c4c00c81bf2a3787456609620f606708a6dc4faec07345df3c4a00aabf",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "TASK_HANDOFF.md",
+      "sha256": "aa64e1fd6a7b89f1d26beb58508d95303b58e93c28714d95ef18eab0aa7323eb",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "TEST_PLAN.md",
+      "sha256": "9c4bec7000526552676aa4ff0f3aa715571634a6bf7b98a145df7ce42c9c0ff8",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "eslint.config.mjs",
+      "sha256": "927cc3e7a3599cc1d6386a5fa73a6db71be3bd5f0c0d0e5222366614c7d5f9e5",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "next.config.ts",
+      "sha256": "143c6f9f9b0f35938ffaa7d3599c3cb9d75f07870b62fc22bfb56853b0d21646",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "package-lock.json",
+      "sha256": "c6a7c119a138e6abe4f98f86c96fbab4b7baa686827e3c0c2012b58ac844fdea",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "package.json",
+      "sha256": "bc83117ad7268cc1261fb852e801b664db6f677fbc249b6300d357257b56d58d",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "postcss.config.mjs",
+      "sha256": "f8ed6853d2d91797f125edbb2af4052bd0adc52ba638d0de65d696a62d1ad3f7",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/DEV-001-leveranserapport.md",
+      "sha256": "310482fb522c37d655d9fb32f7c270ade64d6bf3d0357191b5ccef2c5a6c791c",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/DEV-002-leveranserapport.md",
+      "sha256": "244bfca7c1bb228dcff918dd45caa1276d81f1cdfb97e4bb56b83eb9fe16f84b",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/DEV-003-leveranserapport.md",
+      "sha256": "798f0448b3b8ee76e23d269a0e1dfc8c9436d26fe180badfb829b15fb9fb0023",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/DEV-004-leveranserapport.md",
+      "sha256": "904782243ced76398420008f91fc1a43100f0d7291229e71fe9f0c88c24b2c49",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/DEV-005-leveranserapport.md",
+      "sha256": "2bf7f09e26fdb6f58991336dfcb0d10cea38f0c09ae150e6203190704b004d58",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/DEV-005B0-leveranserapport.md",
+      "sha256": "398275242bcf343e9c83c0677684b817ee3d12d6d4d4185ec5e55b7e81cf313b",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/QA-001-gate-G1.md",
+      "sha256": "d4c9c60c75b9ede0fc498cb8db9d0aa4b1f132563686d00f66e87ab81b0b859d",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "reviews/QA-DEP-001.md",
+      "sha256": "061cc1cf2b512585ea81d3c34b183d5c929a962e07bc41e3247f86cfef55e6da",
+      "reason": "Fantes bare lokalt i snapshot; repoet har nå byte-lik kopi. Ikke kopier over lokal fil."
+    },
+    {
+      "path": "reviews/QA-SEARCH-001.md",
+      "sha256": "3f3c8a43761d40d53b418a10cdf0d6f18571297208aaab7eecaf1ff61335820c",
+      "reason": "Fantes bare lokalt i snapshot; repoet har nå byte-lik kopi. Ikke kopier over lokal fil."
+    },
+    {
+      "path": "scripts/purge-expired.mjs",
+      "sha256": "cccb417e5a1c58a7b59af11f26294cb0ad575cf5e599a3401175872dbdfb9080",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "scripts/qa-demo-mode.sh",
+      "sha256": "7354547532d05c5a11fb59dfb94dce65707f53e62dc7ba047e511e7c50660f53",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "scripts/qa-secret-scan.sh",
+      "sha256": "eeba944de8271a21e6ff8d9afd4ae777d5f58b64ab43357de2e999636f705e5a",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "scripts/qa-upgrade-check.sh",
+      "sha256": "f5b55f86d46dbb1aeb6e892c9923bc3ea0ef4c38bcb30f4698590b34ee8a41d7",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "scripts/setup-local-ingest-role.sh",
+      "sha256": "a64040ac901cbde221a7644515b2f0db2e89ca2c6262ae8fd2f9d64edca7c2d8",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "scripts/test-db.sh",
+      "sha256": "56a21156129e80037d2c4ac8c429fc72910f8734e8d9522b426f5c3ffb045d66",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/[id]/page.tsx",
+      "sha256": "fbdbaf04c0942b4b416ed16da54168f725cf4bd6030b09fe628bead65438b501",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/[id]/runs/[runId]/page.tsx",
+      "sha256": "131e5923dafa6a0733a532be6a16eb9eace50b0f59662543c2cfe5395302f4f0",
+      "reason": "Lokal rettelse («Utløper senest» + forklaring) er innarbeidet i repoet; byte-lik lokal fil, ingen endring nødvendig."
+    },
+    {
+      "path": "src/app/agents/[id]/runs/actions.ts",
+      "sha256": "19d0a912e2f0808a1b7ad5629fb80195e8266b03b32513599de7c3947d23bcd0",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/[id]/runs/messages.ts",
+      "sha256": "70854b7cb5ebbe86cb655867e15a25c4c81d437204240ed71f4ec6a99682c461",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/[id]/runs/page.tsx",
+      "sha256": "f1ab302fed661bee8d86b31e1ed543742860628d7579b13b2a3bac20cbdd7fa7",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/actions.ts",
+      "sha256": "83d1ca17b15bc14a46bde8c5ffcc61f383e35768f172c08ed44d8e14713b4791",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/messages.ts",
+      "sha256": "5609bf39649a7881df01f7e494482042dee36e823cb8b190b4274e98dc93d69e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/new/page.tsx",
+      "sha256": "3d215c62ebf5a114ff5a188804ac3b69d5e44b0479ae21c6743ca98f9c7181b6",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/agents/page.tsx",
+      "sha256": "87ca4295d93b58a2c9696c220acee121a576c3f8d5320470756c1f02462f843c",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/dashboard/page.tsx",
+      "sha256": "99e9da18813b9c9ca673f9b2ec174576b0aa81235443ad6c5b63a65807cf773e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/globals.css",
+      "sha256": "3d9565ffc613bf1ad79e9ce2598484c5d10806884cab64f754040a5020f31be6",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/layout.tsx",
+      "sha256": "99fbffae539679d45c844745d9539cba19db6dc1d94182ccf849cefda2778292",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/login/actions.ts",
+      "sha256": "d833652613e35ae96acf081032c7d4b4cefc5ab2226ce52421430a7bdfdce78d",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/login/page.tsx",
+      "sha256": "1b156d4a7543af6299d9413dfb34441c5d8bf878b4cf6b3fe24ced3b8078e393",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/not-found.tsx",
+      "sha256": "815c1a2bdf97769439d3d50887cfff596b4179e91ac16670e717940171b5df37",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/opportunities/[id]/page.tsx",
+      "sha256": "72d2b59b7fc7369fa0bca8e31549f7a0d58979f7e815fb567ceca1b8b72d1798",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/app/page.tsx",
+      "sha256": "832b647cd752da7f0ad0313ca426a04bfd851d972467bb003294a99b4caefde7",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/AgentForm.tsx",
+      "sha256": "84c2cf842774ba0c26e2f4490496d794e0abae8fa48b14c82524f2953927d733",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/AuthStatus.tsx",
+      "sha256": "5b5c4776c7f80e1196fb251d595db8acce168d68d00d055163a06b14a584f384",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/CarPlaceholder.tsx",
+      "sha256": "a735ada2dadab4a99345ba6cfe44ba919c9ce2b0c30c0e1d320c681a2626c63d",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/DemoBanner.tsx",
+      "sha256": "1860505344560c763bed3b732ac0ed4b34002468c8cbf3d80160c4223d2b1270",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/ListingCard.tsx",
+      "sha256": "9edf910baa8ddd4e89b16d1929f0847177115f26094ea8b9bfecda5f1388a5a7",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/RunButton.tsx",
+      "sha256": "23257e32262591f86f9e2f9e000351639b67a88416ceaf78509e610409ca916e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/SiteNav.tsx",
+      "sha256": "fe025a2db99875a0940d4cecd0e06ecfd7ecad517283e0ded0fc79d7bcc03dae",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/components/SourceErrorNotice.tsx",
+      "sha256": "39b9fb61aaeced615bdf7c331fa84fe12cedffd49cc67571269fc478c891bb72",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/demo/fixtures.ts",
+      "sha256": "537ec709947f78767b87a637f73d2e52764abda4f335859477bf8d1a27c5aa68",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/demo/repository.ts",
+      "sha256": "29cecf6dbcc9b5bb6a5a390b97792b23b9728c923ec03d858b512613a3f74a2e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/domain/agent-validation.ts",
+      "sha256": "defedab0a4480097c57ec769db01226df25c93452ab07f0e27faef7a5e812596",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/domain/currency.ts",
+      "sha256": "0caa07039ad03928c428449e1833d7f6dcdc1bf54ffc383be22cd4384b606c31",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/domain/matching.ts",
+      "sha256": "c01efb4b1f2987c6e2a85bfcc065245e381a7557248be65076b6adeaf58ef8b7",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/domain/rights.ts",
+      "sha256": "760806cabc038966e02f7633d82163b95024ca32acd12651f6f9ba3f4917733e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/domain/search-run.ts",
+      "sha256": "c2fb790c5c06953c86f79891d04fe368bf96edd3b43091e51c1fff023534122c",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/domain/types.ts",
+      "sha256": "91ec8c3b330e775b84809d2addd9cbcd09dba22a36839895fd581485938bcb4e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/lib/format.ts",
+      "sha256": "25a50845bce7f3f66471f46457213bef12b1add8407fbb69fdc0b5be17615bb2",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/lib/supabase/config.ts",
+      "sha256": "5eff69d7b7450465eabe761665cde481685186ca63c6b1e78262b35470a73276",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/lib/supabase/server.ts",
+      "sha256": "b5f07c09f5f0306ed66c7d045576b5d4e98e70f436da415f7cd27ff9ecba8b43",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/errors.ts",
+      "sha256": "c2f80890b36a0a0a490edf044f00aec9eca2983d35f0f6b08ddf4d2e78c48586",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/index.ts",
+      "sha256": "a190cac76bb35352124a39b96204099ca90252617043184265c9f334f5310922",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/synthetic/fixtures/FIXTURES.md",
+      "sha256": "8fe6fb430f66bf85b2b8d66b5c2e07b85815ed6badfd2a4ed0ea446887fffcb1",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/synthetic/fixtures/generated.ts",
+      "sha256": "afbd28871c82efde455aa66d70429ba8023c3216849f47ca7629e394154a2314",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/synthetic/fixtures/handwritten.ts",
+      "sha256": "1a9b38b9d65303ca7a7bfdd0d8f3b1c54281aca3f5c9ee5cdfcfb107fcb2fd57",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/synthetic/fixtures/index.ts",
+      "sha256": "7f520de56b3b26ab0406c13ac2d34a2e78e2ce821b3c47cf14ac0e614764f78f",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/synthetic/normalize.ts",
+      "sha256": "1fc417acc6aab4a9f8ba7cf040eeb72e130a0834815bdbee762e7054455a2b42",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/synthetic/provider.ts",
+      "sha256": "84738bfdfc47738dc534cd73b3654183cdba70a3516d9f9b813b0999a09a82a7",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/synthetic/raw.ts",
+      "sha256": "3df4bb086eaa86ab8b397bc79d1bed05958d5ae382d508ec245590a67a9e7ab1",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/providers/marketplace/types.ts",
+      "sha256": "860104e37ab3ae1daae2ec886d854e2426408cef1d87a3b23169f340dde357be",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/proxy.ts",
+      "sha256": "7effc98a641505080dbec5afcbe70baf02ffff1e0fe5b60be3766f973788705f",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/server/agent-form.ts",
+      "sha256": "0e10e95afd57ff71041e1f42c408046ef71f8c13f967e3effcc980723e09815a",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/server/agent-records.ts",
+      "sha256": "0ea5d50b75c1f360c92c95b72046831b7288a0e2ffadd661e48e8705facdcf30",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/server/agents.ts",
+      "sha256": "575f7ae60ca99fbd89ea786b7613de90d3690a639bf70a5c7823e5c889c7f57e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/server/search-pipeline.ts",
+      "sha256": "740aea582d2dd8a5e6876fe20f78242c235fe63d03ae5133bba11bba82456c7c",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/server/search-runs.ts",
+      "sha256": "72827212fb8ab6a7e9c7cf5995ad4b1364acf7e9fae34721828cb30995d27cab",
+      "reason": "Lokal rettelse (expiresAt-kommentar) er innarbeidet i repoet; byte-lik lokal fil, ingen endring nødvendig."
+    },
+    {
+      "path": "src/server/session.ts",
+      "sha256": "ad2ed8ab98678c8eb9c0d99d6d99f57bd16e41d14bfc8f542fdf7f9c3f3b509f",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "src/server/trusted-ingest.ts",
+      "sha256": "48deee9693373fab792c056a960030be837c1d88103cb429ffab81641f8e0c2e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "start-scout-local.cmd",
+      "sha256": "8ec9a84f7fbab18d6098274a7207b58b6324bd01cafd2ea7f51b8a2d3f0294b2",
+      "reason": "Fantes bare lokalt i snapshot; repoet har nå byte-lik kopi. Ikke kopier over lokal fil. Refererer lokalt sertifikat (certs\\prod-ca-2021.crt) som ikke er distribuert; skal ikke endres."
+    },
+    {
+      "path": "supabase/.gitignore",
+      "sha256": "507699eb91144818edf61d3a079212cacf31d8db520eae428e3b48fcf0d6919c",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/config.toml",
+      "sha256": "45f2e2d26efbe99f30349b999a5da6615b5bf5e651370d7cbfbe6a21d87bc272",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/migrations/20261005090000_dev002_tenancy_and_agents.sql",
+      "sha256": "f3a44976095a9350fd127c96d3e8a4513fa5ab30fd42473232033ae9d957df57",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/migrations/20261006090000_dev004_agent_validation.sql",
+      "sha256": "44aee2f0d4d1fb2b47745ea5e4472ac1a43463ecf9fbfa60850be6af9f38d41e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/migrations/20261006100000_qa001_fix_active_limit_trigger.sql",
+      "sha256": "fbb13f2d13995a20eb45af9bb90aaf1e98a68ba86e045ac5444aba1a04f83b79",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/migrations/20261007090000_dev005_search_runs.sql",
+      "sha256": "b4d36704e6675d7b4f16d023a457804374928cc9cdd61fb674eda4ea93fc1870",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/migrations/20261008090000_dev005b0_rights_retention.sql",
+      "sha256": "b0f408e4bada12b2eaac43f6cc90dba5112a381196485021610fd42e82962b36",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/migrations/20261009090000_dev005b0_rights_visibility.sql",
+      "sha256": "edb760c40a84a42dd5fd74deee9065e3b1c75363896f1e31c69c2c49b91d21d1",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "supabase/seed.sql",
+      "sha256": "f896964bee4aeb49fe8db8e8b7c8a91c310e729f3486a6855c5274126c14479a",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/agent-form.test.ts",
+      "sha256": "b5a088c925d635ac2ed2c8149c9dd38fe62481003a7142b27b29647b22008037",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/agent-messages.test.ts",
+      "sha256": "e16066bd6c076791293c03b79a3de23a3d305e0a21e4926476c684d7cae8d8bf",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/agent-records.test.ts",
+      "sha256": "a5253b4b5e43a1a622fbbc34374a7ac54ad01f07238436084ee4417c4756bc56",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/agent-setups.test.ts",
+      "sha256": "27748e27050955dc3932072c29cfd33c875c3fea797689b90c3701783f3093a5",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/README.md",
+      "sha256": "29dab942d227d67cfaff05da0be1d0ac6d386fe5500d6bbc2ec95e075679cf6a",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/agents.test.ts",
+      "sha256": "f702e8dca85a749502478fac9e7ae55ac6a22dffe48c22c41720c3c92446bcd2",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/harness.ts",
+      "sha256": "b6442f434e9fd84e01eb9883644a5bb1a5a847f25cd7b8fb3229997dca6e2295",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/qa-catalog.test.ts",
+      "sha256": "2f1b586b1b98e81da78697cd16e124a7b0cd683e36a616cdfcaaf9d586c2f95d",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/qa-isolation.test.ts",
+      "sha256": "3201197a253fb37079ec9cc32d45cf0df3da147b174148081a165394ff30da55",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/qa-limit.test.ts",
+      "sha256": "8b95d4af61585835fa0ccba63dc20e2409f8a80c2a2026d5304583a92c6cc539",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/qa-validation.test.ts",
+      "sha256": "8e0196c9f38b7205add922dffedd6039831250654fdc64f818f4b28f8bc80a9e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/rights-retention.test.ts",
+      "sha256": "a1eb3828a0ee9a6190435e39e6b8b393afff2b3f95fc069e30360cc778f0a361",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/rls.test.ts",
+      "sha256": "c0b6b932eaa4d71ff003e8fe0568fafcfcaf0b0b16f5823d6a2cba2ddc01a002",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/db/search-runs.test.ts",
+      "sha256": "e687998f01dcb613902e67bc0e6b927696337c6b73e4fdaa77dfeb7dcd92d226",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/e2e/dev002-auth.e2e.mjs",
+      "sha256": "db85d32a8756bb0aef97a4a2efbc2d753a3fc90c63e1a9495af2488bf078b7b3",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/e2e/dev004-agents.e2e.mjs",
+      "sha256": "3e3f30d975d7908d464ddb6575147ed198ac7311ff0a63cbd213c866a5c25d5c",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/e2e/dev005-search-runs.e2e.mjs",
+      "sha256": "da99a07853ebae099f5280f390290b615a0945cbae119f4565b772707cc59b39",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/e2e/qa001-app-paths.e2e.mjs",
+      "sha256": "aee0c907cc751b2ca15d10d63c6e6aa6e26d5aa9a6456f9718e48e5f29d0e43a",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/fixtures/agent-setups.ts",
+      "sha256": "144388ccbd55ace462473482c3fdcdf36571feab1f6077ea09db63e4fbe50e39",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/format.test.ts",
+      "sha256": "9e685fd0afe9ed02c03a44633fbf978283db01955ecae0498152e02e262c3473",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/helpers.ts",
+      "sha256": "b8aa75c1a7e31ca4a2767d150d7c254c931cdb60c89e9e0b8d6f95f980725b58",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/matching.test.ts",
+      "sha256": "b46ab52805572ba551f52caa2ad966e1089b6679a37d0edeb171b9478e8d7a9e",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/money-boundary.test.ts",
+      "sha256": "c36613a963977c861d222e9a4f2625c67b0866cadb4a44724f09d114b18cab5f",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/normalize.test.ts",
+      "sha256": "67fa4bb08f732de8a19c9ae4026fc774712563948e2c720c4ff3f6c1e13990e9",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/provider.test.ts",
+      "sha256": "d8462834a55519ce5dc75c98ed91802bb0e51cda292bc05999487e56c5feb205",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/rights.test.ts",
+      "sha256": "f44848e7cae8611313182317203e318b1355dbd517e4975f29ea37fa86ff19e5",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/search-pipeline.test.ts",
+      "sha256": "011172551ff2dd99e055aeddc7f89af417bcc034ad5e0f9a19e01d560840cf22",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/search-run-domain.test.ts",
+      "sha256": "20021fc39dad05e10886493be1e0a3a1b999cbb35f41848cb06cfddf6eb9a2b3",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tests/synthetic-dataset.test.ts",
+      "sha256": "d73f34fc1bc71ae1ab9e4a53de09013a748766457fa000658d06a609ceef83e4",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "tsconfig.json",
+      "sha256": "f7ab2947064f692d23dfc152da83f2965b7921ceaa38386fd8518b65e49562e9",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "vitest.config.ts",
+      "sha256": "a3c4a730ee52bb04685747735ca55d2ae016934a2a7bb01e5dfc9ea5f736195b",
+      "reason": "Identisk med lokal manifest."
+    },
+    {
+      "path": "vitest.db.config.ts",
+      "sha256": "5a190a8a06ac6fc16d34eab68d1329c1981fce77e4000fab0f1ff6fb94922e48",
+      "reason": "Identisk med lokal manifest."
+    }
+  ],
+  "skipped": [
+    {
+      "path": ".env.example",
+      "reason": "Utelatt fra snapshot ved regel (.env*). Mal uten hemmeligheter; antatt lokalt, skal ikke røres av oppdateringen."
+    },
+    {
+      "path": "Project_Scout_Start_her.pdf",
+      "reason": "PDF utelatt fra snapshot ved regel; ikke kildekode. Skal ikke røres."
+    },
+    {
+      "path": "SEARCH-002-FIX1-review-d96d125.zip",
+      "reason": "Generert review-ZIP; ikke kildefil."
+    },
+    {
+      "path": "reviews/SYNC-001-file-plan.json",
+      "reason": "Selve filplanen (kan ikke inneholde egen hash)."
+    }
+  ],
+  "deletions": [],
+  "deleteProposals": []
+}

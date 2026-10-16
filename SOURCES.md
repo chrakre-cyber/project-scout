@@ -24,3 +24,11 @@ Kontrolldato: 03.10.2026. Offentlige primærkilder er brukt for de kritiske API-
 **Åpne avklaringer:** API-pris/rettigheter, konkrete 2026-regelprofiler, kurskilder, transportpriser, fradragsrett og salgsgrunnlag. Det er bevisst ikke lagt inn oppdiktede satstabeller eller feltmapping.
 
 Teknisk stack er valgt som prosjektretning. Kontoer, produktnivåer, priser, regioner og pakkeversjoner må avklares når de faktisk opprettes; tidligere omtale av gratis/lave priser skal ikke brukes som budsjettfasit.
+
+
+## Tillegg 15.10.2026 — TAX-001A
+
+Kildene T01–T19, S07, X01–X02 er registrert i `docs/tax/sources.json` med uttrekkspunkter. Ingen av dem ble hentet direkte (host blokkert i miljøet); sammendrag fra søkeverktøy er kun ledetråder (E2). Smarte Penger og Crowe er avvist som grunnlag. Primærkontroll gjenstår (TAX-001B).
+
+## Tillegg 15.10.2026 (TAX-001B)
+Seks originalfiler fra Codex' kildepakke er lest lokalt og er E1: rundskriv engangsavgift 2026 (T03), bruksfradragstabell (T07), vrakpantavgift (T20), vrakpantutbetaling (T09, omdefinert – ikke kilde til avgiften), Tolletatens importside (T21) og Merverdiavgiftshåndboken 2025 (T22). Pakkehash og versjon står i `docs/tax/sources.json`; filene ligger ikke i Git. Stortingsvedtak, forskrift, tollkurs og T10–T17 er fortsatt ikke lest.

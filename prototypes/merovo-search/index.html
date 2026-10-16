@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="nb">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Merovo – søkeskjema (forhåndsvisning)</title>
+  <link rel="icon" type="image/svg+xml" href="assets/merovo-symbol-original.svg">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#form">Hopp til skjemaet</a>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <img class="logo" src="assets/merovo-logo-horizontal-original.svg" alt="Merovo" width="157" height="40">
+      <span class="chip-preview">Forhåndsvisning</span>
+    </div>
+  </header>
+
+  <div class="preview-band" role="note" aria-label="Status for denne siden">
+    <div class="wrap band-inner">
+      <img class="band-symbol" src="assets/merovo-symbol-reversed.svg" alt="" width="46" height="40">
+      <div>
+        <p class="eyebrow">Forhåndsvisning – ingen søk sendes</p>
+        <p class="band-text">Dette er en lokal prototype av Merovos nye søkeskjema, laget for å prøve felt, krav og innkjøpsbudsjett. Skjemaet er ikke koblet til en datakilde, viser ingen treff og lagrer ingenting i appens database. Merke-, modell-, land- og sertifiseringslistene er demonstrasjonsutvalg, ikke en fullstendig katalog.</p>
+      </div>
+    </div>
+  </div>
+
+  <main class="wrap layout" id="main">
+    <div class="form-col">
+      <div class="intro">
+        <h1>Søk etter bil</h1>
+        <p class="lead">Beskriv bilen, velg krav og ønsker, og sett maksimal innkjøpskostnad til Norge. Alle felt er valgfrie. «Alle» betyr ingen begrensning.</p>
+        <div class="intro-actions">
+          <button type="button" class="btn btn-secondary" id="btn-example">Fyll ut GLS-eksempel (demo)</button>
+          <span class="hint">Demoverdier som kan endres fritt. De er eksempler, ikke bekreftede ønsker.</span>
+        </div>
+        <nav class="jump" aria-label="Hopp til seksjon" id="jump"></nav>
+      </div>
+      <noscript><p class="error-box">Forhåndsvisningen krever JavaScript. Ingenting sendes eller lagres.</p></noscript>
+      <form id="form" novalidate autocomplete="off" aria-label="Søkeutkast"></form>
+    </div>
+
+    <aside id="summary" class="summary" aria-labelledby="summary-title"></aside>
+  </main>
+
+  <div id="mobilebar" class="mobilebar">
+    <div class="mobilebar-text" id="mobilebar-text" aria-live="polite"></div>
+    <button type="button" class="btn btn-primary" id="mobilebar-toggle" aria-expanded="false" aria-controls="summary">Vis oppsummering</button>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/logic.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

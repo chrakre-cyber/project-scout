@@ -1,0 +1,21 @@
+migrasjon anvendt: 20261005090000_dev002_tenancy_and_agents.sql
+psql:supabase/migrations/20261006090000_dev004_agent_validation.sql:168: NOTICE:  DEV-004: 0 aktiv(e) agent(er) uten komplette krav ble pauset
+migrasjon anvendt: 20261006090000_dev004_agent_validation.sql
+migrasjon anvendt: 20261006100000_qa001_fix_active_limit_trigger.sql
+migrasjon anvendt: 20261007090000_dev005_search_runs.sql
+migrasjon anvendt: 20261008090000_dev005b0_rights_retention.sql
+migrasjon anvendt: 20261009090000_dev005b0_rights_visibility.sql
+migrasjon anvendt: 20261015090000_search005_search_drafts.sql
+OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret (ede2d5aeb48883beaffd5fd08767bed5)
+(!) Your Vite config uses features that are unsupported by `configLoader: 'native'`, which is planned to become the default in a future major version of Vite:
+  - ESM syntax in a file loaded as CommonJS (vitest.db.config.ts:1:1). Use a `.mjs` extension or set `"type": "module"` in the closest package.json
+Set `VITE_CONFIG_NATIVE_IGNORE_WARNING=true` to suppress this warning.
+
+ RUN  v5.0.3 /home/user/project-scout
+
+
+ Test Files  2 passed (2)
+      Tests  83 passed (83)
+   Start at  15:53:30
+   Duration  2.58s (tests 82%, transform 13%, import 6%)
+

@@ -1,0 +1,2470 @@
+{
+ "schema": "merovo.tax.rules-register",
+ "version": "TAX-001E/1",
+ "researchDate": "2026-10-15",
+ "note": "DOKUMENTASJON, ikke produksjonsregler eller godkjent regelsett. TAX-001B: seks originale kilder lest lokalt (E1/E1P). E1 = dokumentert regeltekst i lest primærkilde; det betyr IKKE godkjent parameter. Godkjenning (usableAsRuleParameter=true) krever eksplisitt parameterApproval, se approvalRequirements. Ingen regel er godkjent.",
+ "evidenceLevels": {
+  "E0": "ikke undersøkt",
+  "E1": "primærkilde lest direkte og påstandene i regelens e1Findings er dekket av lest tekst (kilde, versjon, avsnitt, lesedato)",
+  "E1P": "delvis: avgrensede påstander er E1 (e1Findings), resten er fortsatt E2/uavklart (openQuestions)",
+  "E2": "sammendrag fra søkeverktøy av offisiell side (ikke lest) – lead, ikke kontrollert grunnlag",
+  "E3": "sekundærkilde – avvist som grunnlag",
+  "E1X": "primærkilde verifisert eksternt av Christian/Codex 2026-10-16; fakta mottatt som sammendrag i oppdraget (TAX-001D). Kildefil/hash er IKKE levert og Claude har IKKE lest kilden selv. Svakere enn E1; kan ikke alene godkjenne parameter."
+ },
+ "rules": [
+  {
+   "id": "R-OTA-000",
+   "component": "Oversikt",
+   "title": "Rekkefølge og sammensetning av avgifter ved import",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "avgiftsgruppe",
+    "drivlinje",
+    "registreringsdato"
+   ],
+   "formulaStructure": "Engangsavgift + import-mva. + vrakpant + klimagassavgift (Skatteetaten oversikt); toll normalt 0 for bil fra EU/EØS-kontekst (IKKE undersøkt)",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ukjent. Virkningsdatoer må leses per komponent."
+   },
+   "sources": [
+    {
+     "id": "T01"
+    },
+    {
+     "id": "T08"
+    }
+   ],
+   "evidenceLevel": "E2",
+   "status": "ikke_primærkontrollert",
+   "leads": [
+    {
+     "claim": "Import av kjøretøy gir engangsavgift, merverdiavgift, vrakpant og klimagassavgift (sammendrag av Skatteetaten-sider).",
+     "source": "T01/T08",
+     "note": "Tollsats ikke undersøkt."
+    }
+   ],
+   "openQuestions": [
+    "Toll (tollsats) for personbil/varebil importert fra EU/EØS: ikke kartlagt.",
+    "Registrerings-/merkegebyrer hos Statens vegvesen: ikke kartlagt."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": []
+  },
+  {
+   "id": "R-IMP-VAT-001",
+   "component": "Import-mva.",
+   "title": "Norsk import-mva.: sats og grunnlag",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "tollverdi (NOK)",
+    "engangsavgift (inngår i grunnlaget?)",
+    "kjøretøyprofil (elbil-fritak)"
+   ],
+   "formulaStructure": "mva = sats × grunnlag; sats og grunnlagets sammensetning skal leses fra primærkilde",
+   "amountUnitAndRounding": "25 % av tollverdi (E1X, eksternt verifisert). Avrunding og øre: IKKE KONTROLLERT. Ikrafttredelse: ikke oppgitt.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Sats-/grunnlagsdato ikke lest."
+   },
+   "sources": [
+    {
+     "id": "T01"
+    },
+    {
+     "id": "T08",
+     "section": "import-mva."
+    },
+    {
+     "id": "T11"
+    },
+    {
+     "id": "T21"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_og_E1X_sats_og_grunnlag",
+   "leads": [
+    {
+     "claim": "Sammendrag: mva. 25 % av tollverdien for importerte kjøretøy.",
+     "source": "T08",
+     "note": "Universell 25 % skal ikke innføres uten kildekontroll (IMPORT_ENGINE_SPEC); elbil har egen regel (R-IMP-VAT-003)."
+    }
+   ],
+   "openQuestions": [
+    "Toll (tollsats) for bil: ikke gitt – grunnlaget «tollverdi + toll» fra tidligere ledetråd er derfor ikke avgjort.",
+    "Forhandlerbehandling (næringsdrivende deklarasjon/oppgjør) ikke gitt.",
+    "Tollkurs-dato (U-008), avrunding."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "Kjøretøy innført av privatperson deklareres og merverdiavgift betales til Tolletaten (ved grensen); deretter engangsavgift til Skatteetaten etter godkjenning; til slutt registrering hos Statens vegvesen. (Betalingsrekkefølge – ikke beregningsrekkefølge eller grunnlag.)",
+     "source": "T21",
+     "locator": "innledning, «Avgifter du må betale til Tolletaten»",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "governingEvent": "Innførsel/deklarasjon til Tolletaten",
+   "e1xFindings": [
+    {
+     "claim": "Mva. ved import av kjøretøy er 25 %; mva.-grunnlaget er tollverdien.",
+     "source": "T33",
+     "locator": "Bilimport (Tolletaten)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-IMP-VAT-002",
+   "component": "Tollverdi",
+   "title": "Tollverdi: kjøpspris + frakt + forsikring til norsk grense",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "kjøpspris i kontrakts-/fakturavaluta",
+    "frakt til norsk grense",
+    "forsikring til norsk grense",
+    "kurs"
+   ],
+   "formulaStructure": "tollverdi = kjøpspris + frakt til grensen + forsikring til grensen (sammendrag); frakt etter grensen inngår ikke",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikke lest."
+   },
+   "sources": [
+    {
+     "id": "T08"
+    },
+    {
+     "id": "T10"
+    },
+    {
+     "id": "T21"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_og_E1X_grunnlag",
+   "leads": [
+    {
+     "claim": "Tollverdi bygges av kjøpspris, frakt og forsikring til norsk grense (Skatteetaten og Tolletaten, sammendrag).",
+     "source": "T08/T10"
+    },
+    {
+     "claim": "For biler kjørt inn på egne hjul brukes Tolletatens sjablongfrakt per land, med rett til å dokumentere faktisk frakt (sammendrag).",
+     "source": "T10"
+    }
+   ],
+   "openQuestions": [
+    "Sjablongfrakt, transaksjonsgebyr og tollkurs (U-008) ikke gitt.",
+    "Gjelder «engangsavgift inngår ikke» også eksplisitt for mva.-grunnlaget? Slutning fra tollverdi-regelen; ikke separat bekreftet for import-mva. i forhandlerdeklarasjon."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "For nylig kjøpt bil beregnes avgiften ut fra kjøpesummen, frakt og forsikring; ellers må bilens verdi dokumenteres, og noen ganger kreves takst.",
+     "source": "T21",
+     "locator": "«Avgifter du må betale til Tolletaten»",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "governingEvent": "Innførsel/deklarasjon til Tolletaten (dato for tollkurs og tollverdi uavklart, se R-IMP-FX-001)",
+   "e1xFindings": [
+    {
+     "claim": "Transport og forsikring fram til norsk innførselssted inngår i tollverdien.",
+     "source": "T34",
+     "locator": "Incoterms/tollverdi",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Norske avgifter som oppstår etter innførsel (f.eks. engangsavgift ved registrering) inngår ikke i tollverdien bare fordi de oppstår senere.",
+     "source": "T34",
+     "locator": "Incoterms/tollverdi",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Mva.-grunnlaget er tollverdien.",
+     "source": "T33",
+     "locator": "Bilimport (Tolletaten)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Bekreftet på nytt (TAX-001E): tollverdi inkluderer kjøpesum pluss transport og forsikring til norsk innførselssted; senere norske avgifter blir ikke automatisk del av import-mva.-grunnlaget bare fordi de oppstår etter innførsel.",
+     "source": "T34",
+     "locator": "Incoterms/tollverdi",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ]
+  },
+  {
+   "id": "R-IMP-FX-001",
+   "component": "Valutakurs",
+   "title": "Tollkurs (Tolletatens kurs) kontra betalingskurs",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "valuta",
+    "tidspunkt/dato for kursvalg"
+   ],
+   "formulaStructure": "tollverdi i NOK = tollverdi i valuta × Tolletatens kurs; betalingskurs er egen kostnad",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ukjent."
+   },
+   "sources": [
+    {
+     "id": "T10"
+    },
+    {
+     "id": "T23"
+    },
+    {
+     "id": "T24"
+    }
+   ],
+   "evidenceLevel": "E2",
+   "status": "kildekonflikt",
+   "leads": [
+    {
+     "claim": "Tolletaten fastsetter kurs for én uke om gangen (sammendrag).",
+     "source": "T10"
+    },
+    {
+     "claim": "Kildene er uenige om hvilken dato som styrer kursen: tidspunkt tolldeklarasjon godtas, eller frigivelsestidspunkt.",
+     "source": "T10",
+     "note": "KILDEKONFLIKT i sammendragene."
+    },
+    {
+     "claim": "Sammendrag: tollverdi omregnes med Tolletatens kurs på det tidspunktet tollmyndighetene aksepterer deklarasjonen (vareførselsloven § 3-4 / tollavgiftsloven § 2-2).",
+     "source": "T24",
+     "note": "Primærtekst ikke lest. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    },
+    {
+     "claim": "Kurssyklus motstridende: «annenhver tirsdag, gyldig i to uker» (T23) mot eldre «ukentlig onsdag/mandag». Endringsforskrift 21.8.2026 til vareførselsforskriften § 6-12-1 åpner for deklarasjon 16–30 dager før innførsel.",
+     "source": "T23",
+     "note": "KILDEKONFLIKT (syklus). Ikke avgjort. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    }
+   ],
+   "openQuestions": [
+    "Hvilken dato styrer kursen?",
+    "Hvor hentes ukekursen (kilde-URL, format)?"
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": []
+  },
+  {
+   "id": "R-IMP-VAT-003",
+   "component": "Import-mva.",
+   "title": "Elbil: fritak/beløpsgrense for mva.",
+   "profiles": [
+    "PB-BEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "drivlinje = batterielektrisk",
+    "beløp fritaket regnes av",
+    "dato"
+   ],
+   "formulaStructure": "mva. beregnes bare på den delen av vederlaget/grunnlaget som overstiger grensen (sammendrag); grense avhenger av dato",
+   "amountUnitAndRounding": "Grense 300 000 kr (mva.-fritt); 25 % over grensen (E1X). «Kvalifiserende», anvendelse ved innførsel og avrunding: IKKE KONTROLLERT.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "300 000 kr-grensen gjelder fra 1.1.2026 (håndbok merket 2025-utgave). Videre nedtrapping/lov 19.6.2026: ikke avgjort."
+   },
+   "sources": [
+    {
+     "id": "T14"
+    }
+   ],
+   "evidenceLevel": "E1X",
+   "status": "delvis_E1X_300000_fra_2026-01-01",
+   "leads": [
+    {
+     "claim": "Videre nedtrapping (150 000 kr per år i 2027 og 2028 forutsatt ESA-godkjenning; regjeringen foreslo full mva. fra 2027) er FREMTIDIG/uenighet.",
+     "source": "T14"
+    }
+   ],
+   "openQuestions": [
+    "Eksplisitt anvendelse ved INNFØRSEL for forhandler er ikke gitt i pakken (regelen er oppgitt for kvalifiserende elbiler).",
+    "Hva som regnes som «kvalifiserende» elbil og hvilket beløp grensen måles mot ved import.",
+    "Lov av 19.6.2026: ikrafttredelse ukjent; ev. senere nedtrapping."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-16",
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "E1X (eksternt verifisert, ikke lest av Claude); krever E1-kildefil, klasse 1 og eksplisitt godkjenning"
+   },
+   "e1Findings": [],
+   "e1xFindings": [
+    {
+     "claim": "Fra 2026-01-01 er kvalifiserende elektriske personkjøretøy mva.-frie opptil 300 000 kr; 25 % mva. på beløp over 300 000 kr. Vektkomponenten i engangsavgiften er ikke del av dette mva.-grunnlaget.",
+     "source": "T35",
+     "locator": "Håndbok § 6-8",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-001",
+   "component": "Engangsavgift gruppe a",
+   "title": "Vektkomponent",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "egenvekt (kg, norsk definisjon)",
+    "avgiftsgruppe",
+    "drivlinje"
+   ],
+   "formulaStructure": "komponent = sats × (vekt over terskel) per sats-trinn; ny komponent for alle drivlinjer inkl. elbil fra 2026",
+   "amountUnitAndRounding": "Gruppe a 2026: 260 kr per kg over 1 200 kg (E1X). Gruppe b: se R-OTA-008. Avrunding og andre grupper: IKKE KONTROLLERT.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "Gruppe a 2026. Gruppe b-vekt er oppgitt bare til og med 2026-08-31 (R-OTA-008)."
+   },
+   "sources": [
+    {
+     "id": "T02"
+    },
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T04",
+     "section": "§ 3"
+    },
+    {
+     "id": "T26"
+    },
+    {
+     "id": "T30"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_og_E1X_gruppe_a_vekt",
+   "leads": [
+    {
+     "claim": "Bil med forbrenningsmotor: ny vektkomponent + generell engangsavgift (CO2/egenvekt); elbil: bare vektkomponent (Skatteetaten, sammendrag).",
+     "source": "T02"
+    },
+    {
+     "claim": "Lovdata-sammendrag av stortingsvedtaket (T04) viser vektsats i § 3 over 1 200 kg (260 kr/kg og 30 kr/kg nevnt uten tydelig gruppemapping).",
+     "source": "T04",
+     "note": "UBEKREFTET gruppemapping. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter] [LØST TAX-001E: gruppe a og b er nå separert (E1X)]"
+    },
+    {
+     "claim": "Stortingets oversikt (T26) gir CO2-tabell 800/1 600/3 200/5 000 kr for gruppe a – motsier Lovdata-sammendraget (450/600/1 200).",
+     "source": "T26",
+     "note": "KILDEKONFLIKT mellom sammendragene; ingen sats kan velges. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter] [LØST TAX-001E: gruppe a og b er nå separert (E1X)]"
+    }
+   ],
+   "openQuestions": [
+    "Vektsats for gruppe b fra 2026-09-01 er IKKE oppgitt (ukjent).",
+    "Satser for andre grupper, trinnvis/marginal beregning og styrende dato er ikke gitt.",
+    "Forskrift/stortingsvedtak er ikke lest av Claude (E1X)."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "Avgiften beregnes for personbil og varebil i gruppe a og b på grunnlag av egenvekt og CO2-utslipp; satsendringer og omstrukturering av satstabellene i § 3 ble gjort 1.1.2026.",
+     "source": "T03",
+     "locator": "3.1, 13.1.1",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": [
+    {
+     "claim": "Revidert 2026 (vedtak 1131/1132) endrer engangsavgiften for gruppe b med virkning fra 2026-09-01 (CO2-komponenten). Øvrig innhold er ikke gitt.",
+     "source": "T31",
+     "locator": "Vedtak 1131/1132",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Gruppe a 2026: vektkomponent 260 kr per kg over 1 200 kg.",
+     "source": "T30",
+     "locator": "Vedtak 220 (gruppe a)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ],
+   "datedParameters": [
+    {
+     "id": "DP-WEIGHT-A-2026",
+     "series": "WEIGHT-A",
+     "group": "a",
+     "component": "Vektkomponent, avgiftsgruppe a",
+     "from": "2026-01-01",
+     "to": null,
+     "unit": "NOK per kg over terskel",
+     "thresholdKg": 1200,
+     "rate": 260,
+     "evidence": "E1X",
+     "beforeFrom": "UKJENT – tiden før fra-datoen er ikke dokumentert for denne parameteren (skal gi not_calculated)",
+     "afterTo": null,
+     "legalRule": "Gruppe a 2026: 260 kr/kg over 1 200 kg.",
+     "implementationAssumptionsNotApproved": [
+      "Om regelen endres for gruppe a etter 2026-09-01 er IKKE oppgitt (to=null betyr «ingen endring dokumentert», ikke «bekreftet ut året»)",
+      "Styrende hendelsesdato og rekkefølge mot bruksfradrag er ikke gitt",
+      "Plug-in hybrid: vektfradrag-spørsmålet (U-005) er åpent"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-002",
+   "component": "Engangsavgift gruppe a",
+   "title": "CO2-komponent",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV"
+   ],
+   "inputs": [
+    "CO2 g/km",
+    "testmetode (WLTP/NEDC)",
+    "kilde i vognkort/typegodkjenning"
+   ],
+   "formulaStructure": "komponent = sats-trapp over CO2-bånd; CO2 fra registrert verdi, ellers anslag",
+   "amountUnitAndRounding": "Gruppe a 2026: 800/1 600/3 200/5 000 kr per g/km for 0–100/101–150/151–225/>225 (E1X). Gruppe b: se R-OTA-008. NEDC-faktor 1,24 (a/j), 1,22 (b) (E1X, stemmer med rundskriv 3.2.5). Avrunding og andre grupper: IKKE KONTROLLERT.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "Gruppe a 2026 uten dokumentert endring; gruppe b har egen datosplitt (R-OTA-008)."
+   },
+   "sources": [
+    {
+     "id": "T02"
+    },
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T04",
+     "section": "§ 3"
+    },
+    {
+     "id": "T05"
+    },
+    {
+     "id": "T30"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_og_E1X_gruppe_a_og_b",
+   "leads": [
+    {
+     "claim": "Hvis Statens vegvesen har registrert CO2, brukes den som hovedregel.",
+     "source": "T02"
+    },
+    {
+     "claim": "CO2-trinn 0–100/101–150/>150 g/km = 450/600/1 200 kr er sitert i Lovdata-sammendrag uten gruppe; 2025-vedtaket har eget fradrag under 70 g/km.",
+     "source": "T04",
+     "note": "Gruppe, årgang og overgang ukjent. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter] [LØST TAX-001E: gruppe a og b er nå separert (E1X)]"
+    }
+   ],
+   "openQuestions": [
+    "Overgangsregler ved registrering nær årsskifte.",
+    "Gruppe a/b-satser er E1X, ikke E1 (ingen kildefil/hash).",
+    "Trinnvis/marginal beregning, styrende hendelsesdato, avrunding og samspill med bruksfradrag er ikke gitt.",
+    "Satser for andre avgiftsgrupper (c, j …) er ikke gitt."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "CO2 hentes for WLTP-kjøretøy fra samsvarssertifikat (CoC); satstabellen i stortingsvedtaket brukes direkte for WLTP.",
+     "source": "T03",
+     "locator": "3.2.5",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "NEDC-godkjente kjøretøy: registrert CO2 justeres opp med fast faktor, 24 % i gruppe a og j og 22 % i gruppe b, før satstabellen.",
+     "source": "T03",
+     "locator": "3.2.5",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "EPA/NRCan-målt CO2 beregnes som WLTP.",
+     "source": "T03",
+     "locator": "3.2.5",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Målemetode ukjent: første registrering i utlandet før 1.9.2018 → NEDC-behandling; fra og med 1.9.2018 eller ikke tidligere registrert → WLTP.",
+     "source": "T03",
+     "locator": "3.2.5",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Uten plikt til å oppgi CO2: anslått CO2 = egenvekt/10 (se R-OTA-004).",
+     "source": "T03",
+     "locator": "3.2.6",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": [
+    {
+     "claim": "CO2-komponenten for gruppe b er endret med virkning fra 2026-09-01 (450/600/1 200 kr per g/km); satser for gruppe a er ikke verifisert.",
+     "source": "T31",
+     "locator": "Vedtak 1131/1132",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Gruppe a 2026: CO2 0–100 g/km 800 kr/g, 101–150 g/km 1 600, 151–225 g/km 3 200, over 225 g/km 5 000.",
+     "source": "T30",
+     "locator": "Vedtak 220 (gruppe a)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    },
+    {
+     "claim": "§ 3-1: WLTP-kjøretøy bruker relevant kombinert CO2-verdi; der forskriften anvender NEDC-omregning er faktoren 1,24 for gruppe a/j og 1,22 for gruppe b.",
+     "source": "T05",
+     "locator": "Forskrift § 3-1",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ],
+   "datedParameters": [
+    {
+     "id": "DP-CO2-A-2026",
+     "series": "CO2-A",
+     "group": "a",
+     "component": "CO2-komponent, avgiftsgruppe a",
+     "from": "2026-01-01",
+     "to": null,
+     "unit": "NOK per g/km",
+     "bands": [
+      {
+       "fromGramKm": 0,
+       "toGramKm": 100,
+       "rate": 800
+      },
+      {
+       "fromGramKm": 101,
+       "toGramKm": 150,
+       "rate": 1600
+      },
+      {
+       "fromGramKm": 151,
+       "toGramKm": 225,
+       "rate": 3200
+      },
+      {
+       "fromGramKm": 226,
+       "toGramKm": null,
+       "rate": 5000
+      }
+     ],
+     "evidence": "E1X",
+     "beforeFrom": "UKJENT – tiden før fra-datoen er ikke dokumentert for denne parameteren (skal gi not_calculated)",
+     "afterTo": null,
+     "legalRule": "Gruppe a 2026 CO2-satser.",
+     "implementationAssumptionsNotApproved": [
+      "Trinnvis (marginal) eller flat sats i hvert intervall er IKKE gitt",
+      "Om gruppe a endres etter 2026-09-01 er IKKE oppgitt",
+      "Disse satsene må ikke brukes for gruppe b"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-003",
+   "component": "Engangsavgift",
+   "title": "NOx-komponenten er fjernet fra 1.1.2026",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "NOx mg/km"
+   ],
+   "formulaStructure": "ikke aktuelt hvis komponenten er avviklet",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "Overgang rundt årsskiftet ikke avklart."
+   },
+   "sources": [
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T02"
+    }
+   ],
+   "evidenceLevel": "E1",
+   "status": "dokumentert_E1_parameter_ikke_godkjent",
+   "leads": [],
+   "openQuestions": [
+    "T02 (oversiktsside) er ikke lest; sammendraget nevnte NOx i oversiktsteksten. Rundskrivet er entydig; T02 må avstemmes ved senere lesing."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "e1Findings": [
+    {
+     "claim": "«NOx-komponenten er fjernet med virkning fra 1. januar 2026.»",
+     "source": "T03",
+     "locator": "3.2.4 og 13.1.2",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": []
+  },
+  {
+   "id": "R-OTA-004",
+   "component": "Engangsavgift",
+   "title": "Slagvolum som grunnlag er avviklet for gruppe a, b, j fra 1.1.2026; erstattet av anslått CO2 = egenvekt/10",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "slagvolum",
+    "CO2 registrert?"
+   ],
+   "formulaStructure": "eldre regel: slagvolum når CO2 ikke er registrert",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "Rundskriv 2026."
+   },
+   "sources": [
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T05"
+    }
+   ],
+   "evidenceLevel": "E1",
+   "status": "dokumentert_E1_parameter_ikke_godkjent",
+   "leads": [],
+   "openQuestions": [
+    "Avrunding av egenvekt/10, og hva «egenvekt» er for utenlandsk bil (3.2.2: minimumsvekt fra europeisk typegodkjenning) – forskrift § 3-1 ikke lest."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "e1Findings": [
+    {
+     "claim": "Fra 1.1.2026 brukes ikke slagvolum som alternativt grunnlag for motorvogner i gruppe a, b og j uten plikt til å dokumentere CO2; i stedet anslått CO2 (g/km) = egenvekt i kg / 10.",
+     "source": "T03",
+     "locator": "3.2.6",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Slagvolum brukes fortsatt for campingbiler i gruppe c.",
+     "source": "T03",
+     "locator": "3.2.6",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": [
+    {
+     "claim": "Der relevant CO2-grunnlag mangler og lovfestet fallback gjelder, bygger fallback på egenvekt/10 (eksternt bekreftet; stemmer med rundskriv 3.2.6, E1).",
+     "source": "T05",
+     "locator": "Forskrift § 3-1",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-005",
+   "component": "Engangsavgift",
+   "title": "Ladbar hybrid: CO2-grunnlag og fradrag for elektrisk rekkevidde",
+   "profiles": [
+    "PB-PHEV",
+    "VB-PHEV"
+   ],
+   "inputs": [
+    "CO2 vektet kombinert (WLTP)",
+    "elektrisk rekkevidde km",
+    "avgiftsgruppe"
+   ],
+   "formulaStructure": "CO2-grunnlag = verdi i feltet «vektet kombinert» (ev. faktor); eventuelt fradrag i vektgrunnlag etter rekkevidde",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2022 (historisk lead)",
+    "to": null,
+    "note": "2026-gyldighet ukjent."
+   },
+   "sources": [
+    {
+     "id": "T05"
+    },
+    {
+     "id": "T19"
+    },
+    {
+     "id": "T03"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_og_E1X_co2_grunnlag_besvart_vektfradrag_uavklart",
+   "leads": [
+    {
+     "claim": "Eldre forskriftstekst: CO2 for ladbar hybrid tas fra «vektet kombinert»; for gruppe a og j multipliseres med 1,24.",
+     "source": "T05",
+     "note": "Kan være utdatert. [TAX-001E: «×1,24 for gruppe a og j» er NEDC-omregningsfaktoren (1,24 a/j; 1,22 b), ikke en PHEV-spesifikk faktor]"
+    },
+    {
+     "claim": "2022-forskrift: 10 % fradrag i vektgrunnlag ved ≥ 100 km elektrisk rekkevidde, proporsjonalt lavere under.",
+     "source": "T19",
+     "note": "2026-status ukjent."
+    },
+    {
+     "claim": "Lead om 10 % fradrag i vektgrunnlag ved ≥ 100 km elektrisk rekkevidde (2022-forskrift) er MOTSAGT for 2026 av rundskriv 3.3.11 (opphevet 1.1.2024).",
+     "source": "T03/T19",
+     "note": "Ikke bruk fradraget."
+    },
+    {
+     "claim": "Skatteetatens side (sammendrag) sier at ladbar hybrid får fradrag i vektavgiftsgrunnlaget på inntil 10 % (stortingsvedtaket § 8 og forskriften § 3-1).",
+     "source": "T05",
+     "note": "MOTSIER rundskriv 2026 punkt 3.3.11 (E1): vektfradraget for ladbare hybrider er opphevet fra 1.1.2024. Mulig utdatert sammendrag; uavklart. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    }
+   ],
+   "openQuestions": [
+    "Vektfradrag for ladbar hybrid: rundskriv 2026 punkt 3.3.11 (E1) sier opphevet fra 1.1.2024; et E2-søkesammendrag av Skatteetaten sier «inntil 10 %». Pakken i TAX-001E adresserer ikke dette, så motsigelsen er IKKE løst.",
+    "Forskrift § 3-1 gjelder CO2-grunnlag (vektet kombinert, besvart av E1X), ikke vektfradraget.",
+    "Elektrisk rekkevidde-regel (hvis noen) ikke gitt."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "e1Findings": [
+    {
+     "claim": "Vektfradraget for ladbare hybridbiler er opphevet med virkning fra 1. januar 2024.",
+     "source": "T03",
+     "locator": "3.3.11",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": [
+    {
+     "claim": "Ladbar hybrid bruker vektet kombinert CO2-verdi (§ 3-1).",
+     "source": "T05",
+     "locator": "Forskrift § 3-1",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-006",
+   "component": "Engangsavgift",
+   "title": "Ikke-ladbar hybrid: behandlet som forbrenningsbil?",
+   "profiles": [
+    "PB-HEV",
+    "VB-HEV"
+   ],
+   "inputs": [
+    "CO2",
+    "egenvekt"
+   ],
+   "formulaStructure": "samme som bensin/diesel hvis ingen egne regler",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ukjent."
+   },
+   "sources": [
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T05"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_ingen_regeltekst_funnet",
+   "leads": [
+    {
+     "claim": "Eldre regjeringsnotat (2019): ikke-ladbare hybrider behandles som forbrenningsbiler.",
+     "source": "T05",
+     "note": "Gammel kilde."
+    }
+   ],
+   "openQuestions": [
+    "Egne regler 2026 for mild/full hybrid?",
+    "Hvordan skilles ikke-ladbar hybrid fra plug-in i Statens vegvesen-data?",
+    "Behandling av ikke-ladbar hybrid er ikke dokumentert i lest materiale; antagelsen «som forbrenningsbil» (2019-lead) står ubekreftet."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "e1Findings": [
+    {
+     "claim": "Rundskrivet 2026 har ingen egen omtale av ikke-ladbar hybrid; ordet «hybrid» forekommer ellers bare i 3.3.11 (ladbar hybridbil).",
+     "source": "T03",
+     "locator": "tekstsøk i hele PDF",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": []
+  },
+  {
+   "id": "R-OTA-007",
+   "component": "Engangsavgift",
+   "title": "Batterielektrisk: kun vektkomponent",
+   "profiles": [
+    "PB-BEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "egenvekt"
+   ],
+   "formulaStructure": "vektkomponent uten CO2-komponent",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01 (lead)",
+    "to": null,
+    "note": "Se R-OTA-001."
+   },
+   "sources": [
+    {
+     "id": "T02"
+    },
+    {
+     "id": "T04"
+    },
+    {
+     "id": "T03"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_satser_mangler",
+   "leads": [
+    {
+     "claim": "Elbiler omfattes bare av vektkomponenten (sammendrag).",
+     "source": "T02"
+    }
+   ],
+   "openQuestions": [
+    "Vektkomponentens satser (stortingsvedtaket § 2) ikke lest.",
+    "Konsekvens av lest tekst: elektrisk varebil klasse 2 (gruppe b) → ingen engangsavgift; elektrisk personbil og varebil klasse 1 (gruppe a) → engangsavgift. Avhenger av korrekt klassifisering (SVV)."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "e1Findings": [
+    {
+     "claim": "Fritaket for elektriske motorvogner er opphevet fra 1.1.2023; elektriske motorvogner i avgiftsgruppe a betaler engangsavgift etter stortingsvedtaket § 2.",
+     "source": "T03",
+     "locator": "6.12",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Elektriske motorvogner i andre grupper enn a betaler ikke engangsavgift, fordi § 3 bare ilegges motorvogner med stempeldrevet forbrenningsmotor.",
+     "source": "T03",
+     "locator": "6.12",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": []
+  },
+  {
+   "id": "R-OTA-008",
+   "component": "Engangsavgift gruppe b",
+   "title": "Varebil klasse 2: sammensetning og satser",
+   "profiles": [
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "avgiftsgruppe b bekreftet",
+    "egenvekt",
+    "CO2"
+   ],
+   "formulaStructure": "b: vektkomponent + CO2-komponent (sammendrag av § 3 b i stortingsvedtaket)",
+   "amountUnitAndRounding": "Gruppe b: 2026-01-01–08-31: vekt 30 kr/kg >1 200 kg; CO2 300/600/1 200 kr per g/km (0–100/101–150/>150). Fra 2026-09-01: CO2 450/600/1 200; vekt fra 09-01 UKJENT (E1X). Avrunding: IKKE KONTROLLERT.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "Gruppe b har to perioder: til og med 2026-08-31 og fra 2026-09-01 (CO2). Vekt er oppgitt bare til 2026-08-31."
+   },
+   "sources": [
+    {
+     "id": "T04",
+     "section": "§ 3 b"
+    },
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T27"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_og_E1X_gruppe_b_to_perioder",
+   "leads": [
+    {
+     "claim": "Komitéinnstilling omtaler forslag om at CO2-komponenten for varebil skal være 50 % av personbil; ikke bekreftet vedtatt.",
+     "source": "T27",
+     "note": "Ikke avgjort om gruppe b ble endret. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    }
+   ],
+   "openQuestions": [
+    "Vektsats gruppe b fra 2026-09-01 er ikke oppgitt (ukjent).",
+    "Trinnvis/marginal beregning og styrende hendelsesdato (registrering/innførsel) er ikke gitt.",
+    "Forskrift § 2-3 (klassifisering varebil klasse 2) ikke adressert.",
+    "Hvilken dato som styrer hvilken sats ved innførsel før og registrering etter 1.9.2026."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "Varebil klasse 2 er en ren avgiftsmessig definisjon (gruppe b) med lavere avgift; vilkår i forskrift § 2-3 (lasterom, beskyttelsesvegg); Statens vegvesen avgjør klassifiseringen.",
+     "source": "T03",
+     "locator": "3.3.3.1–3.3.3.2",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": [
+    {
+     "claim": "Avgiftsgruppe b, fra 2026-09-01: CO2-sats 450 kr per g/km (0–100 g/km), 600 kr (101–150), 1 200 kr (over 150).",
+     "source": "T31",
+     "locator": "Vedtak 1131/1132 (revidert 2026)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Grunnvedtaket for 2026 er Vedtak 220.",
+     "source": "T30",
+     "locator": "Vedtak 220",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Gruppe b 2026-01-01–2026-08-31: vektkomponent 30 kr/kg over 1 200 kg; CO2 0–100 g/km 300 kr/g, 101–150 600, over 150 1 200.",
+     "source": "T30",
+     "locator": "Vedtak 220 (gruppe b)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ],
+   "datedParameters": [
+    {
+     "id": "DP-WEIGHT-B-2026-01-01",
+     "series": "WEIGHT-B",
+     "group": "b",
+     "component": "Vektkomponent, avgiftsgruppe b",
+     "from": "2026-01-01",
+     "to": "2026-08-31",
+     "unit": "NOK per kg over terskel",
+     "thresholdKg": 1200,
+     "rate": 30,
+     "evidence": "E1X",
+     "beforeFrom": "UKJENT – tiden før fra-datoen er ikke dokumentert for denne parameteren (skal gi not_calculated)",
+     "afterTo": "UKJENT – vektsats for gruppe b fra 2026-09-01 er ikke oppgitt (ikke anta 30)",
+     "legalRule": "Gruppe b 2026-01-01 til og med 2026-08-31: 30 kr/kg over 1 200 kg.",
+     "implementationAssumptionsNotApproved": [
+      "Vektsats fra 2026-09-01 er ukjent: skal gi not_calculated, ikke 30"
+     ]
+    },
+    {
+     "id": "DP-CO2-B-2026-01-01",
+     "series": "CO2-B",
+     "group": "b",
+     "component": "CO2-komponent, avgiftsgruppe b",
+     "from": "2026-01-01",
+     "to": "2026-08-31",
+     "unit": "NOK per g/km",
+     "bands": [
+      {
+       "fromGramKm": 0,
+       "toGramKm": 100,
+       "rate": 300
+      },
+      {
+       "fromGramKm": 101,
+       "toGramKm": 150,
+       "rate": 600
+      },
+      {
+       "fromGramKm": 151,
+       "toGramKm": null,
+       "rate": 1200
+      }
+     ],
+     "evidence": "E1X",
+     "beforeFrom": "UKJENT – tiden før fra-datoen er ikke dokumentert for denne parameteren (skal gi not_calculated)",
+     "afterTo": "dekket av DP-CO2-B-2026-09-01",
+     "legalRule": "Gruppe b 2026-01-01 til og med 2026-08-31.",
+     "implementationAssumptionsNotApproved": [
+      "Trinnvis/marginal beregning og styrende hendelsesdato er IKKE gitt"
+     ]
+    },
+    {
+     "id": "DP-CO2-B-2026-09-01",
+     "component": "CO2-komponent, avgiftsgruppe b",
+     "from": "2026-09-01",
+     "to": null,
+     "unit": "NOK per g/km",
+     "bands": [
+      {
+       "fromGramKm": 0,
+       "toGramKm": 100,
+       "rate": 450
+      },
+      {
+       "fromGramKm": 101,
+       "toGramKm": 150,
+       "rate": 600
+      },
+      {
+       "fromGramKm": 151,
+       "toGramKm": null,
+       "rate": 1200
+      }
+     ],
+     "evidence": "E1X",
+     "beforeFrom": "dekket av DP-CO2-B-2026-01-01 (til og med 2026-08-31)",
+     "legalRule": "Satsene er vedtatt for gruppe b fra 2026-09-01.",
+     "implementationAssumptionsNotApproved": [
+      "Om bånd regnes trinnvis (marginalt) eller som flat sats i hvert intervall er IKKE gitt",
+      "Hvilken dato som styrer (registrering eller innførsel) er IKKE gitt",
+      "Om satsene gjelder varebil klasse 2 elbil/hybrid er IKKE gitt"
+     ],
+     "series": "CO2-B",
+     "group": "b",
+     "afterTo": null
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-009",
+   "component": "Kjøretøyklassifisering",
+   "title": "Varebil klasse 1/2, avgiftsgruppe og hvem som avgjør",
+   "profiles": [
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "teknisk klasse N1",
+    "seteplass bak førersete",
+    "fast skillevegg/lasterom (mål)",
+    "Statens vegvesens avgiftsgruppe"
+   ],
+   "formulaStructure": "klasse 2 = N1 uten sete bak fører (+ lastromkrav); klasse 1 = N1 som ikke oppfyller dette; klasse 2 → gruppe b, klasse 1 → gruppe a",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Definisjonene fra eldre versjon; gjeldende tekst må leses."
+   },
+   "sources": [
+    {
+     "id": "T05"
+    },
+    {
+     "id": "T15"
+    },
+    {
+     "id": "T03"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_forskrift_ikke_lest",
+   "leads": [
+    {
+     "claim": "Varebil klasse 2: N1 uten sete/sitteanordning bak føreren; pick-up-regel om lasteplan; klasse 1 faller i gruppe a. Statens vegvesen avgjør klassifiseringen og vedtaket kan påklages.",
+     "source": "T05/T15",
+     "note": "Sammendrag av eldre rundskriv og forskrift."
+    }
+   ],
+   "openQuestions": [
+    "Gjeldende presis definisjon, målekrav til lasterom.",
+    "Hva dokumenterer klassen (vognkort, typegodkjenning, vegvesenvedtak) for utenlandsk bil som ennå ikke er registrert i Norge?",
+    "Hvordan påvirker ombygging klassifiseringen, og hvilke kostnader/godkjenninger gjelder?",
+    "Teknisk klassifisering (kjøretøyets kode) er ikke det samme som avgiftsbehandling; implementasjon må holde dem adskilt og hente avgiftsgruppe fra kodeverk + vedtak, ikke fra karosseri.",
+    "Hele kodelisten er ikke gitt."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "Statens vegvesen avgjør i første instans avgiftsmessig klassifisering (forskrift § 2-1); kan påklages til Skattedirektoratet via SVV.",
+     "source": "T03",
+     "locator": "3.3.1",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Varebil klasse 1 er N1 som ikke oppfyller kravene til varebil klasse 2; personbil (M1) har inntil åtte seter i tillegg til fører. Busser under 6 m med inntil 17 seter hører til gruppe a (klasse 1) eller j (klasse 2).",
+     "source": "T03",
+     "locator": "3.3.2",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Obligatorisk enkeltgodkjenning på trafikkstasjon av bruktimporterte kjøretøy før beregning og forhåndsbetaling av engangsavgiften; SVV leverer tekniske grunnlagsdata.",
+     "source": "T03",
+     "locator": "3.1",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Avgiftsplikt oppstår primært ved første gangs registrering i Kjøretøyregisteret.",
+     "source": "T03",
+     "locator": "2.1.1",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": [
+    {
+     "claim": "Statens vegvesens kodeverk AVGIFT finnes som offisielt kodesystem; kode 315 = Varebil klasse 2, fortollet etter 31.3.2001.",
+     "source": "T15",
+     "locator": "Kodeverk AVGIFT",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-010",
+   "component": "Bruksfradrag",
+   "title": "Ordinært bruksfradrag: tabellmetode",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "første utenlandske registreringsdato (dag/måned)",
+    "planlagt norsk registreringsdato",
+    "grunnlaget fradraget gjelder"
+   ],
+   "formulaStructure": "fradrag = prosent (alder) av beregnet engangsavgift; alder = tid fra første utenlandske registrering til første norske registrering",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Tabellens ikrafttredelse ikke dokumentert i filen; endret 1.1.2024 (ett ekstra trinn)."
+   },
+   "sources": [
+    {
+     "id": "T06"
+    },
+    {
+     "id": "T07"
+    },
+    {
+     "id": "T04",
+     "section": "§ 4"
+    },
+    {
+     "id": "T03"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_tabell_ikke_avstemt_mot_forskrift",
+   "leads": [
+    {
+     "claim": "Standardiserte prosentsatser etter alder; alternativ individuell metode finnes (utenfor første motor).",
+     "source": "T06"
+    },
+    {
+     "claim": "Lovdata-sammendrag av § 3-3 viser trappen 16 % (>9 mnd), 17 % (>10), 18 % (>11) … 100 % (≥ 20 år) – samsvarer med T07 for de viste trinnene.",
+     "source": "T05",
+     "note": "Sammendraget oppgir at forskriften sist ble endret i 2026; tekstutdraget kan være eldre. Ikke avstemt trinn for trinn (U-002 uløst). [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    }
+   ],
+   "openQuestions": [
+    "Forskrift § 3-3 ikke lest: tabellen er ikke avstemt mot forskriftstekst.",
+    "Uavklart språkforskjell U-002 (production vs første registrering).",
+    "Gjelder månedstrinn samme dato-til-dato-prinsipp som rundskrivets årseksempel?",
+    "Reduseres vrakpantavgift av bruksfradrag? (se R-IMP-OTH-001)"
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "Ordinært bruksfradrag gis som prosentvis fradrag i den utregnede avgiften etter tabell i forskrift § 3-3 (4.3). Alder regnes fra første gangs registrering i utlandet til registrering i Norge, dato til dato (4.2).",
+     "source": "T03",
+     "locator": "4.2–4.3",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Tabellen (41 trinn) fra 2 % ved 1 måned til 100 % ved 20 år er transkribert fra Skatteetatens engelske satsside (bruksfradrag-tabell-T07.json).",
+     "source": "T07",
+     "locator": "tabell",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "tableRef": "bruksfradrag-tabell-T07.json",
+   "e1xFindings": [
+    {
+     "claim": "Ordinært bruksfradrag er aldersbasert; relevant periode er første registrering i utlandet til første registrering i Norge; tabellen går til 100 % ved 20 år.",
+     "source": "T32",
+     "locator": "Deduction for use + tabellside",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Tabellen går til 100 % ved 20 år (også bekreftet eksternt for T07; T07 er i tillegg lest lokalt, E1).",
+     "source": "T32",
+     "locator": "Deduction for use table (T07)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-011",
+   "component": "Bruksfradrag",
+   "title": "Aldersgrense 20 år / fritak",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "alder ved norsk registrering"
+   ],
+   "formulaStructure": "kjøretøy ≥ 20 år: ingen engangsavgift (sammendrag)",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2024-01-01 (lead)",
+    "to": null,
+    "note": "Sammenheng med Stortingsvedtakets pkt. 9 bokstav p (avvikling) uklar."
+   },
+   "sources": [
+    {
+     "id": "T06"
+    },
+    {
+     "id": "T07"
+    },
+    {
+     "id": "T03"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_forskrift_ikke_lest",
+   "leads": [],
+   "openQuestions": [
+    "Språkforskjell U-002.",
+    "Forskrift § 3-3 tredje ledd ikke lest."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "e1Findings": [
+    {
+     "claim": "Fritaket for kjøretøy ≥ 20 år i stortingsvedtaket er opphevet fra 1.1.2024; kjøretøyet innvilges i stedet 100 % bruksfradrag (forskrift § 3-3).",
+     "source": "T03",
+     "locator": "6.21",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "En motorvogn anses 20 år 1. januar i det året det har gått 20 år siden første gangs registrering; åpenbart ≥ 20 år gamle kjøretøy kan behandles etter produksjonsår.",
+     "source": "T03",
+     "locator": "6.21",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Tabellen er utvidet med 20-årstrinn (100 %) fra 1.1.2024; siste trinn nås etter 1. januar-regelen, øvrige trinn på datoen (sideteksten bruker ordet «production»).",
+     "source": "T07",
+     "locator": "forklaringstekst",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": []
+  },
+  {
+   "id": "R-OTA-012",
+   "component": "Bruksfradrag",
+   "title": "Alternativ metode (individuell, pris og km)",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "pris og kilometerstand"
+   ],
+   "formulaStructure": "utenfor første motor",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "UTENFOR første motor."
+   },
+   "sources": [
+    {
+     "id": "T06"
+    }
+   ],
+   "evidenceLevel": "E1X",
+   "status": "utenfor_første_motor_E1X_dokumentert",
+   "leads": [
+    {
+     "claim": "Alternativ metode er individuell og dokumentkrevende.",
+     "source": "T06"
+    }
+   ],
+   "openQuestions": [
+    "Utenfor første motor. Detaljer (søknad, beregning, kjøretøy som omfattes) ikke gitt i denne pakken (rundskriv 4.4 er ikke lest i detalj)."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-16",
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "E1X (eksternt verifisert, ikke lest av Claude); krever E1-kildefil, klasse 1 og eksplisitt godkjenning"
+   },
+   "e1Findings": [],
+   "e1xFindings": [
+    {
+     "claim": "Alternativ beregning av bruksfradrag finnes og er bindende når den er valgt.",
+     "source": "T32",
+     "locator": "Deduction for use",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-OTA-013",
+   "component": "Fritak",
+   "title": "Fritak/særordninger i engangsavgiften",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "særskilt grunnlag"
+   ],
+   "formulaStructure": "ingen særordninger støttes i første motor",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikke kartlagt."
+   },
+   "sources": [
+    {
+     "id": "T05",
+     "section": "kap. IV"
+    },
+    {
+     "id": "T04"
+    }
+   ],
+   "evidenceLevel": "E2",
+   "status": "utenfor_første_motor",
+   "leads": [
+    {
+     "claim": "Fritak finnes (forskrift kap. IV); innhold ikke lest.",
+     "source": "T05"
+    }
+   ],
+   "openQuestions": [
+    "Hvilke fritak er relevante for forhandlerimport?"
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": []
+  },
+  {
+   "id": "R-IMP-OTH-001",
+   "component": "Vrakpantavgift (innbetaling ved første gangs registrering)",
+   "title": "Vrakpantavgift – del av engangsavgiften, betales ved registrering",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "kjøretøytype"
+   ],
+   "formulaStructure": "Fast beløp pr. kjøretøy etter avgiftsgruppe. Lette lastebiler som blir avgiftspliktige i gruppe b (a/c) svarer 2 400.",
+   "amountUnitAndRounding": "2 400 kr, fast beløp per kjøretøy i avgiftsgruppe a, b, c, g, j og k (rundskriv 3.4); 500 kr moped/motorsykkel; 3 000 kr campingvogn; 5 000 kr lastebil som ikke er avgiftspliktig i gruppe b. Heltall, ingen avrunding.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "Rundskriv 2026 (1. januar). Skatteetaten-siden viser 2026 valgt. Endring senere i 2026 ikke dokumentert."
+   },
+   "sources": [
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T20"
+    }
+   ],
+   "evidenceLevel": "E1",
+   "status": "dokumentert_E1_parameter_ikke_godkjent",
+   "leads": [],
+   "openQuestions": [
+    "Reduseres vrakpantavgiften av bruksfradrag for brukte kjøretøy? Lest tekst sier bruksfradrag gis «i den utregnede engangsavgiften» (4.1/4.3); vrakpantavgiften omtales som del av engangsavgiften, men at den omfattes av bruksfradrag er IKKE lest. Ikke avgjort.",
+    "Fritak etter stortingsvedtaket § 9 a–c gir også fritak for vrakpantavgift; relevans for forhandler ikke vurdert.",
+    "Uavhengig kalkulatorreferanse mangler."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "e1Findings": [
+    {
+     "claim": "Vrakpantavgift 2 400 kr ved første gangs registrering for motorvogner i avgiftsgruppe a, b, c, g, j, k.",
+     "source": "T03",
+     "locator": "3.4 (PDF-side 17)",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Satsside for vrakpantavgift viser 2 400 kr for person-, vare- og campingbiler og busser under 6 m; 500 mopeder/motorsykler; 3 000 campingvogner; 5 000 lastebiler. Årsvelger 2026 valgt.",
+     "source": "T20",
+     "locator": "satsside",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Vrakpantavgiften er en del av engangsavgiften og betales sammen med den etter godkjenning hos Statens vegvesen.",
+     "source": "T20",
+     "locator": "innledning",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "governingEvent": "Første gangs registrering i Kjøretøyregisteret (rundskriv 2.1.1 og 3.4); betales sammen med engangsavgiften (T20)",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Mangler klasse 1-referanse og godkjenning; bruksfradragsspørsmål åpent"
+   },
+   "e1xFindings": [
+    {
+     "claim": "Vrakpantavgift 2 400 kr (eksternt bekreftet, TAX-001E).",
+     "source": "T20",
+     "locator": "Vrakpantavgift",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ]
+  },
+  {
+   "id": "R-IMP-OTH-002",
+   "component": "Klimagassavgift",
+   "title": "Avgift på klimagass i kjøretøyets klimaanlegg",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "gasstype",
+    "mengde (gram/kg)"
+   ],
+   "formulaStructure": "avgift avhenger av type og mengde; typisk ca. 1 kg (sammendrag)",
+   "amountUnitAndRounding": "HFK-134a: 2 130,70 kr per kg ekskl. mva. (E1X). Andre gasser, GWP, mengde per kjøretøy og avrunding: IKKE KONTROLLERT.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikrafttredelse/gyldighetsår ikke oppgitt."
+   },
+   "sources": [
+    {
+     "id": "T08"
+    },
+    {
+     "id": "T25"
+    }
+   ],
+   "evidenceLevel": "E1X",
+   "status": "delvis_E1X_hfk134a",
+   "leads": [
+    {
+     "claim": "Avgift på klimagass; mengde ca. 1 kg for typisk personbil (sammendrag).",
+     "source": "T08"
+    },
+    {
+     "claim": "Sats for HFK/PFK: 1,639 kr pr. kg × GWP nevnt, og HFK-134a 2 130,70 kr/kg nevnt på en annen side. Gjelder klimaanlegg i importerte kjøretøy.",
+     "source": "T25",
+     "note": "KILDEKONFLIKT mellom sammendrag. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter] [LØST TAX-001E: 2 130,70 kr/kg for HFK-134a; 1,639 er sannsynligvis sats per GWP-enhet (1,639 × 1 300 = 2 130,7) – GWP-verdien er ikke levert som kilde]"
+    }
+   ],
+   "openQuestions": [
+    "Hvilken gass og mengde et konkret kjøretøy har (vehicle-specific; ukjent inntil dokumentert).",
+    "Satser for andre gasser og GWP-kilde.",
+    "Om elbil/varebil omfattes.",
+    "Ikrafttredelse."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-16",
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": [
+    {
+     "claim": "Klimagassavgift for HFK-134a er 2 130,70 kr per kg ekskl. mva.",
+     "source": "T25",
+     "locator": "Klimagassavgift",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ]
+  },
+  {
+   "id": "R-IMP-OTH-003",
+   "component": "Øvrige gebyr",
+   "title": "Registreringsgebyr, merker og lignende",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "—"
+   ],
+   "formulaStructure": "ikke kartlagt",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikke undersøkt."
+   },
+   "sources": [],
+   "evidenceLevel": "E2",
+   "status": "ikke_undersøkt",
+   "leads": [],
+   "openQuestions": [
+    "Hvilke gebyrer hos Statens vegvesen er obligatoriske ved førstegangsregistrering?",
+    "Omregistreringsavgift er en annen avgift og er ikke antatt relevant ved førstegangsregistrering."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": []
+  },
+  {
+   "id": "R-DED-001",
+   "component": "Fradragsrett",
+   "title": "Inngående mva. på personkjøretøy kjøpt/innført for videresalg",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "importørens mva.-registrering",
+    "bilen er salgsvare (lager)",
+    "dokumentasjon"
+   ],
+   "formulaStructure": "fradrag etter mval. § 8-4 første ledd bokstav a (unntak fra personkjøretøyforbudet) – gjelder også innførselsmva. (sammendrag)",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikke kontrollert."
+   },
+   "sources": [
+    {
+     "id": "T12"
+    },
+    {
+     "id": "T11"
+    },
+    {
+     "id": "T22"
+    },
+    {
+     "id": "T28"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_og_E1X_videresalg_unntak",
+   "leads": [
+    {
+     "claim": "Håndbok (sammendrag): tilbakeføring etter § 9-6 gjelder utleie/persontransport, ikke videresalg; eksport utløser ikke tilbakeføring; åtteårsregel.",
+     "source": "T28",
+     "note": "Vilkår for importørens videresalg ikke lest; forhandlerprofil ikke dokumentert. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    }
+   ],
+   "openQuestions": [
+    "Gjelder KUN anskaffelse for videresalg; ikke generalisert til utleie, privat bruk eller andre profiler.",
+    "Innførselsmva. spesielt, varebil, bindingstid/tilbakeføring og importørprofil er ikke gitt.",
+    "Utgaver: 2023 (E1X) og 2025 (E1)."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "Hovedregel: ingen fradragsrett for inngående avgift på personkjøretøy. Unntak etter mval. § 8-4 første ledd annet punktum bokstav a: anskaffelse av personkjøretøy for videresalg (kodifisert fra 1.3.2004).",
+     "source": "T22",
+     "locator": "«Unntak fra hovedregelen» – Videresalg",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Fradragsretten omfatter vedlikehold, reparasjoner og klargjøring, og drivstoff ved forflytning av salgsvarer fra lager/importsted til utsalgssted.",
+     "source": "T22",
+     "locator": "«Vedlikehold, reparasjoner, klargjøring»",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
+   },
+   "e1xFindings": [
+    {
+     "claim": "Inngående mva. på personkjøretøy kan fradragsføres når kjøretøyet anskaffes for videresalg; dette er et uttrykkelig unntak fra den ordinære fradragsbegrensningen for personkjøretøy.",
+     "source": "T36",
+     "locator": "Håndbok § 8-4.3 (utgave 2023)",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-DED-002",
+   "component": "Fradragsrett",
+   "title": "Tilbakeføring av fradragsført mva. (åtte år)",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "omdisponering"
+   ],
+   "formulaStructure": "tilbakeføring ved omdisponering de første åtte år",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Utenfor første motor."
+   },
+   "sources": [
+    {
+     "id": "T12",
+     "section": "M-9-6"
+    }
+   ],
+   "evidenceLevel": "E2",
+   "status": "utenfor_første_motor",
+   "leads": [
+    {
+     "claim": "§ 9-6: tilbakeføring ved omdisponering de første åtte årene.",
+     "source": "T12"
+    }
+   ],
+   "openQuestions": [],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": []
+  },
+  {
+   "id": "R-DED-003",
+   "component": "Salgs-mva.",
+   "title": "Salgs-mva. ved importørens salg av bruktimportert bil",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "salgsprofil"
+   ],
+   "formulaStructure": "utenfor budsjettmodellen (DEC-030); ikke del av TAX-001A",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Utenfor."
+   },
+   "sources": [
+    {
+     "id": "T13"
+    }
+   ],
+   "evidenceLevel": "E2",
+   "status": "utenfor_første_motor",
+   "leads": [],
+   "openQuestions": [],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": []
+  },
+  {
+   "id": "R-FOR-001",
+   "component": "Utenlandsk mva.",
+   "title": "Tyskland: skattefri utførsel til tredjeland (Norge)",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "land = DE",
+    "kjøper/mottaker",
+    "hvem transporterer",
+    "utførselsbevis med VIN"
+   ],
+   "formulaStructure": "netto eksportfaktura når vilkår og bevis er oppfylt",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Tysk rettsstilling per 2026 ikke kontrollert."
+   },
+   "sources": [
+    {
+     "id": "T16"
+    }
+   ],
+   "evidenceLevel": "E1X",
+   "status": "delvis_E1X_vilkår_ikke_gitt",
+   "leads": [
+    {
+     "claim": "Skattefri utførsel avhenger av hvem som flytter varen; ved selvhenting kreves utenlandsk kjøper. Utførselsbevis for registreringspliktige kjøretøy må inneholde VIN; vanligvis tollbekreftet utgang.",
+     "source": "T16"
+    }
+   ],
+   "openQuestions": [
+    "Lovens vilkår (Abholfall, bevis, utenlandsk kjøper) ikke gitt; ingen enkeltannonse kan antas å kvalifisere. Annonsepåstander, land eller «MwSt. ausweisbar» gir ikke netto eksportpris."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-16",
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "E1X (eksternt verifisert, ikke lest av Claude); krever E1-kildefil, klasse 1 og eksplisitt godkjenning"
+   },
+   "e1Findings": [],
+   "e1xFindings": [
+    {
+     "claim": "Kvalifiserende utførselsleveranser kan være mva.-fritatt; berettigelse avhenger av lovens vilkår (§ 4, § 6 UStG).",
+     "source": "T38",
+     "locator": "UStG § 4",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "Kvalifiserende utførselsleveranser kan være mva.-fritatt; berettigelse avhenger av lovens vilkår.",
+     "source": "T39",
+     "locator": "UStG § 6",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-FOR-002",
+   "component": "Utenlandsk mva.",
+   "title": "Tyskland: differansebeskatning (§ 25a UStG)",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "regime = margin",
+    "faktura viser ikke mva."
+   ],
+   "formulaStructure": "normal mva. kan ikke deles mekanisk ut av prisen",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikke kontrollert."
+   },
+   "sources": [
+    {
+     "id": "T17"
+    },
+    {
+     "id": "T29"
+    }
+   ],
+   "evidenceLevel": "E1X",
+   "status": "delvis_E1X_vilkår_ikke_gitt",
+   "leads": [
+    {
+     "claim": "Utførselsfritak består under differansebeskatning (sammendrag); vilkår: gjenselger av brukte gjenstander.",
+     "source": "T17",
+     "note": "Hva dette betyr for faktisk fakturabeløp er ikke avklart."
+    },
+    {
+     "claim": "UStH (sammendrag): § 25a krever bl.a. at gjenstanden er anskaffet i Fellesskapet uten mva. eller også med differansebeskatning; faktura må ha «Gebrauchtgegenstände/Sonderregelung».",
+     "source": "T29",
+     "note": "Forholdet til § 6-utførsel ikke avklart i sammendragene. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    }
+   ],
+   "openQuestions": [
+    "Vilkår, fakturakrav og forhold til § 6-utførsel ikke gitt; ingen enkeltannonse kan antas å være margin- eller nettoeksport uten at annonsen/kilden bekrefter det."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-16",
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "E1X (eksternt verifisert, ikke lest av Claude); krever E1-kildefil, klasse 1 og eksplisitt godkjenning"
+   },
+   "e1Findings": [],
+   "e1xFindings": [
+    {
+     "claim": "Tysk differansebeskatning finnes for kvalifiserende gjenselgertransaksjoner.",
+     "source": "T17",
+     "locator": "UStG § 25a",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ]
+  },
+  {
+   "id": "R-FOR-003",
+   "component": "Utenlandsk mva.",
+   "title": "Privat salg og ukjent regime",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "selgertype",
+    "regime"
+   ],
+   "formulaStructure": "ingen mva.-justering uten dokumentert regime; ingen skattekonklusjon fra annonsetekst",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Prosjektregel (CLAUDE.md pkt. 4, DEC-019)."
+   },
+   "sources": [],
+   "evidenceLevel": "E2",
+   "status": "prosjektregel",
+   "leads": [],
+   "openQuestions": [
+    "Tilstrekkelig dokumentasjon for privat salg."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1Findings": [],
+   "e1xFindings": []
+  },
+  {
+   "id": "R-FOR-004",
+   "component": "Utenlandsk mva.",
+   "title": "Landdekning utover Tyskland",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "land"
+   ],
+   "formulaStructure": "støttes ikke uten egen kilde per land",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Bare Tyskland har lead-kilder (T16/T17)."
+   },
+   "sources": [
+    {
+     "id": "T16"
+    }
+   ],
+   "evidenceLevel": "E2",
+   "status": "ikke_undersøkt",
+   "leads": [],
+   "openQuestions": [
+    "Hvilke land skal støttes først (Østerrike, Nederland, Belgia, Frankrike …)?",
+    "Bekreftede enkelttilbud fra andre land kan representeres som dokumentert tilbud uten landregel (se purchase-basis.md)."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "e1Findings": [],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke primærkontrollert (E2/E0)"
+   },
+   "e1xFindings": []
+  },
+  {
+   "id": "R-SCR-PAY-001",
+   "component": "Vrakpantutbetaling (ved skroting)",
+   "title": "Vrakpant som utbetales til biloppsamlingsplass ved skroting – UTENFOR importkostnaden",
+   "profiles": [],
+   "inputs": [],
+   "formulaStructure": "Ingen: utbetaling ved skroting er ikke et element i innkjøps- eller importkostnad og trekkes ikke fra kjøpspris.",
+   "amountUnitAndRounding": "3 000 kr for personbil, varebil, campingbil, campingvogn, snøscooter og minibuss/buss under 6 m; 500 kr moped/motorsykkel (utbetaling, 2026 valgt i lest side).",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "Årsvelger 2026; irrelevant for beregningen."
+   },
+   "sources": [
+    {
+     "id": "T09"
+    }
+   ],
+   "evidenceLevel": "E1",
+   "status": "utenfor_beregning_begrepsskille",
+   "leads": [],
+   "e1Findings": [
+    {
+     "claim": "Vrakpant er beløpet som mottas av biloppsamlingsplassen ved skroting (3 000 kr for flere kjøretøytyper). Beløpsforskjellen mot vrakpantavgift (2 400) er ikke en satskonflikt.",
+     "source": "T09",
+     "locator": "ingress og Oppsummert",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "openQuestions": [],
+   "usableAsRuleParameter": false,
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Ikke en kostnadskomponent"
+   },
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "governingEvent": "Skroting/avregistrering – irrelevant for innkjøpsberegning",
+   "e1xFindings": []
+  },
+  {
+   "id": "R-IMP-REF-001",
+   "component": "Refusjon av utenlandsk mva.",
+   "title": "Refusjon av utenlandsk mva. er en sak mellom kjøper og selger – ikke et sikkert netto kjøpsgrunnlag",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "kjøpsbekreftelse (brutto/netto)",
+    "refusjonsstatus (agreed|conditional)"
+   ],
+   "formulaStructure": "Tolletaten behandler ikke refusjonen. Brutto betalt med senere refusjon: kjøpsgrunnlag = betalt beløp, med mindre dokumentert netto faktura/kjøpsbekreftelse foreligger; avtalt tilbakebetalingskrav → bekreftet inndekning i betalingsforløp; betinget refusjon → bare scenario.",
+   "amountUnitAndRounding": "Ingen beløp (strukturell regel). Refusjonsbeløp kommer fra kjøpsbekreftelsen.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Tolletatens side oppdatert 5.2.2026 (privatperson-side)."
+   },
+   "sources": [
+    {
+     "id": "T21"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_tolletatens_posisjon",
+   "leads": [],
+   "e1Findings": [
+    {
+     "claim": "«Refusjon av utenlandsk merverdiavgift er en sak mellom kjøper og selger. Tolletaten har ingenting med dette å gjøre.»",
+     "source": "T21",
+     "locator": "Merk-boks før «Ankomst grensen»",
+     "readDate": "2026-10-15"
+    }
+   ],
+   "openQuestions": [
+    "Selgerlandets regler for utbetaling/refusjon er ikke lest (T16/T17).",
+    "Om en konkret avtale er depositum/tilbakebetalingskrav eller betinget refusjon må dokumenteres per tilbud.",
+    "Siden gjelder privatpersoner; forhandlerens stilling overfor Tolletaten er ikke lest."
+   ],
+   "usableAsRuleParameter": false,
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Delvis E1"
+   },
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-15",
+   "governingEvent": "Kjøpsbekreftelse (avtalens innhold)",
+   "e1xFindings": []
+  },
+  {
+   "id": "R-FOR-005",
+   "component": "Utenlandsk mva.",
+   "title": "Tyskland: regelsats for mva. (§ 12 UStG)",
+   "profiles": [],
+   "inputs": [
+    "salgsland"
+   ],
+   "formulaStructure": "Brutto = netto × (1 + sats) bare når dokumentert regime er ordinær lokal mva. (se purchase-basis.md); sats bestemmes ikke av land alene.",
+   "amountUnitAndRounding": "19 % regelsats (E1X). Redusert sats, avrunding og ikrafttredelse: IKKE KONTROLLERT.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Gjeldende ved verifisering 2026-10-16; ikrafttredelse ikke oppgitt."
+   },
+   "sources": [
+    {
+     "id": "T37"
+    }
+   ],
+   "evidenceLevel": "E1X",
+   "status": "E1X_regelsats",
+   "leads": [],
+   "e1Findings": [],
+   "e1xFindings": [
+    {
+     "claim": "Regelsatsen for mva. er 19 %.",
+     "source": "T37",
+     "locator": "UStG § 12",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    }
+   ],
+   "openQuestions": [
+    "Om en konkret annonse er ordinær mva., eksport eller margin avgjøres av annonsen/dokumentet, ikke av satsen."
+   ],
+   "usableAsRuleParameter": false,
+   "parameterApproval": {
+    "approved": false,
+    "reason": "E1X (eksternt verifisert, ikke lest av Claude); krever E1-kildefil, klasse 1 og eksplisitt godkjenning"
+   },
+   "controlledDate": "2026-10-16",
+   "researchDate": "2026-10-16"
+  }
+ ],
+ "approvalRequirements": [
+  "evidenceLevel E1 (ikke E1P) med controlledDate",
+  "alle kilder i sources er E1 med publishedVersion og packageSha256",
+  "validity.from og governingEvent er satt og begrunnet mot rettskilden",
+  "minst ett uavhengig klasse 1-referansetilfelle (offisiell kalkulator/vedtak) eller godkjent dokumentert klasse 2-håndregning",
+  "parameterApproval.approved=true med approvedBy og approvedDate (Christian eller delegert) – ikke satt av utvikler alene"
+ ],
+ "unresolvedSourceClaims": [
+  {
+   "id": "U-001",
+   "claim": "Søkesammendrag av stortingsvedtaket (T04) nevnte en endring med virkning 1.9.2026 (vedtak 19.6.2026).",
+   "status": "lukket så langt dokumentert (E1X)",
+   "note": "Gruppe b-endringen med virkning 2026-09-01 er dokumentert (CO2 450/600/1 200, før: 300/600/1 200). Vektsats gruppe b fra 09-01 og eventuelle øvrige endringer er ikke dokumentert – de er ukjente, ikke bekreftet uendret.",
+   "affects": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008"
+   ],
+   "state": "closed"
+  },
+  {
+   "id": "U-002",
+   "claim": "Engelsk bruksfradragsside sier at neste trinn nås på 'date of the vehicle's production', mens rundskriv 4.2/6.21 regner fra første gangs registrering i utlandet, dato til dato.",
+   "status": "uavklart språkforskjell",
+   "note": "Forskrift § 3-3 er ikke lest. Ikke gjettet.",
+   "affects": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "state": "open"
+  },
+  {
+   "id": "U-003",
+   "claim": "Merverdiavgiftshåndbok-siden med URL 'gjeldende' er faktisk merket 2025.",
+   "status": "versjon avklart: 2025-utgave",
+   "note": "Dekning for 2026 ikke kontrollert.",
+   "affects": [
+    "R-DED-001"
+   ],
+   "state": "open"
+  },
+  {
+   "id": "U-004",
+   "claim": "Motstridende satstabeller for CO2/vekt i sammendrag av stortingsvedtaket (Lovdata 450/600/1 200; Stortinget 800/1 600/3 200/5 000).",
+   "status": "lukket (E1X): gruppe a og b separert",
+   "note": "Gruppe a 2026: CO2 800/1 600/3 200/5 000 og vekt 260/kg. Gruppe b: 300/600/1 200 + vekt 30/kg til og med 2026-08-31; CO2 450/600/1 200 fra 2026-09-01. Satsene må aldri blandes mellom grupper.",
+   "affects": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008"
+   ],
+   "state": "closed"
+  },
+  {
+   "id": "U-005",
+   "claim": "Ladbar hybrid: sammendrag nevner 10 % vektfradrag, rundskriv 2026 (E1) sier vektfradraget er opphevet fra 1.1.2024.",
+   "status": "åpen, innsnevret",
+   "note": "CO2-grunnlag for ladbar hybrid (vektet kombinert) og tolkningen av 1,24 er besvart (E1X). Motsigelsen om 10 % vektfradrag (rundskriv E1: opphevet 2024; E2-sammendrag: inntil 10 %) er ikke adressert og forblir åpen.",
+   "affects": [
+    "R-OTA-005"
+   ],
+   "state": "open"
+  },
+  {
+   "id": "U-006",
+   "claim": "Klimagassavgift: 1,639 mot 2 130,70 kr/kg i sammendrag.",
+   "status": "lukket (E1X): HFK-134a 2 130,70 kr/kg ekskl. mva.",
+   "note": "1,639 forklares sannsynlig som sats per GWP-enhet (ikke bekreftet kilde). Andre gasser, GWP og mengde per bil er ukjent.",
+   "affects": [
+    "R-IMP-OTH-002"
+   ],
+   "state": "closed"
+  },
+  {
+   "id": "U-007",
+   "claim": "Elbil-mva.: 300 000 mot 500 000 kr i sammendrag; ikrafttredelse av lov 19.6.2026 ukjent.",
+   "status": "løst (E1X): 300 000 kr fra 2026-01-01; anvendelse ved innførsel og lov 19.6.2026 uavklart",
+   "note": "Håndbok § 6-8 (T35): mva.-fritt opptil 300 000 kr, 25 % over, vektkomponenten ikke i grunnlaget. 500 000 kr-tallet i sammendraget hører ikke til denne regelen. Eksplisitt innførselsanvendelse ikke gitt.",
+   "affects": [
+    "R-IMP-VAT-003"
+   ],
+   "state": "closed"
+  },
+  {
+   "id": "U-008",
+   "claim": "Tollkursens syklus (annenhver tirsdag/to uker mot ukentlig).",
+   "status": "uavklart kildekonflikt (E2)",
+   "note": "T23/T24 ikke lest.",
+   "affects": [
+    "R-IMP-FX-001"
+   ],
+   "state": "open"
+  }
+ ],
+ "foundationStatus": {
+  "status": "REVIEW",
+  "date": "2026-10-16",
+  "approvedParameters": 0,
+  "class1References": 0,
+  "reason": "TAX-001E: gruppe a/b-satser, § 3-1-regler, klimagass og importfakta lagt inn som E1X; fortsatt ingen E1-kildefil med hash, ingen godkjent parameter og ingen klasse 1. Se docs/tax/TAX-001E-evidence-status.md.",
+  "doneRequires": [
+   "minst én godkjent parameter per implementert komponent (rules.parameterApproval.approved=true med godkjenner)",
+   "minst ett klasse 1-tilfelle per profil i omfang",
+   "alle uløste kildekonflikter U-* som berører godkjente regler er lukket"
+  ]
+ }
+}

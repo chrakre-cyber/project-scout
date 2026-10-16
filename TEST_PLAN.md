@@ -41,3 +41,8 @@ QA-001–QA-003 består. QA-004 kontrollerer full flyt mot godkjent live-kilde, 
 Commit / miljø / dato / utfører / dataset / kommando eller kontrollmetode / forventet / faktisk / avvik / severity / retting / retest / gatebeslutning.
 
 Test uavhengige invariants og offisielle grenser; ikke bare kopier samme formel i både implementering og test. Featurearbeid stopper i siste QA-sprint til kritiske feil er lukket.
+
+
+## SEARCH-005 — kontroller
+
+`npx vitest run` (540 ikke-DB-tester), `bash scripts/test-db-isolated.sh tests/db/search-drafts.test.ts tests/db/qa-catalog.test.ts` (isolert klynge, uten Docker/Supabase), `bash scripts/test-db-mutations.sh` (seks bevisste feil må oppdages), `bash scripts/test-e2e-search005.sh` (nettleserflyt med Auth/PostgREST-emulator mot isolert PostgreSQL). `npm run test:db` mot lokal Supabase kjører `tests/db/search-drafts.test.ts` sammen med de øvrige DB-testene (IKKE kjørt av Claude: ingen Docker).

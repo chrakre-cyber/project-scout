@@ -8,38 +8,92 @@ Gi norske bilforhandlere relevante innkjøpsmuligheter fra mobile.de, vurdert mo
 
 **Dette er en prosjekt- og spesifikasjonspakke, ikke en ferdig app.** GitHub, Supabase, Vercel, n8n og mobile.de-konto er ikke opprettet av denne leveransen. Ingen henvendelser er sendt. Ingen avgiftsmotor eller kode er implementert eller godkjent.
 
+## Kjøre demo-appen (DEV-001)
+
+Appskallet er en **syntetisk demo**: ingen ekte annonser, ingen mobile.de-data, ingen innlogging og ingen avgifts- eller marginberegning.
+
+Krav: Node.js 20.9 eller nyere (testet med Node 22.22, npm 10.9).
+
+```bash
+npm ci            # ren installasjon fra package-lock.json
+npm run dev       # utvikling på http://localhost:3000
+npm run build && npm run start   # produksjonsbygg lokalt
+npm run check     # typecheck + lint + tester + build
+npm run qa:migrations   # QA-001: migrasjonskjede fra ren DB og fra DEV-002-data (lokal Supabase, destruktiv lokalt)
+npm run qa:secrets      # QA-001: secret-skann av repo, historikk og build
+npm run qa:demo         # QA-001: demomodus uten Supabase-konfigurasjon
+```
+
+Inngang (DEV-006F): rotruten `/` sender til `/login`; innlogget bruker ender på `/searches` (Merovo-søkeflaten). **Eldre Project Scout-ruter (`/dashboard`, `/agents/**`, `/opportunities/**`) er blokkert som standard og omdirigeres til `/login`** (DEV-006G). Intern utvikling åpner dem med `SCOUT_ENABLE_LEGACY_ROUTES=1` (leses ved bygging; se `.env.example`); en partnerdemo trenger ingen variabel for å være trygg. Kontroll: `bash scripts/qa-partner-mode.sh`. De eldre visningene er: `/dashboard` (syntetiske annonser fra datakilden, 24 per side, filter per demo-agent), `/agents` (demo-agenter, kun lesing) og `/opportunities/<id>` (detaljside; kost/bidrag vises som «ikke beregnet»).
+
+Annonser hentes gjennom `MarketplaceProvider` (DEV-003). I dag brukes bare den syntetiske provideren med oppdiktede annonser (109 fra DEV-003 + 6 demovariasjoner fra DEV-006C); se `src/providers/marketplace/synthetic/fixtures/FIXTURES.md`. Kildefeil kan simuleres lokalt uten nettverk, f.eks. `SCOUT_SYNTHETIC_FAILURE=unavailable npm run start` (se `.env.example`).
+
+Versjoner (låst i `package-lock.json`): Next.js 16.3.8, React 19.3.0, TypeScript 5.9.3, Tailwind CSS 4.3.3, ESLint 9 med eslint-config-next 16.3.8, Vitest 5.0.3.
+
+### Supabase, innlogging og firmadata (DEV-002)
+
+Appen bruker bare `NEXT_PUBLIC_SUPABASE_URL` og `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (i `.env.local`, se `.env.example`). Ingen secret/service-role-nøkkel brukes i appen. Uten variablene kjører appen i demomodus.
+
+Lokalt (krever Docker):
+
+```bash
+npx supabase start          # lokal Postgres, Auth og API (lokale utviklingsnøkler)
+npx supabase db reset       # migrasjoner fra tom database + syntetisk seed (to firma)
+npm run test:db             # RLS-/constraint-/samtidighetstester mot lokal Supabase
+```
+
+Hostet prosjekt (gjøres av prosjekteier):
+
+1. Kjør migrasjonene i `supabase/migrations/` (`npx supabase link` + `npx supabase db push`, eller lim inn SQL i SQL-editoren). Ikke kjør `supabase/seed.sql` mot et prosjekt med ekte data.
+2. Auth: behold e-post/passord som innloggingsmetode, men slå av «Allow new users to sign up».
+3. Opprett brukere i Auth-dashboardet (Add user, auto-confirm). Knytt dem til firma i SQL-editoren: `select private.admin_create_dealership('Firmanavn');` og `select private.admin_add_member('bruker@firma.no', '<firma-id>');`.
+
+Kodeplassering: `src/domain/` (rene domenetyper og valuta, ingen UI/provider), `src/providers/marketplace/` (provider-kontrakt, feiltyper, syntetisk provider med normalisering og fixturer), `src/demo/` (syntetiske demo-agenter når man ikke er innlogget), `src/lib/supabase/` og `src/proxy.ts` (Supabase-klient og sesjonsfornying), `src/server/` (sesjon/firmakontekst og agentlagring), `supabase/` (konfigurasjon, migrasjoner, lokal seed), `src/lib/format.ts` (visning, «ikke oppgitt»), `src/components/`, `src/app/` og `tests/`.
+
+### Søkekjøringer (DEV-005A)
+
+Fra `/agents` kan en aktiv agent kjøres manuelt («Søkekjøringer» → «Kjør søk»). Søket går mot den **syntetiske** demokilden (ingen live mobile.de-data). Hver kjøring lagres med kriteriesnapshot, status, tellere og resultater, og finnes igjen etter reload. Delt ingestion (DEV-005B) er ikke bygget og er blokkert på BUS-002. Resultatene er ikke autoritative input til automatikk (DEC-026). Kontroller: `npm run test:db` (RLS/idempotens), `node tests/e2e/dev005-search-runs.e2e.mjs` (se toppen av filen), `npm run qa:migrations`.
+
+### Rettigheter, retensjon og betrodd skrivevei (DEV-005B0)
+
+Lagring av providerdata styres av en rettighetsprofil per kilde (DEC-028); uten gyldig profil startes ingen kjøring, og utløpte rader er usynlige og kan slettes. Resultater skrives av den begrensede databaserollen `scout_ingest` (DEC-029), ikke av brukeren. Det krever én server-only miljøvariabel, `SCOUT_INGEST_DATABASE_URL`; uten den kan ikke søkekjøringer startes (appen sier fra).
+
+- **Lokalt:** `npm run setup:ingest-role` (aktiverer rollen med et tilfeldig passord og skriver strengen til `.env.local`), start deretter appen på nytt. DB-testene slår rollen av igjen (`NOLOGIN`) når de er ferdige; kjør skriptet på nytt før e2e.
+- **Slette utløpte rader:** `npm run purge:expired` (leser `.env.local`). Periodisk kjøring er ikke satt opp.
+- **Hosted oppsett av `scout_ingest` (ikke utprøvd):** (1) anvend migrasjonen `20261008090000_dev005b0_rights_retention.sql`; (2) som prosjekteier i SQL Editor: `alter role scout_ingest login password '<generert passord>';` (passordet lagres aldri i git eller chat); (3) sett `SCOUT_INGEST_DATABASE_URL` som server-only miljøvariabel (ikke `NEXT_PUBLIC_`) i Vercel, med tilkoblingsstrengen fra Supabase (Database → Connection string, bruker `scout_ingest`). Om Supabase sin pooler godtar rollen i transaksjonsmodus må kontrolleres i hosted smoke-test. Dette er **ikke** service-role-nøkkelen.
+
 ## Start her
 
 1. Les [START_HER.md](START_HER.md): dine tre første oppgaver og første utviklingsoppdrag.
-2. Les [produktspesifikasjonen](docs/PRODUCT_SPEC.md) og [Sprint 0](planning/SPRINT_0.md).
+2. Les [produktspesifikasjonen](PRODUCT_SPEC.md) og [Sprint 0](SPRINT_0.md).
 3. Opprett et privat GitHub-repository, `project-scout`, og legg inn innholdet i denne mappen i repositoryets rot. `CLAUDE.md` og `AGENTS.md` skal ligge i roten.
-4. Avklar mobile.de-tilgang med [utkastet](templates/MOBILE_DE_REQUEST.md). Lagre svaret som avtaledokumentasjon; oppdater BUS-001.
-5. Start oppgavene som står READY i [backloggen](planning/MVP_BACKLOG.md). Arbeid på mock-sporet fortsetter mens API-vilkårene avklares.
+4. Avklar mobile.de-tilgang med [utkastet](MOBILE_DE_REQUEST.md). Lagre svaret som avtaledokumentasjon; oppdater BUS-001.
+5. Start oppgavene som står READY i [backloggen](MVP_BACKLOG.md). Arbeid på mock-sporet fortsetter mens API-vilkårene avklares.
 
 ## Dokumentkart
 
 | Fil | Formål |
 |---|---|
-| docs/PRODUCT_SPEC.md | Låst MVP, brukerflyt, akseptkrav og begreper |
-| planning/MVP_BACKLOG.md | Oppgaver, ansvar, estimater, avhengigheter og status |
-| planning/ROADMAP.md | 30-dagers plan og beslutningsporter |
-| docs/DECISIONS.md | Beslutninger og åpne avklaringer |
-| docs/AI_TEAM_ROLES.md | Hvem som gjør hva, og hvordan arbeid overleveres |
-| planning/SPRINT_0.md | Arbeidsliste for dag 1–3 |
-| planning/PILOT_PLAN.md | Rekruttering, to ukers pilot og målemetode |
-| docs/SWOT_AND_RISKS.md | SWOT og risikoregister med tiltak |
-| docs/ARCHITECTURE.md | Modulgrenser, datakildekontrakt og kjøring |
-| docs/DATABASE_SCHEMA.md | Logisk datamodell, tilgangskontroll og integritet |
-| docs/MOBILE_DE_INTEGRATION.md | Verifiserte API-fakta og kommersielle avklaringer |
-| docs/IMPORT_ENGINE_SPEC.md | Kost-, mva.- og marginregler; valideringsport |
-| docs/AI_ANALYSIS_SPEC.md | Strukturert annonseanalyse med kildebelegg |
-| docs/OPPORTUNITY_SCORE.md | Forklarbar score og varselkriterier |
-| docs/TEST_PLAN.md | Tester og krav før ekte pilot |
-| docs/SOURCES.md | Kilder kontrollert 03.10.2026 og deres begrensninger |
-| prompts/SPRINT_1_HANDOFF.md | Oppdrag som kan gis til Claude Code/Codex |
-| templates/TASK_HANDOFF.md | Mal for nye utviklingsoppdrag |
-| templates/MOBILE_DE_REQUEST.md | Engelsk utkast til API-forespørsel |
-| templates/PILOT_INTERVIEW.md | Spørsmål til forhandlere |
+| PRODUCT_SPEC.md | Låst MVP, brukerflyt, akseptkrav og begreper |
+| MVP_BACKLOG.md | Oppgaver, ansvar, estimater, avhengigheter og status |
+| ROADMAP.md | 30-dagers plan og beslutningsporter |
+| DECISIONS.md | Beslutninger og åpne avklaringer |
+| AI_TEAM_ROLES.md | Hvem som gjør hva, og hvordan arbeid overleveres |
+| SPRINT_0.md | Arbeidsliste for dag 1–3 |
+| PILOT_PLAN.md | Rekruttering, to ukers pilot og målemetode |
+| SWOT_AND_RISKS.md | SWOT og risikoregister med tiltak |
+| ARCHITECTURE.md | Modulgrenser, datakildekontrakt og kjøring |
+| DATABASE_SCHEMA.md | Logisk datamodell, tilgangskontroll og integritet |
+| MOBILE_DE_INTEGRATION.md | Verifiserte API-fakta og kommersielle avklaringer |
+| IMPORT_ENGINE_SPEC.md | Kost-, mva.- og marginregler; valideringsport |
+| AI_ANALYSIS_SPEC.md | Strukturert annonseanalyse med kildebelegg |
+| OPPORTUNITY_SCORE.md | Forklarbar score og varselkriterier |
+| TEST_PLAN.md | Tester og krav før ekte pilot |
+| SOURCES.md | Kilder kontrollert 03.10.2026 og deres begrensninger |
+| SPRINT_1_HANDOFF.md | Oppdrag som kan gis til Claude Code/Codex |
+| TASK_HANDOFF.md | Mal for nye utviklingsoppdrag |
+| MOBILE_DE_REQUEST.md | Engelsk utkast til API-forespørsel |
+| PILOT_INTERVIEW.md | Spørsmål til forhandlere |
 | CLAUDE.md / AGENTS.md | Felles spilleregler i repositoryet |
 
 ## Hvordan vi holder oversikt

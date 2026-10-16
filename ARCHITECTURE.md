@@ -45,6 +45,16 @@ Pris er et beløp + valuta + grunnlag (`gross`, `net`, `unknown`) og mva.-opplys
 
 Feiltyper: authentication, forbidden, rate_limit, invalid_query, timeout, unavailable, malformed_data. Autentisering/forbidden gir stopp og synlig blokkering; kun transient feil får begrenset retry med backoff og jitter.
 
+### Implementert i DEV-003 (syntetisk provider)
+
+Koden ligger i `src/providers/marketplace/` (`types.ts`, `errors.ts`, `index.ts`) og `src/providers/marketplace/synthetic/`. UI henter annonser bare via `getMarketplaceProvider()`. Konkretiseringer av kontrakten:
+
+- `NormalizedListing` har i tillegg `lastSeenAt`, og `price` kan være `null` (pris ikke oppgitt). `price` har `stated` (beløp som kildens desimalstreng + valuta, alltid bevart), `amount` (`Money` eller `null` ved ustøttet valuta, se DEC-018) og `vat` (sats, fradragspåstand claimed/denied/unknown, belegg og opphav). Alle annonsefelt er kildens opplysninger; Scouts vurderinger ligger i kalkyler.
+- `SearchPage.rejected` lister poster som ikke kunne normaliseres (`malformed_data`); resten av siden leveres. `getListing` kaster `malformed_data` for en slik post og returnerer `null` når annonsen ikke finnes.
+- `firstSeenAt`/`lastSeenAt` er syntetisk observasjonshistorikk i mock-dataene. For ekte kilder settes de av ingestion (DEV-005B), ikke av kilden.
+- Syntetisk søk ekskluderer ikke annonser med ukjent verdi for et filter, og sammenligner ikke pris på tvers av valuta. Hardfilter og needs_review avgjøres i DEV-010. Miles regnes eksakt om (1 mi = 1,609344 km) bare for sammenligning; lagret verdi beholder kildens enhet.
+- Fixturene ligger under `src/providers/marketplace/synthetic/fixtures/` (ikke `tests/fixtures/`) fordi demoen bruker dem i appen. Opphav: `FIXTURES.md` i samme mappe.
+
 ## Kjøring av én agent
 
 1. Verifiser aktiv agent og firmatilgang; ta tidsavgrenset lock.
@@ -60,6 +70,21 @@ Feiltyper: authentication, forbidden, rate_limit, invalid_query, timeout, unavai
 
 Standard planleggingsmål er hvert 30. minutt; faktisk intervall fastsettes av kvoter og avtale. Søke-jobben er asynkron og skal ikke bindes til en lang nettleserforespørsel. Jobbrute må autentiseres med separat serversecret og begrenset funksjon.
 
+## Manuell søkekjøring (DEV-005A)
+
+Omfang: DEV-005A = manuelle, tenant-isolerte søkekjøringer med snapshots. **DEV-005B** (delt ingestion: `listings`, `listing_revisions`, dedup på tvers av kjøringer, sjekkpunkter, låser) er BLOCKED på BUS-002 / OPEN-001 / OPEN-002 og finnes ikke ennå. Resultatrader fra DEV-005A er ikke autoritative input til automatikk før FU-005-1 (betrodd server-side skriving) er løst; «Se annonse» slår opp mot nåværende provider, ikke lagret revisjon (DEC-026).
+
+
+Agent → Search Run → Provider → Resultat er adskilt: `src/domain/matching.ts` og `src/domain/search-run.ts` (rene regler, rangering, snapshot), `src/server/search-pipeline.ts` (provider-sider, tidsavbrudd, begrenset retry, validering, hashing; provider injiseres), `src/server/search-runs.ts` (orkestrering mot databasen), databasen (tabeller, constraints og triggere for tenant, status og idempotens — ingen domenelogikk) og UI (`/agents/[id]/runs`). Provideren er fortsatt `MarketplaceProvider`; en ekte provider (DEV-006) kan byttes inn uten UI-endring. Se DEC-026/027.
+
+### Lagringsrettigheter og betrodd skrivevei (DEV-005B0)
+
+- **Rettighetsprofil per provider** (DEC-028): lagring er default-deny og styres av en versjonert, verifisert profil (retensjon, datatyper, virkningsperiode). Domenet (`src/domain/rights.ts`) projiserer resultatutdraget gjennom profilen før hashing og lagring; databasen håndhever det samme (hvitelistet snapshot, `expires_at`, usynlighet via RLS). Se `DATABASE_SCHEMA.md`.
+- **Betrodd skrivevei** (DEC-029): brukerens sesjon starter en kjøring (tenant-sjekket i databasen). Lagring og avslutning av resultater går via `src/server/trusted-ingest.ts` som den begrensede databaserollen `scout_ingest` (fem funksjoner, ingen tabellrettigheter). Orkestreringen i `src/server/search-runs.ts` bruker begge: brukerklient for start og lesing, betrodd vei for skriving. `pg` og `SCOUT_INGEST_DATABASE_URL` er avgrenset til denne ene modulen (arkitekturtest).
+- **Synlighet:** lagrede data er lesbare bare mens raden ikke er utløpt OG profilen fortsatt gjelder (trukket/utløpt profil skjuler umiddelbart; `effective_to` er øvre grense). Purge fjerner også slike rader.
+- **Retensjon:** `npm run purge:expired` (eller funksjonen direkte) sletter utløpte rader. Ingen scheduler er satt opp; DEV-013 eier periodisk kjøring.
+- Ingen ekstern provider, ingen global katalog og ingen n8n: DEV-005B er fortsatt BLOCKED.
+
 ## Duplikater, varsler og prisendringer
 
 Ingestion er idempotent. MVP sender høyst ett første varsel per `(dealership_id, agent_id, source, source_listing_id, notification_type=initial)`; endrede annonser oppdaterer opportunity uten nye prisvarsler i v0.1. En outbox-unique constraint stopper duplikater i DB. E-postleverandørens idempotency-mulighet brukes hvis tilgjengelig; crash etter akseptert sending men før DB-kvittering må avstemmes, ikke blindt resend.
@@ -68,8 +93,25 @@ Ingen garanti om «exactly once» på tvers av en ekstern e-posttjeneste. Uavkla
 
 ## Firmatilgang og drift
 
+### Implementert i DEV-002
+
+- **Supabase-klient:** opprettes bare på serveren (`src/lib/supabase/server.ts`, `@supabase/ssr`) med URL og publishable key. Brukerens sesjon ligger i cookies. `src/proxy.ts` (Next 16-erstatningen for middleware) fornyer sesjonen, men autoriserer ingenting. Det finnes ingen nettleserklient for data.
+- **Sesjonskontekst:** `src/server/session.ts` henter brukeren med `auth.getUser()` (validert mot Auth) og firma fra `dealership_members` under RLS. Resultatet er en av statusene `not_configured`, `anonymous`, `no_membership` eller `member`.
+- **Agentlagring:** server actions bruker `dealership_id` fra konteksten og ignorerer skjemafelt som firma-ID, `active` og `version`. RLS `WITH CHECK` avviser uansett andre firma.
+
+
 User ID utledes fra validert sesjon. Firma utledes fra membership; browserinput er aldri tilstrekkelig autorisasjon. RLS testes med ordinære brukercredentials. Servicerolle brukes bare i avgrensede serverjobber med eksplisitt scope og audit-logg.
 
 Monitorér siste vellykkede run, antall treff, truncation, API-/LLM-forbruk, kø, sendfeil og blokkerte kalkyler. Pause-knapp stopper neste kjøring og nye varsler; pågående jobb sjekker aktiv status før enqueue. Logg IDs/status, ikke secrets eller komplette annonse-/kundetekster.
 
 Gjenoppretting fra backup og replay av jobb er del av pilotporten. Retensjon og tilgang til bilder/tekst bestemmes av avtale og databehandlerforhold, ikke av ubegrenset teknisk lagringsmulighet.
+
+
+## Planlagt utvidelse 15.10.2026 — søk og budsjett
+
+Se DEC-030 og MEROVO_SEARCH_SPEC.md. Skill kjøretøykrav, ønsker, budsjettsum, kostnadsforutsetninger og varslingsvalg i en versjonert modell. Matching, budsjettklassifisering og økonomiske beregninger forblir deterministisk domenelogikk. Provider-kapasitet skal være eksplisitt; ukjente/ikke støttede filtre må ikke falle bort stille. UI, server, databasevalidering, provider-kontrakt og resultat-hvitelister oppdateres samlet i senere oppgaver. Gjeldende implementasjon endres ikke av spesifikasjonen.
+
+
+## Søkeutkast og manuell forhåndsvisning (SEARCH-005)
+
+Ny flyt under `/searches`: skjema (`src/components/search/SearchForm.tsx`) → server-action → `parseSearchForm` (skjema → `SearchSpec`, domenets `validateSpec` mot demokatalogen) → `search_drafts` (RLS, firma fra membership). Forhåndsvisning (`src/server/search-preview.ts`): provider → kandidatadapter → `evaluateCandidate` → ikke-beregnet budsjett; beregnes per forespørsel og lagres ikke. Rå skjematilstand (`FormValues`), versjonert dokument (`SearchSpecJson`) og intern modell (`bigint`) holdes adskilt. Eksisterende `/agents`, kjøringer og dashboard er uendret.

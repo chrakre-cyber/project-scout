@@ -1,0 +1,804 @@
+{
+ "schema": "merovo.tax.profile-matrix",
+ "version": "TAX-001A/1",
+ "researchDate": "2026-10-15",
+ "note": "FORSLAG/dokumentasjon. Ingen kombinasjon er støttet. Alle profiler er «krever avklaring». Registreringsønske, dokumentert kjøretøyklasse, norsk avgiftsgruppe og godkjent beregningsprofil er fire adskilte lag.",
+ "layers": [
+  "registrationWish",
+  "documentedVehicleClass",
+  "norwegianTaxGroup",
+  "approvedCalculationProfile"
+ ],
+ "profiles": [
+  {
+   "id": "PB-BEN",
+   "vehicle": "personbil",
+   "powertrain": "bensin",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "personbil (M1)",
+    "documentedVehicleClass": "M1 (må dokumenteres, f.eks. vognkort/COC)",
+    "norwegianTaxGroup": "a",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-003",
+    "R-OTA-004",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-OTH-001",
+    "R-IMP-OTH-002",
+    "R-DED-001",
+    "R-IMP-REF-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "CO2 g/km + testmetode (eller bekreftet anslag)"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "CO2 g/km + testmetode (eller bekreftet anslag)"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "CO2 mangler/testmetode ukjent i mange annonser"
+   ]
+  },
+  {
+   "id": "PB-DIE",
+   "vehicle": "personbil",
+   "powertrain": "diesel",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "personbil (M1)",
+    "documentedVehicleClass": "M1",
+    "norwegianTaxGroup": "a",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-003",
+    "R-OTA-004",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-OTH-001",
+    "R-IMP-OTH-002",
+    "R-DED-001",
+    "R-IMP-REF-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "CO2 g/km + testmetode",
+    "NOx-status (R-OTA-003)"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "CO2 g/km + testmetode",
+    "NOx-status (R-OTA-003)"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "NOx-komponent usikker (kildekonflikt)"
+   ]
+  },
+  {
+   "id": "PB-HEV",
+   "vehicle": "personbil",
+   "powertrain": "ikke-ladbar hybrid",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "personbil (M1)",
+    "documentedVehicleClass": "M1",
+    "norwegianTaxGroup": "a (antatt behandlet som forbrenningsbil – uavklart)",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-006",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-OTH-001",
+    "R-IMP-OTH-002",
+    "R-DED-001",
+    "R-IMP-REF-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "bekreftelse på at bilen ikke er ladbar"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil",
+    "Fuel «hybrid» i NormalizedListing/CandidateV2 er en grov kategori; ladbar vs ikke-ladbar må bekreftes"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "bekreftelse på at bilen ikke er ladbar"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Fuel «hybrid» skiller ikke mild/full hybrid; regel for ikke-ladbar hybrid uavklart"
+   ]
+  },
+  {
+   "id": "PB-PHEV",
+   "vehicle": "personbil",
+   "powertrain": "ladbar hybrid",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "personbil (M1)",
+    "documentedVehicleClass": "M1",
+    "norwegianTaxGroup": "a",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-OTH-001",
+    "R-IMP-OTH-002",
+    "R-DED-001",
+    "R-IMP-REF-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "CO2 vektet kombinert (WLTP)",
+    "elektrisk rekkevidde (km)"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil",
+    "elektrisk rekkevidde og «vektet kombinert» CO2 finnes ikke i kildemodellen"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "CO2 vektet kombinert (WLTP)",
+    "elektrisk rekkevidde (km)"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Elektrisk rekkevidde finnes ikke i NormalizedListing/CandidateV2",
+    "Faktor/fradrag for ladbar hybrid 2026 uavklart"
+   ]
+  },
+  {
+   "id": "PB-BEV",
+   "vehicle": "personbil",
+   "powertrain": "batterielektrisk",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "personbil (M1)",
+    "documentedVehicleClass": "M1",
+    "norwegianTaxGroup": "a",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-007",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-VAT-003",
+    "R-IMP-FX-001",
+    "R-IMP-OTH-001",
+    "R-DED-001",
+    "R-IMP-REF-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "egenvekt",
+    "bekreftet batterielektrisk",
+    "mva.-fritaksgrense (R-IMP-VAT-003) og hva den regnes av"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "egenvekt",
+    "bekreftet batterielektrisk",
+    "mva.-fritaksgrense (R-IMP-VAT-003) og hva den regnes av"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Elbil-mva.-regel for import er uavklart (fremtidig nedtrapping er ikke i kraft)"
+   ]
+  },
+  {
+   "id": "VB-BEN",
+   "vehicle": "varebil",
+   "powertrain": "bensin",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "varebil (ønske)",
+    "documentedVehicleClass": "N1 (må dokumenteres) + klasse 1/2 etter norsk definisjon",
+    "norwegianTaxGroup": "a (klasse 1) eller b (klasse 2)",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-OTH-001",
+    "R-IMP-OTH-002",
+    "R-DED-001",
+    "R-IMP-REF-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "klasse 1 vs 2: seteplass bak fører, skillevegg, lasterom (mål)",
+    "ombygging og godkjenning (bekreftet av Statens vegvesen)",
+    "CO2 + testmetode"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "klasse 1 vs 2: seteplass bak fører, skillevegg, lasterom (mål)",
+    "ombygging og godkjenning (bekreftet av Statens vegvesen)",
+    "CO2 + testmetode"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Karosseri «van»/SUV beviser ikke N1, klasse eller godkjenning",
+    "Klassifisering fastsettes av Statens vegvesen"
+   ]
+  },
+  {
+   "id": "VB-DIE",
+   "vehicle": "varebil",
+   "powertrain": "diesel",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "varebil (ønske)",
+    "documentedVehicleClass": "N1 + klasse 1/2",
+    "norwegianTaxGroup": "a eller b",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-003",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-OTH-001",
+    "R-IMP-OTH-002",
+    "R-DED-001",
+    "R-IMP-REF-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "klasse 1 vs 2 (se VB-BEN)",
+    "ombygging og godkjenning",
+    "CO2 + testmetode",
+    "NOx-status"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "klasse 1 vs 2 (se VB-BEN)",
+    "ombygging og godkjenning",
+    "CO2 + testmetode",
+    "NOx-status"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Som VB-BEN",
+    "uavklart kildeopplysning U-001 (påstått endring 1.9.2026) – ikke kontrollert"
+   ]
+  },
+  {
+   "id": "VB-HEV",
+   "vehicle": "varebil",
+   "powertrain": "ikke-ladbar hybrid",
+   "relevance": "krever_avklaring_av_relevans",
+   "layers": {
+    "registrationWish": "varebil (ønske)",
+    "documentedVehicleClass": "N1 + klasse 1/2",
+    "norwegianTaxGroup": "a eller b",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-006",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-REF-001",
+    "R-IMP-OTH-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "som VB-DIE",
+    "bekreftelse på ikke-ladbar"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil",
+    "Fuel «hybrid» grov kategori"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "som VB-DIE",
+    "bekreftelse på ikke-ladbar"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Relevans og regler for hybrid-varebil uavklart"
+   ]
+  },
+  {
+   "id": "VB-PHEV",
+   "vehicle": "varebil",
+   "powertrain": "ladbar hybrid",
+   "relevance": "krever_avklaring_av_relevans",
+   "layers": {
+    "registrationWish": "varebil (ønske)",
+    "documentedVehicleClass": "N1 + klasse 1/2",
+    "norwegianTaxGroup": "a eller b",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-FX-001",
+    "R-IMP-REF-001",
+    "R-IMP-OTH-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "CO2 vektet kombinert",
+    "elektrisk rekkevidde",
+    "klasse 1 vs 2"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil",
+    "elektrisk rekkevidde mangler i kildemodellen"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "CO2 vektet kombinert",
+    "elektrisk rekkevidde",
+    "klasse 1 vs 2"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Relevans og regler for ladbar hybrid-varebil uavklart"
+   ]
+  },
+  {
+   "id": "VB-BEV",
+   "vehicle": "varebil",
+   "powertrain": "batterielektrisk",
+   "relevance": "relevant",
+   "layers": {
+    "registrationWish": "varebil (ønske)",
+    "documentedVehicleClass": "N1 + klasse 1/2",
+    "norwegianTaxGroup": "a eller b",
+    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+   },
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-007",
+    "R-OTA-008",
+    "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011",
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-VAT-003",
+    "R-IMP-FX-001",
+    "R-DED-001",
+    "R-IMP-REF-001",
+    "R-IMP-OTH-001"
+   ],
+   "requiredInputs": [
+    "planlagt norsk registreringsdato (dato)",
+    "første utenlandske registrering (dato med tilstrekkelig presisjon for bruksfradragstrinn)",
+    "egenvekt (kg, norsk definisjon)",
+    "tollverdi: kjøpspris + frakt + forsikring til grensen (valuta) og tollkurs",
+    "dokumentert kjøpsgrunnlag (brutto/netto/regime)",
+    "klasse 1 vs 2",
+    "egenvekt",
+    "mva.-fritaksgrense og hva den regnes av"
+   ],
+   "listingHas": {
+    "NormalizedListing": [
+     "specs.firstRegistration (år/måned/dato-presisjon)",
+     "specs.mileage",
+     "specs.fuel (petrol/diesel/electric/hybrid/plugin_hybrid/other)",
+     "specs.bodyType",
+     "specs.powerKw",
+     "specs.co2 {gramsPerKm, testMethod} (kan være null)",
+     "specs.curbWeightKg (vekttype/definisjon uklar)",
+     "price.stated/basis/vat-påstander (annonse)",
+     "seller.type/countryCode"
+    ],
+    "CandidateV2": [
+     "firstRegistration",
+     "mileageKm",
+     "fuel",
+     "bodyType (kan være null)",
+     "id + version (kandidatbinding)"
+    ]
+   },
+   "listingMissing": [
+    "planlagt norsk registreringsdato",
+    "kjøretøyklasse (M1/N1) og norsk avgiftsgruppe (dokumentert)",
+    "egenvekt etter norsk definisjon",
+    "CO2 i CandidateV2 (finnes bare i NormalizedListing og kan mangle/ha ukjent testmetode)",
+    "dokumentert kjøpsbekreftelse (tilbud/faktura) og mva.-regime",
+    "kursgrunnlag (tollkurs/betalingskurs)",
+    "transport/forsikring delt før/etter grense",
+    "importørens fradragsprofil"
+   ],
+   "manualConfirmationInDemo": [
+    "planlagt registreringsdato og scenario",
+    "kjøretøyklasse/avgiftsgruppe",
+    "kjøpsbekreftelse og regime (SYNTETISK demobekreftelse må vises som syntetisk)",
+    "klasse 1 vs 2",
+    "egenvekt",
+    "mva.-fritaksgrense og hva den regnes av"
+   ],
+   "blocksCompleteTotal": [
+    "ingen primærkontrollert regelsett (se rules.json: ingen E1)",
+    "ingen uavhengig kontrollert referanse (references.json: 0 klasse 1)",
+    "Elbil-mva.-regel for varebil uavklart"
+   ]
+  }
+ ]
+}

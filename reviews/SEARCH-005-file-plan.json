@@ -1,0 +1,295 @@
+{
+ "task": "SEARCH-005 + FIX1",
+ "base": "8401dea",
+ "note": "Selektiv plan. Aldri blind overskriving. Oppdatert for FIX1 (commit 1595005 + denne filen). ZIP-er, skjermbilder og logger er ikke med.",
+ "files": [
+  {
+   "path": "ARCHITECTURE.md",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "3f9d77574c49f6b8610346b3ad7db00cb4277c7df0ae2e413367d2c67243c699",
+   "newSha256": "29999304cf4703beff8407f8f28c297431b7f4a32f26c9b99be096475d8036e9"
+  },
+  {
+   "path": "DATABASE_SCHEMA.md",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "34c714f00f2d797a6a53774c302f15f1768bce2f28644abaa7da5a1cc9008256",
+   "newSha256": "a7e04ac12475a7f76ee36d1480d6090876672ece82088adca6656e73b0f1470b"
+  },
+  {
+   "path": "DECISIONS.md",
+   "action": "merge_sections_do_not_overwrite",
+   "expectedLocalSha256": "47c1277cf362cc410ea23e89e5682826c15fd582e81d7055ac82bde95ffded8e",
+   "newSha256": "d7ccfc1fe76afd184ebad562da5e94447c26eb5d204a05914626555b652c31c3"
+  },
+  {
+   "path": "MVP_BACKLOG.md",
+   "action": "merge_sections_do_not_overwrite",
+   "expectedLocalSha256": "851328fcb4ab2213651003e613714650d60e102cf94845ad04e3a66e03fa1bf6",
+   "newSha256": "89b50ecbb7f1661ad0ead469a63c136b3048741c13d3e63751c0e633645075e0"
+  },
+  {
+   "path": "TEST_PLAN.md",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "9c4bec7000526552676aa4ff0f3aa715571634a6bf7b98a145df7ce42c9c0ff8",
+   "newSha256": "f27107d7717bc495b50e52d36e2ea28d213b3b5308f66ca1ca2c4ae6bb12ae1b"
+  },
+  {
+   "path": "public/brand/Figtree-OFL.txt",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "140d37233e7f3ce7313798befa9600893bcceaf41a55fa0fa5ad52f7f657a268"
+  },
+  {
+   "path": "public/brand/figtree.ttf",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "26ad3db9b31ff7dde67a91ff515d022d2f495cd506590699cf264f0bfe6fb714"
+  },
+  {
+   "path": "public/brand/merovo-logo-horizontal-original.svg",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "14f825e36d011d7f13e422a63f7b2d26eb323b6e96e9700f66fccfab8a2f5088"
+  },
+  {
+   "path": "public/brand/merovo-symbol-original.svg",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "73646bf04d85104594e4f07f8e8830723554df1c102435f19db7804301b1a3c6"
+  },
+  {
+   "path": "public/brand/merovo-symbol-reversed.svg",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "4997485651cfdb82c40d8aa35fd273596824ef1d279dad8d305dcb11c4b24765"
+  },
+  {
+   "path": "reviews/SEARCH-005.md",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "fdb629ee1fe3c56429719ac663b4d26277772c3e539cd049b939159eca765e39"
+  },
+  {
+   "path": "scripts/test-db-isolated.sh",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "77f84ca38032652a4be47a7b6218061efb56ab314d33997c76f58adff4b36bb8"
+  },
+  {
+   "path": "scripts/test-db-mutations.sh",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "ac4f1e63662b4f082b7edb23846c6f0eaa297a2f41fa11c3cb496cb4432f2e22"
+  },
+  {
+   "path": "scripts/test-e2e-search005.sh",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "9b48e595f4a2e8e7b1c5de12ca91198d9f1524ab436528609ecf251c47b5dda9"
+  },
+  {
+   "path": "src/adapters/search-candidate/capabilities.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "611eee03be351dea70b17789b24bbc615f3d96aa9939f080997e0d63d9a1537b"
+  },
+  {
+   "path": "src/adapters/search-catalog/demo-catalog.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "1f3bceb7dddc4a831a4463d1cf6fef8030b99130e8b465659a75d682b4e2aefe"
+  },
+  {
+   "path": "src/app/agents/page.tsx",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "87ca4295d93b58a2c9696c220acee121a576c3f8d5320470756c1f02462f843c",
+   "newSha256": "fa70736bbcb9d0c3460365e9864f0442109bc48efe6ce4923046fec960bcceba"
+  },
+  {
+   "path": "src/app/globals.css",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "3d9565ffc613bf1ad79e9ce2598484c5d10806884cab64f754040a5020f31be6",
+   "newSha256": "26a3b6cb586f0a7b3e58b730a54f2b99823ce17b0f5d205868971f9a80b85dff"
+  },
+  {
+   "path": "src/app/searches/[id]/page.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "4bdd3801226ce6cd455e4d0c02105887b1c08c5a6283bd2b10bf768c7f2c6a00"
+  },
+  {
+   "path": "src/app/searches/[id]/preview/[listingId]/page.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "2a6dde61f9c6112f1ce90db299541ff96a97e2d90398ef0cd0d9428312c68b4f"
+  },
+  {
+   "path": "src/app/searches/[id]/preview/page.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "de6742df5501b7a10efef4c68154e7768686f543f8697f7da437a0318f3a2739"
+  },
+  {
+   "path": "src/app/searches/actions.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "522aac55a42d6254c618342c844a0e2c7465380fbd6a7cafd6b6f9feff8370f9"
+  },
+  {
+   "path": "src/app/searches/layout.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "c3d0d47abbeacfe376d224f56ce06c13cfe5feab5e1c4e0683e17305a88f056f"
+  },
+  {
+   "path": "src/app/searches/messages.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "5ee4b6066dac101f37a7d569b3297e22c3ab608a836748e437272e2c096360d9"
+  },
+  {
+   "path": "src/app/searches/new/page.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "4267e283b712fc9e9f211943f16d44a7a5c6b2827de17c8b43908e18692ee08c"
+  },
+  {
+   "path": "src/app/searches/page.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "cbdd566e9d24b574845e0d88651bd5f279f0a1e6c4c4c67bc32acddfc8b9baab"
+  },
+  {
+   "path": "src/components/SiteNav.tsx",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "fe025a2db99875a0940d4cecd0e06ecfd7ecad517283e0ded0fc79d7bcc03dae",
+   "newSha256": "37cfda5977880b25746356fef6430a4109fce2d86cb3506e3fee19d79ba73f23"
+  },
+  {
+   "path": "src/components/search/Explanation.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "6f2ae2a4653cefade98d15ecfa0c716fc3f7f4115dc57c96ffbec44728709a21"
+  },
+  {
+   "path": "src/components/search/ResultCard.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "4f2dce71ff15c502605dddb9292ac8a9774009000901cb0433f2c4aa2c4d34f0"
+  },
+  {
+   "path": "src/components/search/SearchForm.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "298c22adde45dc99a4effe0b8cb27f27b8dd264cf6f3de7f3d8ee650037c133d"
+  },
+  {
+   "path": "src/components/search/SpecSummary.tsx",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "b5ce0ab24f856e0106a820ec81998eee544c2005ce3ee4eabd483a2a528fba3f"
+  },
+  {
+   "path": "src/lib/search-labels.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "232c8588da178598510994a1d0ef2817dcb6285802cfe81bcb9869b4366d35b8"
+  },
+  {
+   "path": "src/lib/search-summary.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "6d770a2565f3767fc47a6c82aa3c6adad84669a8621281231bf449477ad25de7"
+  },
+  {
+   "path": "src/server/search-draft-errors.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "fa2c58e233fa54bebb228d9c4dda3b1c3055199b89e09e21d142c2b5a6edb047"
+  },
+  {
+   "path": "src/server/search-drafts.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "d7a2df36cb331dcd329f7e036f6b8d463ad17ec7f1494f8a717e4b1790417963"
+  },
+  {
+   "path": "src/server/search-examples.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "310c613b21599c4a5619242b85f8f59565c34203c14418df1a0460def9be1b50"
+  },
+  {
+   "path": "src/server/search-form.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "aa45b580d98b77342b054365939bf47f736e0e1ca8f3f2d26f3bc5de3aa9ec8c"
+  },
+  {
+   "path": "src/server/search-preview.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "bf1bbd4e4cf9adb394e145a473a467376f9c6777d1d0c2da514657bc325f4648"
+  },
+  {
+   "path": "supabase/migrations/20261015090000_search005_search_drafts.sql",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "1cef5ffe718b64ca8c470e1a1f2010454539c251b31d4e664df8074830c281ce"
+  },
+  {
+   "path": "tests/architecture.test.ts",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "c14787ffc95b35492cf6d390d5fd242953c83fd23c2d358991976564f33554c2",
+   "newSha256": "47ab8a66386a6d3d7a4df4ccf5948246dc11046b194a7c8aee911217653764cb"
+  },
+  {
+   "path": "tests/codex-search005-review.test.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "c62b20f53185cb83bd9f83b281b29fd0d4d174e40e2b0dc70d2110fa321be4be"
+  },
+  {
+   "path": "tests/db/harness.ts",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "b6442f434e9fd84e01eb9883644a5bb1a5a847f25cd7b8fb3229997dca6e2295",
+   "newSha256": "eab7aecc88b80b3791d5919e7f44eb16b92a633bfea7bc1f772b3acb54cd82e3"
+  },
+  {
+   "path": "tests/db/qa-catalog.test.ts",
+   "action": "replace_if_local_hash_matches",
+   "expectedLocalSha256": "2f1b586b1b98e81da78697cd16e124a7b0cd683e36a616cdfcaaf9d586c2f95d",
+   "newSha256": "afea6fb077f8f61d57ee3817bff788a11c1dea2bba875eabe80b01eb6b60f1af"
+  },
+  {
+   "path": "tests/db/search-drafts.test.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "b1b04ca480adafa2218f25acd35efeed723e0864a02f8ba79466f31cffad7e91"
+  },
+  {
+   "path": "tests/db/support/supabase-shim.sql",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "4093a5358abae63991ba0503e77e596925fa534b5bc487aa1cbee0e630263801"
+  },
+  {
+   "path": "tests/e2e/search005.e2e.mjs",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "814e3a3cf045967db34d3838dc3e57d28cb11c5717bee9e3b0dda597431ac7b0"
+  },
+  {
+   "path": "tests/e2e/support/mini-supabase.mjs",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "e39608f51b488dad250beec2673bb666db03f1dc9b17edc5abbfdab50617d33a"
+  },
+  {
+   "path": "tests/search-005-form.test.ts",
+   "action": "add_new_file",
+   "expectedLocalSha256": null,
+   "newSha256": "3484796e1ee220cba4d5a0595660fb6be2ee23bdf5e33c9dccba3b7fdecd4b1f"
+  }
+ ]
+}
