@@ -252,6 +252,12 @@ try {
   const firstMatch = pA.locator('li[data-status="match"]').first();
   const matchText = nb(await firstMatch.innerText());
   check("treff viser merke/modell, registrering, km, annonsepris med valuta og brutto/netto/ukjent", /BMW 3er/.test(matchText) && /Registrert/.test(matchText) && /Kilometerstand/.test(matchText) && /Annonsepris/.test(matchText) && /(kr|€|EUR)/.test(matchText) && /prisgrunnlag|oppgitt som/.test(matchText), matchText.slice(0, 300));
+  {
+    const hrefs = await pA.locator('li[data-listing] a[href*="/preview/"]').evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+    const attrs = await pA.locator("li[data-listing]").evaluateAll((ls) => ls.map((l) => l.getAttribute("data-listing")));
+    check("DATA-002C: resultatlenker og data-listing bruker bare opake Merovo-id-er (m1_…), aldri leverandørens id (syn-/demo-/dvar-)",
+      hrefs.length >= 10 && hrefs.every((h) => /\/preview\/m1_[A-Za-z0-9_-]{24}\?v=\d+$/.test(h)) && attrs.every((a) => /^m1_[A-Za-z0-9_-]{24}$/.test(a)) && !(await pA.content()).match(/\b(syn|demo|dvar)-\d{3}\b/));
+  }
   check("treff: sier at innkjøpskostnad til Norge ikke er beregnet", matchText.includes("Innkjøpskostnad til Norge er ikke beregnet"));
   check("DEV-006C: kort viser etiketten «Syntetiske demodata – ikke ekte leverandørdata», hvorfor vist og kravs-/ønskesammendrag",
     nb(await firstMatch.locator('[data-testid="source-label"]').innerText()).toLowerCase().includes("syntetiske demodata – ikke ekte leverandørdata")
@@ -387,7 +393,7 @@ try {
   await pB.goto(`${BASE}/searches`);
   const bList = await pB.content();
   check("firma B ser ingen av firma A sine utkast", !bList.includes(glsId) && !bList.includes(bmwId) && !bList.includes("Fane 1 vinner"));
-  for (const path of [`/searches/${bmwId}`, `/searches/${bmwId}/preview?v=4`, `/searches/${bmwId}/preview/syn-005?v=4`]) {
+  for (const path of [`/searches/${bmwId}`, `/searches/${bmwId}/preview?v=4`, `/searches/${bmwId}/preview/m1_AAAAAAAAAAAAAAAAAAAAAAAA?v=4`]) {
     const res = await pB.goto(`${BASE}${path}`);
     check(`firma B: ${path.replace(bmwId, "<A-id>")} gir 404`, res.status() === 404, `status ${res.status()}`);
   }

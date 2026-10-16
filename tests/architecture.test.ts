@@ -87,10 +87,10 @@ describe("Supabase og hemmeligheter", () => {
     }
   });
 
-  it("bare fem miljøvariabler leses; den eneste hemmelige leses kun i den betrodde skriveveien", () => {
+  it("bare seks miljøvariabler leses; den eneste hemmelige leses kun i den betrodde skriveveien", () => {
     const names = new Set<string>();
     for (const f of ALL) for (const m of f.text.matchAll(/process\.env\.([A-Z0-9_]+)/g)) names.add(m[1]!);
-    expect([...names].sort()).toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_URL", "SCOUT_ENABLE_LEGACY_ROUTES", "SCOUT_INGEST_DATABASE_URL", "SCOUT_SYNTHETIC_FAILURE"]); // DEV-006G: SCOUT_ENABLE_LEGACY_ROUTES (bare lest i rotlayouten; ingen hemmelighet)
+    expect([...names].sort()).toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_URL", "SCOUT_ENABLE_LEGACY_ROUTES", "SCOUT_INGEST_DATABASE_URL", "SCOUT_PUBLIC_ID_KEY", "SCOUT_SYNTHETIC_FAILURE"]); // DEV-006G: SCOUT_ENABLE_LEGACY_ROUTES (bare lest i rotlayouten); DATA-002C: SCOUT_PUBLIC_ID_KEY (server-only, bare lest i public-ids.ts)
     for (const f of ALL) expect(f.text, f.rel).not.toMatch(/service_role|sb_secret|SERVICE_ROLE/i);
     const readers = ALL.filter((f) => /SCOUT_INGEST_DATABASE_URL/.test(f.text)).map((f) => f.rel);
     expect(readers).toEqual(["src/server/trusted-ingest.ts"]);
@@ -127,6 +127,102 @@ describe("demo og påstander", () => {
         if (/\blive\b/i.test(line) && !/^\s*(\/\/|\*|\/\*)/.test(line)) expect(line, `${f.rel}: ${line.trim()}`).toMatch(/ingen live|ikke koblet|Ikke live|ingen/i);
       }
     }
+  });
+});
+
+describe("visningsrettigheter: rå leverandørannonser når ikke /searches-UI (DATA-002A)", () => {
+  const UI = ALL.filter((f) => f.rel.startsWith("src/components/search/") || f.rel.startsWith("src/components/merovo/") || f.rel.startsWith("src/app/searches/"));
+  const RAW_SPEC = /^@\/(providers\/|server\/search-preview$|adapters\/search-candidate)/;
+
+  it("komponenter og sider i søkeflyten importerer ikke provider, rå forhåndsvisning eller kandidatadapter", () => {
+    expect(UI.length).toBeGreaterThan(10);
+    for (const f of UI) for (const i of f.imports) expect(i.spec, `${f.rel} → ${i.spec}`).not.toMatch(RAW_SPEC);
+  });
+
+  it("komponenter og sider i søkeflyten nevner aldri de rå typene eller funksjonene (også ikke som type)", () => {
+    for (const f of UI) {
+      const code = f.text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+      for (const raw of ["NormalizedListing", "PreviewItem", "assessListing", "previewSearch", "getMarketplaceProvider", "MarketplaceProvider", "CandidateMeta", "CandidateV2"]) {
+        expect(code, `${f.rel} bruker ${raw}`).not.toMatch(new RegExp(`\\b${raw}\\b`));
+      }
+      // felt som bare finnes på den rå annonsen (visningsmodellen har sellerType/sellerLocation/sourceUrl/listingDates/listingId)
+      expect(code, `${f.rel} leser rå annonsefelt`).not.toMatch(/\b(listing|l)\.(originalUrl|sourceModifiedAt|seller|sourceListingId|provenance)\b/);
+    }
+  });
+
+  it("bare søkeflatens servergrense (search-display) kjenner både provider og visningsmodell; den bruker applyDisplayPolicy", () => {
+    const bridge = ALL.find((f) => f.rel === "src/server/search-display.ts")!;
+    expect(bridge.text).toMatch(/applyDisplayPolicy\(/);
+    expect(bridge.text).toMatch(/policyForSource/);
+    // sidene henter data kun via grensen
+    const pages = ALL.filter((f) => f.rel.startsWith("src/app/searches/") && /preview\/(\[listingId\]\/)?page\.tsx$/.test(f.rel));
+    expect(pages.length).toBe(2);
+    for (const p of pages) expect(p.imports.some((i) => i.spec === "@/server/search-display"), p.rel).toBe(true);
+  });
+
+  it("visningspolicyen er rent domene: ingen import av provider, UI, server eller React", () => {
+    const d = ALL.find((f) => f.rel === "src/domain/display-policy.ts")!;
+    for (const i of d.imports) expect(i.spec, i.spec).toMatch(/^\.\//);
+    expect(d.text).not.toMatch(/process\.env|fetch\(|from "react"/);
+  });
+
+  it("resultatkortet kan ikke bygges av en rå annonse: komponentens props er DisplayItem", () => {
+    const card = ALL.find((f) => f.rel === "src/components/search/ResultCard.tsx")!;
+    expect(card.text).toMatch(/item: DisplayItem/);
+    const facts = ALL.find((f) => f.rel === "src/components/search/ListingFacts.tsx")!;
+    expect(facts.text).toMatch(/listing: DisplayableListing/);
+  });
+});
+
+describe("én rettighetsmodell (DATA-002B)", () => {
+  const rights = () => ALL.find((f) => f.rel === "src/domain/provider-rights.ts")!;
+  it("provider-rights er rent domene og eneste sted som kjenner leverandørprofiler; display-policy kjenner ingen leverandør", () => {
+    for (const i of rights().imports) expect(i.spec, i.spec).toMatch(/^\.\//);
+    expect(rights().text).not.toMatch(/process\.env|fetch\(|from "react"/);
+    const dp = ALL.find((f) => f.rel === "src/domain/display-policy.ts")!;
+    expect(dp.text.replace(/\/\*[\s\S]*?\*\//g, "")).not.toMatch(/synthetic-demo|mobile|SYNTHETIC_DISPLAY_POLICY/);
+  });
+  it("ingen kjøretidskode registrerer en ekte leverandørprofil (kun syntetisk); eksempelprofilen finnes bare i tester", () => {
+    expect(rights().text).toMatch(/REGISTERED_PROFILES: readonly ProviderRightsProfile\[\] = Object\.freeze\(\[SYNTHETIC_RIGHTS_PROFILE\]\)/);
+    for (const f of ALL) expect(f.text, f.rel).not.toMatch(/mobile-sandbox|mobile-live|providerId:\s*["']mobile/i);
+  });
+  it("visning og matching går begge via profilen i servergrensen, og matching fjernes før kandidatadapteren", () => {
+    const bridge = ALL.find((f) => f.rel === "src/server/search-display.ts")!;
+    expect(bridge.text).toMatch(/rightsForSource\(/);
+    expect(bridge.text).toMatch(/restrictForMatching\(/);
+    expect(bridge.text).toMatch(/matchingRights\(/);
+    const preview = ALL.find((f) => f.rel === "src/server/search-preview.ts")!;
+    expect(preview.text).toMatch(/prepare\(listing\)/);
+  });
+});
+
+describe("proveniens og annonseidentitet (DATA-002C)", () => {
+  const UI2 = ALL.filter((f) => f.rel.startsWith("src/components/search/") || f.rel.startsWith("src/components/merovo/") || f.rel.startsWith("src/app/searches/"));
+  it("søkeflatens UI importerer verken proveniens eller id-/avtrykksmodulen, og nevner ikke interne provenienstyper", () => {
+    for (const f of UI2) {
+      for (const i of f.imports) expect(i.spec, `${f.rel} → ${i.spec}`).not.toMatch(/^@\/(domain\/provenance|server\/public-ids)$/);
+      const code = f.text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+      for (const t of ["InternalProvenance", "InternalItem", "previewInternal", "publicIdFor", "derivePublicId", "profileDigest", "providerListingId"]) {
+        expect(code, `${f.rel} bruker ${t}`).not.toMatch(new RegExp(`\\b${t}\\b`));
+      }
+    }
+  });
+  it("proveniensmodulen er rent domene; nøkkelen leses bare i public-ids.ts; evaluering skjer i servergrensen", () => {
+    const prov = ALL.find((f) => f.rel === "src/domain/provenance.ts")!;
+    for (const i of prov.imports) expect(i.spec, i.spec).toMatch(/^\.\//);
+    expect(prov.text).not.toMatch(/process\.env|node:crypto/);
+    expect(ALL.filter((f) => /SCOUT_PUBLIC_ID_KEY/.test(f.text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1")) && /process\.env/.test(f.text)).map((f) => f.rel)).toEqual(["src/server/public-ids.ts"]);
+    const bridge = ALL.find((f) => f.rel === "src/server/search-display.ts")!;
+    expect(bridge.text).toMatch(/evaluateProvenance\(/);
+    expect(bridge.text).toMatch(/buildProvenance\(/);
+  });
+  it("resultat-URL-er og detaljsiden bruker kun den opake id-en (PUBLIC_ID_PATTERN), aldri leverandørens id", () => {
+    const detail = ALL.find((f) => f.rel === "src/app/searches/[id]/preview/[listingId]/page.tsx")!;
+    expect(detail.text).toMatch(/PUBLIC_ID_PATTERN\.test\(/);
+    expect(detail.text).not.toMatch(/SAFE_ID/);
+    const card = ALL.find((f) => f.rel === "src/components/search/ResultCard.tsx")!;
+    expect(card.text).toMatch(/l\.listingId/);
+    expect(card.text).not.toMatch(/sourceListingId/);
   });
 });
 

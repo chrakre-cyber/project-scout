@@ -115,3 +115,6 @@ Se DEC-030 og MEROVO_SEARCH_SPEC.md. Skill kjøretøykrav, ønsker, budsjettsum,
 ## Søkeutkast og manuell forhåndsvisning (SEARCH-005)
 
 Ny flyt under `/searches`: skjema (`src/components/search/SearchForm.tsx`) → server-action → `parseSearchForm` (skjema → `SearchSpec`, domenets `validateSpec` mot demokatalogen) → `search_drafts` (RLS, firma fra membership). Forhåndsvisning (`src/server/search-preview.ts`): provider → kandidatadapter → `evaluateCandidate` → ikke-beregnet budsjett; beregnes per forespørsel og lagres ikke. Rå skjematilstand (`FormValues`), versjonert dokument (`SearchSpecJson`) og intern modell (`bigint`) holdes adskilt. Eksisterende `/agents`, kjøringer og dashboard er uendret.
+
+## Annonseidentitet og proveniens (DATA-002C)
+`/searches` identifiserer resultater med en opak Merovo-id (`m1_…`, HMAC av leverandør + leverandørens id; `src/server/public-ids.ts`), ikke med leverandørens id. Leverandørens id, rettighetsprofilens versjon/avtrykk, hentetid, utløp, skjemaversjon, kilde-URL-referanse, attribusjon og korrelasjons-id ligger i serverintern `InternalProvenance` (`src/domain/provenance.ts`), som `search-display` bruker til å feile lukket og aldri sender til UI. UI får bare `DisplayItem`/`DisplayableListing` (DATA-002A) — proveniens skaper ingen ny vei forbi `applyDisplayPolicy`. Se DEC-035.

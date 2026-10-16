@@ -137,7 +137,7 @@ describe("funksjoner i private", () => {
   it("SECURITY DEFINER er begrenset til kjente funksjoner", async () => {
     const rows = await q<{ proname: string }>("select proname::text from pg_proc where prosecdef and pronamespace in ('private'::regnamespace, 'public'::regnamespace) order by 1");
     expect(rows.map((r) => r.proname)).toEqual([
-      "enforce_active_agent_limit", "my_dealership_ids", "purge_expired_search_runs", "rights_profile_active", "rights_profile_in_force", "rights_profiles_guard",
+      "enforce_active_agent_limit", "my_dealership_ids", "purge_expired_search_runs", "rights_profile_active", "rights_profile_in_force", "rights_profiles_guard", "rights_profiles_no_delete",
       "search_run_results_before_insert", "search_runs_before_insert", "search_runs_before_update",
       "trusted_complete_run", "trusted_fail_run", "trusted_run_policy", "trusted_store_results",
     ]);
@@ -147,7 +147,7 @@ describe("funksjoner i private", () => {
     for (const fn of ["private.admin_create_dealership(text)", "private.admin_add_member(text, uuid)",
       "private.enforce_active_agent_limit()", "private.search_agents_before_write()",
       "private.search_runs_before_insert()", "private.search_runs_before_update()", "private.search_run_results_before_insert()",
-      "private.rights_profiles_guard()", "private.rights_profile_in_force(text, timestamptz)"]) {
+      "private.rights_profiles_guard()", "private.rights_profiles_no_delete()", "private.rights_profile_in_force(text, timestamptz)"]) {
       for (const role of ["anon", "authenticated", "service_role", "public"]) {
         expect((await q<{ ok: boolean }>("select has_function_privilege($1, $2, 'EXECUTE') ok", [role, fn]))[0]!.ok, `${role} ${fn}`).toBe(false);
       }
@@ -208,7 +208,7 @@ describe("constraints og triggere", () => {
   it("DEV-005B0: rettighetsprofiler (private), rollen scout_ingest og utløpskolonner", async () => {
     expect((await q("select relname from pg_class where relnamespace = 'private'::regnamespace and relkind in ('r','p') order by 1")).map((r) => (r as { relname: string }).relname)).toEqual(["provider_rights_profiles"]);
     const trg = await q<{ tgname: string; tgenabled: string }>("select tgname::text, tgenabled::text from pg_trigger where tgrelid = 'private.provider_rights_profiles'::regclass and not tgisinternal");
-    expect(trg).toEqual([{ tgname: "provider_rights_profiles_guard", tgenabled: "O" }]);
+    expect(trg.sort((a, b) => a.tgname.localeCompare(b.tgname))).toEqual([{ tgname: "provider_rights_profiles_guard", tgenabled: "O" }, { tgname: "provider_rights_profiles_no_delete", tgenabled: "O" }]); // DATA-002C la til sletteretten
     const role = (await q<{ rolcanlogin: boolean; rolsuper: boolean; rolbypassrls: boolean }>("select rolcanlogin, rolsuper, rolbypassrls from pg_roles where rolname = 'scout_ingest'"))[0];
     expect(role, "rollen scout_ingest finnes").toBeDefined();
     expect(role).toEqual({ rolcanlogin: false, rolsuper: false, rolbypassrls: false }); // NOLOGIN som standard; passord settes utenfor git

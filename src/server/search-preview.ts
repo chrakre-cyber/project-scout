@@ -26,8 +26,13 @@ import type { MarketplaceErrorCode } from "@/providers/marketplace/errors";
 export const PREVIEW_MAX_PAGES = 30;
 export const PREVIEW_PAGE_SIZE = 100;
 
+/** Forbehandling før vurdering (matchingretten); null = annonsen kan ikke vurderes. */
+export type PrepareListing = (listing: NormalizedListing) => NormalizedListing | null;
+
 export interface PreviewItem {
   listing: NormalizedListing;
+  /** Når annonsen ble hentet fra kilden (sidens `fetchedAt`). Server-internt; brukes til proveniens (DATA-002C). */
+  retrievedAt: string;
   candidate: CandidateV2;
   meta: CandidateMeta;
   assessment: CandidateAssessment;
@@ -71,17 +76,22 @@ function adapter(): CandidateAdapter {
 }
 
 /** Vurderer én annonse mot søket (samme regler som i listen). `null` når annonsen ikke kan gjøres om til kandidat. */
-export function assessListing(spec: SearchSpec, listing: NormalizedListing, now: () => Date = () => new Date()): PreviewItem | null {
-  const r = adapter().adapt(listing);
+export function assessListing(spec: SearchSpec, listing: NormalizedListing, now: () => Date = () => new Date(), prepare?: PrepareListing, retrievedAt?: string): PreviewItem | null {
+  // DATA-002B: `prepare` fjerner det som ikke kan brukes til matching (egen rett, adskilt fra visning); null = uvurderbar.
+  const prepared = prepare ? prepare(listing) : listing;
+  if (prepared === null) return null;
+  const r = adapter().adapt(prepared);
   if (!r.ok) return null;
   const vehicle = evaluateCandidate(spec, r.candidate);
   const budget = classifyBudget(spec, { id: r.candidate.id, version: r.candidate.version }, null, now().toISOString());
-  return { listing, candidate: r.candidate, meta: r.meta, assessment: combineAssessment(vehicle, budget) };
+  // `listing` er den opprinnelige (rå) annonsen; visningsretten avgjøres separat av `applyDisplayPolicy`.
+  return { listing, retrievedAt: retrievedAt ?? now().toISOString(), candidate: r.candidate, meta: r.meta, assessment: combineAssessment(vehicle, budget) };
 }
 
-export async function previewSearch(spec: SearchSpec, provider: MarketplaceProvider, now: () => Date = () => new Date()): Promise<PreviewOutcome> {
+export async function previewSearch(spec: SearchSpec, provider: MarketplaceProvider, now: () => Date = () => new Date(), prepare?: PrepareListing): Promise<PreviewOutcome> {
   try {
     const listings: NormalizedListing[] = [];
+    const fetchedAt: string[] = [];
     let sourceTotal = 0, rejected = 0, pages = 0;
     let truncated = false;
     let page: number | null = 1;
@@ -99,14 +109,15 @@ export async function previewSearch(spec: SearchSpec, provider: MarketplaceProvi
       truncated = truncated || result.truncated;
       rejected += result.rejected.length;
       listings.push(...result.items);
+      for (let n = 0; n < result.items.length; n++) fetchedAt.push(result.fetchedAt);
       page = result.nextPage;
     }
 
     const nowIso = now().toISOString();
     const items: PreviewItem[] = [];
     let notAdapted = 0;
-    for (const listing of listings) {
-      const item = assessListing(spec, listing, now);
+    for (const [idx, listing] of listings.entries()) {
+      const item = assessListing(spec, listing, now, prepare, fetchedAt[idx]);
       if (item) items.push(item); else notAdapted++;
     }
     const count = (s: string) => items.filter((i) => i.assessment.vehicle.status === s).length;
