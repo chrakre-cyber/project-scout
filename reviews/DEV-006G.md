@@ -84,3 +84,6 @@ Innlogget bruker som treffer en blokkert rute går `→ /login → /searches` vi
 4. Ukjente URL-er utenfor `/searches` og de blokkerte stiene gir 404 med Merovo-side; `/opportunities` uten id (ingen side) blir også 404 Merovo.
 5. Hosting, domene, brukerinvitasjon og tilgangskontroll er ikke gjort; ingen deploy. Ingen ekte leverandørdata; kun syntetiske data.
 6. Ikke testet mot ekte Supabase Auth eller i Safari/Firefox/skjermleser.
+
+## Commit
+Kode-commit: `d35653d`.
