@@ -5,10 +5,13 @@
  * Vurderingen (evaluering/forklaring) er uavhengig av visningsretten: den bygger på kriterie-id, status og årsakskoder, ikke på verdier.
  */
 import type { DisplayableListing, DisplayPolicy } from "@/domain/display-policy";
-import { applyDisplayPolicy, policyForSource } from "@/domain/display-policy";
+import { applyDisplayPolicy } from "@/domain/display-policy";
+import { REGISTERED_PROFILES, matchingRights, policyForSource, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
+import type { ProviderRightsProfile } from "@/domain/provider-rights";
 import type { CandidateAssessment, SearchSpec } from "@/domain/search-v2/types";
 import { MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
 import type { MarketplaceProvider } from "@/providers/marketplace";
+import type { NormalizedListing } from "@/domain/types";
 import { assessListing, previewSearch } from "./search-preview";
 import type { PreviewItem, PreviewOutcome } from "./search-preview";
 
@@ -32,7 +35,15 @@ export type DisplayDetailOutcome =
 export interface DisplayOptions {
   provider?: MarketplaceProvider;
   now?: () => Date;
-  policyFor?: (source: string) => DisplayPolicy;
+  /** Rettighetsprofiler (standard: de registrerte; i dag bare den syntetiske). */
+  profiles?: readonly ProviderRightsProfile[];
+  /** Overstyrer visningspolicyen (tester). Matching styres fortsatt av profilene. */
+  policyFor?: (source: string, now: Date) => DisplayPolicy;
+}
+
+/** Forbehandling før vurdering: bruker profilens *matching*-rettigheter (adskilt fra visning). Ukjent/utløpt/trukket kilde ⇒ ingenting kan brukes. */
+function matchingPrepare(profiles: readonly ProviderRightsProfile[], now: () => Date) {
+  return (listing: NormalizedListing) => restrictForMatching(listing, matchingRights(rightsForSource(listing.source, now(), profiles))).listing;
 }
 
 /** Projiserer en rå, vurdert annonse til en visningstrygg modell. Eksportert for tester. */
@@ -46,23 +57,25 @@ export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Dat
 
 export async function previewForDisplay(spec: SearchSpec, opts: DisplayOptions = {}): Promise<DisplayPreviewOutcome> {
   const now = opts.now ?? (() => new Date());
-  const policyFor = opts.policyFor ?? policyForSource;
-  const outcome = await previewSearch(spec, opts.provider ?? getMarketplaceProvider(), now);
+  const profiles = opts.profiles ?? REGISTERED_PROFILES;
+  const policyFor = opts.policyFor ?? ((source: string, at: Date) => policyForSource(source, at, profiles));
+  const outcome = await previewSearch(spec, opts.provider ?? getMarketplaceProvider(), now, matchingPrepare(profiles, now));
   if (!outcome.ok) return outcome;
   const t = now();
-  return { ...outcome, items: outcome.items.map((i) => toDisplayItem(i, policyFor(i.listing.source), t)) };
+  return { ...outcome, items: outcome.items.map((i) => toDisplayItem(i, policyFor(i.listing.source, t), t)) };
 }
 
 export async function detailForDisplay(spec: SearchSpec, listingId: string, opts: DisplayOptions = {}): Promise<DisplayDetailOutcome> {
   const now = opts.now ?? (() => new Date());
-  const policyFor = opts.policyFor ?? policyForSource;
+  const profiles = opts.profiles ?? REGISTERED_PROFILES;
+  const policyFor = opts.policyFor ?? ((source: string, at: Date) => policyForSource(source, at, profiles));
   let listing = null;
   try { listing = await (opts.provider ?? getMarketplaceProvider()).getListing(listingId); } catch (e) {
     if (!(e instanceof MarketplaceError)) throw e;
     return { kind: "source_error" };
   }
   if (!listing) return { kind: "not_found" };
-  const item = assessListing(spec, listing, now);
+  const item = assessListing(spec, listing, now, matchingPrepare(profiles, now));
   if (!item) return { kind: "not_assessable" };
-  return { kind: "ok", item: toDisplayItem(item, policyFor(listing.source), now()) };
+  return { kind: "ok", item: toDisplayItem(item, policyFor(listing.source, now()), now()) };
 }

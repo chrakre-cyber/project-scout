@@ -1,8 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  DISPLAY_FIELD_KEYS, SYNTHETIC_DISPLAY_POLICY, applyDisplayPolicy, denyAllPolicy, policyAllowing, policyForSource, policyInEffect,
+  DISPLAY_FIELD_KEYS, applyDisplayPolicy, denyAllPolicy, policyAllowing, policyInEffect,
   type DisplayFieldKey, type DisplayPolicy,
 } from "@/domain/display-policy";
+import { SYNTHETIC_DISPLAY_POLICY, policyForSource } from "@/domain/provider-rights";
 import { sentinelListing } from "./fixtures/display-sentinel";
 
 const NOW = new Date("2026-10-16T12:00:00Z");
@@ -21,6 +22,8 @@ const KEYS_PER_SENTINEL: Record<DisplayFieldKey, string[]> = {
   listingDates: ["2026-10-01T08:00"],
   providerName: ["Syntetisk demokilde"],
   sourceUrl: ["sentinel-url"],
+  // `listingId` er en intern navigasjonsnøkkel og bærer samme verdi; visningsretten gjelder det separate feltet `providerListingId`.
+  providerListingId: [],
 };
 
 describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
@@ -115,7 +118,7 @@ describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
 
 describe("DATA-002A: profiler — default-deny", () => {
   it("ukjent kilde får deny-all: alt `withheld`", () => {
-    const p = policyForSource("noen-ekte-leverandor");
+    const p = policyForSource("noen-ekte-leverandor", NOW);
     expect(p.environment).toBe("unverified");
     const d = applyDisplayPolicy(sentinelListing("noen-ekte-leverandor"), p, NOW);
     const json = JSON.stringify(d);
@@ -137,8 +140,8 @@ describe("DATA-002A: profiler — default-deny", () => {
   });
 
   it("den syntetiske profilen er den eneste som gir synlighet; alle andre kilder nektes", () => {
-    expect(policyForSource("synthetic-demo")).toBe(SYNTHETIC_DISPLAY_POLICY);
-    expect(policyForSource("mobile-de-sandbox").profileId).toBe("deny:mobile-de-sandbox");
+    expect(policyForSource("synthetic-demo", NOW)).toEqual(SYNTHETIC_DISPLAY_POLICY);
+    expect(policyForSource("mobile-de-sandbox", NOW).profileId).toBe("deny:mobile-de-sandbox");
     expect(denyAllPolicy("x").allow.price).toBe(false);
   });
 

@@ -10,14 +10,14 @@
  *   unavailable tillatt, men kunne ikke hentes (f.eks. detaljkall feilet); meldes av kalleren
  * Default-deny: profil utenfor virkningsperioden og ukjent kilde gir `withheld` på alt. Et forbudt felt leses aldri fra den
  * rå annonsen (lat evaluering), verdier klones (ingen aliasing mot rå objekter), og ingenting erstattes med oppdiktede data.
- * Kun syntetisk profil finnes i dag; ekte leverandørprofiler kommer i DATA-002B.
+ * Policyen utledes av leverandørens rettighetsprofil (`provider-rights.ts`, DATA-002B); denne modulen kjenner ingen leverandør.
  */
 import type {
   BodyType, FirstRegistration, Fuel, ListingPrice, Mileage, NormalizedListing, SellerType, Transmission,
 } from "./types";
 
 export const DISPLAY_FIELD_KEYS = [
-  "title", "price", "mileage", "registration", "specs", "text", "sellerType", "sellerLocation", "listingDates", "providerName", "sourceUrl",
+  "title", "price", "mileage", "registration", "specs", "text", "sellerType", "sellerLocation", "listingDates", "providerName", "sourceUrl", "providerListingId",
 ] as const;
 export type DisplayFieldKey = (typeof DISPLAY_FIELD_KEYS)[number];
 
@@ -66,6 +66,8 @@ export interface DisplayableListing {
   listingDates: Field<{ sourceModifiedAt: string }>;
   providerName: Field<string>;
   sourceUrl: Field<string>;
+  /** Leverandørens annonse-id som VISBAR verdi. (`listingId` over er en intern navigasjonsnøkkel, ikke en visningsrett.) */
+  providerListingId: Field<string>;
 }
 
 export interface ApplyOptions {
@@ -74,20 +76,7 @@ export interface ApplyOptions {
 }
 
 export const SYNTHETIC_ATTRIBUTION = "Syntetiske demodata – ikke ekte leverandørdata";
-const ALL_ALLOWED = Object.fromEntries(DISPLAY_FIELD_KEYS.map((k) => [k, true])) as Record<DisplayFieldKey, boolean>;
 const ALL_DENIED = Object.fromEntries(DISPLAY_FIELD_KEYS.map((k) => [k, false])) as Record<DisplayFieldKey, boolean>;
-
-/** Syntetisk demokilde: oppdiktede annonser; alt kan vises. Ingen tredjepartsrettigheter berøres. */
-export const SYNTHETIC_DISPLAY_POLICY: DisplayPolicy = Object.freeze({
-  profileId: "synthetic-demo",
-  profileVersion: 2,
-  environment: "synthetic",
-  effectiveFrom: null,
-  effectiveTo: null,
-  attribution: SYNTHETIC_ATTRIBUTION,
-  providerName: "Syntetisk demokilde",
-  allow: Object.freeze({ ...ALL_ALLOWED }),
-});
 
 /** Standard for kilder uten verifisert visningsprofil: ingenting kan vises (default-deny). */
 export function denyAllPolicy(source: string): DisplayPolicy {
@@ -106,11 +95,6 @@ export function denyAllPolicy(source: string): DisplayPolicy {
 /** Bygger en policy ut fra en base og et sett tillatte felt (alle andre nektes). Brukes av tester og senere profilinnlasting. */
 export function policyAllowing(base: DisplayPolicy, allowed: readonly DisplayFieldKey[]): DisplayPolicy {
   return { ...base, allow: { ...ALL_DENIED, ...Object.fromEntries(allowed.map((k) => [k, true])) } as Record<DisplayFieldKey, boolean> };
-}
-
-/** Hvilken visningsprofil gjelder for en kilde. Ukjent kilde ⇒ default-deny. */
-export function policyForSource(source: string): DisplayPolicy {
-  return source === SYNTHETIC_DISPLAY_POLICY.profileId ? SYNTHETIC_DISPLAY_POLICY : denyAllPolicy(source);
 }
 
 export function policyInEffect(policy: DisplayPolicy, now: Date): boolean {
@@ -160,5 +144,6 @@ export function applyDisplayPolicy(listing: NormalizedListing, policy: DisplayPo
     listingDates: field("listingDates", () => (listing.sourceModifiedAt !== null ? { sourceModifiedAt: listing.sourceModifiedAt } : null)),
     providerName: field("providerName", () => (policy.providerName === "" ? null : policy.providerName)),
     sourceUrl: field("sourceUrl", () => listing.originalUrl),
+    providerListingId: field("providerListingId", () => listing.sourceListingId),
   };
 }

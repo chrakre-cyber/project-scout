@@ -174,6 +174,28 @@ describe("visningsrettigheter: rå leverandørannonser når ikke /searches-UI (D
   });
 });
 
+describe("én rettighetsmodell (DATA-002B)", () => {
+  const rights = () => ALL.find((f) => f.rel === "src/domain/provider-rights.ts")!;
+  it("provider-rights er rent domene og eneste sted som kjenner leverandørprofiler; display-policy kjenner ingen leverandør", () => {
+    for (const i of rights().imports) expect(i.spec, i.spec).toMatch(/^\.\//);
+    expect(rights().text).not.toMatch(/process\.env|fetch\(|from "react"/);
+    const dp = ALL.find((f) => f.rel === "src/domain/display-policy.ts")!;
+    expect(dp.text.replace(/\/\*[\s\S]*?\*\//g, "")).not.toMatch(/synthetic-demo|mobile|SYNTHETIC_DISPLAY_POLICY/);
+  });
+  it("ingen kjøretidskode registrerer en ekte leverandørprofil (kun syntetisk); eksempelprofilen finnes bare i tester", () => {
+    expect(rights().text).toMatch(/REGISTERED_PROFILES: readonly ProviderRightsProfile\[\] = Object\.freeze\(\[SYNTHETIC_RIGHTS_PROFILE\]\)/);
+    for (const f of ALL) expect(f.text, f.rel).not.toMatch(/mobile-sandbox|mobile-live|providerId:\s*["']mobile/i);
+  });
+  it("visning og matching går begge via profilen i servergrensen, og matching fjernes før kandidatadapteren", () => {
+    const bridge = ALL.find((f) => f.rel === "src/server/search-display.ts")!;
+    expect(bridge.text).toMatch(/rightsForSource\(/);
+    expect(bridge.text).toMatch(/restrictForMatching\(/);
+    expect(bridge.text).toMatch(/matchingRights\(/);
+    const preview = ALL.find((f) => f.rel === "src/server/search-preview.ts")!;
+    expect(preview.text).toMatch(/prepare\(listing\)/);
+  });
+});
+
 describe("stinormalisering (Windows-rettelse bevart, SYNC-001)", () => {
   it("kontrollstiene bruker alltid '/': win32-stier normaliseres slik at sikkerhetsreglene treffer (inspisert uten Windows-kjøring)", () => {
     const rel = win32.relative("C:\\proj", "C:\\proj\\src\\domain\\search-v2\\types.ts");
