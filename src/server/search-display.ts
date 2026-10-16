@@ -1,17 +1,20 @@
 /**
- * Visningsgrensen for `/searches` (DATA-002A). Dette er den ENESTE modulen som både kjenner provideren/rå annonse og bygger UI-modellen.
- * Sider og komponenter under `/searches` får bare `DisplayItem` (felt-tilstander fra `applyDisplayPolicy`, vurdering og ukjent-notater
- * uten kildeverdier). Rå annonse (`NormalizedListing`), kandidat, kildens proveniensfritekst og `sourceValue` forlater aldri denne modulen.
- * Vurderingen (evaluering/forklaring) er uavhengig av visningsretten: den bygger på kriterie-id, status og årsakskoder, ikke på verdier.
+ * Visningsgrensen for `/searches` (DATA-002A) og det eneste stedet proveniens og rettighetsprofil møter UI-modellen (DATA-002C).
+ * Sider og komponenter får bare `DisplayItem` (felt-tilstander fra `applyDisplayPolicy`, vurdering og ukjent-notater uten kildeverdier).
+ * Rå annonse, kandidat, leverandørens annonse-id og `InternalProvenance` forlater aldri denne modulen: proveniens brukes her til å
+ * FEILE LUKKET (ukjent/endret/utløpt/trukket profil, utløpte kildedata) og til å lage den opake offentlige id-en.
  */
 import type { DisplayableListing, DisplayPolicy } from "@/domain/display-policy";
 import { applyDisplayPolicy } from "@/domain/display-policy";
+import { buildProvenance, evaluateProvenance } from "@/domain/provenance";
+import type { InternalProvenance, ProvenanceStatus } from "@/domain/provenance";
 import { REGISTERED_PROFILES, matchingRights, policyForSource, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
 import type { ProviderRightsProfile } from "@/domain/provider-rights";
 import type { CandidateAssessment, SearchSpec } from "@/domain/search-v2/types";
-import { MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
-import type { MarketplaceProvider } from "@/providers/marketplace";
 import type { NormalizedListing } from "@/domain/types";
+import { EMPTY_QUERY, MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
+import type { MarketplaceProvider } from "@/providers/marketplace";
+import { PublicIdKeyMissingError, profileDigest, publicIdFor } from "./public-ids";
 import { assessListing, previewSearch } from "./search-preview";
 import type { PreviewItem, PreviewOutcome } from "./search-preview";
 
@@ -22,13 +25,18 @@ export interface DisplayItem {
   unknowns: { field: string; code: string }[];
 }
 
+/** Server-internt: visningsmodell + proveniens. Eksporteres bare for tester og fremtidig lagring; UI får aldri denne typen. */
+export interface InternalItem { display: DisplayItem; provenance: InternalProvenance }
+
+type PreviewOk = Extract<PreviewOutcome, { ok: true }>;
 export type DisplayPreviewOutcome =
-  | (Omit<Extract<PreviewOutcome, { ok: true }>, "items"> & { items: DisplayItem[] })
+  | (Omit<PreviewOk, "items" | "coverage"> & { items: DisplayItem[]; coverage: PreviewOk["coverage"] & { withheldByProvenance: number } })
   | Extract<PreviewOutcome, { ok: false }>;
 
 export type DisplayDetailOutcome =
   | { kind: "ok"; item: DisplayItem }
   | { kind: "not_found" }
+  | { kind: "blocked"; reason: Exclude<ProvenanceStatus, "valid"> }
   | { kind: "source_error" }
   | { kind: "not_assessable" };
 
@@ -37,8 +45,11 @@ export interface DisplayOptions {
   now?: () => Date;
   /** Rettighetsprofiler (standard: de registrerte; i dag bare den syntetiske). */
   profiles?: readonly ProviderRightsProfile[];
-  /** Overstyrer visningspolicyen (tester). Matching styres fortsatt av profilene. */
+  /** Overstyrer visningspolicyen (tester). Matching og proveniens styres fortsatt av profilene. */
   policyFor?: (source: string, now: Date) => DisplayPolicy;
+  /** Verdi av SCOUT_PUBLIC_ID_KEY (injiserbar i tester). */
+  publicIdKey?: string;
+  correlationId?: string;
 }
 
 /** Forbehandling før vurdering: bruker profilens *matching*-rettigheter (adskilt fra visning). Ukjent/utløpt/trukket kilde ⇒ ingenting kan brukes. */
@@ -47,35 +58,110 @@ function matchingPrepare(profiles: readonly ProviderRightsProfile[], now: () => 
 }
 
 /** Projiserer en rå, vurdert annonse til en visningstrygg modell. Eksportert for tester. */
-export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Date): DisplayItem {
+export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Date, publicId: string): DisplayItem {
   return {
-    listing: applyDisplayPolicy(item.listing, policy, now),
+    listing: applyDisplayPolicy(item.listing, policy, now, { publicId }),
     assessment: item.assessment,
     unknowns: item.meta.explanations.map((e) => ({ field: String(e.field), code: e.code })),
   };
 }
 
-export async function previewForDisplay(spec: SearchSpec, opts: DisplayOptions = {}): Promise<DisplayPreviewOutcome> {
+/**
+ * Bygger visningsmodell og proveniens for en vurdert annonse, og evaluerer proveniensen. Gir `null` med årsak hvis annonsen ikke kan vises
+ * (ingen profil i kraft, id-nøkkel mangler, endret/utløpt/trukket profil, utløpte kildedata) — feiler lukket.
+ */
+function internalItem(item: PreviewItem, o: Required<Pick<DisplayOptions, "profiles">> & DisplayOptions, now: Date): { ok: true; value: InternalItem } | { ok: false; reason: Exclude<ProvenanceStatus, "valid"> } {
+  const source = item.listing.source;
+  const rights = rightsForSource(source, now, o.profiles);
+  if (!rights.inForce) return { ok: false, reason: rights.reason === "revoked" ? "rights_revoked" : rights.reason === "expired" ? "rights_expired" : "rights_unknown" };
+  let publicId: string;
+  try { publicId = publicIdFor(source, item.listing.sourceListingId, rights.profile.environment, o.publicIdKey); }
+  catch (e) { if (e instanceof PublicIdKeyMissingError) return { ok: false, reason: "rights_unknown" }; throw e; }
+  const provenance = buildProvenance({
+    listing: item.listing, publicId, profile: rights.profile, profileDigest: profileDigest(rights.profile), retrievedAt: new Date(item.retrievedAt),
+    schemaVersion: `${item.meta.mapping.sourceId}@${item.meta.mapping.version}`, correlationId: o.correlationId ?? null,
+  });
+  const status = evaluateProvenance(provenance, { profiles: o.profiles, now, digestOf: profileDigest });
+  if (status !== "valid") return { ok: false, reason: status };
+  const policy = (o.policyFor ?? ((s: string, at: Date) => policyForSource(s, at, o.profiles)))(source, now);
+  return { ok: true, value: { display: toDisplayItem(item, policy, now, publicId), provenance } };
+}
+
+/** Server-internt: som `previewForDisplay`, men med proveniens. UI bruker aldri denne. */
+export async function previewInternal(spec: SearchSpec, opts: DisplayOptions = {}): Promise<
+  { ok: true; items: InternalItem[]; outcome: PreviewOk; withheldByProvenance: number } | Extract<PreviewOutcome, { ok: false }>
+> {
   const now = opts.now ?? (() => new Date());
   const profiles = opts.profiles ?? REGISTERED_PROFILES;
-  const policyFor = opts.policyFor ?? ((source: string, at: Date) => policyForSource(source, at, profiles));
   const outcome = await previewSearch(spec, opts.provider ?? getMarketplaceProvider(), now, matchingPrepare(profiles, now));
   if (!outcome.ok) return outcome;
   const t = now();
-  return { ...outcome, items: outcome.items.map((i) => toDisplayItem(i, policyFor(i.listing.source, t), t)) };
+  const items: InternalItem[] = [];
+  let withheld = 0;
+  for (const i of outcome.items) {
+    const r = internalItem(i, { ...opts, profiles }, t);
+    if (r.ok) items.push(r.value); else withheld++;
+  }
+  return { ok: true, items, outcome, withheldByProvenance: withheld };
 }
 
-export async function detailForDisplay(spec: SearchSpec, listingId: string, opts: DisplayOptions = {}): Promise<DisplayDetailOutcome> {
+export async function previewForDisplay(spec: SearchSpec, opts: DisplayOptions = {}): Promise<DisplayPreviewOutcome> {
+  const r = await previewInternal(spec, opts);
+  if (!r.ok) return r;
+  // Tellerne skal bare gjelde det som faktisk kan vises: annonser som feilet lukket telles ikke som treff.
+  const count = (st: string) => r.items.filter((i) => i.display.assessment.vehicle.status === st).length;
+  return {
+    ...r.outcome,
+    items: r.items.map((i) => i.display),
+    counts: { match: count("match"), needsReview: count("needs_review"), excluded: count("excluded") },
+    coverage: { ...r.outcome.coverage, withheldByProvenance: r.withheldByProvenance },
+  };
+}
+
+/** Miljø for en leverandør ut fra høyeste registrerte profilversjon (også når ingen profil er i kraft), ellers null (ukjent leverandør). */
+const environmentOf = (source: string, profiles: readonly ProviderRightsProfile[]) =>
+  [...profiles].filter((p) => p.providerId === source).sort((a, b) => b.version - a.version)[0]?.environment ?? null;
+
+/**
+ * Finner en annonse ut fra den opake id-en ved å gå gjennom leverandørens sider (id-en er enveis). Dyrt for ekte leverandører
+ * (kvote); erstattes av en lagret, tenant-avgrenset handle-tabell før ekte data — se DATA-002C. Ukjent leverandør (ingen profil i det hele tatt)
+ * kan ikke gi en id og hoppes over; en leverandør med trukket/utløpt profil kan identifiseres, slik at avslaget får riktig årsak.
+ */
+const MAX_RESOLVE_PAGES = 30;
+async function resolvePublicId(provider: MarketplaceProvider, publicId: string, o: Required<Pick<DisplayOptions, "profiles">> & DisplayOptions):
+  Promise<{ listing: NormalizedListing; fetchedAt: string } | null> {
+  for (let page: number | null = 1, n = 0; page !== null && n < MAX_RESOLVE_PAGES; n++) {
+    const current: number = page;
+    const res = await provider.search(EMPTY_QUERY, { page: current, pageSize: 100 });
+    if (!Array.isArray(res.items) || (res.nextPage !== null && (!Number.isSafeInteger(res.nextPage) || res.nextPage <= current))) throw new MarketplaceError("malformed_data", "ugyldig side");
+    for (const l of res.items) {
+      const env = environmentOf(l.source, o.profiles);
+      if (env === null) continue;
+      let id: string;
+      try { id = publicIdFor(l.source, l.sourceListingId, env, o.publicIdKey); } catch (e) { if (e instanceof PublicIdKeyMissingError) continue; throw e; }
+      if (id === publicId) return { listing: l, fetchedAt: res.fetchedAt };
+    }
+    page = res.nextPage;
+  }
+  return null;
+}
+
+export async function detailForDisplay(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DisplayDetailOutcome> {
   const now = opts.now ?? (() => new Date());
   const profiles = opts.profiles ?? REGISTERED_PROFILES;
-  const policyFor = opts.policyFor ?? ((source: string, at: Date) => policyForSource(source, at, profiles));
-  let listing = null;
-  try { listing = await (opts.provider ?? getMarketplaceProvider()).getListing(listingId); } catch (e) {
+  const o = { ...opts, profiles };
+  let found: { listing: NormalizedListing; fetchedAt: string } | null = null;
+  try { found = await resolvePublicId(opts.provider ?? getMarketplaceProvider(), publicId, o); } catch (e) {
     if (!(e instanceof MarketplaceError)) throw e;
     return { kind: "source_error" };
   }
-  if (!listing) return { kind: "not_found" };
-  const item = assessListing(spec, listing, now, matchingPrepare(profiles, now));
+  if (!found) return { kind: "not_found" };
+  // Rettigheter først: ukjent/ikke i kraft/trukket/utløpt gir et avslag MED årsak (ikke «ikke funnet» og aldri «ukjent»).
+  const rights = rightsForSource(found.listing.source, now(), profiles);
+  if (!rights.inForce) return { kind: "blocked", reason: rights.reason === "revoked" ? "rights_revoked" : rights.reason === "expired" ? "rights_expired" : "rights_unknown" };
+  const item = assessListing(spec, found.listing, now, matchingPrepare(profiles, now), found.fetchedAt);
   if (!item) return { kind: "not_assessable" };
-  return { kind: "ok", item: toDisplayItem(item, policyFor(listing.source, now()), now()) };
+  const r = internalItem(item, o, now());
+  if (!r.ok) return { kind: "blocked", reason: r.reason };
+  return { kind: "ok", item: r.value.display };
 }

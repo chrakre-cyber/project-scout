@@ -342,8 +342,9 @@ describe("profiltabellen: versjonering og uforanderlighet", () => {
   const ins = (extra: Record<string, unknown> = {}) => {
     const v = { provider: P, version: 1, status: "draft", effective_from: "2026-01-01T00:00:00Z", effective_to: null, retention_seconds: 1800, source_ref: "testkontrakt", verified_by: null, verified_at: null, ...extra };
     return db.query(
-      `insert into private.provider_rights_profiles (provider, version, status, effective_from, effective_to, retention_seconds, source_ref, verified_by, verified_at)
-       values ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id`,
+      // DATA-002B/C: miljø er påkrevd (testprofilene er syntetiske, så de kan ryddes bort) og verifiserte profiler som krever attribusjon trenger tekst.
+      `insert into private.provider_rights_profiles (provider, version, status, effective_from, effective_to, retention_seconds, source_ref, verified_by, verified_at, environment, attribution_text)
+       values ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'synthetic', 'Testprofil') returning id`,
       [v.provider, v.version, v.status, v.effective_from, v.effective_to, v.retention_seconds, v.source_ref, v.verified_by, v.verified_at]);
   };
   const verified = { status: "verified", verified_by: "Test", verified_at: "2026-01-01T00:00:00Z" };

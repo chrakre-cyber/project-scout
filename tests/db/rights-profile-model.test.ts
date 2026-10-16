@@ -174,3 +174,42 @@ describe("DATA-002B: uforanderlighet og tilbakekalling (vakttriggeren dekker de 
     });
   });
 });
+
+describe("DATA-002C: sletting av brukte profiler (vakt mot å fjerne rettighetshistorikk)", () => {
+  const verified = { status: "verified", verified_by: "test", verified_at: "2026-10-02T00:00:00Z", attribution_text: "Kilde", provider_name: "Eksempel" };
+  const del = (provider: string) => attempt("delete from private.provider_rights_profiles where provider = $1", [provider]);
+
+  it.each(["sandbox", "live"])("verifisert og trukket %s-profil kan ikke slettes; utkast kan", async (environment) => {
+    await tx(async () => {
+      const v = insert({ ...verified, environment, provider: "example-verified" });
+      expect((await attempt(v.sql, v.params)).ok).toBe(true);
+      const r1 = await del("example-verified");
+      expect(r1.ok).toBe(false);
+      if (!r1.ok) expect(r1.message).toMatch(/rights_profile_immutable/);
+      expect((await attempt("update private.provider_rights_profiles set status = 'revoked' where provider = 'example-verified'")).ok).toBe(true);
+      expect((await del("example-verified")).ok).toBe(false); // trukket kan heller ikke slettes
+      const d = insert({ environment, provider: "example-draft" });
+      expect((await attempt(d.sql, d.params)).ok).toBe(true);
+      expect((await del("example-draft")).ok).toBe(true);
+    });
+  });
+
+  it("syntetisk utviklingsprofil kan slettes (før-live-unntaket; FK beskytter bruk), men unntaket gjelder ikke sandbox/live", async () => {
+    await tx(async () => {
+      const s = insert({ ...verified, environment: "synthetic", provider: "example-synthetic" });
+      expect((await attempt(s.sql, s.params)).ok).toBe(true);
+      expect((await del("example-synthetic")).ok).toBe(true);
+    });
+  });
+
+  it("semantikken i en profil kan ikke endres på plass uansett miljø (også syntetisk): ny versjon kreves", async () => {
+    await tx(async () => {
+      for (const environment of ["synthetic", "sandbox", "live"]) {
+        const v = insert({ ...verified, environment, provider: `example-${environment}`, display_fields: map({ title: true }) });
+        expect((await attempt(v.sql, v.params)).ok).toBe(true);
+        const r = await attempt("update private.provider_rights_profiles set display_fields = $1::jsonb where provider = $2", [map({ title: true, price: true }), `example-${environment}`]);
+        expect(r.ok, environment).toBe(false);
+      }
+    });
+  });
+});

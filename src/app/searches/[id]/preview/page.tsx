@@ -74,6 +74,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
                 ? <strong className="text-danger"> Resultatet er avkortet: bare deler av kilden er hentet, så dette er ikke full dekning.</strong>
                 : " Hele demokilden er hentet."}
               {outcome.coverage.rejectedBySource > 0 && ` ${outcome.coverage.rejectedBySource} kildeposter kunne ikke leses og er ikke vurdert.`}
+              {outcome.coverage.withheldByProvenance > 0 && ` ${outcome.coverage.withheldByProvenance} annonser vises ikke fordi visningsretten eller kildedataene ikke lenger er gyldige.`}
               {outcome.coverage.notAdapted > 0 && ` ${outcome.coverage.notAdapted} annonser kunne ikke gjøres om til vurderbare biler og er ikke vurdert.`}
             </p>
             {outcome.sourceCannotSupply.length > 0 && (

@@ -14,7 +14,10 @@ import type { MarketplaceProvider } from "@/providers/marketplace";
 import { EXAMPLES } from "@/server/search-examples";
 import { detailForDisplay, previewForDisplay } from "@/server/search-display";
 import { parseSearchFormValues, type FormValues } from "@/server/search-form";
+import { publicIdFor } from "@/server/public-ids";
 import { sentinelListing } from "./fixtures/display-sentinel";
+
+const pid = (id: string) => publicIdFor("synthetic-demo", id, "synthetic");
 
 const NOW = () => new Date("2026-10-16T12:00:00Z");
 let seq = 0;
@@ -55,7 +58,7 @@ describe("DATA-002A: forbudte felt når aldri UI-modellen eller markup", () => {
   });
 
   it("detaljvisning (deny-all): fakta-seksjonen viser «vises ikke» for hvert felt og ingen sentinel, inkludert fritekst, selgersted og URL", async () => {
-    const out = await detailForDisplay(spec(), "sentinel-1", { provider: providerOf([sentinelListing()]), now: NOW, policyFor: deny() });
+    const out = await detailForDisplay(spec(), pid("sentinel-1"), { provider: providerOf([sentinelListing()]), now: NOW, policyFor: deny() });
     if (out.kind !== "ok") throw new Error(out.kind);
     noSentinel(json(out), "DisplayDetailOutcome");
     const html = renderToStaticMarkup(createElement(ListingFacts, { listing: out.item.listing }));
@@ -67,7 +70,7 @@ describe("DATA-002A: forbudte felt når aldri UI-modellen eller markup", () => {
 
   it("delvis profil: bare tillatte felt vises; forbudte erstattes med «vises ikke», aldri med oppdiktet verdi", async () => {
     const policy = policyAllowing(SYNTHETIC_DISPLAY_POLICY, ["title", "registration"]);
-    const out = await detailForDisplay(spec(), "sentinel-1", { provider: providerOf([sentinelListing()]), now: NOW, policyFor: () => policy });
+    const out = await detailForDisplay(spec(), pid("sentinel-1"), { provider: providerOf([sentinelListing()]), now: NOW, policyFor: () => policy });
     if (out.kind !== "ok") throw new Error(out.kind);
     const html = renderToStaticMarkup(createElement(ListingFacts, { listing: out.item.listing }));
     expect(html).toContain("2019"); // registrering er tillatt
@@ -82,7 +85,7 @@ describe("DATA-002A: forbudte felt når aldri UI-modellen eller markup", () => {
   it("alt tillatt (syntetisk profil): verdiene vises, ukjent vises som «ikke oppgitt», `unavailable` har egen tekst", async () => {
     const l = sentinelListing();
     l.specs.color = null;
-    const out = await detailForDisplay(spec(), "sentinel-1", { provider: providerOf([l]), now: NOW });
+    const out = await detailForDisplay(spec(), pid("sentinel-1"), { provider: providerOf([l]), now: NOW });
     if (out.kind !== "ok") throw new Error(out.kind);
     const html = renderToStaticMarkup(createElement(ListingFacts, { listing: out.item.listing }));
     expect(html).toContain("SENTINEL-FRITEKST");

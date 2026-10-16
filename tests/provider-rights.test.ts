@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyDisplayPolicy } from "@/domain/display-policy";
+import { publicIdFor } from "@/server/public-ids";
 import {
   REGISTERED_PROFILES, RIGHTS_FIELD_KEYS, SYNTHETIC_DISPLAY_POLICY, SYNTHETIC_RIGHTS_PROFILE, canDisplay, canMatch, geographyAllows, isWithinRetention,
   noRights, policyForSource, resolveRights, restrictForMatching, retentionExpiresAt, toDisplayPolicy, validateProfile, type ProviderRightsProfile,
@@ -13,13 +14,16 @@ import { sentinelListing } from "./fixtures/display-sentinel";
 import { MOBILE_SANDBOX_EXAMPLE, profile } from "./fixtures/rights-profiles";
 
 const NOW = new Date("2026-10-16T12:00:00Z");
+const ap = (l: Parameters<typeof applyDisplayPolicy>[0], p: Parameters<typeof applyDisplayPolicy>[1], n: Date) => applyDisplayPolicy(l, p, n, { publicId: "m1_AAAAAAAAAAAAAAAAAAAAAAAA" });
+const pid = (id: string) => publicIdFor("synthetic-demo", id, "synthetic");
 let seq = 0;
 const spec = () => {
   const r = parseSearchFormValues({ ...EXAMPLES.find((e) => e.id === "demo-bmw")!.values() }, DEMO_CATALOG, { newCostId: () => (seq++).toString(16).padStart(12, "0") });
   if (!r.ok || !r.spec) throw new Error(JSON.stringify(r.errors));
   return r.spec;
 };
-const run = (profiles: readonly ProviderRightsProfile[], provider = new SyntheticMarketplaceProvider()) =>
+const provider0 = () => new SyntheticMarketplaceProvider({ now: () => NOW });
+const run = (profiles: readonly ProviderRightsProfile[], provider = provider0()) =>
   previewForDisplay(spec(), { provider, now: () => NOW, profiles }).then((o) => { if (!o.ok) throw new Error("kilden feilet"); return o; });
 const statuses = (o: Awaited<ReturnType<typeof run>>) => o.items.map((i) => `${i.listing.listingId}:${i.assessment.vehicle.status}`);
 
@@ -54,7 +58,7 @@ describe("DATA-002B: profilens tilstander (default-deny)", () => {
     const pol = toDisplayPolicy(r);
     expect(Object.values(pol.allow).every((v) => v === false)).toBe(true);
     expect(pol.profileVersion).toBe(3);
-    const d = applyDisplayPolicy(sentinelListing(), pol, NOW);
+    const d = ap(sentinelListing(), pol, NOW);
     expect(JSON.stringify(d)).not.toContain("SENTINEL");
     expect(d.title).toEqual({ state: "withheld" });
   });
@@ -151,11 +155,11 @@ describe("DATA-002B: visning og matching er separate rettigheter", () => {
     expect(r.sourceModifiedAt).toBeNull();
   });
 
-  it("detalj: ukjent profil (ingen registrert for kilden) ⇒ uvurderbar; ellers vurdert", async () => {
-    const provider = new SyntheticMarketplaceProvider();
-    const noProfile = await detailForDisplay(spec(), "syn-005", { provider, now: () => NOW, profiles: [] });
-    expect(noProfile.kind).toBe("not_assessable");
-    const ok = await detailForDisplay(spec(), "syn-005", { provider, now: () => NOW });
+  it("detalj: ukjent profil (ingen registrert for kilden) ⇒ ikke funnet (lukket); ellers vurdert", async () => {
+    const provider = provider0();
+    const noProfile = await detailForDisplay(spec(), pid("syn-005"), { provider, now: () => NOW, profiles: [] });
+    expect(noProfile.kind).toBe("not_found"); // uten profil kan ingen id engang slås opp (feiler lukket)
+    const ok = await detailForDisplay(spec(), pid("syn-005"), { provider, now: () => NOW });
     expect(ok.kind).toBe("ok");
   });
 });
@@ -165,15 +169,15 @@ describe("DATA-002B: profilversjon følger resultatet", () => {
     const p = profile({ version: 7 });
     const o = await run([p]);
     for (const i of o.items) expect(i.listing.policy).toEqual({ profileId: "synthetic-demo", profileVersion: 7, environment: "synthetic", inEffect: true });
-    const d = await detailForDisplay(spec(), "syn-005", { now: () => NOW, profiles: [p] });
+    const d = await detailForDisplay(spec(), pid("syn-005"), { provider: provider0(), now: () => NOW, profiles: [p] });
     if (d.kind !== "ok") throw new Error(d.kind);
     expect(d.item.listing.policy.profileVersion).toBe(7);
   });
 
   it("utløper profilen mellom to kall, forsvinner rettighetene umiddelbart (ingen mellomlagring av tillatelser)", async () => {
     const p = profile({ validUntil: "2026-10-16T12:30:00Z" });
-    const before = await previewForDisplay(spec(), { now: () => NOW, profiles: [p] });
-    const after = await previewForDisplay(spec(), { now: () => new Date("2026-10-16T12:31:00Z"), profiles: [p] });
+    const before = await previewForDisplay(spec(), { provider: provider0(), now: () => NOW, profiles: [p] });
+    const after = await previewForDisplay(spec(), { provider: provider0(), now: () => new Date("2026-10-16T12:31:00Z"), profiles: [p] });
     if (!before.ok || !after.ok) throw new Error("kilden feilet");
     expect(before.items.length).toBeGreaterThan(0);
     expect(after.items).toHaveLength(0);

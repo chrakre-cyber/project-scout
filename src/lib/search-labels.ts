@@ -93,3 +93,13 @@ export const CANDIDATE_FIELD_LABEL: Record<string, string> = {
 
 /** Kort kildeetikett for alle resultater i den nye søkeflyten (DEV-006C). Intern kilde-id er `synthetic-demo`. */
 export const SYNTHETIC_SOURCE_LABEL = SYNTHETIC_ATTRIBUTION;
+
+/** Hvorfor et resultat ikke vises (feiler lukket; DATA-002C). Nøytrale tekster uten annonsedata. Hvert avslag har sin egen tekst — ingenting blir «ukjent». */
+export const BLOCKED_TEXT = {
+  source_expired: "Kildedataene for denne annonsen er utløpt og vises ikke lenger.",
+  rights_expired: "Visningsretten for denne kilden er utløpt, så annonsen vises ikke.",
+  rights_revoked: "Visningsretten for denne kilden er trukket, så annonsen vises ikke.",
+  rights_unknown: "Det finnes ingen gyldig visningsprofil for denne kilden, så annonsen vises ikke.",
+  rights_changed: "Visningsprofilen for denne kilden er endret etter at annonsen ble hentet, så annonsen vises ikke.",
+  unavailable: "Annonsen er ikke lenger tilgjengelig hos kilden.",
+} as const;

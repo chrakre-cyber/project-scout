@@ -5,9 +5,10 @@ import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { StatusBadge, SyntheticChip } from "@/components/merovo/StatusBadge";
 import { Explanation } from "@/components/search/Explanation";
 import { ListingFacts } from "@/components/search/ListingFacts";
+import { PUBLIC_ID_PATTERN } from "@/domain/display-policy";
 import { fieldValue } from "@/lib/display-text";
 import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
-import { BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { BLOCKED_TEXT, BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { getDraft } from "@/server/search-drafts";
 import { detailForDisplay } from "@/server/search-display";
 import { getSessionContext } from "@/server/session";
@@ -15,15 +16,13 @@ import { getSessionContext } from "@/server/session";
 export const metadata: Metadata = { title: "Detaljer — Merovo demo" };
 export const dynamic = "force-dynamic";
 
-const SAFE_ID = /^[A-Za-z0-9._:-]{1,200}$/;
-
 export default async function ListingDetailPage({ params, searchParams }: { params: Promise<{ id: string; listingId: string }>; searchParams: Promise<{ v?: string }> }) {
   const ctx = await getSessionContext();
   if (ctx.status !== "member") redirect("/searches");
   const { id, listingId: raw } = await params;
   const listingId = decodeURIComponent(raw);
   const draft = await getDraft(ctx, id);
-  if (!draft || !SAFE_ID.test(listingId)) notFound();
+  if (!draft || !PUBLIC_ID_PATTERN.test(listingId)) notFound();
   const back = <Link className="font-semibold text-rust underline" href={`/searches/${id}/preview?v=${draft.version}`}>Tilbake til resultatet</Link>;
   if (!draft.readable) notFound();
   const requested = Number((await searchParams).v);
@@ -34,6 +33,10 @@ export default async function ListingDetailPage({ params, searchParams }: { para
   const detail = await detailForDisplay(draft.spec, listingId);
   if (detail.kind === "source_error") return <div className="space-y-3"><p role="alert" className="rounded-lg bg-[#fbeae5] p-3 text-danger">Kilden kunne ikke leses. {back}</p></div>;
   if (detail.kind === "not_found") notFound();
+  if (detail.kind === "blocked") {
+    // Feiler lukket: ingen annonsedata, bare en nøytral forklaring på HVORFOR (utløpt kilde / rettighet utløpt eller trukket / utilgjengelig).
+    return <div className="space-y-3" data-testid="blocked" data-reason={detail.reason}><p role="alert" className="rounded-lg border border-sand bg-sand-soft p-3">{BLOCKED_TEXT[detail.reason]} {back}</p></div>;
+  }
   if (detail.kind === "not_assessable") return <div className="space-y-3"><p role="alert" className="rounded-lg bg-[#fbeae5] p-3 text-danger">Annonsen kunne ikke vurderes. {back}</p></div>;
 
   const { listing, assessment, unknowns } = detail.item;

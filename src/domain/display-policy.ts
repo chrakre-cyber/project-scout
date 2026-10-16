@@ -44,7 +44,7 @@ export interface DisplayPolicy {
 }
 
 export interface DisplayableListing {
-  /** Intern nøkkel for navigasjon. Ingen annonseverdi. */
+  /** Opak Merovo-id for URL-er og oppslag (DATA-002C): koder verken leverandør eller leverandørens id. Ingen annonseverdi. */
   listingId: string;
   attribution: string;
   policy: { profileId: string; profileVersion: number; environment: DisplayEnvironment; inEffect: boolean };
@@ -66,11 +66,16 @@ export interface DisplayableListing {
   listingDates: Field<{ sourceModifiedAt: string }>;
   providerName: Field<string>;
   sourceUrl: Field<string>;
-  /** Leverandørens annonse-id som VISBAR verdi. (`listingId` over er en intern navigasjonsnøkkel, ikke en visningsrett.) */
+  /** Leverandørens annonse-id som VISBAR verdi. (`listingId` over er den opake Merovo-id-en, ikke leverandørens id.) */
   providerListingId: Field<string>;
 }
 
+/** Format på den opake offentlige annonse-id-en (DATA-002C). Brukes av sider for å avvise alt annet før oppslag. */
+export const PUBLIC_ID_PATTERN = /^m1_[A-Za-z0-9_-]{24}$/;
+
 export interface ApplyOptions {
+  /** Opak Merovo-id (aldri leverandørens id). Påkrevd: den bestemmer URL-en til resultatet. */
+  publicId: string;
   /** Felt som er tillatt, men som ikke kunne hentes nå (f.eks. detaljkall feilet). */
   unavailable?: readonly DisplayFieldKey[];
 }
@@ -112,7 +117,7 @@ const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
  * Projiserer en rå annonse til det som kan vises. Ren funksjon. Rå felt leses bare for felt som policyen tillater
  * (og bare når profilen gjelder), slik at forbudte verdier aldri berøres.
  */
-export function applyDisplayPolicy(listing: NormalizedListing, policy: DisplayPolicy, now: Date, opts: ApplyOptions = {}): DisplayableListing {
+export function applyDisplayPolicy(listing: NormalizedListing, policy: DisplayPolicy, now: Date, opts: ApplyOptions): DisplayableListing {
   const inEffect = policyInEffect(policy, now);
   const unavailable = new Set(opts.unavailable ?? []);
   function field<T>(key: DisplayFieldKey, read: () => T | null): Field<T> {
@@ -123,7 +128,7 @@ export function applyDisplayPolicy(listing: NormalizedListing, policy: DisplayPo
   }
   const spec = <T>(read: () => T | null): Field<T> => field("specs", read);
   return {
-    listingId: listing.sourceListingId,
+    listingId: opts.publicId,
     attribution: policy.attribution,
     policy: { profileId: policy.profileId, profileVersion: policy.profileVersion, environment: policy.environment, inEffect },
     title: field("title", () => ({ make: listing.specs.make, model: listing.specs.model, variant: listing.specs.variant })),

@@ -7,6 +7,8 @@ import { SYNTHETIC_DISPLAY_POLICY, policyForSource } from "@/domain/provider-rig
 import { sentinelListing } from "./fixtures/display-sentinel";
 
 const NOW = new Date("2026-10-16T12:00:00Z");
+const PID = "m1_AAAAAAAAAAAAAAAAAAAAAAAA";
+const ap = (l: Parameters<typeof applyDisplayPolicy>[0], p: DisplayPolicy, n: Date, o: { unavailable?: readonly DisplayFieldKey[] } = {}) => applyDisplayPolicy(l, p, n, { publicId: PID, ...o });
 
 const SENTINELS = ["SENTINEL-MERKE", "SENTINEL-MODELL", "SENTINEL-VARIANT", "31337", "3133700", "SENTINEL-PRISBELEGG", "SENTINEL-MVA", "424242", "SENTINEL-FARGE",
   "SENTINEL-FRITEKST", "12345678", "SENTINEL-BY", "sentinel-url", "2026-10-01T08:00", "SENTINEL-PROVENANS", "777", "Syntetisk demokilde"];
@@ -28,7 +30,7 @@ const KEYS_PER_SENTINEL: Record<DisplayFieldKey, string[]> = {
 
 describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
   it("syntetisk profil: alle felt er `value` med de oppgitte verdiene; attribusjonen er med", () => {
-    const d = applyDisplayPolicy(sentinelListing(), SYNTHETIC_DISPLAY_POLICY, NOW);
+    const d = ap(sentinelListing(), SYNTHETIC_DISPLAY_POLICY, NOW);
     expect(d.title).toEqual({ state: "value", value: { make: "SENTINEL-MERKE", model: "SENTINEL-MODELL", variant: "SENTINEL-VARIANT" } });
     expect(d.mileage).toEqual({ state: "value", value: { value: 424_242, unit: "km" } });
     expect(d.specs.fuel).toEqual({ state: "value", value: "diesel" });
@@ -41,7 +43,7 @@ describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
   it("forbudt felt ⇒ `withheld`, og ingen verdi fra feltet finnes i utdata — ett felt av gangen", () => {
     for (const key of DISPLAY_FIELD_KEYS) {
       const policy = policyAllowing(SYNTHETIC_DISPLAY_POLICY, DISPLAY_FIELD_KEYS.filter((k) => k !== key));
-      const d = applyDisplayPolicy(sentinelListing(), policy, NOW);
+      const d = ap(sentinelListing(), policy, NOW);
       const json = JSON.stringify(d);
       for (const s of KEYS_PER_SENTINEL[key]) expect(json, `${key}: ${s}`).not.toContain(s);
       // de andre feltene er fortsatt synlige
@@ -50,7 +52,7 @@ describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
   });
 
   it("ingen felt tillatt (default-deny): alt `withheld`, ingen sentinel noe sted", () => {
-    const d = applyDisplayPolicy(sentinelListing(), policyAllowing(SYNTHETIC_DISPLAY_POLICY, []), NOW);
+    const d = ap(sentinelListing(), policyAllowing(SYNTHETIC_DISPLAY_POLICY, []), NOW);
     const json = JSON.stringify(d);
     for (const s of SENTINELS) expect(json, s).not.toContain(s);
     expect(d.title).toEqual({ state: "withheld" });
@@ -64,7 +66,7 @@ describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
     });
     const raw = sentinelListing();
     const policy = policyAllowing(SYNTHETIC_DISPLAY_POLICY, ["title", "registration"]);
-    applyDisplayPolicy(wrap(raw, "l"), policy, NOW);
+    ap(wrap(raw, "l"), policy, NOW);
     const read = touched.join(" ");
     expect(read).toMatch(/l\.specs\.make/);
     expect(read).toMatch(/l\.specs\.firstRegistration/);
@@ -77,7 +79,7 @@ describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
     const l = sentinelListing();
     l.price = null; l.text = null; l.seller = null; l.originalUrl = null; l.sourceModifiedAt = null;
     l.specs.mileage = null; l.specs.variant = null; l.specs.color = null; l.specs.fuel = null;
-    const open = applyDisplayPolicy(l, SYNTHETIC_DISPLAY_POLICY, NOW);
+    const open = ap(l, SYNTHETIC_DISPLAY_POLICY, NOW);
     expect(open.price).toEqual({ state: "unknown" });
     expect(open.text).toEqual({ state: "unknown" });
     expect(open.sellerType).toEqual({ state: "unknown" });
@@ -87,28 +89,28 @@ describe("DATA-002A: applyDisplayPolicy — feltstater", () => {
     expect(open.mileage).toEqual({ state: "unknown" });
     expect(open.specs.fuel).toEqual({ state: "unknown" });
     expect(open.title).toMatchObject({ state: "value", value: { variant: null } }); // ukjent variant er null, ikke oppdiktet
-    const closed = applyDisplayPolicy(l, policyAllowing(SYNTHETIC_DISPLAY_POLICY, []), NOW);
+    const closed = ap(l, policyAllowing(SYNTHETIC_DISPLAY_POLICY, []), NOW);
     expect(closed.price).toEqual({ state: "withheld" });
     expect(closed.mileage).toEqual({ state: "withheld" });
-    const unav = applyDisplayPolicy(sentinelListing(), SYNTHETIC_DISPLAY_POLICY, NOW, { unavailable: ["text", "price"] });
+    const unav = ap(sentinelListing(), SYNTHETIC_DISPLAY_POLICY, NOW, { unavailable: ["text", "price"] });
     expect(unav.text).toEqual({ state: "unavailable" });
     expect(unav.price).toEqual({ state: "unavailable" });
     expect(JSON.stringify(unav)).not.toContain("SENTINEL-FRITEKST");
     expect(unav.title.state).toBe("value");
     // forbudt vinner over «utilgjengelig»
-    const both = applyDisplayPolicy(sentinelListing(), policyAllowing(SYNTHETIC_DISPLAY_POLICY, []), NOW, { unavailable: ["text"] });
+    const both = ap(sentinelListing(), policyAllowing(SYNTHETIC_DISPLAY_POLICY, []), NOW, { unavailable: ["text"] });
     expect(both.text).toEqual({ state: "withheld" });
   });
 
   it("0 og tom verdi gjøres ikke om: pris 0 forblir ikke funnet-opp; km 0 er en verdi", () => {
     const l = sentinelListing();
     l.specs.mileage = { value: 0, unit: "km" };
-    expect(applyDisplayPolicy(l, SYNTHETIC_DISPLAY_POLICY, NOW).mileage).toEqual({ state: "value", value: { value: 0, unit: "km" } });
+    expect(ap(l, SYNTHETIC_DISPLAY_POLICY, NOW).mileage).toEqual({ state: "value", value: { value: 0, unit: "km" } });
   });
 
   it("verdier klones: endring av rå annonse eller visningsmodell påvirker ikke den andre", () => {
     const l = sentinelListing();
-    const d = applyDisplayPolicy(l, SYNTHETIC_DISPLAY_POLICY, NOW);
+    const d = ap(l, SYNTHETIC_DISPLAY_POLICY, NOW);
     if (d.price.state !== "value" || d.mileage.state !== "value") throw new Error("forventet verdi");
     expect(d.price.value).not.toBe(l.price);
     d.mileage.value.value = 1;
@@ -120,7 +122,7 @@ describe("DATA-002A: profiler — default-deny", () => {
   it("ukjent kilde får deny-all: alt `withheld`", () => {
     const p = policyForSource("noen-ekte-leverandor", NOW);
     expect(p.environment).toBe("unverified");
-    const d = applyDisplayPolicy(sentinelListing("noen-ekte-leverandor"), p, NOW);
+    const d = ap(sentinelListing("noen-ekte-leverandor"), p, NOW);
     const json = JSON.stringify(d);
     for (const s of SENTINELS) expect(json, s).not.toContain(s);
     expect(Object.values(p.allow).every((v) => v === false)).toBe(true);
@@ -131,7 +133,7 @@ describe("DATA-002A: profiler — default-deny", () => {
     const expired: DisplayPolicy = { ...SYNTHETIC_DISPLAY_POLICY, effectiveTo: "2026-10-16T12:00:00Z" }; // slutt er eksklusiv
     for (const p of [early, expired]) {
       expect(policyInEffect(p, NOW)).toBe(false);
-      const d = applyDisplayPolicy(sentinelListing(), p, NOW);
+      const d = ap(sentinelListing(), p, NOW);
       expect(d.policy.inEffect).toBe(false);
       for (const s of SENTINELS) expect(JSON.stringify(d), s).not.toContain(s);
     }
