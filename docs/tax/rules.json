@@ -1,6 +1,6 @@
 {
  "schema": "merovo.tax.rules-register",
- "version": "TAX-001B/1",
+ "version": "TAX-001C/1",
  "researchDate": "2026-10-15",
  "note": "DOKUMENTASJON, ikke produksjonsregler eller godkjent regelsett. TAX-001B: seks originale kilder lest lokalt (E1/E1P). E1 = dokumentert regeltekst i lest primærkilde; det betyr IKKE godkjent parameter. Godkjenning (usableAsRuleParameter=true) krever eksplisitt parameterApproval, se approvalRequirements. Ingen regel er godkjent.",
  "evidenceLevels": {
@@ -121,6 +121,11 @@
      "claim": "Sammendrag: mva. 25 % av tollverdien for importerte kjøretøy.",
      "source": "T08",
      "note": "Universell 25 % skal ikke innføres uten kildekontroll (IMPORT_ENGINE_SPEC); elbil har egen regel (R-IMP-VAT-003)."
+    },
+    {
+     "claim": "Skatteetaten (sammendrag): mva.-grunnlag ved innførsel er tollverdi + toll og andre avgifter – tyder på at engangsavgift kan inngå i grunnlaget; sats ikke vist.",
+     "source": "T11",
+     "note": "Må leses i T11/mval. § 4-? ; ikke avgjort. 25 % er fortsatt ikke kontrollert. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -251,6 +256,12 @@
    "sources": [
     {
      "id": "T10"
+    },
+    {
+     "id": "T23"
+    },
+    {
+     "id": "T24"
     }
    ],
    "evidenceLevel": "E2",
@@ -264,6 +275,16 @@
      "claim": "Kildene er uenige om hvilken dato som styrer kursen: tidspunkt tolldeklarasjon godtas, eller frigivelsestidspunkt.",
      "source": "T10",
      "note": "KILDEKONFLIKT i sammendragene."
+    },
+    {
+     "claim": "Sammendrag: tollverdi omregnes med Tolletatens kurs på det tidspunktet tollmyndighetene aksepterer deklarasjonen (vareførselsloven § 3-4 / tollavgiftsloven § 2-2).",
+     "source": "T24",
+     "note": "Primærtekst ikke lest. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    },
+    {
+     "claim": "Kurssyklus motstridende: «annenhver tirsdag, gyldig i to uker» (T23) mot eldre «ukentlig onsdag/mandag». Endringsforskrift 21.8.2026 til vareførselsforskriften § 6-12-1 åpner for deklarasjon 16–30 dager før innførsel.",
+     "source": "T23",
+     "note": "KILDEKONFLIKT (syklus). Ikke avgjort. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -315,6 +336,11 @@
     {
      "claim": "Videre nedtrapping (150 000 kr per år i 2027 og 2028 forutsatt ESA-godkjenning; regjeringen foreslo full mva. fra 2027) er FREMTIDIG/uenighet.",
      "source": "T14"
+    },
+    {
+     "claim": "Stortingets lovvedtak (sammendrag): fritak for omsetning av rene elbiler opptil 300 000 kr; et annet sted nevnes 500 000 kr (leasing) – inkonsistent; ny lov 19.6.2026 med ikrafttredelse ved kongelig resolusjon.",
+     "source": "T14",
+     "note": "Ikke i kraft-status og innførselsregel uavklart. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -369,6 +395,9 @@
     {
      "id": "T04",
      "section": "§ 3"
+    },
+    {
+     "id": "T26"
     }
    ],
    "evidenceLevel": "E1P",
@@ -377,6 +406,16 @@
     {
      "claim": "Bil med forbrenningsmotor: ny vektkomponent + generell engangsavgift (CO2/egenvekt); elbil: bare vektkomponent (Skatteetaten, sammendrag).",
      "source": "T02"
+    },
+    {
+     "claim": "Lovdata-sammendrag av stortingsvedtaket (T04) viser vektsats i § 3 over 1 200 kg (260 kr/kg og 30 kr/kg nevnt uten tydelig gruppemapping).",
+     "source": "T04",
+     "note": "UBEKREFTET gruppemapping. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    },
+    {
+     "claim": "Stortingets oversikt (T26) gir CO2-tabell 800/1 600/3 200/5 000 kr for gruppe a – motsier Lovdata-sammendraget (450/600/1 200).",
+     "source": "T26",
+     "note": "KILDEKONFLIKT mellom sammendragene; ingen sats kan velges. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -444,6 +483,11 @@
     {
      "claim": "Hvis Statens vegvesen har registrert CO2, brukes den som hovedregel.",
      "source": "T02"
+    },
+    {
+     "claim": "CO2-trinn 0–100/101–150/>150 g/km = 450/600/1 200 kr er sitert i Lovdata-sammendrag uten gruppe; 2025-vedtaket har eget fradrag under 70 g/km.",
+     "source": "T04",
+     "note": "Gruppe, årgang og overgang ukjent. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -657,6 +701,11 @@
      "claim": "Lead om 10 % fradrag i vektgrunnlag ved ≥ 100 km elektrisk rekkevidde (2022-forskrift) er MOTSAGT for 2026 av rundskriv 3.3.11 (opphevet 1.1.2024).",
      "source": "T03/T19",
      "note": "Ikke bruk fradraget."
+    },
+    {
+     "claim": "Skatteetatens side (sammendrag) sier at ladbar hybrid får fradrag i vektavgiftsgrunnlaget på inntil 10 % (stortingsvedtaket § 8 og forskriften § 3-1).",
+     "source": "T05",
+     "note": "MOTSIER rundskriv 2026 punkt 3.3.11 (E1): vektfradraget for ladbare hybrider er opphevet fra 1.1.2024. Mulig utdatert sammendrag; uavklart. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -832,6 +881,9 @@
     },
     {
      "id": "T03"
+    },
+    {
+     "id": "T27"
     }
    ],
    "evidenceLevel": "E1P",
@@ -841,6 +893,11 @@
      "claim": "Lead (Lovdata-snutt, ikke lest direkte): gruppe b har vekt 30 kr per kg over 1 200 kg og CO2-trapp 450/600/1 200 kr for 0–100 / 101–150 / >150 g/km.",
      "source": "T04",
      "note": "SKAL IKKE BRUKES SOM REGELPARAMETER før primærkilden er lest og datoversjon er avklart."
+    },
+    {
+     "claim": "Komitéinnstilling omtaler forslag om at CO2-komponenten for varebil skal være 50 % av personbil; ikke bekreftet vedtatt.",
+     "source": "T27",
+     "note": "Ikke avgjort om gruppe b ble endret. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -906,6 +963,11 @@
      "claim": "Varebil klasse 2: N1 uten sete/sitteanordning bak føreren; pick-up-regel om lasteplan; klasse 1 faller i gruppe a. Statens vegvesen avgjør klassifiseringen og vedtaket kan påklages.",
      "source": "T05/T15",
      "note": "Sammendrag av eldre rundskriv og forskrift."
+    },
+    {
+     "claim": "Statens vegvesen-kodeverk for avgiftsgruppe (T15) ble ikke funnet via søk; ikke lest.",
+     "source": "T15",
+     "note": "Åpent. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -997,6 +1059,11 @@
     {
      "claim": "Standardiserte prosentsatser etter alder; alternativ individuell metode finnes (utenfor første motor).",
      "source": "T06"
+    },
+    {
+     "claim": "Lovdata-sammendrag av § 3-3 viser trappen 16 % (>9 mnd), 17 % (>10), 18 % (>11) … 100 % (≥ 20 år) – samsvarer med T07 for de viste trinnene.",
+     "source": "T05",
+     "note": "Sammendraget oppgir at forskriften sist ble endret i 2026; tekstutdraget kan være eldre. Ikke avstemt trinn for trinn (U-002 uløst). [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -1310,6 +1377,9 @@
    "sources": [
     {
      "id": "T08"
+    },
+    {
+     "id": "T25"
     }
    ],
    "evidenceLevel": "E2",
@@ -1318,6 +1388,11 @@
     {
      "claim": "Avgift på klimagass; mengde ca. 1 kg for typisk personbil (sammendrag).",
      "source": "T08"
+    },
+    {
+     "claim": "Sats for HFK/PFK: 1,639 kr pr. kg × GWP nevnt, og HFK-134a 2 130,70 kr/kg nevnt på en annen side. Gjelder klimaanlegg i importerte kjøretøy.",
+     "source": "T25",
+     "note": "KILDEKONFLIKT mellom sammendrag. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -1415,11 +1490,20 @@
     },
     {
      "id": "T22"
+    },
+    {
+     "id": "T28"
     }
    ],
    "evidenceLevel": "E1P",
    "status": "delvis_E1_2025_utgave",
-   "leads": [],
+   "leads": [
+    {
+     "claim": "Håndbok (sammendrag): tilbakeføring etter § 9-6 gjelder utleie/persontransport, ikke videresalg; eksport utløser ikke tilbakeføring; åtteårsregel.",
+     "source": "T28",
+     "note": "Vilkår for importørens videresalg ikke lest; forhandlerprofil ikke dokumentert. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    }
+   ],
    "openQuestions": [
     "Siden er Merverdiavgiftshåndboken 2025, ikke verifisert for 2026.",
     "Håndbokssiden dekker «anskaffelse»; om innførselsmva. fradragsføres på samme måte, dokumentasjonskrav og bindingstid (§ 9-6) er ikke lest (kap. 3-29, 9-6, T11).",
@@ -1631,6 +1715,9 @@
    "sources": [
     {
      "id": "T17"
+    },
+    {
+     "id": "T29"
     }
    ],
    "evidenceLevel": "E2",
@@ -1640,6 +1727,11 @@
      "claim": "Utførselsfritak består under differansebeskatning (sammendrag); vilkår: gjenselger av brukte gjenstander.",
      "source": "T17",
      "note": "Hva dette betyr for faktisk fakturabeløp er ikke avklart."
+    },
+    {
+     "claim": "UStH (sammendrag): § 25a krever bl.a. at gjenstanden er anskaffet i Fellesskapet uten mva. eller også med differansebeskatning; faktura må ha «Gebrauchtgegenstände/Sonderregelung».",
+     "source": "T29",
+     "note": "Forholdet til § 6-utførsel ikke avklart i sammendragene. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
     }
    ],
    "openQuestions": [
@@ -1882,6 +1974,65 @@
    "affects": [
     "R-DED-001"
    ]
+  },
+  {
+   "id": "U-004",
+   "claim": "Motstridende satstabeller for CO2/vekt i sammendrag av stortingsvedtaket (Lovdata 450/600/1 200; Stortinget 800/1 600/3 200/5 000).",
+   "status": "uavklart kildekonflikt (E2)",
+   "note": "Primærtekst T04 ikke lest.",
+   "affects": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008"
+   ]
+  },
+  {
+   "id": "U-005",
+   "claim": "Ladbar hybrid: sammendrag nevner 10 % vektfradrag, rundskriv 2026 (E1) sier vektfradraget er opphevet fra 1.1.2024.",
+   "status": "uavklart (E1 rundskriv mot E2 sammendrag)",
+   "note": "Rundskrivet er den kontrollerte kilden, men forskrift/stortingsvedtak ikke lest.",
+   "affects": [
+    "R-OTA-005"
+   ]
+  },
+  {
+   "id": "U-006",
+   "claim": "Klimagassavgift: 1,639 mot 2 130,70 kr/kg i sammendrag.",
+   "status": "uavklart kildekonflikt (E2)",
+   "note": "T25 ikke lest.",
+   "affects": [
+    "R-IMP-OTH-002"
+   ]
+  },
+  {
+   "id": "U-007",
+   "claim": "Elbil-mva.: 300 000 mot 500 000 kr i sammendrag; ikrafttredelse av lov 19.6.2026 ukjent.",
+   "status": "uavklart (E2)",
+   "note": "T14 ikke lest.",
+   "affects": [
+    "R-IMP-VAT-003"
+   ]
+  },
+  {
+   "id": "U-008",
+   "claim": "Tollkursens syklus (annenhver tirsdag/to uker mot ukentlig).",
+   "status": "uavklart kildekonflikt (E2)",
+   "note": "T23/T24 ikke lest.",
+   "affects": [
+    "R-IMP-FX-001"
+   ]
   }
- ]
+ ],
+ "foundationStatus": {
+  "status": "REVIEW",
+  "date": "2026-10-16",
+  "approvedParameters": 0,
+  "class1References": 0,
+  "reason": "Ingen nye primærkilder lest (nettverkspolicy), ingen kalkulator kjørt, ingen parameter godkjent. Se docs/tax/TAX-001C-evidence-status.md.",
+  "doneRequires": [
+   "minst én godkjent parameter per implementert komponent (rules.parameterApproval.approved=true med godkjenner)",
+   "minst ett klasse 1-tilfelle per profil i omfang",
+   "alle uløste kildekonflikter U-* som berører godkjente regler er lukket"
+  ]
+ }
 }

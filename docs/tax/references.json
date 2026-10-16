@@ -1,8 +1,8 @@
 {
  "schema": "merovo.tax.reference-cases",
- "version": "TAX-001B/1",
+ "version": "TAX-001C/1",
  "researchDate": "2026-10-15",
- "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig offisiell referanse/kalkulator) er TOM: ingen kalkulator er kjørt. Klasse 2 = manuell håndregning fra lest primærkilde (E1-kilder), med dokumentert utregning; det er IKKE klasse 1. Klasse 3 = syntetisk aritmetikk/regelkontrakt, ikke bekreftelse av faktiske regler. Klasse 4 har ingen forventet totalsum.",
+ "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig offisiell referanse/kalkulator) er TOM: ingen kalkulator er kjørt. Klasse 2 = manuell håndregning fra lest primærkilde (E1-kilder), med dokumentert utregning; det er IKKE klasse 1. Klasse 3 = syntetisk aritmetikk/regelkontrakt, ikke bekreftelse av faktiske regler. Klasse 4 har ingen forventet totalsum. TAX-001C 2026-10-16: Skatteetatens kalkulator (S07) er IKKE kjørt (host blokkert av nettverkspolicy); klasse 1 = 0. Ingen resultat er funnet på eller utledet.",
  "classes": {
   "1": "uavhengig kontrollert referanse",
   "2": "manuelt kildeutledet forventning",

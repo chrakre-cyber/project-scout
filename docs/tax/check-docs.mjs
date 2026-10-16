@@ -202,6 +202,21 @@ if (packDir) {
     else console.log("pack: bruksfradragstabell (41 trinn) stemmer med T07-HTML");
   }
 }
+// Grunnlagsstatus: DONE krever godkjente parametere og klasse 1-dekning per profil i omfang (TAX-001C).
+{
+  const fs = rules.foundationStatus;
+  if (!fs || !["REVIEW", "DONE"].includes(fs.status)) err("foundationStatus mangler eller er ugyldig");
+  else {
+    const approved = rules.rules.filter((r) => r.usableAsRuleParameter).length;
+    const c1 = refs.cases.filter((c) => c.evidenceClass === 1);
+    if (fs.approvedParameters !== approved) err(`foundationStatus.approvedParameters ${fs.approvedParameters} ≠ faktisk ${approved}`);
+    if (fs.class1References !== c1.length) err(`foundationStatus.class1References ${fs.class1References} ≠ faktisk ${c1.length}`);
+    if (fs.status === "DONE") {
+      if (approved === 0) err("foundationStatus DONE uten godkjente parametere");
+      for (const p of profIds) if (!c1.some((c) => c.profileId === p)) err(`foundationStatus DONE men profil ${p} mangler klasse 1-tilfelle`);
+    }
+  }
+}
 const lv = {}; for (const r of rules.rules) lv[r.evidenceLevel] = (lv[r.evidenceLevel] ?? 0) + 1;
 console.log(`regler ${ruleIds.size} (${Object.entries(lv).map(([k, v]) => `${k}:${v}`).join(" ")}), kilder ${srcIds.size}, profiler ${profIds.size}, tilfeller ${caseIds.size} (klasse1 ${counts[1]}, klasse2 ${counts[2]}, klasse3 ${counts[3]}, klasse4 ${counts[4]})`);
 console.log(`regnet på nytt: ${arithChecked} komponent-tilfeller, ${ageChecked} bruksfradrag-tilfeller, ${demo.scenarios.filter((s) => s.purchaseBasisEur !== null).length} demoscenarier`);
