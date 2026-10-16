@@ -124,6 +124,19 @@ try {
   await pA.goto(`${BASE}/searches`);
   check("oversikt: ingen utkast ennå, forklarer at utkast ikke er aktive agenter", (await pA.locator("body").innerText()).includes("ikke aktive agenter") && (await pA.locator("[data-draft-id]").count()) === 0);
   await shot(pA, "01-oversikt-tom");
+  {
+    const body = nb(await pA.locator("body").innerText());
+    check("DEV-006D: Merovo-skall på /searches: ingen Project Scout-topp og ingen gult demobanner; merkelinje og fast etikett til stede",
+      !body.includes("Project Scout") && (await pA.locator('[role="status"].bg-amber-400').count()) === 0
+      && nb(await pA.locator('[data-testid="tagline"]').innerText()) === "Local demand. European supply."
+      && nb(await pA.locator('[data-testid="tagline-explainer"]').innerText()) === "Forhandlere vet hvilke biler kundene vil ha. Merovo finner dem i Europa."
+      && nb(await pA.locator('[data-testid="layout-source-label"]').innerText()).includes("Syntetiske demodata – ikke ekte leverandørdata"));
+    const navLinks = (await pA.locator('nav[aria-label="Hovedmeny"] a').allInnerTexts()).map(nb);
+    check("DEV-006D: navigasjonen i Merovo-skallet er begrenset til Søk og Nytt søk (ingen lenke til Mine agenter/Dashboard)",
+      JSON.stringify(navLinks) === JSON.stringify(["Søk", "Nytt søk"]) && (await pA.locator('a[href^="/agents"], a[href^="/dashboard"]').count()) === 0);
+    check("DEV-006D: flytstripen viser fire trinn og sier at den bare illustrerer modellen (ingen live kilder/avtaler)",
+      (await pA.locator('[data-testid="flow-strip"] li').count()) === 4 && (await pA.locator('[data-testid="flow-strip"]').innerText()).includes("Ingen live kilder, ingen avtaler"));
+  }
 
   // --- GLS-eksempel: ufullstendig skjema gir feil, ingenting lagres
   await pA.click('a[href="/searches/new?example=gls"]');
@@ -200,7 +213,7 @@ try {
   check("treff viser merke/modell, registrering, km, annonsepris med valuta og brutto/netto/ukjent", /BMW 3er/.test(matchText) && /Registrert/.test(matchText) && /Kilometerstand/.test(matchText) && /Annonsepris/.test(matchText) && /(kr|€|EUR)/.test(matchText) && /prisgrunnlag|oppgitt som/.test(matchText), matchText.slice(0, 300));
   check("treff: sier at innkjøpskostnad til Norge ikke er beregnet", matchText.includes("Innkjøpskostnad til Norge er ikke beregnet"));
   check("DEV-006C: kort viser etiketten «Syntetiske demodata – ikke ekte leverandørdata», hvorfor vist og kravs-/ønskesammendrag",
-    nb(await firstMatch.locator('[data-testid="source-label"]').innerText()).toLowerCase() === "syntetiske demodata – ikke ekte leverandørdata"
+    nb(await firstMatch.locator('[data-testid="source-label"]').innerText()).toLowerCase().includes("syntetiske demodata – ikke ekte leverandørdata")
     && (await firstMatch.locator('[data-testid="why-shown"]').innerText()).includes("Alle krav er oppfylt")
     && /Ønsker:.*ønske/.test(nb(await firstMatch.locator('[data-testid="criteria-summary"]').innerText())));
   check("DEV-006C: ingen «sterkt treff»-status og ingen påstand om verifisert treff; kjent oppfylt ønske vises først i treffgruppen",
@@ -389,6 +402,7 @@ try {
   check("mobil: handlinger er synlige og ikke tildekket (første handlingsknapp i viewport-bredde)", btn !== null && btn.x >= 0 && btn.x + btn.width <= 390);
   await pM.goto(`${BASE}/searches`);
   await noHScroll(pM, "mobil: oversikt");
+  await shot(pM, "15-mobil-oversikt");
   await ctxM.close();
 
   check("ingen JavaScript-feil i konsollen under hele flyten", problems.length === 0, problems.slice(0, 3).join(" | "));

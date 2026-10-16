@@ -9,7 +9,7 @@ import { specToFormValues } from "@/server/search-form";
 import { getSessionContext } from "@/server/session";
 import { DRAFT_SUCCESS, lookup } from "../messages";
 
-export const metadata: Metadata = { title: "Rediger søk — Project Scout" };
+export const metadata: Metadata = { title: "Rediger søk — Merovo demo" };
 
 export default async function EditSearchPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ msg?: string }> }) {
   const ctx = await getSessionContext();
@@ -29,7 +29,7 @@ export default async function EditSearchPage({ params, searchParams }: { params:
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{draft.name}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-forest">{draft.name}</h1>
         <p className="text-sm text-muted" data-testid="draft-meta">Utkast (ikke aktiv) · lagret versjon {draft.version} · sist lagret {formatDateTime(draft.updatedAt)} · firma: {ctx.dealership.name}</p>
       </div>
       {success && <p role="status" className="rounded-lg border border-ok/40 bg-[#e5f0e8] p-3 text-sm text-ok">{success}</p>}

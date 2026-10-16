@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { ResultCard } from "@/components/search/ResultCard";
 import { SpecSummary } from "@/components/search/SpecSummary";
 import { formatDateTime } from "@/lib/format";
+import { FlowStrip } from "@/components/merovo/FlowStrip";
+import { StatusBadge } from "@/components/merovo/StatusBadge";
 import { orderForPresentation } from "@/lib/search-explain";
 import { BUDGET_NOT_CALCULATED, criterionLabel, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { equipmentLabel } from "@/lib/search-summary";
@@ -12,7 +14,7 @@ import { getDraft } from "@/server/search-drafts";
 import { previewSearch } from "@/server/search-preview";
 import { getSessionContext } from "@/server/session";
 
-export const metadata: Metadata = { title: "Prøv med demodata — Project Scout" };
+export const metadata: Metadata = { title: "Prøv med demodata — Merovo demo" };
 // Resultatet beregnes for hver forespørsel og lagres ikke.
 export const dynamic = "force-dynamic";
 
@@ -46,7 +48,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">{draft.name}</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-forest">{draft.name}</h1>
         <p className="text-sm text-muted" data-testid="preview-meta">
           Resultatet gjelder <strong>lagret versjon {draft.version}</strong> (sist lagret {formatDateTime(draft.updatedAt)}). {back}
         </p>
@@ -55,6 +57,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
         <strong>{SYNTHETIC_SOURCE_LABEL}.</strong> Demo mot syntetiske annonser. Resultatet beregnes nå, for denne forespørselen, og lagres ikke — det kan ikke åpnes igjen senere.
         Ingen live kilde er brukt. {BUDGET_NOT_CALCULATED}
       </p>
+      <FlowStrip />
       <SpecSummary spec={draft.spec} />
 
       {!outcome.ok ? (
@@ -86,8 +89,8 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
             <h2 id="counts" className="sr-only">Antall</h2>
             {([["match", outcome.counts.match], ["needs_review", outcome.counts.needsReview], ["excluded", outcome.counts.excluded]] as const).map(([k, n]) => (
               <div key={k} className="rounded-2xl border border-sand bg-paper p-4 text-center">
-                <p className="text-3xl font-bold" data-count={k}>{n}</p>
-                <p className="text-sm text-muted">{VEHICLE_STATUS_LABEL[k]}</p>
+                <p className="text-3xl font-bold text-forest" data-count={k}>{n}</p>
+                <p className="mt-1"><StatusBadge status={k} /></p>
               </div>
             ))}
           </section>
@@ -102,14 +105,14 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
             const items = orderForPresentation(outcome.items.filter((i) => i.assessment.vehicle.status === st));
             return (
               <section key={st} aria-labelledby={`g-${st}`} className="space-y-3">
-                <h2 id={`g-${st}`} className="text-xl font-bold">{VEHICLE_STATUS_LABEL[st]} ({items.length})</h2>
-                {st === "needs_review" && <p className="text-sm text-muted">Kilden oppgir ikke alt som trengs for å avgjøre kravene. Kontroller hos kilden før du går videre.</p>}
+                <h2 id={`g-${st}`} className="flex flex-wrap items-center gap-3 text-xl font-bold text-forest"><StatusBadge status={st} /><span>({items.length})</span></h2>
+                {st === "needs_review" && <p className="text-sm text-muted">Dette er ikke feil: kilden oppgir ikke alt som trengs for å avgjøre kravene. Kontroller hos kilden før du går videre.</p>}
                 {items.length === 0 ? <p className="text-sm text-muted">Ingen.</p> : <ul className="space-y-3">{items.map((i) => <ResultCard key={i.listing.sourceListingId} item={i} draftId={id} version={draft.version} />)}</ul>}
               </section>
             );
           })}
           <details className="rounded-2xl border border-sand bg-paper p-4" data-testid="excluded">
-            <summary className="cursor-pointer text-xl font-bold">{VEHICLE_STATUS_LABEL.excluded} ({outcome.counts.excluded})</summary>
+            <summary className="min-h-11 cursor-pointer text-xl font-bold text-forest">{VEHICLE_STATUS_LABEL.excluded} ({outcome.counts.excluded})</summary>
             <p className="mt-2 text-sm text-muted">Disse bilene har minst ett kjent kravbrudd. Åpne forklaringen for å se hvilket krav som ikke er oppfylt.</p>
             <ul className="mt-3 space-y-3">
               {orderForPresentation(outcome.items.filter((i) => i.assessment.vehicle.status === "excluded")).map((i) => <ResultCard key={i.listing.sourceListingId} item={i} draftId={id} version={draft.version} />)}

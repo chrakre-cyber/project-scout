@@ -7,6 +7,7 @@ import {
   BODY_LABEL, FUEL_LABEL, SELLER_LABEL, TRANSMISSION_LABEL, formatDateTime, formatFirstRegistration, formatListingPrice, formatMileage, formatNumber,
   formatPriceBasis, formatVatStatement, labelOrNotStated,
 } from "@/lib/format";
+import { StatusBadge, SyntheticChip } from "@/components/merovo/StatusBadge";
 import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
 import { BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
@@ -14,7 +15,7 @@ import { getDraft } from "@/server/search-drafts";
 import { assessListing } from "@/server/search-preview";
 import { getSessionContext } from "@/server/session";
 
-export const metadata: Metadata = { title: "Detaljer — Project Scout" };
+export const metadata: Metadata = { title: "Detaljer — Merovo demo" };
 export const dynamic = "force-dynamic";
 
 const SAFE_ID = /^[A-Za-z0-9._:-]{1,200}$/;
@@ -49,15 +50,22 @@ export default async function ListingDetailPage({ params, searchParams }: { para
   return (
     <div className="space-y-5">
       <p>{back}</p>
+      <p className="rounded-xl bg-paper px-4 py-2 text-xs text-muted" data-testid="chain">
+        <strong className="text-forest">Forhandlerens etterspørsel</strong> (søket «{draft.name}») → <strong className="text-forest">Merovo søker</strong> (syntetiske annonser) →{" "}
+        <strong className="text-forest">Kildeannonse</strong> (syntetisk demoannonse) → <strong className="text-forest">Selger</strong> (ikke tilkoblet i demoen).
+      </p>
       <div className="grid gap-4 md:grid-cols-[14rem_1fr]">
-        <CarPlaceholder seed={listing.sourceListingId} bodyType={s.bodyType} className="h-44" />
+        <CarPlaceholder variant="merovo" seed={listing.sourceListingId} bodyType={s.bodyType} className="h-44" />
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold tracking-tight">{s.make} {s.model}{s.variant ? ` · ${s.variant}` : ""}</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-forest">{s.make} {s.model}{s.variant ? ` · ${s.variant}` : ""}</h1>
           <p className="text-sm text-muted">Syntetisk demoannonse {listing.sourceListingId} · {item.meta.provenance.description}. Ikke en ekte annonse.</p>
-          <p className="text-xs font-bold uppercase tracking-wide text-rust" data-testid="source-label">{SYNTHETIC_SOURCE_LABEL}</p>
-          <p className="text-lg font-bold" data-testid="detail-status">{VEHICLE_STATUS_LABEL[status]}</p>
-          <p className="text-sm" data-testid="why-shown">{whyShown(item.assessment.vehicle)}</p>
-          <p className="text-sm text-muted" data-testid="criteria-summary"><strong>Krav:</strong> {mustSummary(item.assessment.vehicle)} <strong>Ønsker:</strong> {wishSummary(item.assessment.vehicle)}</p>
+          <p><SyntheticChip text={SYNTHETIC_SOURCE_LABEL} /></p>
+          <p className="text-lg font-bold" data-testid="detail-status"><StatusBadge status={status} /></p>
+          <div className="rounded-xl border-l-4 border-rust bg-cream p-3">
+            <p className="text-xs font-bold uppercase tracking-wide text-rust-dark">Hvorfor vist</p>
+            <p className="mt-0.5 text-base" data-testid="why-shown">{whyShown(item.assessment.vehicle)}</p>
+            <p className="mt-1 text-sm text-muted" data-testid="criteria-summary"><strong>Krav:</strong> {mustSummary(item.assessment.vehicle)} <strong>Ønsker:</strong> {wishSummary(item.assessment.vehicle)}</p>
+          </div>
           <p className="rounded-lg bg-sand-soft px-3 py-2 text-sm" data-testid="budget-note">{BUDGET_NOT_CALCULATED}</p>
         </div>
       </div>

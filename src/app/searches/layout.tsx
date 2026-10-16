@@ -1,22 +1,40 @@
 import Image from "next/image";
 import Link from "next/link";
+import { MerovoAccount } from "@/components/merovo/MerovoAccount";
+import { MerovoNav } from "@/components/merovo/MerovoNav";
 import { SYNTHETIC_SOURCE_LABEL } from "@/lib/search-labels";
 
 /**
- * Egen, avgrenset flate for den nye søkeflyten (SEARCH-005): Merovo-profil (krem, skoggrønn, terrakotta, Figtree) kun her.
- * Eksisterende sider (agenter, dashboard, kjøringer) beholder sitt utseende og sin navigasjon.
+ * Merovo-skall for hele søkeflyten (SEARCH-005, DEV-006D): eget topplinje, merkevarelinje og fast etikett for syntetiske data.
+ * Erstatter Project Scout-toppen og det gule demobanneret på `/searches/**` (se AppChrome). Navigasjonen holdes til selve
+ * søkeopplevelsen. Etiketten er alltid synlig og er den samme sikkerhetsmeldingen som banneret ga: annonsene er syntetiske.
  */
 export default function SearchesLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className="merovo-scope rounded-2xl bg-cream text-ink">
-      <header className="flex flex-wrap items-center justify-between gap-3 border-b border-sand px-4 py-3 sm:px-6">
-        <Link href="/searches" className="flex items-center gap-3" aria-label="Nye søk — til oversikten">
-          <Image src="/brand/merovo-logo-horizontal-original.svg" alt="Merovo" width={160} height={40} priority unoptimized className="h-9 w-auto" />
-        </Link>
-        <span className="rounded-full border border-rust px-3 py-0.5 text-xs font-bold uppercase tracking-wide text-rust">Demo · utkast</span>
-        <span className="w-full text-xs text-muted" data-testid="layout-source-label">{SYNTHETIC_SOURCE_LABEL}</span>
+    <div className="merovo-scope min-h-screen bg-cream text-ink">
+      <header className="border-b border-sand bg-paper">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-2 sm:px-6">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-1">
+            <Link href="/searches" className="flex items-center" aria-label="Merovo — til søkeoversikten">
+              <Image src="/brand/merovo-logo-horizontal-original.svg" alt="Merovo" width={160} height={40} priority unoptimized className="h-9 w-auto" />
+            </Link>
+            <MerovoNav />
+          </div>
+          <MerovoAccount />
+        </div>
       </header>
-      <div className="px-4 py-6 sm:px-6">{children}</div>
+      <div className="border-b border-sand bg-forest text-cream">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-2 px-4 py-3 sm:px-6">
+          <div>
+            <p className="text-lg font-bold tracking-tight" lang="en" data-testid="tagline">Local demand. European supply.</p>
+            <p className="text-sm text-cream/90" data-testid="tagline-explainer">Forhandlere vet hvilke biler kundene vil ha. Merovo finner dem i Europa.</p>
+          </div>
+          <p role="status" className="rounded-full border border-rust bg-paper px-3 py-1 text-xs font-bold text-rust-dark" data-testid="layout-source-label">
+            <span aria-hidden="true">◇ </span>{SYNTHETIC_SOURCE_LABEL}
+          </p>
+        </div>
+      </div>
+      <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">{children}</main>
     </div>
   );
 }
