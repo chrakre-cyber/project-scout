@@ -24,7 +24,7 @@ npm run qa:secrets      # QA-001: secret-skann av repo, historikk og build
 npm run qa:demo         # QA-001: demomodus uten Supabase-konfigurasjon
 ```
 
-Visninger: `/dashboard` (syntetiske annonser fra datakilden, 24 per side, filter per demo-agent), `/agents` (demo-agenter, kun lesing) og `/opportunities/<id>` (detaljside; kost/bidrag vises som «ikke beregnet»).
+Inngang (DEV-006F): rotruten `/` sender til `/login`; innlogget bruker ender på `/searches` (Merovo-søkeflaten). Eldre visninger er uendret og nås via direkte URL: `/dashboard` (syntetiske annonser fra datakilden, 24 per side, filter per demo-agent), `/agents` (demo-agenter, kun lesing) og `/opportunities/<id>` (detaljside; kost/bidrag vises som «ikke beregnet»).
 
 Annonser hentes gjennom `MarketplaceProvider` (DEV-003). I dag brukes bare den syntetiske provideren med oppdiktede annonser (109 fra DEV-003 + 6 demovariasjoner fra DEV-006C); se `src/providers/marketplace/synthetic/fixtures/FIXTURES.md`. Kildefeil kan simuleres lokalt uten nettverk, f.eks. `SCOUT_SYNTHETIC_FAILURE=unavailable npm run start` (se `.env.example`).
 

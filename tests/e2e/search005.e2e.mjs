@@ -123,6 +123,8 @@ try {
   check("DEV-006E: vellykket innlogging havner på /searches (ikke /agents)", /\/searches$/.test(pA.url()));
   await pA.goto(`${BASE}/login`);
   check("DEV-006E: allerede innlogget bruker på /login sendes til /searches", /\/searches$/.test(pA.url()));
+  await pA.goto(`${BASE}/`);
+  check("DEV-006F: rotruten / for innlogget bruker ender på /searches (via /login)", /\/searches$/.test(pA.url()));
   {
     const ctxL = await browser.newContext({ viewport: { width: 1280, height: 900 } });
     const pL = await ctxL.newPage(); watch(pL);
@@ -140,6 +142,8 @@ try {
     await Promise.all([pL.waitForURL(/\/login\?error=1/), pL.click('main button[type="submit"]')]);
     check("DEV-006E: feil passord gir felles feilmelding i samme skall (ingen redirect til /searches)", (await pL.locator('[data-testid="login-error"]').innerText()).includes("Innloggingen mislyktes") && (await pL.locator('[data-testid="tagline"]').count()) === 1);
     await shot(pL, "17-login-feil");
+    await pL.goto(`${BASE}/`);
+    check("DEV-006F: rotruten / sender en anonym besøkende til /login (ikke /dashboard)", /\/login$/.test(pL.url()) && !(await pL.locator("body").innerText()).includes("Project Scout"));
     await ctxL.close();
     const ctxLM = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
     const pLM = await ctxLM.newPage(); watch(pLM);

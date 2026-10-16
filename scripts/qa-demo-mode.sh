@@ -21,7 +21,8 @@ get() { curl -s -o /tmp/qa-demo.html -w '%{http_code}' "localhost:$PORT$1"; sed 
 check "/dashboard 200" "$(get /dashboard)" "200"
 check "  demo-banner (syntetiske annonser)" "$(grep -c 'annonsene er syntetiske' /tmp/qa-demo.txt)" "1"
 check "  24 syntetiske kort på side 1" "$(grep -o 'href="/opportunities/[a-z0-9-]*"' /tmp/qa-demo.txt | sort -u | wc -l)" "24"
-check "  «av 109 i syntetisk kilde»" "$(grep -c 'av 109 i syntetisk kilde' /tmp/qa-demo.txt)" "1"
+# DEV-006F: antallet er ikke hardkodet (DEV-006C la til variasjonsposter); sjekk at tellingen vises og er minst 109.
+check "  «av N i syntetisk kilde» (N ≥ 109)" "$(grep -oE 'av [0-9]+ i syntetisk kilde' /tmp/qa-demo.txt | head -1 | grep -oE '[0-9]+' | awk '$1>=109{print 1; exit} END{}' )" "1"
 check "  ingen påstand om live-data (ingen «live»/«mobile.de» utenom negasjon)" "$(grep -o -i -E '[^.>]{0,25}(live|mobile\.de)[^.<]{0,25}' /tmp/qa-demo.txt | grep -v -i -E 'ingen|ikke' | wc -l)" "0"
 check "/dashboard?page=5 200 (13 kort, siste side)" "$(get '/dashboard?page=5')" "200"
 check "/opportunities/demo-001 200 (EUR, belegg)" "$(get /opportunities/demo-001)" "200"

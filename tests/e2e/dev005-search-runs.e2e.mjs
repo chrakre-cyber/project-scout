@@ -53,7 +53,9 @@ async function login(p, u, base = BASE) {
   await p.goto(`${base}/login`);
   await p.fill('input[name="email"]', u.email);
   await p.fill('input[name="password"]', u.password);
-  await Promise.all([p.waitForURL(/\/agents/), p.click('button[type="submit"]')]);
+  await Promise.all([p.waitForURL(/\/searches/), p.click('button[type="submit"]')]);
+  // DEV-006F: innlogging går nå til /searches; de eldre agentflytene navigerer eksplisitt til /agents.
+  await p.goto(`${base}/agents`);
 }
 async function waitUp(url) {
   for (let i = 0; i < 60; i++) { try { if ((await fetch(url)).status < 500) return true; } catch {} await new Promise((r) => setTimeout(r, 1000)); }

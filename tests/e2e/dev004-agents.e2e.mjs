@@ -44,7 +44,9 @@ async function login(u) {
   await page.goto(`${BASE}/login`);
   await page.fill('input[name="email"]', u.email);
   await page.fill('input[name="password"]', u.password);
-  await Promise.all([page.waitForURL(/\/agents/), page.click('button[type="submit"]')]);
+  await Promise.all([page.waitForURL(/\/searches/), page.click('button[type="submit"]')]);
+  // DEV-006F: innlogging går nå til /searches; de eldre agentflytene navigerer eksplisitt til /agents.
+  await page.goto(`${BASE}/agents`);
 }
 async function clickAndWait(locator, url) { await Promise.all([page.waitForURL(url), locator.click()]); }
 const N1 = `Golf ${run}`, N2 = `Bred SUV ${run}`;

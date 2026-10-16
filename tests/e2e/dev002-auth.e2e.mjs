@@ -29,7 +29,9 @@ async function login(page, u, pw = u.password) {
   await page.goto(`${BASE}/login`);
   await page.fill('input[name="email"]', u.email);
   await page.fill('input[name="password"]', pw);
-  await Promise.all([page.waitForURL(/\/(agents|login\?error=1)/), page.click('button[type="submit"]')]);
+  await Promise.all([page.waitForURL(/\/(searches|login\?error=1)/), page.click('button[type="submit"]')]);
+  // DEV-006F: innlogging går nå til /searches; de eldre agentflytene navigerer eksplisitt til /agents.
+  if (/\/searches/.test(page.url())) await page.goto(`${BASE}/agents`);
 }
 try {
   const ctx = await browser.newContext(); const page = await ctx.newPage();
