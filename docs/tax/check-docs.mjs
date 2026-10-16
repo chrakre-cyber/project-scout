@@ -20,12 +20,17 @@ const profIds = uniq(profiles.profiles.map((p) => p.id), "profil-id");
 const caseIds = uniq(refs.cases.map((c) => c.id), "tilfelle-id");
 const srcById = new Map(sources.sources.map((s) => [s.id, s]));
 const ruleById = new Map(rules.rules.map((r) => [r.id, r]));
-const LEVELS = ["E0", "E1", "E1P", "E2", "E3"];
+const LEVELS = ["E0", "E1", "E1P", "E1X", "E2", "E3"];
 
 // ---- kilder
 for (const s of sources.sources) {
   if (!/^https:\/\//.test(s.url)) err(`kilde ${s.id}: url må være https`);
-  if (!["E0", "E1", "E2", "E3"].includes(s.evidenceLevel)) err(`kilde ${s.id}: ugyldig nivå ${s.evidenceLevel}`);
+  if (!["E0", "E1", "E1X", "E2", "E3"].includes(s.evidenceLevel)) err(`kilde ${s.id}: ugyldig nivå ${s.evidenceLevel}`);
+  if (s.evidenceLevel === "E1X") {
+    // Eksternt verifisert (ikke lest av Claude): ingen lesedato/hash, men verifisør, dato, oppgitte fakta og begrensninger kreves.
+    if (s.directReadDate || s.packageSha256) err(`kilde ${s.id}: E1X skal ikke ha directReadDate/packageSha256 (ikke lest av Claude)`);
+    if (!s.verifiedBy || !s.verifiedDate || !s.providedFacts?.length || !s.limitations) err(`kilde ${s.id}: E1X krever verifiedBy, verifiedDate, providedFacts og limitations`);
+  }
   if (s.evidenceLevel === "E1") {
     if (!s.directReadDate) err(`kilde ${s.id}: E1 krever directReadDate`);
     if (!String(s.fetchStatus).startsWith("lest_")) err(`kilde ${s.id}: E1 krever fetchStatus lest_*`);
@@ -33,6 +38,7 @@ for (const s of sources.sources) {
     if (!s.limitations) err(`kilde ${s.id}: E1 krever limitations`);
     if (!s.packageFile || !/^[0-9a-f]{64}$/.test(s.packageSha256 ?? "")) err(`kilde ${s.id}: E1 krever packageFile og packageSha256`);
   } else if (s.directReadDate) err(`kilde ${s.id}: directReadDate satt uten E1`);
+  if (s.externalVerification && s.evidenceLevel !== "E1") err(`kilde ${s.id}: externalVerification er bare for E1-kilder (E1X bruker egne felt)`);
   for (const r of s.rules ?? []) if (!ruleIds.has(r)) err(`kilde ${s.id}: ukjent regel ${r}`);
 }
 // ---- begrepsvern (F1): vrakpantutbetaling er ikke vrakpantavgift
@@ -59,6 +65,24 @@ for (const r of rules.rules) {
     }
     if (r.evidenceLevel === "E1P" && !r.openQuestions.length) err(`regel ${r.id}: E1P krever åpne spørsmål`);
   } else if (f.length) err(`regel ${r.id}: e1Findings uten E1/E1P`);
+  const fx = r.e1xFindings ?? [];
+  if (r.evidenceLevel === "E1X" && !fx.length) err(`regel ${r.id}: E1X krever e1xFindings`);
+  if (fx.length && !["E1", "E1P", "E1X"].includes(r.evidenceLevel)) err(`regel ${r.id}: e1xFindings på regel uten E1/E1P/E1X`);
+  for (const x of fx) {
+    if (srcById.get(x.source)?.evidenceLevel !== "E1X") err(`regel ${r.id}: e1xFinding bygger på kilde ${x.source} som ikke er E1X`);
+    if (!x.claim || !x.locator || !x.verifiedDate || !x.verifiedBy) err(`regel ${r.id}: e1xFinding mangler claim/locator/verifiedDate/verifiedBy`);
+  }
+  if (r.evidenceLevel === "E1X" && !r.openQuestions.length) err(`regel ${r.id}: E1X krever åpne spørsmål (unknown stays unknown)`);
+  // Datosensitive parametere: må ha fra-dato, stigende bånd, og aldri brukes før fra-datoen.
+  for (const dp of r.datedParameters ?? []) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(dp.from ?? "")) err(`regel ${r.id}: datedParameter ${dp.id} mangler fra-dato`);
+    if (!dp.beforeFrom || !/UKJENT|not_calculated/i.test(dp.beforeFrom)) err(`regel ${r.id}: datedParameter ${dp.id} må si at tiden før fra-datoen er ukjent`);
+    if (dp.evidence !== "E1X" && dp.evidence !== "E1") err(`regel ${r.id}: datedParameter ${dp.id} mangler evidens`);
+    let prev = -1;
+    for (const b of dp.bands ?? []) { if (b.fromGramKm <= prev && prev !== -1) err(`regel ${r.id}: bånd ikke stigende i ${dp.id}`); prev = b.fromGramKm; if (!(b.rate > 0)) err(`regel ${r.id}: bånd uten sats i ${dp.id}`); }
+    if (r.validity?.from && dp.from < r.validity.from && r.validity.from !== dp.from) err(`regel ${r.id}: validity.from ${r.validity.from} etter datedParameter`);
+    if (r.usableAsRuleParameter) err(`regel ${r.id}: datert parameter kan ikke godkjennes uten E1 og klasse 1`);
+  }
   // godkjent parameter krever eksplisitte vilkår
   if (r.usableAsRuleParameter || r.parameterApproval?.approved) {
     const a = r.parameterApproval ?? {};
@@ -71,7 +95,7 @@ for (const r of rules.rules) {
   }
   for (const s of r.sources) if (!srcIds.has(s.id)) err(`regel ${r.id}: ukjent kilde ${s.id}`);
   for (const p of r.profiles) if (!profIds.has(p)) err(`regel ${r.id}: ukjent profil ${p}`);
-  if (!/IKKE KONTROLLERT/.test(r.amountUnitAndRounding) && !["E1", "E1P"].includes(r.evidenceLevel)) err(`regel ${r.id}: beløp uten E1/E1P`);
+  if (!/IKKE KONTROLLERT/.test(r.amountUnitAndRounding) && !["E1", "E1P", "E1X"].includes(r.evidenceLevel)) err(`regel ${r.id}: beløp uten E1/E1P/E1X`);
 }
 for (const p of profiles.profiles) for (const r of p.rules) if (!ruleIds.has(r)) err(`profil ${p.id}: ukjent regel ${r}`);
 
@@ -138,6 +162,20 @@ for (const c of refs.cases) {
   }
   if (c.id.startsWith("C2-SCRAP-") && c.expected.kind === "value" && !/2 400/.test(ruleById.get("R-IMP-OTH-001").amountUnitAndRounding)) err(`tilfelle ${c.id}: stemmer ikke med regelens beløp`);
   if (c.ruleIds.includes("R-SCR-PAY-001") && !(c.expected.kind === "status" && /ekskludert/.test(c.expected.value))) err(`tilfelle ${c.id}: vrakpantutbetaling skal være ekskludert, ikke et beløp`);
+  if (c.inputs?.calc) {
+    const k = c.inputs.calc; let got;
+    if (k.kind === "importVat") {
+      const cv = toMinor(k.vehiclePriceNok) + toMinor(k.freightToBorderNok) + toMinor(k.insuranceToBorderNok); // senere norske avgifter inngår IKKE
+      const vat = (cv * BigInt(k.rateBp) + 5000n) / 10000n;
+      got = `customsValue=${fmt(cv)} ; importVat=${fmt(vat)}`;
+    } else if (k.kind === "evVat") {
+      const price = toMinor(k.priceNok), thr = toMinor(k.thresholdNok);
+      const base = price > thr ? price - thr : 0n;
+      got = `vatBase=${fmt(base)} ; vat=${fmt((base * BigInt(k.rateBp) + 5000n) / 10000n)}`;
+    } else { err(`tilfelle ${c.id}: ukjent calc ${k.kind}`); continue; }
+    if (got !== c.expected.value) err(`tilfelle ${c.id}: forventet «${c.expected.value}», regnet «${got}»`);
+    arithChecked++;
+  }
   if (c.inputs?.components) {
     let got; try { got = summarize(c.inputs.components); } catch (e) { err(`tilfelle ${c.id}: ${e.message}`); continue; }
     for (const [k, v] of Object.entries(c.expected.value)) if (got[k] !== v) err(`tilfelle ${c.id}: ${k} forventet ${v}, regnet ${got[k]}`);

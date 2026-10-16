@@ -1,8 +1,8 @@
 {
  "schema": "merovo.tax.reference-cases",
- "version": "TAX-001C/1",
+ "version": "TAX-001D/1",
  "researchDate": "2026-10-15",
- "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig offisiell referanse/kalkulator) er TOM: ingen kalkulator er kjørt. Klasse 2 = manuell håndregning fra lest primærkilde (E1-kilder), med dokumentert utregning; det er IKKE klasse 1. Klasse 3 = syntetisk aritmetikk/regelkontrakt, ikke bekreftelse av faktiske regler. Klasse 4 har ingen forventet totalsum. TAX-001C 2026-10-16: Skatteetatens kalkulator (S07) er IKKE kjørt (host blokkert av nettverkspolicy); klasse 1 = 0. Ingen resultat er funnet på eller utledet.",
+ "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig offisiell referanse/kalkulator) er TOM: ingen kalkulator er kjørt. Klasse 2 = manuell håndregning fra lest primærkilde (E1-kilder), med dokumentert utregning; det er IKKE klasse 1. Klasse 3 = syntetisk aritmetikk/regelkontrakt, ikke bekreftelse av faktiske regler. Klasse 4 har ingen forventet totalsum. TAX-001C 2026-10-16: Skatteetatens kalkulator (S07) er IKKE kjørt (host blokkert av nettverkspolicy); klasse 1 = 0. Ingen resultat er funnet på eller utledet. TAX-001D: klasse 3-tilfeller C3-040…043 illustrerer eksternt verifiserte regler (E1X) som aritmetikk; de er ikke kalkulator- eller klasse 1/2-referanser.",
  "classes": {
   "1": "uavhengig kontrollert referanse",
   "2": "manuelt kildeutledet forventning",
@@ -3324,6 +3324,187 @@
    "requiredToUpgrade": [],
    "sources": [],
    "notes": "Uavklart refusjon vises som scenario, ikke som bekreftet budsjettfordel."
+  },
+  {
+   "id": "C3-040",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Import-mva. 25 % av tollverdi inkl. frakt og forsikring til norsk innførselssted; engangsavgift (oppstår senere) inngår ikke",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002"
+   ],
+   "inputs": {
+    "calc": {
+     "kind": "importVat",
+     "vehiclePriceNok": "1000000.00",
+     "freightToBorderNok": "20000.00",
+     "insuranceToBorderNok": "5000.00",
+     "rateBp": 2500,
+     "laterNorwegianTaxNok": "150000.00"
+    },
+    "currency": "NOK (syntetiske beløp)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "customsValue=1025000.00 ; importVat=256250.00",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til hele øre (demo-regel)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Aritmetisk illustrasjon av E1X-regelen. Forutsetter at det ikke finnes toll (ukjent). Ikke et kalkulator- eller tollresultat."
+  },
+  {
+   "id": "C3-041",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Elbil-mva.: kjøpesum 400 000 → grunnlag over 300 000 = 100 000 → mva. 25 000",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-003"
+   ],
+   "inputs": {
+    "calc": {
+     "kind": "evVat",
+     "priceNok": "400000.00",
+     "thresholdNok": "300000.00",
+     "rateBp": 2500
+    },
+    "currency": "NOK (syntetiske beløp)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "vatBase=100000.00 ; vat=25000.00",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til hele øre (demo-regel)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Aritmetisk illustrasjon. Anvendelse ved innførsel og «kvalifiserende» er ikke avklart."
+  },
+  {
+   "id": "C3-042",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Elbil-mva.: kjøpesum eksakt 300 000 → ingen mva. (grensen er «opptil» 300 000)",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-003"
+   ],
+   "inputs": {
+    "calc": {
+     "kind": "evVat",
+     "priceNok": "300000.00",
+     "thresholdNok": "300000.00",
+     "rateBp": 2500
+    },
+    "currency": "NOK (syntetiske beløp)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "vatBase=0.00 ; vat=0.00",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til hele øre (demo-regel)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Grensetilfelle; tolkning «opptil» er fra oppgitt regeltekst."
+  },
+  {
+   "id": "C3-043",
+   "evidenceClass": 3,
+   "classLabel": "syntetisk aritmetikk/demo/regelkontrakt",
+   "title": "Elbil-mva.: kjøpesum 250 000 → under grensen → ingen mva.",
+   "profileId": null,
+   "ruleIds": [
+    "R-IMP-VAT-003"
+   ],
+   "inputs": {
+    "calc": {
+     "kind": "evVat",
+     "priceNok": "250000.00",
+     "thresholdNok": "300000.00",
+     "rateBp": 2500
+    },
+    "currency": "NOK (syntetiske beløp)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "vatBase=0.00 ; vat=0.00",
+    "unit": "NOK",
+    "rounding": "ROUND_HALF_UP til hele øre (demo-regel)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [],
+   "notes": "Aritmetisk illustrasjon."
+  },
+  {
+   "id": "C4-VER-B-0831",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Gruppe b varebil, styrende dato 2026-08-31: satsene 450/600/1 200 gjelder IKKE (før 2026-09-01)",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-008",
+    "R-OTA-002"
+   ],
+   "inputs": {
+    "governingDate": "2026-08-31",
+    "group": "b"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "satser før 2026-09-01 (ukjent)",
+     "vektkomponent gruppe b",
+     "styrende hendelse (registrering/innførsel)"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les stortingsvedtak (T30/T31) og forskrift direkte (E1)"
+   ],
+   "sources": [
+    "T31"
+   ],
+   "notes": "Datovakt: ingen sats før 1.9. Forventet resultat = not_calculated."
+  },
+  {
+   "id": "C4-VER-B-0901",
+   "evidenceClass": 4,
+   "classLabel": "planlagt eller blokkert tilfelle",
+   "title": "Gruppe b varebil, styrende dato 2026-09-01: CO2-satsene 450/600/1 200 gjelder (E1X), men totalen kan ikke beregnes",
+   "profileId": "VB-DIE",
+   "ruleIds": [
+    "R-OTA-008",
+    "R-OTA-002"
+   ],
+   "inputs": {
+    "governingDate": "2026-09-01",
+    "group": "b",
+    "co2GramKm": "ukjent"
+   },
+   "expected": {
+    "kind": "none",
+    "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
+    "missing": [
+     "vektkomponent gruppe b",
+     "trinnvis/marginal beregning",
+     "CO2 og egenvekt for kjøretøyet",
+     "bruksfradrag og vrakpantavgift-samspill"
+    ]
+   },
+   "requiredToUpgrade": [
+    "Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre input, dato, resultat og skjermbilde uten persondata",
+    "Les stortingsvedtak (T30/T31) og forskrift direkte (E1)"
+   ],
+   "sources": [
+    "T31"
+   ],
+   "notes": "Datovakt: satsene kan brukes fra denne datoen, men resultat krever resten."
   }
  ]
 }

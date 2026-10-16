@@ -1,6 +1,6 @@
 {
  "schema": "merovo.tax.sources",
- "version": "TAX-001C/1",
+ "version": "TAX-001D/1",
  "researchDate": "2026-10-15",
  "coverage": "TAX-001B 15.10.2026: seks originale kildefiler hentet av Codex og lest lokalt av Claude (kildepakke TAX-001B-handoff, hash i MANIFEST). Kilder merket E1 er lest i hele eller relevante deler; E1 betyr lest primærkilde, ikke godkjent regelparameter. Direkte nettverkstilgang til norske verter er fortsatt blokkert; øvrige kilder står uendret på E2/E0. Stortingsvedtak, forskrift (§ 3-1, § 3-3), Lovdata og tollkurs er IKKE lest. TAX-001C 2026-10-16: ingen nye primærkilder kunne leses (nettverkspolicy). Alle nye opplysninger er E2-ledetråder fra søkesammendrag.",
  "sources": [
@@ -195,7 +195,15 @@
     "hele tabellen",
     "forklaringstekst om 2024-endring og siste trinn"
    ],
-   "limitations": "Engelsk sats-side. Ingen publiseringsdato i filen. Tabelltrinn og datoforklaring («production») er ikke avstemt mot forskrift § 3-3 (ikke lest). Tabellen er transkribert i bruksfradrag-tabell-T07.json."
+   "limitations": "Engelsk sats-side. Ingen publiseringsdato i filen. Tabelltrinn og datoforklaring («production») er ikke avstemt mot forskrift § 3-3 (ikke lest). Tabellen er transkribert i bruksfradrag-tabell-T07.json.",
+   "externalVerification": {
+    "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+    "verifiedDate": "2026-10-16",
+    "providedFacts": [
+     "Tabellen går til 100 % ved 20 år (verifisert eksternt, i tillegg til Claudes lokale lesing av filen)"
+    ],
+    "limitations": "Se T07 (E1) for hash og transkripsjon."
+   }
   },
   {
    "id": "T08",
@@ -357,8 +365,8 @@
    "publisher": "Statens vegvesen",
    "url": "https://autosys-kjoretoy-api.atlas.vegvesen.no/kodeverk-ui/index-kodeverk.html?kodeverkId=AVGIFT",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
    "directReadDate": null,
    "searchLeadDate": "2026-10-15",
    "whatToExtract": [
@@ -368,7 +376,13 @@
    "rules": [
     "R-OTA-009"
    ],
-   "note": ""
+   "note": "",
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Kodeverket AVGIFT finnes som offisielt kodesystem; eksempel: kode 315 = Varebil klasse 2, fortollet etter 31.3.2001"
+   ],
+   "limitations": "Bare ett eksempel er gitt, ikke hele kodelisten. Teknisk klassifisering er ikke det samme som avgiftsbehandling."
   },
   {
    "id": "T16",
@@ -397,8 +411,8 @@
    "publisher": "gesetze-im-internet.de (DE)",
    "url": "https://www.gesetze-im-internet.de/ustg_1980/__25a.html",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
    "directReadDate": null,
    "searchLeadDate": "2026-10-15",
    "whatToExtract": [
@@ -408,7 +422,13 @@
    "rules": [
     "R-FOR-002"
    ],
-   "note": "Dekker bare Tyskland."
+   "note": "Dekker bare Tyskland.",
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Differansebeskatning finnes for kvalifiserende gjenselgertransaksjoner"
+   ],
+   "limitations": "Vilkår og forhold til § 6 ikke gitt. Ingen enkeltannonse kan antas å kvalifisere."
   },
   {
    "id": "T18",
@@ -708,6 +728,229 @@
     "R-FOR-002"
    ],
    "note": ""
+  },
+  {
+   "id": "T30",
+   "title": "Stortinget – Vedtak 220: Engangsavgift på motorvogner mv. for 2026",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?did=40035798&p=104911",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Grunnvedtak for 2026 (satser per gruppe) – innholdet utover punktene under er ikke gitt i oppdraget"
+   ],
+   "limitations": "Bare faktaene oppgitt i TAX-001D er verifisert. Satstabeller for gruppe a, vektkomponent og satser før 1.9.2026 er ikke gitt."
+  },
+  {
+   "id": "T31",
+   "title": "Stortinget – Revidert 2026, vedtak 1131/1132 (endring av engangsavgift)",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?p=200313",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-008"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Avgiftsgruppe b, fra 1. september 2026: CO2-sats 450 kr per g/km for 0–100 g/km, 600 kr for 101–150, 1 200 kr over 150 g/km"
+   ],
+   "limitations": "Hvilken hendelse som styrer datoen (registrering/innførsel), om intervallene regnes trinnvis (marginalt), og satsene før 1.9.2026 er ikke gitt. Gruppe a og vektkomponent ikke gitt."
+  },
+  {
+   "id": "T32",
+   "title": "Skatteetaten – Deduction for use (bruksfradrag)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/en/person/duties/cars-and-other-vehicles/importing/one-off-registration-tax/deduction-for-use/",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-010",
+    "R-OTA-012"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Ordinært fradrag er aldersbasert",
+    "Relevant periode: første registrering i utlandet til første registrering i Norge",
+    "Alternativ beregning finnes og er bindende når den er valgt"
+   ],
+   "limitations": "Forskrift § 3-3 og «production»-ordlyden (U-002) er ikke adressert. Vrakpantavgift × bruksfradrag ikke adressert."
+  },
+  {
+   "id": "T33",
+   "title": "Tolletaten – Import av bil og andre kjøretøy (eksternt verifiserte fakta)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Merverdiavgift ved import av kjøretøy er 25 %",
+    "Mva.-grunnlaget er tollverdien"
+   ],
+   "limitations": "Samme URL som T21 (lest lokalt, privatpersonside uten sats). Faktaene her er gitt av ekstern verifisering. Forhandlerbehandling ikke gitt."
+  },
+  {
+   "id": "T34",
+   "title": "Tolletaten – Incoterms / tollverdi",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/bedrift/import/deklarering-av-varer/incoterms-2010",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Transport og forsikring fram til det norske innførselsstedet inngår i tollverdien",
+    "Norske avgifter som oppstår etter innførsel inngår ikke i tollverdien bare fordi de oppstår senere"
+   ],
+   "limitations": "Sjablongfrakt, transaksjonsgebyr og tollkurs ikke gitt. Om toll (tollsats) finnes for bil er ikke gitt."
+  },
+  {
+   "id": "T35",
+   "title": "Merverdiavgiftshåndboken – § 6-8 (elbil, avgiftsfritak)",
+   "publisher": "Skatteetaten",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende/MVA2025_M-6",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-003"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Fra 1.1.2026: kvalifiserende elektriske personkjøretøy er mva.-frie opptil 300 000 kr",
+    "25 % mva. på beløp over 300 000 kr",
+    "Vektkomponenten i engangsavgiften er ikke del av dette mva.-grunnlaget"
+   ],
+   "limitations": "Håndbokens URL er merket 2025-utgaven. Eksplisitt anvendelse ved innførsel (import), «kvalifiserende»-vilkår og lov av 19.6.2026 er ikke gitt."
+  },
+  {
+   "id": "T36",
+   "title": "Merverdiavgiftshåndboken – § 8-4.3 (utgave 2023)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/rettskilder/type/handboker/merverdiavgiftshandboken/2023/M-8/M-8-4/M-8-4.3/",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-DED-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Inngående mva. på personkjøretøy kan fradragsføres når kjøretøyet anskaffes for videresalg",
+    "Dette er et uttrykkelig unntak fra den ordinære fradragsbegrensningen for personkjøretøy"
+   ],
+   "limitations": "2023-utgave (T22 er 2025-utgaven, lest). Gjelder IKKE generalisert til utleie, privat bruk eller andre profiler. Innførselsmva., varebil, bindingstid og importørprofil er ikke gitt."
+  },
+  {
+   "id": "T37",
+   "title": "UStG § 12 (Steuersätze)",
+   "publisher": "gesetze-im-internet.de (DE)",
+   "url": "https://www.gesetze-im-internet.de/ustg_1980/__12.html",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-FOR-005"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Regelsats for mva. er 19 %"
+   ],
+   "limitations": "Redusert sats og ikrafttredelsesdato ikke gitt."
+  },
+  {
+   "id": "T38",
+   "title": "UStG § 4 (Steuerbefreiungen)",
+   "publisher": "gesetze-im-internet.de (DE)",
+   "url": "https://www.gesetze-im-internet.de/ustg_1980/__4.html",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-FOR-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Kvalifiserende utførselsleveranser kan være mva.-fritatt; vilkårene følger av loven"
+   ],
+   "limitations": "Detaljerte vilkår/bevis ikke gitt."
+  },
+  {
+   "id": "T39",
+   "title": "UStG § 6 (Ausfuhrlieferung)",
+   "publisher": "gesetze-im-internet.de (DE)",
+   "url": "https://www.gesetze-im-internet.de/ustg_1980/__6.html",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-FOR-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
+   "directReadDate": null,
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Kvalifiserende utførselsleveranser kan være mva.-fritatt; berettigelse avhenger av lovens vilkår"
+   ],
+   "limitations": "Abholfall, bevis og utenlandsk kjøper ikke gitt. Ingen enkeltannonse kan antas å kvalifisere."
   }
  ],
  "accessAttempts": [
@@ -745,5 +988,8 @@
    "result": "sammendrag av offisielle sider; fragmenterte og delvis motstridende; E2-ledetråder, ikke lest primærtekst",
    "note": "Brukes aldri som regelparameter."
   }
- ]
+ ],
+ "evidenceLevels": {
+  "E1X": "primærkilde verifisert eksternt av Christian/Codex 2026-10-16; fakta mottatt som sammendrag i oppdraget (TAX-001D). Kildefil/hash er IKKE levert og Claude har IKKE lest kilden selv. Svakere enn E1; kan ikke alene godkjenne parameter."
+ }
 }
