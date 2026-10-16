@@ -1,8 +1,8 @@
 {
  "schema": "merovo.tax.reference-cases",
- "version": "TAX-001D/1",
+ "version": "TAX-001E/1",
  "researchDate": "2026-10-15",
- "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig offisiell referanse/kalkulator) er TOM: ingen kalkulator er kjørt. Klasse 2 = manuell håndregning fra lest primærkilde (E1-kilder), med dokumentert utregning; det er IKKE klasse 1. Klasse 3 = syntetisk aritmetikk/regelkontrakt, ikke bekreftelse av faktiske regler. Klasse 4 har ingen forventet totalsum. TAX-001C 2026-10-16: Skatteetatens kalkulator (S07) er IKKE kjørt (host blokkert av nettverkspolicy); klasse 1 = 0. Ingen resultat er funnet på eller utledet. TAX-001D: klasse 3-tilfeller C3-040…043 illustrerer eksternt verifiserte regler (E1X) som aritmetikk; de er ikke kalkulator- eller klasse 1/2-referanser.",
+ "note": "Testgrunnlag/dokumentasjon, ikke produksjonsregler. Klasse 1 (uavhengig offisiell referanse/kalkulator) er TOM: ingen kalkulator er kjørt. Klasse 2 = manuell håndregning fra lest primærkilde (E1-kilder), med dokumentert utregning; det er IKKE klasse 1. Klasse 3 = syntetisk aritmetikk/regelkontrakt, ikke bekreftelse av faktiske regler. Klasse 4 har ingen forventet totalsum. TAX-001C 2026-10-16: Skatteetatens kalkulator (S07) er IKKE kjørt (host blokkert av nettverkspolicy); klasse 1 = 0. Ingen resultat er funnet på eller utledet. TAX-001D: klasse 3-tilfeller C3-040…043 illustrerer eksternt verifiserte regler (E1X) som aritmetikk; de er ikke kalkulator- eller klasse 1/2-referanser. TAX-001E: gruppe a/b-satser, § 3-1-regler, klimagass og importfakta er E1X; ingen nye klasse 1.",
  "classes": {
   "1": "uavhengig kontrollert referanse",
   "2": "manuelt kildeutledet forventning",
@@ -736,7 +736,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-PB-DIE",
@@ -778,7 +778,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-PB-HEV",
@@ -819,7 +819,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-PB-PHEV",
@@ -860,7 +860,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-PB-BEV",
@@ -900,7 +900,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-VB-BEN",
@@ -942,7 +942,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-VB-DIE",
@@ -985,7 +985,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-VB-HEV",
@@ -1028,7 +1028,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-VB-PHEV",
@@ -1071,7 +1071,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-BASE-VB-BEV",
@@ -1113,7 +1113,7 @@
     "T04",
     "S07"
    ],
-   "notes": ""
+   "notes": " [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-PB-BEN-1M",
@@ -1148,7 +1148,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-PB-BEN-1Y",
@@ -1183,7 +1183,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-PB-BEN-14Y",
@@ -1218,7 +1218,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-PB-BEN-20Y",
@@ -1253,7 +1253,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-VB-DIE-1M",
@@ -1288,7 +1288,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-VB-DIE-1Y",
@@ -1323,7 +1323,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-VB-DIE-14Y",
@@ -1358,7 +1358,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-AGE-VB-DIE-20Y",
@@ -1393,7 +1393,7 @@
     "T06",
     "T07"
    ],
-   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK."
+   "notes": "Bruksfradrags-PROSENT for tilsvarende aldre er håndregnet fra lest tabell i klasse 2-tilfellene C2-AGE-*; dette tilfellet gjelder beløp i NOK. [TAX-001E: satser for gruppe a/b 2026 er E1X; blokkert av kalkulatorreferanse, trinnvis/marginal beregning, CO2/egenvekt og bruksfradragsrekkefølge.]"
   },
   {
    "id": "C4-CO2-minus",
@@ -1958,7 +1958,7 @@
    "id": "C4-VER-0831",
    "evidenceClass": 4,
    "classLabel": "planlagt eller blokkert tilfelle",
-   "title": "Registrering 2026-08-31 – regelversjon (påstått endring 1.9.2026 er uavklart kildeopplysning U-001)",
+   "title": "Registrering 2026-08-31 – regelversjon (gruppe a: satser 2026 E1X kjent; ingen endring 1.9 dokumentert)",
    "profileId": "PB-BEN",
    "ruleIds": [
     "R-OTA-001",
@@ -1972,8 +1972,10 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "bekreftelse av om en endring finnes og hva den gjelder (U-001; T04 ikke lest)",
-     "satser i stortingsvedtaket §§ 2–3 (T04)"
+     "trinnvis/marginal beregning og styrende hendelsesdato",
+     "egenvekt og CO2 (WLTP/NEDC, ev. vektet kombinert) for kjøretøyet",
+     "bruksfradrag og rekkefølge, vrakpantavgift-samspill",
+     "kalkulatorreferanse (klasse 1)"
     ]
    },
    "requiredToUpgrade": [
@@ -1983,13 +1985,13 @@
    "sources": [
     "T04"
    ],
-   "notes": "Ingen regel eller fasit bygger på den påståtte endringen."
+   "notes": "Gruppe a 2026-satser er E1X (TAX-001E). Om gruppe a endres etter 2026-09-01 er ikke oppgitt (ukjent)."
   },
   {
    "id": "C4-VER-0901",
    "evidenceClass": 4,
    "classLabel": "planlagt eller blokkert tilfelle",
-   "title": "Registrering 2026-09-01 – regelversjon (påstått endring 1.9.2026 er uavklart kildeopplysning U-001)",
+   "title": "Registrering 2026-09-01 – regelversjon (gruppe a: satser 2026 E1X kjent; ingen endring 1.9 dokumentert)",
    "profileId": "PB-BEN",
    "ruleIds": [
     "R-OTA-001",
@@ -2003,8 +2005,10 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "bekreftelse av om en endring finnes og hva den gjelder (U-001; T04 ikke lest)",
-     "satser i stortingsvedtaket §§ 2–3 (T04)"
+     "trinnvis/marginal beregning og styrende hendelsesdato",
+     "egenvekt og CO2 (WLTP/NEDC, ev. vektet kombinert) for kjøretøyet",
+     "bruksfradrag og rekkefølge, vrakpantavgift-samspill",
+     "kalkulatorreferanse (klasse 1)"
     ]
    },
    "requiredToUpgrade": [
@@ -2014,7 +2018,7 @@
    "sources": [
     "T04"
    ],
-   "notes": "Ingen regel eller fasit bygger på den påståtte endringen."
+   "notes": "Gruppe a 2026-satser er E1X (TAX-001E). Om gruppe a endres etter 2026-09-01 er ikke oppgitt (ukjent)."
   },
   {
    "id": "C4-GHG",
@@ -3444,7 +3448,7 @@
    "id": "C4-VER-B-0831",
    "evidenceClass": 4,
    "classLabel": "planlagt eller blokkert tilfelle",
-   "title": "Gruppe b varebil, styrende dato 2026-08-31: satsene 450/600/1 200 gjelder IKKE (før 2026-09-01)",
+   "title": "Gruppe b varebil, styrende dato 2026-08-31: periode 1 (vekt 30 kr/kg >1 200 kg; CO2 300/600/1 200)",
    "profileId": "VB-DIE",
    "ruleIds": [
     "R-OTA-008",
@@ -3458,9 +3462,10 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "satser før 2026-09-01 (ukjent)",
-     "vektkomponent gruppe b",
-     "styrende hendelse (registrering/innførsel)"
+     "trinnvis/marginal beregning og styrende hendelsesdato",
+     "egenvekt og CO2 for kjøretøyet",
+     "bruksfradrag og vrakpantavgift-samspill",
+     "kalkulatorreferanse (klasse 1)"
     ]
    },
    "requiredToUpgrade": [
@@ -3470,13 +3475,13 @@
    "sources": [
     "T31"
    ],
-   "notes": "Datovakt: ingen sats før 1.9. Forventet resultat = not_calculated."
+   "notes": "Datosplitt gruppe b: til og med 2026-08-31 / fra 2026-09-01 (E1X)."
   },
   {
    "id": "C4-VER-B-0901",
    "evidenceClass": 4,
    "classLabel": "planlagt eller blokkert tilfelle",
-   "title": "Gruppe b varebil, styrende dato 2026-09-01: CO2-satsene 450/600/1 200 gjelder (E1X), men totalen kan ikke beregnes",
+   "title": "Gruppe b varebil, styrende dato 2026-09-01: CO2 450/600/1 200; vekt fra 1.9 er UKJENT",
    "profileId": "VB-DIE",
    "ruleIds": [
     "R-OTA-008",
@@ -3491,10 +3496,11 @@
     "kind": "none",
     "reason": "forventet resultat er ikke fastsatt; ingen oppfunnet totalsum",
     "missing": [
-     "vektkomponent gruppe b",
-     "trinnvis/marginal beregning",
-     "CO2 og egenvekt for kjøretøyet",
-     "bruksfradrag og vrakpantavgift-samspill"
+     "vektsats gruppe b fra 2026-09-01 (ukjent)",
+     "trinnvis/marginal beregning og styrende hendelsesdato",
+     "egenvekt og CO2 for kjøretøyet",
+     "bruksfradrag og vrakpantavgift-samspill",
+     "kalkulatorreferanse (klasse 1)"
     ]
    },
    "requiredToUpgrade": [
@@ -3504,7 +3510,7 @@
    "sources": [
     "T31"
    ],
-   "notes": "Datovakt: satsene kan brukes fra denne datoen, men resultat krever resten."
+   "notes": "Datosplitt gruppe b: til og med 2026-08-31 / fra 2026-09-01 (E1X)."
   }
  ]
 }

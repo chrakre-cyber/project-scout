@@ -1,6 +1,6 @@
 {
  "schema": "merovo.tax.sources",
- "version": "TAX-001D/1",
+ "version": "TAX-001E/1",
  "researchDate": "2026-10-15",
  "coverage": "TAX-001B 15.10.2026: seks originale kildefiler hentet av Codex og lest lokalt av Claude (kildepakke TAX-001B-handoff, hash i MANIFEST). Kilder merket E1 er lest i hele eller relevante deler; E1 betyr lest primærkilde, ikke godkjent regelparameter. Direkte nettverkstilgang til norske verter er fortsatt blokkert; øvrige kilder står uendret på E2/E0. Stortingsvedtak, forskrift (§ 3-1, § 3-3), Lovdata og tollkurs er IKKE lest. TAX-001C 2026-10-16: ingen nye primærkilder kunne leses (nettverkspolicy). Alle nye opplysninger er E2-ledetråder fra søkesammendrag.",
  "sources": [
@@ -126,8 +126,8 @@
    "publisher": "Lovdata / Finansdepartementet",
    "url": "https://lovdata.no/dokument/SF/forskrift/2001-03-19-268",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
    "directReadDate": null,
    "searchLeadDate": "2026-10-15",
    "whatToExtract": [
@@ -142,7 +142,16 @@
     "R-OTA-009",
     "R-OTA-013"
    ],
-   "note": ""
+   "note": "",
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "§ 3-1: WLTP-kjøretøy bruker relevant kombinert CO2-verdi",
+    "Ladbar hybrid bruker vektet kombinert CO2-verdi",
+    "NEDC-omregning der forskriften anvender den: faktor 1,24 for gruppe a/j og 1,22 for gruppe b",
+    "Der relevant CO2-grunnlag mangler og lovfestet fallback gjelder, bygger fallback på egenvekt/10"
+   ],
+   "limitations": "Bare faktaene oppgitt er verifisert. Ikke generalisert utover gruppene/situasjonene regelen dekker. § 2-3 og § 3-3 er ikke adressert i TAX-001E. Ikke lest av Claude; ingen kildefil/hash."
   },
   {
    "id": "T06",
@@ -538,7 +547,16 @@
    "readSections": [
     "hele satssiden"
    ],
-   "limitations": "HTML-kopi uten publiseringsdato; 2026 er valgt år. Bekreftes av rundskriv punkt 3.4 (T03)."
+   "limitations": "HTML-kopi uten publiseringsdato; 2026 er valgt år. Bekreftes av rundskriv punkt 3.4 (T03).",
+   "externalVerification": {
+    "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)",
+    "verifiedDate": "2026-10-16",
+    "providedFacts": [
+     "Vrakpantavgift 2 400 kr (eksternt bekreftet i TAX-001E)"
+    ],
+    "limitations": "Ekstern bekreftelse uten oppgitt kilde-URL; T20 er lest lokalt (E1).",
+    "sourceUrlGiven": false
+   }
   },
   {
    "id": "T21",
@@ -642,8 +660,8 @@
    "publisher": "Skatteetaten",
    "url": "https://www.skatteetaten.no/en/business-and-organisation/vat-and-duties/excise-duties/about-the-excise-duties/hfc-and-pfc/",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
+   "evidenceLevel": "E1X",
+   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
    "directReadDate": null,
    "searchLeadDate": "2026-10-16",
    "whatToExtract": [
@@ -653,7 +671,13 @@
    "rules": [
     "R-IMP-OTH-002"
    ],
-   "note": "Sammendrag nevner både 1,639 og 2 130,70 NOK – KONFLIKT."
+   "note": "Sammendrag nevner både 1,639 og 2 130,70 NOK – KONFLIKT.",
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)",
+   "verifiedDate": "2026-10-16",
+   "providedFacts": [
+    "Klimagassavgift for HFK-134a: 2 130,70 kr per kg ekskl. mva."
+   ],
+   "limitations": "Andre gasser, GWP-tabell, mengde per kjøretøy og hvilken gass et konkret kjøretøy har er ikke gitt. Ikke lest av Claude; ingen kildefil/hash."
   },
   {
    "id": "T26",
@@ -745,12 +769,14 @@
    "evidenceLevel": "E1X",
    "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
    "directReadDate": null,
-   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)",
    "verifiedDate": "2026-10-16",
    "providedFacts": [
-    "Grunnvedtak for 2026 (satser per gruppe) – innholdet utover punktene under er ikke gitt i oppdraget"
+    "Gruppe a 2026: vektkomponent 260 kr/kg over 1 200 kg; CO2 0–100 g/km 800 kr/g, 101–150 1 600, 151–225 3 200, over 225 5 000",
+    "Gruppe b 2026-01-01–2026-08-31: vekt 30 kr/kg over 1 200 kg; CO2 0–100 300 kr/g, 101–150 600, over 150 1 200",
+    "(se også tidligere: Vedtak 220 er grunnvedtaket for 2026)"
    ],
-   "limitations": "Bare faktaene oppgitt i TAX-001D er verifisert. Satstabeller for gruppe a, vektkomponent og satser før 1.9.2026 er ikke gitt."
+   "limitations": "Oppgitt som verifisert fra offisielt Storting/Lovdata-materiale uten kildefil/hash. Trinnvis/marginal beregning, styrende hendelsesdato, bruksfradragsrekkefølge, avrunding og satser for andre avgiftsgrupper er ikke gitt. Gruppe a etter 2026-09-01 og vektsats gruppe b fra 2026-09-01 er ikke oppgitt."
   },
   {
    "id": "T31",

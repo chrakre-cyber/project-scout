@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 const dir = dirname(fileURLToPath(import.meta.url));
 const rd = (f) => JSON.parse(readFileSync(join(dir, f), "utf8"));
 const errors = [];
+function addDay(d) { const t = new Date(d + "T00:00:00Z"); t.setUTCDate(t.getUTCDate() + 1); return t.toISOString().slice(0, 10); }
 const err = (m) => errors.push(m);
 const uniq = (arr, what) => { const s = new Set(); for (const x of arr) { if (s.has(x)) err(`duplikat ${what}: ${x}`); s.add(x); } return s; };
 const packIdx = process.argv.indexOf("--pack");
@@ -69,14 +70,24 @@ for (const r of rules.rules) {
   if (r.evidenceLevel === "E1X" && !fx.length) err(`regel ${r.id}: E1X krever e1xFindings`);
   if (fx.length && !["E1", "E1P", "E1X"].includes(r.evidenceLevel)) err(`regel ${r.id}: e1xFindings på regel uten E1/E1P/E1X`);
   for (const x of fx) {
-    if (srcById.get(x.source)?.evidenceLevel !== "E1X") err(`regel ${r.id}: e1xFinding bygger på kilde ${x.source} som ikke er E1X`);
+    const xs = srcById.get(x.source);
+    if (!(xs?.evidenceLevel === "E1X" || (xs?.evidenceLevel === "E1" && xs.externalVerification))) err(`regel ${r.id}: e1xFinding bygger på kilde ${x.source} som verken er E1X eller E1 med externalVerification`);
     if (!x.claim || !x.locator || !x.verifiedDate || !x.verifiedBy) err(`regel ${r.id}: e1xFinding mangler claim/locator/verifiedDate/verifiedBy`);
   }
   if (r.evidenceLevel === "E1X" && !r.openQuestions.length) err(`regel ${r.id}: E1X krever åpne spørsmål (unknown stays unknown)`);
   // Datosensitive parametere: må ha fra-dato, stigende bånd, og aldri brukes før fra-datoen.
   for (const dp of r.datedParameters ?? []) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(dp.from ?? "")) err(`regel ${r.id}: datedParameter ${dp.id} mangler fra-dato`);
-    if (!dp.beforeFrom || !/UKJENT|not_calculated/i.test(dp.beforeFrom)) err(`regel ${r.id}: datedParameter ${dp.id} må si at tiden før fra-datoen er ukjent`);
+    if (!dp.beforeFrom || !/UKJENT|not_calculated|dekket av DP-/i.test(dp.beforeFrom)) err(`regel ${r.id}: datedParameter ${dp.id} må si at tiden før fra-datoen er ukjent eller dekket av annen parameter`);
+    if (dp.to && !/^\d{4}-\d{2}-\d{2}$/.test(dp.to)) err(`regel ${r.id}: datedParameter ${dp.id} har ugyldig til-dato`);
+    if (dp.to && dp.to < dp.from) err(`regel ${r.id}: datedParameter ${dp.id} har til-dato før fra-dato`);
+    if (dp.to && !(dp.afterTo && /UKJENT|not_calculated|dekket av DP-/i.test(dp.afterTo))) err(`regel ${r.id}: datedParameter ${dp.id} har til-dato men mangler afterTo (ukjent eller dekket av annen parameter)`);
+    if (!dp.series || !["a", "b"].includes(dp.group)) err(`regel ${r.id}: datedParameter ${dp.id} mangler series/group`);
+    if (!dp.bands && !(dp.thresholdKg > 0 && dp.rate > 0)) err(`regel ${r.id}: datedParameter ${dp.id} mangler bands eller thresholdKg+rate`);
+    if (/dekket av (DP-[A-Z0-9-]+)/.test(dp.beforeFrom ?? "")) { const o = (r.datedParameters ?? []).find((q) => q.id === RegExp.$1); if (!o || o.series !== dp.series || !o.to || addDay(o.to) !== dp.from) err(`regel ${r.id}: datedParameter ${dp.id} beforeFrom peker ikke på tilstøtende parameter i samme serie`); }
+    if (/dekket av (DP-[A-Z0-9-]+)/.test(dp.afterTo ?? "")) { const o = (r.datedParameters ?? []).find((q) => q.id === RegExp.$1); if (!o || o.series !== dp.series || !dp.to || addDay(dp.to) !== o.from) err(`regel ${r.id}: datedParameter ${dp.id} afterTo peker ikke på tilstøtende parameter i samme serie`); }
+    if (r.id === "R-OTA-008" && dp.group !== "b") err(`regel ${r.id}: gruppe-b-regel har parameter i gruppe ${dp.group}`);
+    if (["R-OTA-001", "R-OTA-002"].includes(r.id) && dp.group !== "a") err(`regel ${r.id}: gruppe-a-regel har parameter i gruppe ${dp.group}`);
     if (dp.evidence !== "E1X" && dp.evidence !== "E1") err(`regel ${r.id}: datedParameter ${dp.id} mangler evidens`);
     let prev = -1;
     for (const b of dp.bands ?? []) { if (b.fromGramKm <= prev && prev !== -1) err(`regel ${r.id}: bånd ikke stigende i ${dp.id}`); prev = b.fromGramKm; if (!(b.rate > 0)) err(`regel ${r.id}: bånd uten sats i ${dp.id}`); }
@@ -242,6 +253,9 @@ if (packDir) {
 }
 // Grunnlagsstatus: DONE krever godkjente parametere og klasse 1-dekning per profil i omfang (TAX-001C).
 {
+  for (const u of rules.unresolvedSourceClaims ?? []) {
+    if (!["open", "closed"].includes(u.state)) err(`unresolvedSourceClaims ${u.id}: ugyldig state ${u.state}`);
+  }
   const fs = rules.foundationStatus;
   if (!fs || !["REVIEW", "DONE"].includes(fs.status)) err("foundationStatus mangler eller er ugyldig");
   else {

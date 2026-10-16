@@ -5,7 +5,7 @@ Status 15.10.2026. «E1» = lest i kildepakken (T03 rundskriv 2026, T07, T20, T2
 | Komponent | Styrende hendelse / dato | Belegg | Status |
 |---|---|---|---|
 | Engangsavgift – plikt | Første gangs registrering i Kjøretøyregisteret (stortingsvedtaket § 1; forskrift § 1-2) | T03 2.1.1 | E1 |
-| Engangsavgift – satstabell (vekt/CO2) | Hvilken satsversjon som gjelder ved registrering nær årsskifte eller ved endring i året | stortingsvedtaket §§ 2–3 (T04) ikke lest; påstått endring 1.9.2026 = **uavklart kildeopplysning U-001** | uavklart |
+| Engangsavgift – satstabell (vekt/CO2) | Hvilken satsversjon som gjelder ved registrering nær årsskifte eller ved endring i året | stortingsvedtaket §§ 2–3 (T04) ikke lest; gruppe b-endring virkning **2026-09-01** (E1X, U-001 lukket så langt dokumentert); gruppe a og b har separate serier; vekt gruppe b fra 09-01 ukjent | E1X (datert parameter, ikke godkjent) |
 | Engangsavgift – CO2-målemetode (NEDC/WLTP) når metode er ukjent | Dato for første gangs registrering **i utlandet** (før 1.9.2018 → NEDC-behandling) | T03 3.2.5 | E1 |
 | Engangsavgift – grunnlagsdata | Statens vegvesens godkjenning/enkeltgodkjenning; obligatorisk før beregning og forhåndsbetaling | T03 3.1, 3.2.1 | E1 |
 | Bruksfradrag – alder | Fra første gangs registrering i utlandet til registrering i Norge, **dato til dato** | T03 4.2; T07 | E1 (måneds-/dagsgrenser: uavklart U-002) |
