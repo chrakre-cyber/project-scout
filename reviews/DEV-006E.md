@@ -48,3 +48,6 @@ Ikke kjørt: DB-/RLS-suitene mot Supabase, isolerte DB-tester og mutasjonstester
 - Bruker uten firma (`no_membership`) får en upresis melding på `/searches` (se 3).
 - Ikke testet mot ekte Supabase Auth, i Safari/Firefox eller med skjermleser.
 - Ingen ekte leverandørdata er aktivert; kun syntetiske data.
+
+## Commit
+Kode-commit: `6f9f30f`.
