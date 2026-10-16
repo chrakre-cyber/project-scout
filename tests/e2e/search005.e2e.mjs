@@ -66,7 +66,7 @@ async function login(ctx, u, base = BASE) {
   await page.goto(`${base}/login`);
   await page.fill('input[name="email"]', u.email);
   await page.fill('input[name="password"]', u.password);
-  await Promise.all([page.waitForURL(/\/agents/), page.click('main button[type="submit"]')]);
+  await Promise.all([page.waitForURL(/\/searches/), page.click('main button[type="submit"]')]);
   return page;
 }
 const noHScroll = async (page, label) => {
@@ -119,6 +119,40 @@ try {
   // ===== firma A, skrivebord
   const ctxA = await browser.newContext({ viewport: { width: 1280, height: 900 } });
   const pA = await login(ctxA, A);
+  // ===== DEV-006E: innlogging i Merovo-skall, omdirigering til /searches, Merovo-«ikke funnet»
+  check("DEV-006E: vellykket innlogging havner på /searches (ikke /agents)", /\/searches$/.test(pA.url()));
+  await pA.goto(`${BASE}/login`);
+  check("DEV-006E: allerede innlogget bruker på /login sendes til /searches", /\/searches$/.test(pA.url()));
+  {
+    const ctxL = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const pL = await ctxL.newPage(); watch(pL);
+    await pL.goto(`${BASE}/login`);
+    const t = nb(await pL.locator("body").innerText());
+    check("DEV-006E: innloggingssiden i Merovo-skall: tagline, støttetekst, ingen Project Scout, ingen gult banner, ingen miljøvariabelnavn",
+      nb(await pL.locator('[data-testid="tagline"]').innerText()) === "Local demand. European supply."
+      && nb(await pL.locator('[data-testid="login-support"]').innerText()) === "Privat partnerdemo. Tilgang gis av Merovo; det finnes ingen åpen registrering."
+      && !t.includes("Project Scout") && !/NEXT_PUBLIC|SUPABASE/.test(t) && (await pL.locator(".bg-amber-400").count()) === 0
+      && (await pL.locator('img[alt="Merovo"]').count()) === 1 && !/\bAI\b|live|partnerskap|mobile\.de/i.test(t.replace("Privat partnerdemo.", "")));
+    check("DEV-006E: skjemafeltene er uendret (e-post/passord, riktige autocomplete)",
+      (await pL.locator('input[name="email"][type="email"][autocomplete="username"]').count()) === 1 && (await pL.locator('input[name="password"][type="password"][autocomplete="current-password"]').count()) === 1);
+    await shot(pL, "16-login");
+    await pL.fill('input[name="email"]', A.email); await pL.fill('input[name="password"]', "feil-passord-" + Date.now());
+    await Promise.all([pL.waitForURL(/\/login\?error=1/), pL.click('main button[type="submit"]')]);
+    check("DEV-006E: feil passord gir felles feilmelding i samme skall (ingen redirect til /searches)", (await pL.locator('[data-testid="login-error"]').innerText()).includes("Innloggingen mislyktes") && (await pL.locator('[data-testid="tagline"]').count()) === 1);
+    await shot(pL, "17-login-feil");
+    await ctxL.close();
+    const ctxLM = await browser.newContext({ viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true });
+    const pLM = await ctxLM.newPage(); watch(pLM);
+    await pLM.goto(`${BASE}/login`);
+    await noHScroll(pLM, "mobil: innlogging");
+    await shot(pLM, "18-mobil-login");
+    await ctxLM.close();
+  }
+  await pA.goto(`${BASE}/searches/00000000-0000-4000-8000-000000000000`);
+  check("DEV-006E: ukjent søk i /searches viser Merovo-«ikke funnet» med lenke til /searches og uten Project Scout",
+    (await pA.locator('[data-testid="searches-not-found"]').count()) === 1 && !(await pA.locator("body").innerText()).includes("Project Scout")
+    && (await pA.locator('[data-testid="searches-not-found"] a[href="/searches"]').count()) === 1);
+  await shot(pA, "19-ikke-funnet");
   await pA.goto(`${BASE}/agents`);
   check("eksisterende agentside har lenke til nye søk og er ellers uendret", await pA.locator('a[href="/searches"]').count() >= 1 && (await pA.content()).includes("Mine agenter"));
   await pA.goto(`${BASE}/searches`);

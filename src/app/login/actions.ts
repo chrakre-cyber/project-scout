@@ -11,7 +11,8 @@ export async function signIn(form: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   // Felles feilmelding: avslører ikke om e-posten finnes.
   if (error) redirect("/login?error=1");
-  redirect("/agents");
+  // DEV-006E (godkjent atferdsendring for partnerdemoen): mål etter vellykket innlogging er /searches (tidligere /agents).
+  redirect("/searches");
 }
 
 export async function signOut() {
