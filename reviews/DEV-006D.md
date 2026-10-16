@@ -41,3 +41,6 @@ Ikke kjørt: DB-/RLS-suitene mot Supabase, isolerte DB-tester og mutasjonstester
 - Ikke testet i Safari/Firefox/skjermleser; ikke fargekontrastmålt med verktøy (kombinasjonene er hentet fra eksisterende tokens). Visuell vurdering baseres på skjermbildene.
 - Prototypens ønskede merkevareuttrykk er tolket fra eksisterende tokens, logo og skrifttype; ingen ny designfil er brukt.
 - Emulatorbasert nettlesertest er ikke ekte Supabase Auth.
+
+## Commit
+Kode-commit: `3c2b577`.
