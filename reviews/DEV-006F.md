@@ -75,3 +75,6 @@ Ikke endret: auth/sesjon/RLS/tenancy, `/login`, `/searches/**`, `/dashboard`, `/
 
 ## Begrensninger
 Ikke testet mot ekte Supabase Auth; ingen deploy, hosting, domene eller brukerinvitasjon; kun syntetiske data (ingen ekte leverandørdata).
+
+## Commit
+Kode-commit: `def89a6`.
