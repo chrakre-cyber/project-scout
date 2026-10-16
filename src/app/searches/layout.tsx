@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { SYNTHETIC_SOURCE_LABEL } from "@/lib/search-labels";
 
 /**
  * Egen, avgrenset flate for den nye søkeflyten (SEARCH-005): Merovo-profil (krem, skoggrønn, terrakotta, Figtree) kun her.
@@ -13,6 +14,7 @@ export default function SearchesLayout({ children }: Readonly<{ children: React.
           <Image src="/brand/merovo-logo-horizontal-original.svg" alt="Merovo" width={160} height={40} priority unoptimized className="h-9 w-auto" />
         </Link>
         <span className="rounded-full border border-rust px-3 py-0.5 text-xs font-bold uppercase tracking-wide text-rust">Demo · utkast</span>
+        <span className="w-full text-xs text-muted" data-testid="layout-source-label">{SYNTHETIC_SOURCE_LABEL}</span>
       </header>
       <div className="px-4 py-6 sm:px-6">{children}</div>
     </div>

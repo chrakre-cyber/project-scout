@@ -89,3 +89,6 @@ export const CANDIDATE_FIELD_LABEL: Record<string, string> = {
   driveTrain: "Hjuldrift", exteriorColor: "Utvendig farge", interiorColor: "Interiørfarge", interiorMaterial: "Interiørmateriale",
   equipment: "Utstyr", packages: "Utstyrspakker", currentCategory: "Nåværende kategori (personbil/varebil)",
 };
+
+/** Kort kildeetikett for alle resultater i den nye søkeflyten (DEV-006C). Intern kilde-id er `synthetic-demo`. */
+export const SYNTHETIC_SOURCE_LABEL = "Syntetiske demodata – ikke ekte leverandørdata";

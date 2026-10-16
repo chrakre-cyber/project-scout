@@ -181,7 +181,7 @@ try {
   check("GLS: viser at innkjøpskostnad til Norge ikke er beregnet; ingen total eller budsjettreff påstås",
     prev.includes("Innkjøpskostnad til Norge er ikke beregnet") && !/(^|\n)\s*(Innenfor budsjett|Innenfor avvik|Over budsjett|Budsjettreff|Fullt treff)/i.test(prev) && !/Total innkjøpskostnad[^.\n]*\d/.test(prev));
   check("GLS: resultatet sier at det beregnes nå og ikke lagres", prev.includes("lagres ikke") && prev.includes("lagret versjon 1"));
-  check("GLS: dekning oppgis (109 av 109, ikke avkortet)", /Vurderte 109 av 109 annonser/.test(prev) && prev.includes("Hele demokilden er hentet"));
+  check("GLS: dekning oppgis (alle vurdert, ikke avkortet)", (() => { const m = /Vurderte (\d+) av (\d+) annonser/.exec(prev); return !!m && m[1] === m[2] && Number(m[1]) >= 109; })() && prev.includes("Hele demokilden er hentet"));
   await shot(pA, "05-resultat-gls");
   await noHScroll(pA, "resultat GLS (skrivebord)");
 
@@ -194,11 +194,18 @@ try {
     bmwDoc.spec.budget.costs.length === 1 && bmwDoc.spec.budget.costs[0].id === "transport" && bmwDoc.spec.budget.costs[0].amountMinor === null && bmwDoc.spec.budget.costs[0].currency === "EUR" && bmwDoc.spec.budget.costs[0].includedInBudget === true);
   await Promise.all([pA.waitForURL(/\/preview\?v=1/), pA.click('[data-testid="preview-link"]')]);
   const m = Number(await pA.locator('[data-count="match"]').innerText()), nr = Number(await pA.locator('[data-count="needs_review"]').innerText()), ex = Number(await pA.locator('[data-count="excluded"]').innerText());
-  check(`demofixtur: minst ett kjent treff og ett kjent kravbrudd (treff ${m}, må kontrolleres ${nr}, ikke oppfylt ${ex})`, m >= 1 && ex >= 1 && m + nr + ex === 109);
+  check(`demofixtur: minst ett kjent treff og ett kjent kravbrudd (treff ${m}, må kontrolleres ${nr}, ikke oppfylt ${ex})`, m >= 1 && ex >= 1 && m + nr + ex >= 109);
   const firstMatch = pA.locator('li[data-status="match"]').first();
   const matchText = nb(await firstMatch.innerText());
   check("treff viser merke/modell, registrering, km, annonsepris med valuta og brutto/netto/ukjent", /BMW 3er/.test(matchText) && /Registrert/.test(matchText) && /Kilometerstand/.test(matchText) && /Annonsepris/.test(matchText) && /(kr|€|EUR)/.test(matchText) && /prisgrunnlag|oppgitt som/.test(matchText), matchText.slice(0, 300));
   check("treff: sier at innkjøpskostnad til Norge ikke er beregnet", matchText.includes("Innkjøpskostnad til Norge er ikke beregnet"));
+  check("DEV-006C: kort viser etiketten «Syntetiske demodata – ikke ekte leverandørdata», hvorfor vist og kravs-/ønskesammendrag",
+    nb(await firstMatch.locator('[data-testid="source-label"]').innerText()).toLowerCase() === "syntetiske demodata – ikke ekte leverandørdata"
+    && (await firstMatch.locator('[data-testid="why-shown"]').innerText()).includes("Alle krav er oppfylt")
+    && /Ønsker:.*ønske/.test(nb(await firstMatch.locator('[data-testid="criteria-summary"]').innerText())));
+  check("DEV-006C: ingen «sterkt treff»-status og ingen påstand om verifisert treff; kjent oppfylt ønske vises først i treffgruppen",
+    !/sterkt treff|fullt treff/i.test(nb(await pA.locator("main").innerText())) && /1 av 2 ønsker oppfylt/.test(matchText));
+  check("DEV-006C: gruppen «må kontrolleres» forklarer hva som må kontrolleres", /må kontrolleres hos kilden/.test(await pA.locator('li[data-status="needs_review"]').first().locator('[data-testid="why-shown"]').innerText()));
   await firstMatch.locator("summary").click();
   check("forklaring viser krav og ønsker", (await firstMatch.locator('[data-testid="explanation"]').innerText()).includes("Krav") && (await firstMatch.locator('[data-testid="explanation"]').innerText()).includes("Ønsker"));
   await shot(pA, "06-resultat-demofixtur");

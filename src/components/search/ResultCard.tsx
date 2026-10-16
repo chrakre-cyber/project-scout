@@ -2,7 +2,8 @@ import Link from "next/link";
 import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { Explanation } from "@/components/search/Explanation";
 import { BODY_LABEL, FUEL_LABEL, TRANSMISSION_LABEL, formatFirstRegistration, formatListingPrice, formatMileage, formatPriceBasis, labelOrNotStated } from "@/lib/format";
-import { BUDGET_NOT_CALCULATED, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { BUDGET_NOT_CALCULATED, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
 import type { PreviewItem } from "@/server/search-preview";
 
 const CHIP = { match: "bg-[#dcebdf] text-ok", needs_review: "bg-[#f6e6c9] text-[#6b4a07]", excluded: "bg-[#f0d8d2] text-danger" } as const;
@@ -21,6 +22,9 @@ export function ResultCard({ item, draftId, version, expanded = false }: { item:
             <h3 className="text-lg font-bold">{s.make} {s.model}{s.variant ? ` · ${s.variant}` : ""}</h3>
             <span className={`rounded-full px-3 py-0.5 text-xs font-bold ${CHIP[status]}`} data-testid="vehicle-status">{VEHICLE_STATUS_LABEL[status]}</span>
           </div>
+          <p className="text-xs font-bold uppercase tracking-wide text-rust" data-testid="source-label">{SYNTHETIC_SOURCE_LABEL}</p>
+          <p className="text-sm" data-testid="why-shown">{whyShown(a.vehicle)}</p>
+          <p className="text-xs text-muted" data-testid="criteria-summary"><strong>Krav:</strong> {mustSummary(a.vehicle)} <strong>Ønsker:</strong> {wishSummary(a.vehicle)}</p>
           <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-0.5 text-sm sm:grid-cols-[auto_1fr_auto_1fr]">
             <dt className="text-muted">Registrert</dt><dd>{formatFirstRegistration(s.firstRegistration)}</dd>
             <dt className="text-muted">Kilometerstand</dt><dd>{formatMileage(s.mileage)}</dd>

@@ -4,7 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { ResultCard } from "@/components/search/ResultCard";
 import { SpecSummary } from "@/components/search/SpecSummary";
 import { formatDateTime } from "@/lib/format";
-import { BUDGET_NOT_CALCULATED, criterionLabel, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { orderForPresentation } from "@/lib/search-explain";
+import { BUDGET_NOT_CALCULATED, criterionLabel, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { equipmentLabel } from "@/lib/search-summary";
 import { getMarketplaceProvider } from "@/providers/marketplace";
 import { getDraft } from "@/server/search-drafts";
@@ -51,7 +52,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
         </p>
       </div>
       <p className="rounded-lg border border-sand bg-sand-soft p-3 text-sm" data-testid="preview-notice">
-        <strong>Demo mot syntetiske annonser.</strong> Resultatet beregnes nå, for denne forespørselen, og lagres ikke — det kan ikke åpnes igjen senere.
+        <strong>{SYNTHETIC_SOURCE_LABEL}.</strong> Demo mot syntetiske annonser. Resultatet beregnes nå, for denne forespørselen, og lagres ikke — det kan ikke åpnes igjen senere.
         Ingen live kilde er brukt. {BUDGET_NOT_CALCULATED}
       </p>
       <SpecSummary spec={draft.spec} />
@@ -98,7 +99,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
           )}
 
           {(["match", "needs_review"] as const).map((st) => {
-            const items = outcome.items.filter((i) => i.assessment.vehicle.status === st);
+            const items = orderForPresentation(outcome.items.filter((i) => i.assessment.vehicle.status === st));
             return (
               <section key={st} aria-labelledby={`g-${st}`} className="space-y-3">
                 <h2 id={`g-${st}`} className="text-xl font-bold">{VEHICLE_STATUS_LABEL[st]} ({items.length})</h2>
@@ -111,7 +112,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
             <summary className="cursor-pointer text-xl font-bold">{VEHICLE_STATUS_LABEL.excluded} ({outcome.counts.excluded})</summary>
             <p className="mt-2 text-sm text-muted">Disse bilene har minst ett kjent kravbrudd. Åpne forklaringen for å se hvilket krav som ikke er oppfylt.</p>
             <ul className="mt-3 space-y-3">
-              {outcome.items.filter((i) => i.assessment.vehicle.status === "excluded").map((i) => <ResultCard key={i.listing.sourceListingId} item={i} draftId={id} version={draft.version} />)}
+              {orderForPresentation(outcome.items.filter((i) => i.assessment.vehicle.status === "excluded")).map((i) => <ResultCard key={i.listing.sourceListingId} item={i} draftId={id} version={draft.version} />)}
             </ul>
           </details>
         </>

@@ -7,7 +7,8 @@ import {
   BODY_LABEL, FUEL_LABEL, SELLER_LABEL, TRANSMISSION_LABEL, formatDateTime, formatFirstRegistration, formatListingPrice, formatMileage, formatNumber,
   formatPriceBasis, formatVatStatement, labelOrNotStated,
 } from "@/lib/format";
-import { BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
+import { BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
 import { getDraft } from "@/server/search-drafts";
 import { assessListing } from "@/server/search-preview";
@@ -53,7 +54,10 @@ export default async function ListingDetailPage({ params, searchParams }: { para
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight">{s.make} {s.model}{s.variant ? ` · ${s.variant}` : ""}</h1>
           <p className="text-sm text-muted">Syntetisk demoannonse {listing.sourceListingId} · {item.meta.provenance.description}. Ikke en ekte annonse.</p>
+          <p className="text-xs font-bold uppercase tracking-wide text-rust" data-testid="source-label">{SYNTHETIC_SOURCE_LABEL}</p>
           <p className="text-lg font-bold" data-testid="detail-status">{VEHICLE_STATUS_LABEL[status]}</p>
+          <p className="text-sm" data-testid="why-shown">{whyShown(item.assessment.vehicle)}</p>
+          <p className="text-sm text-muted" data-testid="criteria-summary"><strong>Krav:</strong> {mustSummary(item.assessment.vehicle)} <strong>Ønsker:</strong> {wishSummary(item.assessment.vehicle)}</p>
           <p className="rounded-lg bg-sand-soft px-3 py-2 text-sm" data-testid="budget-note">{BUDGET_NOT_CALCULATED}</p>
         </div>
       </div>

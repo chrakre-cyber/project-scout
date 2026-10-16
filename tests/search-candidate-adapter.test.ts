@@ -57,12 +57,15 @@ const adapter: CandidateAdapter = built.adapter;
 const ok = (r: CandidateResult) => { if (!r.ok) throw new Error("forventet ok: " + JSON.stringify(r.issues)); return r; };
 const codes = (r: CandidateResult) => (r.ok ? [] : r.issues.map((i) => `${i.path}:${i.code}`));
 
+// LISTINGS er DEV-003-datasettet (109 annonser) som testene under beskriver. DEV-006C-variasjonspostene («dvar-») ligger i
+// DVAR og testes for seg, slik at tallene om DEV-003-datasettet ikke endres av demoposter.
 const LISTINGS: NormalizedListing[] = [];
+const DVAR: NormalizedListing[] = [];
 beforeAll(async () => {
   const p = new SyntheticMarketplaceProvider();
   for (let page = 1; page < 50; page++) {
     const r = await p.search(EMPTY_QUERY, { page, pageSize: 100 });
-    LISTINGS.push(...r.items);
+    for (const l of r.items) (l.sourceListingId.startsWith("dvar-") ? DVAR : LISTINGS).push(l);
     expect(r.rejected).toEqual([]);
     if (!r.nextPage) break;
   }
@@ -174,6 +177,15 @@ describe("alle syntetiske annonser fra kilden behandles: kjent kandidat eller fo
     expect(LISTINGS.length).toBe(109);
     expect(new Set(LISTINGS.map((l) => l.source))).toEqual(new Set(["synthetic-demo"]));
     expect(syntheticRawListings.length).toBeGreaterThan(109); // revisjoner og duplikat slås sammen av providerne
+  });
+
+  it("DEV-006C-variasjonspostene er syntetiske, kommer fra samme kilde og kan alle gjøres om til kandidat", () => {
+    expect(DVAR.length).toBeGreaterThanOrEqual(6);
+    for (const l of DVAR) {
+      expect(l.source).toBe("synthetic-demo");
+      expect(l.originalUrl).toBeNull();
+      expect(adapter.adapt(l).ok).toBe(true);
+    }
   });
 
   it("hver annonse gir ok; hvert null-felt har en forklaring; ingen felt er gjettet", () => {

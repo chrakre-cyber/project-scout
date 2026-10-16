@@ -15,4 +15,7 @@ Belegg-strenger (prisgrunnlag og mva. fra tekst) står ordrett i den syntetiske 
 
 Prisgrunnlag brutto/netto med belegg, brutto uten belegg (→ unknown), ingen opplysning; mva.-sats og fradragspåstand fra felt eller tekst, påstand uten belegg i teksten (→ forkastet); valutaer EUR, CHF, SEK, GBP, PLN og USD (ustøttet); pris 0 (→ ikke oppgitt); registrering med dato/måned/år, mangler eller ugyldig; km og miles; manglende kilometer; ukjent drivstoffkode; effekt 0 (→ null); CO2 med WLTP/NEDC/ukjent/mangler; ugyldig landkode; manglende selger og tekst; ukjent endringstid; endret annonse; duplikat.
 
-Normalisert datasett: 109 unike annonser.
+Normalisert datasett (DEV-003): 109 unike annonser.
+
+## DEV-006C: variasjonsposter (`demo-variation.ts`)
+Seks håndskrevne, oppdiktede BMW 3er-annonser (`dvar-001`…`dvar-006`) med kjente fargeverdier, lagt til slik at forklaringene i `/searches` kan vise: oppfylt ønske (001, 002), kjent ikke-oppfylt ønske (003), ukjent ønske (004, ingen farge), ukjent krav (005, mangler kilometer) og kjent kravbrudd (006, bensin). De bruker bare felt kilden allerede har (ingen utstyr, seter eller modellår) og har ingen originalannonse. Datasettet har dermed 115 unike annonser. Tester skal ikke hardkode antallet: de beskriver DEV-003-datasettet ved å utelate `dvar-`-postene, eller sammenligner mot det kilden faktisk oppgir.

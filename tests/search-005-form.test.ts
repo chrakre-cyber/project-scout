@@ -250,7 +250,8 @@ describe("forhåndsvisning mot syntetiske annonser", () => {
     expect(out.ok).toBe(true);
     if (!out.ok) return;
     expect(out.counts.match).toBe(0);
-    expect(out.coverage).toMatchObject({ evaluated: 109, sourceTotal: 109, truncated: false, rejectedBySource: 0, notAdapted: 0 });
+    expect(out.coverage).toMatchObject({ truncated: false, rejectedBySource: 0, notAdapted: 0 });
+    expect(out.coverage.evaluated).toBe(out.coverage.sourceTotal); // alt vurdert, ingenting avkortet
     expect(out.sourceCannotSupply).toEqual(expect.arrayContaining(["modelYear", "seats", "equipment:camera_360", "equipment:carplay"]));
     // ingen GLS i datasettet: ingen bil har modelKey «gls»
     expect(out.items.some((i) => i.candidate.modelKey === "gls")).toBe(false);
@@ -262,7 +263,7 @@ describe("forhåndsvisning mot syntetiske annonser", () => {
     if (!out.ok) throw new Error("kilden feilet");
     expect(out.counts.match).toBeGreaterThanOrEqual(1);
     expect(out.counts.excluded).toBeGreaterThanOrEqual(1);
-    expect(out.counts.match + out.counts.needsReview + out.counts.excluded).toBe(109);
+    expect(out.counts.match + out.counts.needsReview + out.counts.excluded).toBe(out.coverage.evaluated);
     for (const i of out.items) {
       const v = i.assessment.vehicle;
       if (v.excludedBy.length) expect(v.status).toBe("excluded");
@@ -314,7 +315,7 @@ describe("forhåndsvisning mot syntetiske annonser", () => {
     if (!out.ok) throw new Error("kilden feilet");
     expect(out.coverage.truncated).toBe(true);
     expect(out.coverage.evaluated).toBe(30);
-    expect(out.coverage.sourceTotal).toBe(109);
+    expect(out.coverage.sourceTotal).toBeGreaterThan(30);
   });
 
   it("ugyldig providersvar avvises som malformed_data; uventet feil gir nøytral melding uten rå tekst", async () => {
@@ -334,7 +335,7 @@ describe("forhåndsvisning mot syntetiske annonser", () => {
     const p = new SyntheticMarketplaceProvider();
     const listings = [...(await p.search(EMPTY_QUERY, { page: 1, pageSize: 100 })).items, ...(await p.search(EMPTY_QUERY, { page: 2, pageSize: 100 })).items];
     const cands = listings.flatMap((l) => { const x = built.adapter.adapt(l); return x.ok ? [x.candidate] : []; });
-    expect(cands.length).toBe(109);
+    expect(cands.length).toBe(listings.length); // alle annonser kan gjøres om til kandidat
     const val: Record<string, (c: (typeof cands)[number]) => unknown> = {
       brand: (c) => c.brandKey, model: (c) => c.modelKey, variant: (c) => c.variant, modelYear: (c) => c.modelYear, firstRegistration: (c) => c.firstRegistration,
       maxMileage: (c) => c.mileageKm, seats: (c) => c.seats, bodyTypes: (c) => c.bodyType, fuels: (c) => c.fuel, transmissions: (c) => c.transmission,

@@ -43,6 +43,8 @@ function demoBmw(): FormValues {
     maxMileageKm: "80 000",
     fuels: ["diesel"], bodyTypes: ["estate"],
     exteriorColors: ["black", "white"], exteriorColorsPriority: "nice",
+    // Utstyrsønsket kan ikke vurderes av demokilden (ukjent for alle biler): viser «ukjent» i stedet for «ikke oppfylt».
+    "eq:carplay": "nice",
     plannedRegistration: "passenger",
     budgetMax: "450 000", budgetDeviation: "10",
     "cost.transport.use": "true", "cost.transport.currency": "EUR", "cost.transport.amount": "", "cost.transport.vat": "", "cost.transport.included": "true",
