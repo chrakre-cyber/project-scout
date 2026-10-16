@@ -81,3 +81,5 @@ Testdekning mot kravlisten: opak id ✔; leverandørens id ikke i URL (sentinel)
 
 ### 4.9 Status
 **DATA-002C = REVIEW.** Ingen ekstern leverandør, ingen credentials, ingen live data, ingen bilder, ingen VIN/registreringsnummer, ingen deduplisering, TAX/auth/tenant/deploy uendret.
+
+**Kode-commit:** `e9cf250`.
