@@ -13,6 +13,8 @@ cleanup() { stop_server; [ -n "$BAK" ] && mv "$BAK" .env.local; }
 trap cleanup EXIT
 if [ -f .env.local ]; then BAK="$(mktemp -p "${TMPDIR:-/tmp}" env.local.XXXXXX)"; mv .env.local "$BAK"; fi
 check "ingen .env.local og ingen Supabase-variabler i miljøet" "$([ -f .env.local ] || [ -n "${NEXT_PUBLIC_SUPABASE_URL:-}" ] && echo nei || echo ja)" "ja"
+# DEV-006G: dette skriptet tester bevisst de eldre rutene (/dashboard, /agents, /opportunities) og aktiverer dem eksplisitt ved bygging.
+export SCOUT_ENABLE_LEGACY_ROUTES=1
 rm -rf .next
 out="$(npm run build 2>&1)"; check "build uten Supabase-konfigurasjon lykkes" "$(echo "$out" | grep -c '✓ Generating static pages')" "1"
 check "port $PORT er ledig før start" "$(port_status)" "000"

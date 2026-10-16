@@ -10,8 +10,10 @@ import { usePathname } from "next/navigation";
 /** Ruter med eget Merovo-skall (`/searches` fra DEV-006D, `/login` fra DEV-006E). */
 const MEROVO_ROUTES = ["/searches", "/login"];
 
-export function AppChrome({ chrome, children }: { chrome: React.ReactNode; children: React.ReactNode }) {
+export function AppChrome({ chrome, children }: { chrome: React.ReactNode | null; children: React.ReactNode }) {
   const pathname = usePathname();
+  // DEV-006G: uten aktiverte eldre ruter finnes ingen gammel topp/banner (chrome er null); sider som vises (login, søk, not-found) har eget skall.
+  if (chrome === null) return <>{children}</>;
   if (MEROVO_ROUTES.some((r) => pathname === r || pathname.startsWith(`${r}/`))) return <>{children}</>;
   return (
     <>

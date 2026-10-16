@@ -1,6 +1,6 @@
 # DEV-006G — isolere gamle Project Scout-ruter fra ekstern partnerdemo (16.10.2026)
 
-**Status: assessment gjennomført, venter på godkjenning.** Ingen kode er endret og ingenting er deployet. Startpunkt: branch `claude/wonderful-bardeen-yussx3`, HEAD `dbac6a4`, rent arbeidstre.
+**Status: REVIEW** (implementert etter godkjenning; ikke DONE: se begrensninger). Ingenting er deployet. Vurderingen under er uendret fra før implementasjonen. Startpunkt: branch `claude/wonderful-bardeen-yussx3`, HEAD `dbac6a4`, rent arbeidstre.
 
 ## Vurdering
 
@@ -37,19 +37,50 @@ Ikke endret: auth/session/RLS/tenancy, `proxy.ts`, legacy-sider og -actions, pro
 ### 6. Finnes det allerede et flagg?
 **Nei.** Eneste miljøvariabler som leses i appen er Supabase-URL og -nøkkel, `SCOUT_INGEST_DATABASE_URL` og `SCOUT_SYNTHETIC_FAILURE`; ingen skiller partnerdemo fra intern utvikling. Det trengs én boolsk variabel. Siden den leses i `next.config.ts` (utenfor `src/`), påvirkes ikke arkitekturtestens regel om hvilke variabler appkoden leser.
 
-## Beslutninger jeg trenger
-**A. Standardverdi (viktigst).**
-- *Anbefalt, «avslått som standard» (fail-closed):* legacy er blokkert med mindre `SCOUT_ENABLE_LEGACY_ROUTES=1` er satt. Hosting for partnerdemoen trenger ingen ekstra variabel, og en glemt innstilling eksponerer ikke gammel UI. Kostnad: interne kjøringer av gamle sider (lokal `npm run dev`, `qa-demo-mode.sh`, `/agents`-sjekken i search005-e2e og de eldre Supabase-e2e-skriptene) må sette flagget; jeg oppdaterer de skriptene jeg kan kjøre og dokumenterer resten.
-- *Alternativ, «åpen som standard» (fail-open):* `SCOUT_PARTNER_DEMO=1` blokkerer. Mindre endring i skript, men hvis variabelen glemmes ved bygging av den hostede demoen, er den gamle UI-en åpen.
-**B. Mål for omdirigering:** `/searches` (anbefalt) eller `/login`.
-**C. Global not-found:** foreslår fortsatt uendret. Under blokkering lenker «Til dashboard» til `/dashboard`, som da sender videre til `/searches`; den gamle teksten kan likevel sees på ukjente URL-er (f.eks. `/foo`). Vil du ha en Merovo-variant, er det en separat, liten oppgave.
+## Godkjenning og implementasjon
+Godkjent: A sikker som standard (`SCOUT_ENABLE_LEGACY_ROUTES=1` kreves for å åpne gamle ruter); B mål `/login`; C global not-found endres nå; D skript tilpasses, `tests/legacy-isolation.test.ts` og `scripts/qa-partner-mode.sh` legges til.
 
-## Kjente begrensninger ved løsningen (skal ikke anses som løst)
-1. **Bygg-tid:** variabelen må være riktig ved bygging; den kan ikke endres uten ny bygging.
-2. **Server-actions:** blokkeringen stopper navigasjon og POST til de gamle stiene, men en server-action er en ID i appens bygg; en bruker som på annen måte kjenner action-ID-en kunne i teorien POSTe til en tillatt sti. De gamle actions håndhever selv sesjon, firma og RLS (DEV-004/005), så dette gir ikke økt tilgang, men det er ikke fysisk fjernet. Fullstendig fjerning krever å utelate legacy fra bygget (egen, større oppgave).
-3. Global `not-found` og rotmetadata («Project Scout — demo») kan fortsatt vises ved ukjente URL-er.
-4. Hosting, brukerinvitasjon og tilgangskontroll er fortsatt ikke gjort. Ingen deploy.
-5. Supabase-DB-suitene og de eldre Supabase-e2e-skriptene er fortsatt ikke kjørt mot faktisk Supabase.
+### 1. Filer endret
+Ny: `src/lib/legacy-routes.ts`, `tests/legacy-isolation.test.ts`, `scripts/qa-partner-mode.sh`.
+Endret: `next.config.ts` (`redirects()`), `src/app/not-found.tsx` (Merovo), `src/app/layout.tsx` (gammel topp/banner kun når flagget er `1`; rotmetadata «Merovo demo»), `src/components/AppChrome.tsx` (`chrome === null` → ingen gammel topp), `tests/architecture.test.ts` (miljøvariabelallowlisten har fått `SCOUT_ENABLE_LEGACY_ROUTES`), `scripts/qa-demo-mode.sh` og `tests/e2e/search005.e2e.mjs` (setter flagget eksplisitt fordi de bevisst tester eldre ruter), `.env.example`, `README.md`, `MVP_BACKLOG.md`, denne rapporten.
+Ikke endret: eldre sider og actions (ingenting slettet), `proxy.ts`, auth/sesjon/Supabase-konfigurasjon, tenancy, RLS, rettigheter, søkelogikk, TAX. Ingen sesjonslogikk i `next.config`.
 
-## Forespørsel
-Godkjenn A (standardverdi), B (mål) og C (not-found uendret), så implementerer jeg kun dette, kjører typecheck/lint/enhetstester/build/e2e og `qa-partner-mode.sh`, og oppdaterer rapporten med endelig status og commit-hash.
+### 2. Oppførsel med flagget AV (standard; variabelen mangler, er tom eller ≠ `1`)
+Verifisert mot en ekte bygging uten Supabase (`qa-partner-mode.sh`, fase A):
+| Forespørsel | Resultat |
+|---|---|
+| GET `/dashboard` (også med query), `/agents`, `/agents/new`, `/agents/<id>`, `/agents/<id>/runs`, `/agents/a/runs/b`, `/opportunities/demo-001`, `/opportunities/<ukjent>` | **307 → `/login`** (query-strengen videresendes av Next; `/login` leser bare `error`) |
+| POST `/agents`, POST `/dashboard` | **307 → `/login`** |
+| GET `/` | 307 → `/login` |
+| `/login` | 200, Merovo-skall, ingen «Project Scout», ingen «DEMO —»-banner |
+| `/searches`, `/searches/new`, `/searches/<ukjent>` (anonym) | uendret: 200, Merovo-skall, ingen «Project Scout» |
+| Ukjent URL (`/finnes-ikke-i-demoen`) | 404 med Merovo-ikke-funnet |
+Innlogget bruker som treffer en blokkert rute går `→ /login → /searches` via den eksisterende regelen i `/login` (ikke testet mot ekte innlogging her; selve regelen er dekket av e2e fra DEV-006E/F).
+
+### 3. Oppførsel med flagget PÅ (`SCOUT_ENABLE_LEGACY_ROUTES=1` ved bygging)
+`qa-partner-mode.sh`, fase B: `/dashboard` 200 med eldre Project Scout-flate, `/agents` 200, `/opportunities/demo-001` 200, `/agents/new` som før (307 for anonym), `/` → `/login`, `/login` og `/searches` uendret (200, Merovo). Den eldre toppen og det gule banneret returnerer kun i denne modusen.
+
+### 4. Global not-found
+`src/app/not-found.tsx` er nå Merovo: logo, «Local demand. European supply.», «Fant ikke siden» og lenke til `/login`. Ingen Project Scout-tekst, ingen «dashboard»-lenke, ingen gult banner, ingen ny logikk. Med flagget PÅ vises den under den eldre toppen (for intern bruk). `/searches/**` har fortsatt sin egen variant.
+
+### 5. Tester faktisk kjørt
+| Kontroll | Resultat |
+|---|---|
+| `npx tsc --noEmit`, `npx eslint .` | uten feil |
+| `npx vitest run` | 25 filer, **561 / 561** bestått (556 + 5 nye i `legacy-isolation.test.ts`) |
+| `npm run build` (standard, flagg av) | OK |
+| `bash scripts/qa-secret-scan.sh` | ingen funn (lokal-Supabase-delen hoppet over) |
+| `bash scripts/test-e2e-search005.sh` (Chromium mot **emulator** + isolert PG; flagget satt eksplisitt i skriptets bygg) | **76 / 76** |
+| `bash scripts/qa-partner-mode.sh` (to byggefaser, ingen Supabase) | alle kontroller bestått (første kjøring hadde én for streng forventning til query-strengen; rettet i skriptet, ikke i koden) |
+| `bash scripts/qa-demo-mode.sh` (med flagget satt eksplisitt) | alle kontroller bestått |
+
+### 6. Supabase-avhengige kontroller IKKE kjørt
+`tests/e2e/dev002-auth`, `dev004-agents`, `qa001-app-paths`, `dev005-search-runs` (oppdatert i DEV-006F; **kjøring av dem krever nå også at appen bygges med `SCOUT_ENABLE_LEGACY_ROUTES=1`**, siden de åpner `/agents`; dette er ikke lagt inn i dem fordi de ikke bygger appen selv), samt DB-/RLS-suitene (`npm run test:db`) og mutasjonstestene. Ingen påstand om at de består.
+
+### 7. Kjente begrensninger
+1. Flagget leses **ved bygging** (redirects ligger i routes-manifestet; rotlayouten leses ved bygging for statiske sider). En endring krever ny bygging. For `next dev` gjelder verdien ved oppstart.
+2. Server-actions fra de eldre sidene ligger fortsatt i bygget. Stiene deres er blokkert og de håndhever selv sesjon, firma og RLS, men de er ikke fysisk fjernet. Full fjerning krever en egen oppgave (utelate legacy fra bygget).
+3. Query-strengen videresendes ved omdirigering (f.eks. `/dashboard?error=1` → `/login?error=1` viser innloggingsfeilen). Kosmetisk; ingen tilgangskonsekvens.
+4. Ukjente URL-er utenfor `/searches` og de blokkerte stiene gir 404 med Merovo-side; `/opportunities` uten id (ingen side) blir også 404 Merovo.
+5. Hosting, domene, brukerinvitasjon og tilgangskontroll er ikke gjort; ingen deploy. Ingen ekte leverandørdata; kun syntetiske data.
+6. Ikke testet mot ekte Supabase Auth eller i Safari/Firefox/skjermleser.

@@ -42,6 +42,9 @@ await db.query("select private.admin_add_member($1,$2)", [B.email, firmB]);
 const emu = await startMiniSupabase({ dbUrl: DB, users: [A, B, L], port: EMU_PORT, pgModulePath: process.env.PG });
 const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: emu.url, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "test-publishable-key-not-secret", NEXT_TELEMETRY_DISABLED: "1" };
 delete env.SCOUT_SYNTHETIC_FAILURE;
+// DEV-006G: denne flyten tester også at den eksisterende /agents-siden er uendret; eldre ruter er blokkert som standard og må aktiveres ved bygging.
+// (Blokkeringen selv verifiseres av scripts/qa-partner-mode.sh.)
+env.SCOUT_ENABLE_LEGACY_ROUTES = "1";
 console.log("bygger appen mot testemulatoren …");
 execFileSync("npm", ["run", "build"], { env, stdio: ["ignore", "ignore", "inherit"] });
 const servers = [];

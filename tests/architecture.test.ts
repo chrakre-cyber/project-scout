@@ -87,10 +87,10 @@ describe("Supabase og hemmeligheter", () => {
     }
   });
 
-  it("bare fire miljøvariabler leses; den eneste hemmelige leses kun i den betrodde skriveveien", () => {
+  it("bare fem miljøvariabler leses; den eneste hemmelige leses kun i den betrodde skriveveien", () => {
     const names = new Set<string>();
     for (const f of ALL) for (const m of f.text.matchAll(/process\.env\.([A-Z0-9_]+)/g)) names.add(m[1]!);
-    expect([...names].sort()).toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_URL", "SCOUT_INGEST_DATABASE_URL", "SCOUT_SYNTHETIC_FAILURE"]);
+    expect([...names].sort()).toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_URL", "SCOUT_ENABLE_LEGACY_ROUTES", "SCOUT_INGEST_DATABASE_URL", "SCOUT_SYNTHETIC_FAILURE"]); // DEV-006G: SCOUT_ENABLE_LEGACY_ROUTES (bare lest i rotlayouten; ingen hemmelighet)
     for (const f of ALL) expect(f.text, f.rel).not.toMatch(/service_role|sb_secret|SERVICE_ROLE/i);
     const readers = ALL.filter((f) => /SCOUT_INGEST_DATABASE_URL/.test(f.text)).map((f) => f.rel);
     expect(readers).toEqual(["src/server/trusted-ingest.ts"]);

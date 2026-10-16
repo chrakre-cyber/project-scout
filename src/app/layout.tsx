@@ -3,11 +3,12 @@ import { AppChrome } from "@/components/AppChrome";
 import { AuthStatus } from "@/components/AuthStatus";
 import { DemoBanner } from "@/components/DemoBanner";
 import { SiteNav } from "@/components/SiteNav";
+import { legacyRoutesEnabled } from "@/lib/legacy-routes";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Project Scout — demo",
-  description: "Syntetisk demo av Project Scout. Ingen ekte annonser eller beregninger.",
+  title: "Merovo demo",
+  description: "Privat partnerdemo med syntetiske data. Ingen ekte annonser eller beregninger.",
   robots: { index: false, follow: false },
 };
 
@@ -16,7 +17,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="nb">
       <body className="min-h-screen">
         <AppChrome
-          chrome={(
+          chrome={!legacyRoutesEnabled(process.env.SCOUT_ENABLE_LEGACY_ROUTES) ? null : (
             <>
               <DemoBanner />
               <header className="border-b border-slate-200 bg-white">
