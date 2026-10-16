@@ -40,5 +40,7 @@ Ikke endret: auth/session/RLS/tenancy, `/login`, `/searches/**`, global `not-fou
 3. Hosting, domene, miljøvariabler, brukerinvitasjon og tilgangskontroll er ikke del av denne oppgaven (ingen deploy).
 4. Supabase-DB-suitene er fortsatt ikke kjørt mot faktisk Supabase (uendret fra DEV-006-FINAL).
 
+5. **Eldre e2e-skript er foreldet av DEV-006E-redirecten (nytt funn, ikke kjørt):** `tests/e2e/dev002-auth.e2e.mjs`, `dev004-agents.e2e.mjs` og `qa001-app-paths.e2e.mjs` venter på `/agents` etter innlogging (`waitForURL(/\/agents/)`), men innlogging går nå til `/searches`. De er ikke del av standard `npm test` og ble ikke kjørt i DEV-006E (de krever lokal Supabase). De vil feile på denne ventingen til de oppdateres. Forslag: én-linjes oppdatering (vent på `/searches`, naviger deretter til `/agents`) i denne oppgaven eller i en egen; jeg gjør det bare hvis du godkjenner det.
+
 ## Forespørsel
-Godkjenn: (a) `/` → `/login` (anbefalt), eller velg `/searches`; (b) at gamle ruter forblir uendret og nåbare via URL; (c) at global `not-found` ikke endres. Deretter implementerer jeg kun dette og kjører typecheck, lint, enhetstester, build, secret-skann og e2e, og oppdaterer rapporten med endelig status og commit-hash.
+Godkjenn: (a) `/` → `/login` (anbefalt), eller velg `/searches`; (b) at gamle ruter forblir uendret og nåbare via URL; (c) at global `not-found` ikke endres, og (d) om de tre eldre e2e-skriptene skal få ventingen oppdatert (punkt 5). Deretter implementerer jeg kun dette og kjører typecheck, lint, enhetstester, build, secret-skann og e2e, og oppdaterer rapporten med endelig status og commit-hash.
