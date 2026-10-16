@@ -76,7 +76,7 @@ Forutsetninger: Supabase-trinn i punkt 5 gjort; to demofirma (X, Y) og to person
 
 **Tenant-isolasjon** (to nettlesere/profiler): 13. B logger inn → ser ikke A sine utkast. 14. B lager et søk → A ser det ikke. 15. B åpner A sin utkast-URL (`/searches/<A-id>`) → Merovo «Fant ikke siden». 16. A åpner B sin tilsvarende URL → samme.
 
-**Sannferdighet:** 17. Etiketten «Syntetiske demodata – ikke ekte leverandørdata» er synlig på `/login`-løst innhold (`/searches`, forhåndsvisning, detalj, hvert kort). 18. Ingen tekst påstår live-leverandør, partnerskap, lager eller beregnet innkjøpskostnad; annonsepris er merket «ikke innkjøpskostnad». 19. Sidens kilde/Network viser ingen nøkkel utover publishable key; ingen kall til andre domener enn appen og Supabase. 20. Svar-hodene inneholder ikke `X-Powered-By`.
+**Sannferdighet:** 17. Etiketten «Syntetiske demodata – ikke ekte leverandørdata» er synlig på `/searches`, forhåndsvisning, detalj og hvert resultatkort (den vises ikke på `/login`, som ikke viser data; teksten der sier «Privat partnerdemo»). 18. Ingen tekst påstår live-leverandør, partnerskap, lager eller beregnet innkjøpskostnad; annonsepris er merket «ikke innkjøpskostnad». 19. Sidens kilde/Network viser ingen nøkkel utover publishable key; ingen kall til andre domener enn appen og Supabase. 20. Svar-hodene inneholder ikke `X-Powered-By`.
 Dokumenter resultatet med skjermbilder; ikke del legitimasjon i rapporten.
 
 ## 9. Klassifisering av funn
