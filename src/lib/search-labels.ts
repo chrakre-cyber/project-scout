@@ -2,6 +2,7 @@
  * Norsk brukerspråk og skjemametadata for den nye søkeflyten (SEARCH-005). Ren data og små rene funksjoner — kan brukes av både
  * klient- og serverkode. Interne koder (statuskoder, schema-navn, JSON) vises aldri i normal brukerflyt; kodene mappes her.
  */
+import { SYNTHETIC_ATTRIBUTION } from "@/domain/display-policy";
 import type { CostKind, CriterionId, VatBasis } from "@/domain/search-v2/types";
 
 /** De faste kostnadslinjene i skjemaet. Typen er også linjens varige id. */
@@ -91,4 +92,4 @@ export const CANDIDATE_FIELD_LABEL: Record<string, string> = {
 };
 
 /** Kort kildeetikett for alle resultater i den nye søkeflyten (DEV-006C). Intern kilde-id er `synthetic-demo`. */
-export const SYNTHETIC_SOURCE_LABEL = "Syntetiske demodata – ikke ekte leverandørdata";
+export const SYNTHETIC_SOURCE_LABEL = SYNTHETIC_ATTRIBUTION;

@@ -130,6 +130,50 @@ describe("demo og påstander", () => {
   });
 });
 
+describe("visningsrettigheter: rå leverandørannonser når ikke /searches-UI (DATA-002A)", () => {
+  const UI = ALL.filter((f) => f.rel.startsWith("src/components/search/") || f.rel.startsWith("src/components/merovo/") || f.rel.startsWith("src/app/searches/"));
+  const RAW_SPEC = /^@\/(providers\/|server\/search-preview$|adapters\/search-candidate)/;
+
+  it("komponenter og sider i søkeflyten importerer ikke provider, rå forhåndsvisning eller kandidatadapter", () => {
+    expect(UI.length).toBeGreaterThan(10);
+    for (const f of UI) for (const i of f.imports) expect(i.spec, `${f.rel} → ${i.spec}`).not.toMatch(RAW_SPEC);
+  });
+
+  it("komponenter og sider i søkeflyten nevner aldri de rå typene eller funksjonene (også ikke som type)", () => {
+    for (const f of UI) {
+      const code = f.text.replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+      for (const raw of ["NormalizedListing", "PreviewItem", "assessListing", "previewSearch", "getMarketplaceProvider", "MarketplaceProvider", "CandidateMeta", "CandidateV2"]) {
+        expect(code, `${f.rel} bruker ${raw}`).not.toMatch(new RegExp(`\\b${raw}\\b`));
+      }
+      // felt som bare finnes på den rå annonsen (visningsmodellen har sellerType/sellerLocation/sourceUrl/listingDates/listingId)
+      expect(code, `${f.rel} leser rå annonsefelt`).not.toMatch(/\b(listing|l)\.(originalUrl|sourceModifiedAt|seller|sourceListingId|provenance)\b/);
+    }
+  });
+
+  it("bare søkeflatens servergrense (search-display) kjenner både provider og visningsmodell; den bruker applyDisplayPolicy", () => {
+    const bridge = ALL.find((f) => f.rel === "src/server/search-display.ts")!;
+    expect(bridge.text).toMatch(/applyDisplayPolicy\(/);
+    expect(bridge.text).toMatch(/policyForSource/);
+    // sidene henter data kun via grensen
+    const pages = ALL.filter((f) => f.rel.startsWith("src/app/searches/") && /preview\/(\[listingId\]\/)?page\.tsx$/.test(f.rel));
+    expect(pages.length).toBe(2);
+    for (const p of pages) expect(p.imports.some((i) => i.spec === "@/server/search-display"), p.rel).toBe(true);
+  });
+
+  it("visningspolicyen er rent domene: ingen import av provider, UI, server eller React", () => {
+    const d = ALL.find((f) => f.rel === "src/domain/display-policy.ts")!;
+    for (const i of d.imports) expect(i.spec, i.spec).toMatch(/^\.\//);
+    expect(d.text).not.toMatch(/process\.env|fetch\(|from "react"/);
+  });
+
+  it("resultatkortet kan ikke bygges av en rå annonse: komponentens props er DisplayItem", () => {
+    const card = ALL.find((f) => f.rel === "src/components/search/ResultCard.tsx")!;
+    expect(card.text).toMatch(/item: DisplayItem/);
+    const facts = ALL.find((f) => f.rel === "src/components/search/ListingFacts.tsx")!;
+    expect(facts.text).toMatch(/listing: DisplayableListing/);
+  });
+});
+
 describe("stinormalisering (Windows-rettelse bevart, SYNC-001)", () => {
   it("kontrollstiene bruker alltid '/': win32-stier normaliseres slik at sikkerhetsreglene treffer (inspisert uten Windows-kjøring)", () => {
     const rel = win32.relative("C:\\proj", "C:\\proj\\src\\domain\\search-v2\\types.ts");

@@ -9,9 +9,8 @@ import { StatusBadge } from "@/components/merovo/StatusBadge";
 import { orderForPresentation } from "@/lib/search-explain";
 import { BUDGET_NOT_CALCULATED, criterionLabel, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { equipmentLabel } from "@/lib/search-summary";
-import { getMarketplaceProvider } from "@/providers/marketplace";
 import { getDraft } from "@/server/search-drafts";
-import { previewSearch } from "@/server/search-preview";
+import { previewForDisplay } from "@/server/search-display";
 import { getSessionContext } from "@/server/session";
 
 export const metadata: Metadata = { title: "Prøv med demodata — Merovo demo" };
@@ -43,7 +42,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
     );
   }
 
-  const outcome = await previewSearch(draft.spec, getMarketplaceProvider());
+  const outcome = await previewForDisplay(draft.spec);
   const equip = (k: string) => equipmentLabel(k);
   return (
     <div className="space-y-5">
@@ -107,7 +106,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
               <section key={st} aria-labelledby={`g-${st}`} className="space-y-3">
                 <h2 id={`g-${st}`} className="flex flex-wrap items-center gap-3 text-xl font-bold text-forest"><StatusBadge status={st} /><span>({items.length})</span></h2>
                 {st === "needs_review" && <p className="text-sm text-muted">Dette er ikke feil: kilden oppgir ikke alt som trengs for å avgjøre kravene. Kontroller hos kilden før du går videre.</p>}
-                {items.length === 0 ? <p className="text-sm text-muted">Ingen.</p> : <ul className="space-y-3">{items.map((i) => <ResultCard key={i.listing.sourceListingId} item={i} draftId={id} version={draft.version} />)}</ul>}
+                {items.length === 0 ? <p className="text-sm text-muted">Ingen.</p> : <ul className="space-y-3">{items.map((i) => <ResultCard key={i.listing.listingId} item={i} draftId={id} version={draft.version} />)}</ul>}
               </section>
             );
           })}
@@ -115,7 +114,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
             <summary className="min-h-11 cursor-pointer text-xl font-bold text-forest">{VEHICLE_STATUS_LABEL.excluded} ({outcome.counts.excluded})</summary>
             <p className="mt-2 text-sm text-muted">Disse bilene har minst ett kjent kravbrudd. Åpne forklaringen for å se hvilket krav som ikke er oppfylt.</p>
             <ul className="mt-3 space-y-3">
-              {orderForPresentation(outcome.items.filter((i) => i.assessment.vehicle.status === "excluded")).map((i) => <ResultCard key={i.listing.sourceListingId} item={i} draftId={id} version={draft.version} />)}
+              {orderForPresentation(outcome.items.filter((i) => i.assessment.vehicle.status === "excluded")).map((i) => <ResultCard key={i.listing.listingId} item={i} draftId={id} version={draft.version} />)}
             </ul>
           </details>
         </>
