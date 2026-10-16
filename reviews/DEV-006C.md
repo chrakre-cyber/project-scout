@@ -50,3 +50,6 @@ Eksisterende tester som hardkodet 109 er endret til egenskaper (alt vurdert, ing
 - Ingen total innkjøpskostnad; ingen budsjettstatus.
 - Etiketten står ikke i det globale `DemoBanner`; ikke testet i Safari/Firefox/skjermleser; emulatorbasert nettlesertest er ikke ekte Supabase Auth.
 - Resultater lagres ikke; visningsrettigheter for ekte leverandører mangler (se over).
+
+## Commit
+Kode-commit: `63f5a35`.
