@@ -148,7 +148,7 @@
     "R-OTA-013"
    ],
    "note": "",
-   "limitations": "PDF-utskrift uten maskinlesbart tekstlag (lest visuelt). Lest: §§ 1-2, 1-3, 3-1 til 3-4. Ikke lest i detalj: kapittel II (definisjoner), IV–VIII (fritak, statusendring, refusjon, virksomheter). Ingen bestemmelse om avrunding funnet i de leste paragrafene. Ikke samme fil som den utelatte Lovdata-varianten nevnt i MANIFEST.",
+   "limitations": "PDF-utskrift uten maskinlesbart tekstlag (lest visuelt). Alle 17 sider er gjennomgått for avrunding og beregningsregler; §§ 1-2, 1-3, 3-1 til 3-4, 5-2 og 7-2 er lest i detalj. Kapittel II (definisjoner), IV (fritak), VI–VIII er bare skumlest og ikke vurdert for andre formål. Ingen bestemmelse om avrunding funnet i de leste paragrafene. Ikke samme fil som den utelatte Lovdata-varianten nevnt i MANIFEST.",
    "retrievedBy": "Christian (ECON-002 primarkildepakke, manifest i docs/tax/primarkilder/MANIFEST.md)",
    "packageFile": "primarkilder/03_Forskrift_engangsavgift_FOR-2001-03-19-268.pdf",
    "repoFile": "docs/tax/primarkilder/03_Forskrift_engangsavgift_FOR-2001-03-19-268.pdf",
@@ -156,11 +156,13 @@
    "publishedVersion": "Lovdata konsolidert PDF-utskrift (17 s.): FOR-2001-03-19-268, ikrafttredelse 01.04.2001, «Sist endret FOR-2026-01-13-29»; § 3-1 sist endret ved forskrift 19 des 2025 nr. 2787 (i kraft 1 jan 2026)",
    "effectiveDate": "2026-01-01",
    "readSections": [
-    "PDF s. 1 (metadata, sist endret)",
-    "§ 1-2, § 1-3 (PDF s. 2)",
-    "§ 3-1, § 3-2, § 3-3 med tabell og alderregler (PDF s. 5–6)",
-    "§ 3-4 (PDF s. 7)",
-    "§ 9-3 (PDF s. 16)"
+    "PDF s. 1–17 gjennomgått (visuelt) for avrunding og beregningsregler",
+    "§ 1-2, § 1-3 (s. 2)",
+    "§ 3-1, § 3-2, § 3-3 med tabell og alderregler (s. 5–6)",
+    "§ 3-4 (s. 7)",
+    "§ 5-2 (s. 11)",
+    "§ 7-2 (s. 12)",
+    "§ 9-3 (s. 16)"
    ],
    "externalVerification": {
     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)",

@@ -25,9 +25,12 @@ export interface TaxProfile {
   vehicleClass: "passenger_car_m1";
   /** Styrende hendelse: første gangs registrering i Norge (forskrift § 1-2 nr. 1). */
   governingEvent: "first_norwegian_registration";
+  /** KILDEDOKUMENTERT startdato (T41 § 1: «Fra 1. januar 2026»; T03 13.1). */
   validFrom: string;
-  /** Konservativ: budsjettårets omfang (kilden oppgir ingen eksplisitt sluttdato). */
-  validTo: string;
+  /** KILDEDOKUMENTERT sluttdato; null = kildene oppgir ingen (de 2026-satsene vi har lest har ingen oppgitt opphørsdato). */
+  documentedValidTo: string | null;
+  /** INTERN sikkerhetssperre, ikke en kildedokumentert opphørsdato: etter denne datoen regner motoren ikke uten ny kildekontroll. */
+  internalSafetyLimit: { date: string; kind: "internal_guard"; basis: string };
   /** Dato for satsoversikten (T40) satsene er verifisert mot; senere endringer er ikke kontrollert. */
   ratesVerifiedAsOf: string;
   parameters: {
@@ -62,7 +65,12 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
   vehicleClass: "passenger_car_m1",
   governingEvent: "first_norwegian_registration",
   validFrom: "2026-01-01",
-  validTo: "2026-12-31",
+  documentedValidTo: null,
+  internalSafetyLimit: {
+    date: "2026-12-31",
+    kind: "internal_guard",
+    basis: "Satsene er lest som «Avgiftssatser 2026»/«budsjettåret 2026»; kildene oppgir ingen opphørsdato. Sperren hindrer at 2026-satser stilltiende brukes for 2027 uten ny kildekontroll.",
+  },
   ratesVerifiedAsOf: "2026-05-01",
   parameters: {
     generalWeight: { thresholdKg: 500, ratePerKg: "12.71", ruleRef: "R-OTA-001", paramRef: "DP-WEIGHT-GEN-A-2026" },

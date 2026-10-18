@@ -8,10 +8,11 @@ import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { calculateNorwegianVehicleTax, classifyPowertrain, lookupDeduction, NO_OTA_2026_A_PB, DEDUCTION_STEPS_2026, type TaxInput, type TaxProfile } from "@/domain/tax";
 import { add, ceilInt, dec, decInt, floorInt, mul, roundHalfUpInt, toExactString } from "@/domain/tax/decimal";
-import { GOLDEN_CASES } from "./fixtures/tax-golden";
+import { DOCUMENTATION_CHECKLIST, GOLDEN_CASES, missingDocumentation, TEST_DATE } from "./fixtures/tax-golden";
 
 const ROOT = join(__dirname, "..");
 const json = (f: string) => JSON.parse(readFileSync(join(ROOT, "docs/tax", f), "utf8"));
+interface Dp { internalSafetyLimit?: { date: string; kind: string }; id: string; thresholdKg?: number; rate?: number; group: string; from: string; to: string | null; evidence: string; bandSemantics?: string; bands?: Array<{ fromGramKm: number; toGramKm: number | null; rate: number }> }
 const table = DEDUCTION_STEPS_2026;
 
 const ice = (over: Partial<TaxInput> = {}): TaxInput => ({
@@ -41,12 +42,11 @@ describe("eksakt desimalaritmetikk (ingen float)", () => {
 
 describe("kilde-belagte parametere stemmer med docs/tax (ingen parallell regelmodell)", () => {
   const rules = json("rules.json").rules as Array<{ id: string; datedParameters?: Array<Record<string, unknown>> }>;
-  interface Dp { id: string; thresholdKg?: number; rate?: number; group: string; from: string; to: string | null; evidence: string; bandSemantics?: string; bands?: Array<{ fromGramKm: number; toGramKm: number | null; rate: number }> }
   const dp = (id: string) => rules.flatMap((r) => r.datedParameters ?? []).find((d) => d.id === id) as unknown as Dp;
   const P = NO_OTA_2026_A_PB.parameters;
   it("vekt og CO2 = rules.json datedParameters", () => {
-    expect(dp(P.generalWeight.paramRef)).toMatchObject({ thresholdKg: P.generalWeight.thresholdKg, rate: Number(P.generalWeight.ratePerKg), group: "a", from: "2026-01-01", to: NO_OTA_2026_A_PB.validTo, evidence: "E1" });
-    expect(dp(P.combustionWeight.paramRef)).toMatchObject({ thresholdKg: P.combustionWeight.thresholdKg, rate: Number(P.combustionWeight.ratePerKg), group: "a", from: "2026-01-01", to: NO_OTA_2026_A_PB.validTo, evidence: "E1" });
+    expect(dp(P.generalWeight.paramRef)).toMatchObject({ thresholdKg: P.generalWeight.thresholdKg, rate: Number(P.generalWeight.ratePerKg), group: "a", from: "2026-01-01", to: null, evidence: "E1" });
+    expect(dp(P.combustionWeight.paramRef)).toMatchObject({ thresholdKg: P.combustionWeight.thresholdKg, rate: Number(P.combustionWeight.ratePerKg), group: "a", from: "2026-01-01", to: null, evidence: "E1" });
     const bands = dp(P.co2ParamRef).bands!;
     expect(dp(P.co2ParamRef).bandSemantics).toBe("marginal");
     expect(P.co2Bands.map((b) => Number(b.ratePerGramKm))).toEqual(bands.map((b) => b.rate));
@@ -228,26 +228,114 @@ describe("registreringspresisjon (ECON-001 §4.1)", () => {
   });
 });
 
-describe("profilens gyldighet (styrende hendelse = norsk registrering)", () => {
-  it("før 2026-01-01 og etter 2026-12-31 finnes ingen profil ⇒ blokkert (ikke 2026-satser)", () => {
-    for (const d of ["2025-12-31", "2027-01-01"]) {
-      const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: d, kind: "expected" } }));
-      expect(r.status, d).toBe("blocked");
-      expect(codes(r), d).toEqual(["no_profile_for_date"]);
+describe("profilens gyldighet: dokumentert start/slutt er adskilt fra intern sikkerhetssperre", () => {
+  it("dokumentert start 2026-01-01; ingen dokumentert slutt; intern sperre 2026-12-31 er merket som intern", () => {
+    expect(NO_OTA_2026_A_PB.validFrom).toBe("2026-01-01");
+    expect(NO_OTA_2026_A_PB.documentedValidTo).toBeNull();
+    expect(NO_OTA_2026_A_PB.internalSafetyLimit).toMatchObject({ date: "2026-12-31", kind: "internal_guard" });
+    const P = NO_OTA_2026_A_PB.parameters;
+    const rules = json("rules.json").rules as Array<{ datedParameters?: Dp[] }>;
+    for (const ref of [P.generalWeight.paramRef, P.combustionWeight.paramRef, P.co2ParamRef]) {
+      const d = rules.flatMap((r) => r.datedParameters ?? []).find((x) => x.id === ref)!;
+      expect(d.to, ref).toBeNull();
+      expect(d.internalSafetyLimit, ref).toMatchObject({ date: NO_OTA_2026_A_PB.internalSafetyLimit.date, kind: "internal_guard" });
     }
-    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-01-01", kind: "expected" } })).status).toBe("calculated_unverified");
-    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-12-31", kind: "expected" } })).status).toBe("calculated_unverified");
+    const r = calculateNorwegianVehicleTax(ice());
+    expect(r.profile).toMatchObject({ documentedValidTo: null, internalSafetyLimit: { date: "2026-12-31", kind: "internal_guard" } });
   });
-  it("uttrykkelig utløpt profil blokkeres med egen årsak", () => {
-    const expired: TaxProfile = { ...NO_OTA_2026_A_PB, validTo: "2026-06-30" };
-    const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-07-01", kind: "expected" } }), expired);
+  it("før dokumentert start: no_profile_for_date (ikke 2026-satser)", () => {
+    const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2025-12-31", kind: "expected" } }));
+    expect(r.status).toBe("blocked");
+    expect(codes(r)).toEqual(["no_profile_for_date"]);
+    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-01-01", kind: "expected" } })).status).toBe("calculated_unverified");
+  });
+  it("etter intern sperre: egen kode og tekst som sier «ikke kildedokumentert opphørsdato»", () => {
+    const ok = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-12-31", kind: "expected" } }));
+    expect(ok.status).toBe("calculated_unverified");
+    const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2027-01-01", kind: "expected" } }));
+    expect(r.status).toBe("blocked");
+    expect(codes(r)).toEqual(["profile_internal_limit_exceeded"]);
+    expect(r.blocked[0]!.message).toMatch(/Intern sikkerhetssperre/);
+    expect(r.blocked[0]!.message).toMatch(/ikke en kildedokumentert opphørsdato/);
+  });
+  it("en kildedokumentert sluttdato gir en annen kode enn den interne sperren", () => {
+    const documented: TaxProfile = { ...NO_OTA_2026_A_PB, documentedValidTo: "2026-06-30" };
+    const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-07-01", kind: "expected" } }), documented);
     expect(codes(r)).toEqual(["profile_not_valid_for_date"]);
+    expect(r.blocked[0]!.message).toMatch(/dokumentert gyldig til 2026-06-30/);
+    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-06-30", kind: "expected" } }), documented).status).toBe("calculated_unverified");
   });
   it("etter satsoversiktens dato (2026-05-01) følger en advarsel om uverifiserte senere endringer", () => {
     const before = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-05-01", kind: "expected" } }));
     const after = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-05-02", kind: "expected" } }));
     expect(before.warnings.map((w) => w.code)).not.toContain("rates_verified_as_of");
     expect(after.warnings.map((w) => w.code)).toContain("rates_verified_as_of");
+  });
+});
+
+describe("U-009: dag 29–31 når målmåneden er kortere — kildebelagt vs blokkert", () => {
+  // Kilden (T42, T03 4.2) sier bare at steg nås på dagen kjøretøyet «fyller» alderen (15. jan → 15. jan). Vinduet [siste dag i målmåneden, 1. i neste) er ikke avgjort.
+  const row = (first: string, nor: string) => {
+    const l = lookupDeduction(table, first, nor);
+    return { percent: l.percent, ambiguous: l.ambiguous, window: l.ambiguity };
+  };
+  it("31. jan → «1 måned»: 27. feb = 0 % (før begge), 28. feb = blokkert, 1. mars = 2 % (etter begge)", () => {
+    expect(row("2025-01-31", "2025-02-27")).toMatchObject({ percent: 0, ambiguous: false });
+    expect(row("2025-01-31", "2025-02-28")).toMatchObject({ ambiguous: true, window: { stepMonths: 1, clampedDate: "2025-02-28", rolledDate: "2025-03-01" } });
+    expect(row("2025-01-31", "2025-03-01")).toMatchObject({ percent: 2, ambiguous: false });
+  });
+  it("31. mars → «1 måned» (30-dagersmåned): bare 30. april er uavklart", () => {
+    expect([row("2025-03-31", "2025-04-29").ambiguous, row("2025-03-31", "2025-04-30").ambiguous, row("2025-03-31", "2025-05-01").ambiguous]).toEqual([false, true, false]);
+  });
+  it("30. mai 2023 → «9 måneder» i skuddåret 2024: 29. feb er uavklart; 29. mai 2023 har ingen overflyt der", () => {
+    expect(row("2023-05-30", "2024-02-28")).toMatchObject({ ambiguous: false });
+    expect(row("2023-05-30", "2024-02-29").ambiguous).toBe(true);
+    expect(row("2023-05-30", "2024-03-01")).toMatchObject({ ambiguous: false, percent: 16 });
+    expect(row("2023-05-29", "2024-02-29")).toMatchObject({ ambiguous: false, percent: 16 });
+  });
+  it("hele år: 29. feb 2024 → «1 år» finnes ikke 2025: 28. feb 2025 er uavklart, 1. mars 2025 = 19 %", () => {
+    expect(row("2024-02-29", "2025-02-27")).toMatchObject({ ambiguous: false, percent: 18 });
+    expect(row("2024-02-29", "2025-02-28").ambiguous).toBe(true);
+    expect(row("2024-02-29", "2025-03-01")).toMatchObject({ ambiguous: false, percent: 19 });
+    expect(row("2024-02-29", "2028-02-29")).toMatchObject({ ambiguous: false }); // 4 år: dagen finnes (2028 er skuddår)
+  });
+  it("dag 1–28 har aldri overflyt (kildebelagt dato-til-dato): 28. jan → 28. feb = nådd", () => {
+    expect(row("2025-01-28", "2025-02-27")).toMatchObject({ percent: 0, ambiguous: false });
+    expect(row("2025-01-28", "2025-02-28")).toMatchObject({ percent: 2, ambiguous: false });
+  });
+  it("motoren blokkerer (age_step_boundary_ambiguous) med detaljer og beregner aldri et trinn i vinduet", () => {
+    const r = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2025-01-31" }, norwegianRegistration: { date: "2025-02-28", kind: "expected" } }), { ...NO_OTA_2026_A_PB, validFrom: "2025-01-01" });
+    expect(r.status).toBe("blocked");
+    expect(r.blocked[0]).toMatchObject({ code: "age_step_boundary_ambiguous", detail: { stepMonths: 1, clampedDate: "2025-02-28", rolledDate: "2025-03-01", viaMonthPrecisionAlternative: false } });
+    expect(r.totalRegistrationTaxesExact).toBeNull();
+    expect(r.ageDeduction).toBeNull();
+  });
+  it("kun måned kjent: alternativet «siste dag i måneden» kan utløse blokkering; ellers følsomhet", () => {
+    const profile = { ...NO_OTA_2026_A_PB, validFrom: "2025-01-01" };
+    const blocked = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "month", value: "2025-01" }, norwegianRegistration: { date: "2025-02-28", kind: "expected" } }), profile);
+    expect(blocked.blocked[0]).toMatchObject({ code: "age_step_boundary_ambiguous", detail: { viaMonthPrecisionAlternative: true } });
+    const ok = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "month", value: "2025-01" }, norwegianRegistration: { date: "2025-02-27", kind: "expected" } }), profile);
+    expect(ok.status).toBe("calculated_unverified");
+    expect(ok.monthSensitivity).toMatchObject({ alternativeWorkingDate: "2025-01-31", alternativeDeductionPercent: 0 });
+  });
+});
+
+describe("PHEV: definisjon → anvendelig bestemmelse → rundskriv er koblet i evidensregisteret", () => {
+  const rule = (json("rules.json").rules as Array<{ id: string; e1Findings: Array<{ source: string; locator: string }>; chain?: Record<string, string> }>).find((r) => r.id === "R-OTA-005")!;
+  it("regelen dokumenterer definisjon, bestemmelse, rundskriv og det som mangler", () => {
+    expect(Object.keys(rule.chain!)).toEqual(["definition", "applicableProvision", "circular", "gap"]);
+    expect(rule.chain!.definition).toMatch(/ikke definert/);
+    expect(rule.chain!.applicableProvision).toMatch(/§ 3/);
+    expect(rule.chain!.circular).toMatch(/3\.3\.11/);
+    expect(rule.chain!.gap).toMatch(/ingen lest tekst sier uttrykkelig/i);
+    const srcs = new Set(rule.e1Findings.map((f) => f.source));
+    for (const s of ["T03", "T05", "T40", "T41"]) expect(srcs.has(s), s).toBe(true);
+  });
+  it("motoren behandler PHEV likt som forbrenningsmotor for vekt og CO₂, men krever «vektet kombinert»", () => {
+    const base = calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: 140, method: "wltp_combined" } }));
+    const phev = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "type_approval" }, co2: { gramsPerKm: 140, method: "wltp_weighted_combined" } }));
+    expect(phev.components).toEqual(base.components);
+    expect(phev.powertrain).toBe("phev");
   });
 });
 
@@ -316,6 +404,22 @@ describe("gyldne caser (validering mot offisielle verdier; ikke regelkilde)", ()
     const at = (c: number, d: string) => calculateNorwegianVehicleTax({ ...GOLDEN_CASES[c]!.input, norwegianRegistration: { date: d, kind: "expected" } }).ageDeduction!.percent;
     expect([at(0, "2026-09-30"), at(0, "2026-10-01"), at(0, "2026-11-01")]).toEqual([0, 2, 4]);
     expect([at(2, "2026-10-31"), at(2, "2026-11-01")]).toEqual([30, 33]);
+  });
+});
+
+describe("gyldne caser: dokumentasjon mangler (ikke klasse 1); testdato er ikke kalkulatorkjøring", () => {
+  it("hver case mangler kjøredato, norsk registreringsdato brukt og skjermbilder", () => {
+    for (const c of GOLDEN_CASES) {
+      const m = missingDocumentation(c);
+      expect(m, c.id).toEqual(expect.arrayContaining(["calculatorRunDate", "norwegianRegistrationDateUsed", "inputScreenshot", "resultScreenshot", "powertrainEvidence"]));
+      expect(Object.keys(c.documentation), c.id).toEqual([...DOCUMENTATION_CHECKLIST]);
+      expect(c.input.norwegianRegistration).toMatchObject({ date: TEST_DATE, kind: "expected", defaulted: true });
+    }
+    expect(TEST_DATE).toBe("2026-10-18");
+  });
+  it("ingen klasse 1-referanse er registrert i docs/tax (casene er ikke dokumentert nok)", () => {
+    const cases = json("references.json").cases as Array<{ evidenceClass: number }>;
+    expect(cases.filter((c) => c.evidenceClass === 1)).toHaveLength(0);
   });
 });
 

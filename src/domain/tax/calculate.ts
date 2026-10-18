@@ -6,7 +6,7 @@
  * Mangler belegg eller input, blokkeres resultatet med årsak (ingen oppdiktede verdier). Avrunding er IKKE kilde-belagt (U-010):
  * resultatet er eksakt desimal pluss heltallsgrenser; en avrundingspolicy gis bare eksplisitt av kalleren og er merket uten kilde.
  */
-import { lookupDeduction } from "./age-deduction";
+import { lookupDeduction, stepLabel } from "./age-deduction";
 import { add, ceilInt, dec, decInt, floorInt, max0, min, mul, roundHalfUpInt, sub, toExactString, toSafeNumber, ZERO, type Dec } from "./decimal";
 import { compareIso, lastDayOfMonth, parseIsoDate } from "./dates";
 import { TAX_PROFILES, type TaxProfile } from "./profile-no-2026-a";
@@ -25,21 +25,32 @@ export function classifyPowertrain(p: TaxInput["propulsion"]): TaxPowertrain | n
 const percentFactor = (pct: number): Dec => ({ units: BigInt(100 - pct), scale: 2 });
 
 function profileRef(p: TaxProfile): ProfileRef {
-  return { id: p.id, version: p.version, taxGroup: p.taxGroup, validFrom: p.validFrom, validTo: p.validTo, ratesVerifiedAsOf: p.ratesVerifiedAsOf, approved: p.approval.approved };
+  return { id: p.id, version: p.version, taxGroup: p.taxGroup, validFrom: p.validFrom, documentedValidTo: p.documentedValidTo, internalSafetyLimit: { date: p.internalSafetyLimit.date, kind: p.internalSafetyLimit.kind }, ratesVerifiedAsOf: p.ratesVerifiedAsOf, approved: p.approval.approved };
+}
+
+/** Kilde-dokumentert gyldighet og intern sperre holdes adskilt; ulike feilkoder gjør årsaken tydelig. */
+function checkProfileDate(p: TaxProfile, dateIso: string, blockers: Blocker[]): boolean {
+  if (compareIso(dateIso, p.validFrom) < 0) {
+    blockers.push({ code: "no_profile_for_date", message: `Profil ${p.id} er dokumentert gyldig fra ${p.validFrom}; norsk registreringsdato ${dateIso} er før. Regelverket før dette er ikke i kildepakken.` });
+    return false;
+  }
+  if (p.documentedValidTo !== null && compareIso(dateIso, p.documentedValidTo) > 0) {
+    blockers.push({ code: "profile_not_valid_for_date", message: `Profil ${p.id} er dokumentert gyldig til ${p.documentedValidTo}; norsk registreringsdato ${dateIso} er etter.` });
+    return false;
+  }
+  if (compareIso(dateIso, p.internalSafetyLimit.date) > 0) {
+    blockers.push({ code: "profile_internal_limit_exceeded", message: `Intern sikkerhetssperre (${p.internalSafetyLimit.date}), ikke en kildedokumentert opphørsdato: satsene er ikke kontrollert for ${dateIso}. ${p.internalSafetyLimit.basis}` });
+    return false;
+  }
+  return true;
 }
 
 function selectProfile(dateIso: string | null, profile: TaxProfile | undefined, blockers: Blocker[]): TaxProfile | null {
-  if (profile) {
-    if (dateIso && (compareIso(dateIso, profile.validFrom) < 0 || compareIso(dateIso, profile.validTo) > 0)) {
-      blockers.push({ code: "profile_not_valid_for_date", message: `Profil ${profile.id} gjelder ${profile.validFrom}–${profile.validTo}; norsk registreringsdato ${dateIso} er utenfor.` });
-      return null;
-    }
-    return profile;
-  }
+  if (profile) return dateIso && !checkProfileDate(profile, dateIso, blockers) ? null : profile;
   if (!dateIso) return null;
-  const hit = TAX_PROFILES.find((p) => compareIso(dateIso, p.validFrom) >= 0 && compareIso(dateIso, p.validTo) <= 0);
-  if (!hit) blockers.push({ code: "no_profile_for_date", message: `Ingen kilde-belagt avgiftsprofil dekker norsk registreringsdato ${dateIso}.` });
-  return hit ?? null;
+  // Velg profilen hvis dokumenterte startdato ≤ dato; sperrene (dokumentert slutt / intern grense) rapporteres av checkProfileDate.
+  const candidate = TAX_PROFILES.filter((p) => compareIso(dateIso, p.validFrom) >= 0).at(-1) ?? TAX_PROFILES[0]!;
+  return checkProfileDate(candidate, dateIso, blockers) ? candidate : null;
 }
 
 interface Computed {
@@ -83,6 +94,14 @@ function computeComponents(profile: TaxProfile, powertrain: TaxPowertrain, kg: n
     pre = add(pre, co2);
   }
   return { components, preDeduction: pre };
+}
+
+function ambiguityBlocker(a: { stepMonths: number; clampedDate: string; rolledDate: string } | null, norDate: string, viaAlt: boolean): Blocker {
+  return {
+    code: "age_step_boundary_ambiguous",
+    message: `Første registreringsdag (29–31) finnes ikke i målmåneden for trinnet ${a ? stepLabel(a.stepMonths) : "?"}. Kilden sier ikke om trinnet nås ${a?.clampedDate} (siste dag i måneden) eller ${a?.rolledDate} (1. i neste måned); norsk registrering ${norDate} ligger i dette vinduet (U-009).${viaAlt ? " Utfallet oppstår i alternativet «siste dag i måneden» fordi bare måned er kjent." : ""}`,
+    ...(a ? { detail: { stepMonths: a.stepMonths, clampedDate: a.clampedDate, rolledDate: a.rolledDate, norwegianDate: norDate, viaMonthPrecisionAlternative: viaAlt } } : {}),
+  };
 }
 
 export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfile, options: CalcOptions = {}): TaxResult {
@@ -186,7 +205,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     const main = lookupDeduction(prof.deductionTable, working!, norDate);
     const alt = altWorking && compareIso(norDate, altWorking) >= 0 ? lookupDeduction(prof.deductionTable, altWorking, norDate) : null;
     if (main.ambiguous || alt?.ambiguous) {
-      return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, totalIntegerBounds: null, rounded: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [{ code: "age_step_boundary_ambiguous", message: "Første registreringsdag (29–31) finnes ikke i målmåneden for et trinn nær norsk registreringsdato, og kilden sier ikke hvilken dag som gjelder (U-009)." }], warnings, assumptions };
+      return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, totalIntegerBounds: null, rounded: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [ambiguityBlocker(main.ambiguity ?? alt?.ambiguity ?? null, norDate, !main.ambiguity)], warnings, assumptions };
     }
     ded = { percent: main.percent, ageCompletedMonths: main.completedMonths, stepLabel: main.stepLabel, workingFirstRegistration: working, workingDateDerived: derived, norwegianRegistrationDate: norDate, norwegianRegistrationKind: nor.kind, twentyYearRule: main.twentyYearRule };
     if (main.twentyYearRule) warnings.push({ code: "twenty_year_rule_unverified", message: "20-årsregelen gir 100 % fradrag; hvilken avgift som ellers gjelder for 20 år gamle motorvogner er ikke utledet (R-OTA-011)." });

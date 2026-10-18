@@ -72,11 +72,14 @@ export type BlockCode =
   | "norwegian_registration_before_first_registration"
   | "age_step_boundary_ambiguous"
   | "no_profile_for_date"
-  | "profile_not_valid_for_date";
+  | "profile_not_valid_for_date"
+  | "profile_internal_limit_exceeded";
 
 export interface Blocker {
   code: BlockCode;
   message: string;
+  /** Kun `age_step_boundary_ambiguous`: hvilket trinn og de to kandidatdatoene kilden ikke skiller mellom (U-009). */
+  detail?: { stepMonths: number; clampedDate: string; rolledDate: string; norwegianDate: string; viaMonthPrecisionAlternative: boolean };
 }
 
 export type WarningCode =
@@ -129,8 +132,12 @@ export interface ProfileRef {
   id: string;
   version: string;
   taxGroup: "a";
+  /** Kildedokumentert startdato. */
   validFrom: string;
-  validTo: string;
+  /** Kildedokumentert sluttdato; null = ikke oppgitt i kildene. */
+  documentedValidTo: string | null;
+  /** Intern sperre (ikke kildedokumentert opphør). */
+  internalSafetyLimit: { date: string; kind: "internal_guard" };
   ratesVerifiedAsOf: string;
   approved: boolean;
 }

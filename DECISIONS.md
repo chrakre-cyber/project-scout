@@ -114,5 +114,6 @@ Ikke endret: database, RLS, auth, serveractions, providers, prototypen. Åpent: 
 - **Regler (gruppe a, personbil 2026):** generell vekt 12,71 kr/kg over 500 kg for alle; tillegg 260 kr/kg over 1 200 kg og marginale CO₂-bånd (800/1 600/3 200/5 000) bare for stempeldrevet forbrenningsmotor (inkl. ladbar hybrid, CO₂ «vektet kombinert»); elbil bare generell vekt; bruksfradrag i prosent av avgiften etter § 3-3 (første gangs registrering, dato til dato); vrakpant 2 400 kr, ikke redusert.
 - **Status:** motoren gir `calculated_unverified`. Ingen parameter er godkjent (0), ingen klasse 1-referanse (0); TAX-foundation er REVIEW.
 - **Avrunding er åpen (U-010):** ingen lest kilde omtaler den. Motoren returnerer eksakt desimal og heltallsgrenser; en avrundingspolicy gis bare uttrykkelig av kalleren og er merket uten kilde. Valget «ned» som gjenskaper de offisielle beløpene er en observasjon fra casene og er ikke vedtatt.
-- **Blokkering:** NEDC/egenvekt-fallback, bare år, dag 29–31-overflyt, ukjent/utløpt profil og ikke-støttet klasse gir `blocked` med årsak, aldri 0.
+- **Blokkering:** NEDC/egenvekt-fallback, bare år, dag 29–31-overflyt (bare i vinduet der kilden er taus, U-009), ukjent profil, ikke-støttet klasse og dato etter den interne sikkerhetssperren gir `blocked` med årsak, aldri 0.
+- **Gyldighet:** kildedokumentert start 2026-01-01; ingen dokumentert slutt (`documentedValidTo = null`). 2026-12-31 er en INTERN sikkerhetssperre (`internalSafetyLimit`), ikke et kildedokumentert opphør, og har egen feilkode.
 

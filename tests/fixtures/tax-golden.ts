@@ -5,15 +5,54 @@
  */
 import type { TaxInput } from "@/domain/tax";
 
+/** Dokumentasjon som kreves før et golden case kan bli klasse 1-referanse (se reviews/ECON-002.md §6). */
+export const DOCUMENTATION_CHECKLIST = [
+  "vehicleIdentification", // merke/modell/variant/motor (ikke VIN)
+  "firstRegistrationDate", // dato (dag), ikke bare måned
+  "norwegianRegistrationDateUsed", // datoen kalkulatoren fikk som norsk registreringsdato
+  "calculatorRunDate", // faktisk kjøredato for kalkulatoren
+  "calculatorVersionOrUrl", // side/versjon/URL og tidspunkt vist i utskriften
+  "taxWeightAndDefinition", // kg + hva kalkulatoren/typegodkjenningen kalte det
+  "co2ValueAndMethod", // g/km + WLTP/«vektet kombinert»
+  "powertrainEvidence", // typegodkjenning/register: forbrenningsmotor? ladbar?
+  "inputScreenshot",
+  "resultScreenshot", // inkl. delposter hvis kalkulatoren viser dem
+  "resultBreakdown", // avgift, vrakpant, bruksfradrag-prosent slik kalkulatoren viser dem
+] as const;
+export type ChecklistKey = (typeof DOCUMENTATION_CHECKLIST)[number];
+export type ChecklistStatus = "missing" | "partial" | "provided";
+
 export interface GoldenCase {
   id: string;
   label: string;
+  /** Inputen motoren kjøres med. `norwegianRegistration` er FASTSATT TESTDATO (2026-10-18), ikke dokumentasjon på kalkulatorkjøringen. */
   input: TaxInput;
   /** Offisiell «Avgift» inkl. vrakpant (NOK). */
   expectedTotalNok: number;
+  /** Status per dokumentasjonspunkt (ECON-001 §7 er eneste kilde; ingen skjermbilder levert). */
+  documentation: Record<ChecklistKey, ChecklistStatus>;
 }
 
-const NOR = { date: "2026-10-18", kind: "expected" as const, defaulted: true };
+export const TEST_DATE = "2026-10-18";
+const NOR = { date: TEST_DATE, kind: "expected" as const, defaulted: true };
+const DOC: Record<ChecklistKey, ChecklistStatus> = {
+  vehicleIdentification: "partial", // bare modellnavn i ECON-001 §7
+  firstRegistrationDate: "partial", // bare måned (arbeidsdato 1. i måneden)
+  norwegianRegistrationDateUsed: "missing",
+  calculatorRunDate: "missing",
+  calculatorVersionOrUrl: "missing",
+  taxWeightAndDefinition: "partial", // verdi oppgitt («ref.»), definisjon ukjent
+  co2ValueAndMethod: "partial", // verdi og WLTP oppgitt; felt (kombinert/vektet) ikke bekreftet
+  powertrainEvidence: "missing",
+  inputScreenshot: "missing",
+  resultScreenshot: "missing",
+  resultBreakdown: "missing",
+};
+
+/** Punkter som ikke er «provided» — må leveres før klasse 1. */
+export function missingDocumentation(c: GoldenCase): ChecklistKey[] {
+  return DOCUMENTATION_CHECKLIST.filter((k) => c.documentation[k] !== "provided");
+}
 
 export const GOLDEN_CASES: readonly GoldenCase[] = [
   {
@@ -28,6 +67,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
       firstRegistration: { precision: "month", value: "2026-09" },
       norwegianRegistration: NOR,
     },
+    documentation: { ...DOC },
   },
   {
     id: "CASE-002",
@@ -41,6 +81,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
       firstRegistration: { precision: "month", value: "2023-08" },
       norwegianRegistration: NOR,
     },
+    documentation: { ...DOC },
   },
   {
     id: "CASE-003",
@@ -54,5 +95,6 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
       firstRegistration: { precision: "month", value: "2023-11" },
       norwegianRegistration: NOR,
     },
+    documentation: { ...DOC },
   },
 ];

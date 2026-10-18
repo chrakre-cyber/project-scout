@@ -16,6 +16,8 @@ export interface DeductionLookup {
   ambiguous: boolean;
   /** Hele måneder dato til dato (kandidat «clamped»). */
   completedMonths: number;
+  /** Første trinn der utfallet avhenger av dag-overflyt (U-009); null hvis ingen. */
+  ambiguity: { stepMonths: number; clampedDate: string; rolledDate: string } | null;
 }
 
 export function stepLabel(months: number): string {
@@ -35,11 +37,12 @@ export function lookupDeduction(table: readonly DeductionStep[], firstIso: strin
   while (completed < 1200 && compareIso(norwegianIso, monthAnniversaryCandidates(first, completed + 1).clamped) >= 0) completed++;
 
   if (compareIso(norwegianIso, formatIso({ y: first.y + 20, m: 1, d: 1 })) >= 0) {
-    return { percent: 100, stepMonths: 240, stepLabel: stepLabel(240), twentyYearRule: true, ambiguous: false, completedMonths: completed };
+    return { percent: 100, stepMonths: 240, stepLabel: stepLabel(240), twentyYearRule: true, ambiguous: false, completedMonths: completed, ambiguity: null };
   }
   let pc = 0;
   let pr = 0;
   let sm: number | null = null;
+  let ambiguity: DeductionLookup["ambiguity"] = null;
   for (const s of table) {
     if (s.ageMonths >= 240) continue; // siste trinn styres av 1. januar-regelen over
     const c = monthAnniversaryCandidates(first, s.ageMonths);
@@ -48,6 +51,7 @@ export function lookupDeduction(table: readonly DeductionStep[], firstIso: strin
       sm = s.ageMonths;
     }
     if (compareIso(norwegianIso, c.rolled) >= 0) pr = s.percent;
+    if (!ambiguity && compareIso(norwegianIso, c.clamped) >= 0 && compareIso(norwegianIso, c.rolled) < 0) ambiguity = { stepMonths: s.ageMonths, clampedDate: c.clamped, rolledDate: c.rolled };
   }
-  return { percent: pc, stepMonths: sm, stepLabel: sm === null ? null : stepLabel(sm), twentyYearRule: false, ambiguous: pc !== pr, completedMonths: completed };
+  return { percent: pc, stepMonths: sm, stepLabel: sm === null ? null : stepLabel(sm), twentyYearRule: false, ambiguous: pc !== pr, completedMonths: completed, ambiguity };
 }
