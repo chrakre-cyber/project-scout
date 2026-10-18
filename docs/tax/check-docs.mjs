@@ -42,6 +42,13 @@ for (const s of sources.sources) {
   if (s.externalVerification && s.evidenceLevel !== "E1") err(`kilde ${s.id}: externalVerification er bare for E1-kilder (E1X bruker egne felt)`);
   for (const r of s.rules ?? []) if (!ruleIds.has(r)) err(`kilde ${s.id}: ukjent regel ${r}`);
 }
+// ---- kildefiler i repoet (ECON-002): SHA-256 av faktiske filbytes må stemme med registeret
+for (const s of sources.sources) if (s.repoFile) {
+  const p = join(dir, "..", "..", s.repoFile);
+  if (!existsSync(p)) { err(`kilde ${s.id}: repoFile mangler (${s.repoFile})`); continue; }
+  const h = createHash("sha256").update(readFileSync(p)).digest("hex");
+  if (h !== s.packageSha256) err(`kilde ${s.id}: SHA-256 for ${s.repoFile} er ${h}, registrert ${s.packageSha256}`);
+}
 // ---- begrepsvern (F1): vrakpantutbetaling er ikke vrakpantavgift
 for (const s of sources.sources) {
   if (/scrap-deposit/.test(s.url)) for (const rid of s.rules ?? []) if (!/^utenfor_beregning/.test(ruleById.get(rid)?.status ?? "")) err(`kilde ${s.id} (vrakpant-UTBETALING) brukes som grunnlag for beregningsregel ${rid}`);

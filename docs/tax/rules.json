@@ -396,7 +396,7 @@
   {
    "id": "R-OTA-001",
    "component": "Engangsavgift gruppe a",
-   "title": "Vektkomponent",
+   "title": "Vektkomponent (generell § 2 + tillegg for forbrenningsmotor § 3)",
    "profiles": [
     "PB-BEN",
     "PB-DIE",
@@ -415,12 +415,12 @@
     "drivlinje"
    ],
    "formulaStructure": "komponent = sats × (vekt over terskel) per sats-trinn; ny komponent for alle drivlinjer inkl. elbil fra 2026",
-   "amountUnitAndRounding": "Gruppe a 2026: 260 kr per kg over 1 200 kg (E1X). Gruppe b: se R-OTA-008. Avrunding og andre grupper: IKKE KONTROLLERT.",
+   "amountUnitAndRounding": "Gruppe a 2026 (E1): generell komponent 12,71 kr/kg over 500 kg (alle personbiler, inkl. elbil); tillegg for forbrenningsmotor 260 kr/kg over 1 200 kg. Komponentene summeres. Gruppe b: se R-OTA-008. Avrunding: IKKE KONTROLLERT (ingen kilde).",
    "orderInCalculation": null,
    "validity": {
     "from": "2026-01-01",
     "to": null,
-    "note": "Gruppe a 2026. Gruppe b-vekt er oppgitt bare til og med 2026-08-31 (R-OTA-008)."
+    "note": "Gruppe a 2026 (T40/T41). Fra 2026-01-01 (T41 § 1; T03 13.1). Sluttdato ikke oppgitt; konservativt 2026-12-31."
    },
    "sources": [
     {
@@ -438,10 +438,22 @@
     },
     {
      "id": "T30"
+    },
+    {
+     "id": "T40",
+     "section": "PDF s. 3"
+    },
+    {
+     "id": "T41",
+     "section": "§ 2, § 3 a 1"
+    },
+    {
+     "id": "T05",
+     "section": "§ 3-1"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_og_E1X_gruppe_a_vekt",
+   "status": "E1_gruppe_a_sats_lest_parameter_ikke_godkjent",
    "leads": [
     {
      "claim": "Bil med forbrenningsmotor: ny vektkomponent + generell engangsavgift (CO2/egenvekt); elbil: bare vektkomponent (Skatteetaten, sammendrag).",
@@ -459,9 +471,12 @@
     }
    ],
    "openQuestions": [
-    "Vektsats for gruppe b fra 2026-09-01 er IKKE oppgitt (ukjent).",
-    "Satser for andre grupper, trinnvis/marginal beregning og styrende dato er ikke gitt.",
-    "Forskrift/stortingsvedtak er ikke lest av Claude (E1X)."
+    "Gruppe a-satsene er verifisert mot Finansdepartementets oversikt datert 2026-05-01 (T40) og et forslag (T41); endelig vedtatt stortingsvedtak (FOR-2025-12-18-2755) er ikke lest. Senere endringer i 2026 er ikke kontrollert (tomme kolonner «Fra 1. april/1. mai» og «Fra 1. september» for gruppe a i T40).",
+    "Sluttdato for 2026-satsene er ikke eksplisitt oppgitt; «Avgiftssatser 2026»/«budsjettåret 2026» tolkes konservativt som gyldig til og med 2026-12-31.",
+    "Avrunding (egenvekt × sats, summer, bruksfradrag) er ikke omtalt i noen lest kilde.",
+    "Vektsats for gruppe b fra 2026-09-01 er IKKE oppgitt (T40 viser bare CO2-endring).",
+    "Forskriftens eksakte definisjon av egenvekt for utenlandsk bil (§ 3-1 første ledd viser til tekniske data ved godkjenning; rundskriv 3.2.2: minimumsvekt fra europeisk typegodkjenning).",
+    "Satser for andre grupper enn a og b er ikke gitt."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -472,6 +487,42 @@
      "source": "T03",
      "locator": "3.1, 13.1.1",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Avgiftsgruppe a, alle personbiler: egenvekt, første 500 kg 0 kr/kg, resten 12,71 kr/kg (2025-regler 12,44; endring 2,2 %), kolonne «Enighet 2026».",
+     "source": "T40",
+     "locator": "PDF s. 3, «Engangsavgift på kjøretøy – Personbiler mv. Avgiftsgruppe a – Alle personbiler – Egenvekt»",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Avgiftsgruppe a, personbiler med forbrenningsmotor: egenvekt, første 1 200 kg 0 kr/kg, resten 260 kr/kg (kolonne «2025-regler» «-»). Dette er et TILLEGG til den generelle komponenten og gjelder bare biler med forbrenningsmotor.",
+     "source": "T40",
+     "locator": "PDF s. 3, «Personbiler mv. med forbrenningsmotor – Egenvekt»",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "FORSLAG: § 2 – personbiler, varebiler klasse 1 og minibusser klasse 1 (gruppe a): 12,71 kr per kg av egenvekten over 500 kg; «Avgiften kommer i tillegg til den avgift som skal betales etter § 3».",
+     "source": "T41",
+     "locator": "PDF s. 1, § 2",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "FORSLAG: § 3 – «For motorvogner med stempeldrevet forbrenningsmotor»: gruppe a, egenvekt 260 kr per kg over 1 200 kg.",
+     "source": "T41",
+     "locator": "PDF s. 1–2, § 3 a 1",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Egenvekt hentes i de fleste tilfeller fra europeisk typegodkjenning, der minimumsvekt brukes.",
+     "source": "T03",
+     "locator": "3.2.2",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Satsendringer og omstrukturering av satstabellene i stortingsvedtaket §§ 2 og 3 med virkning fra 1. januar 2026.",
+     "source": "T03",
+     "locator": "13.1.1",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -499,20 +550,52 @@
      "id": "DP-WEIGHT-A-2026",
      "series": "WEIGHT-A",
      "group": "a",
-     "component": "Vektkomponent, avgiftsgruppe a",
+     "component": "Vektkomponent, tillegg for motorvogn med stempeldrevet forbrenningsmotor (§ 3 a 1), avgiftsgruppe a",
      "from": "2026-01-01",
-     "to": null,
+     "to": "2026-12-31",
      "unit": "NOK per kg over terskel",
      "thresholdKg": 1200,
      "rate": 260,
-     "evidence": "E1X",
+     "evidence": "E1",
      "beforeFrom": "UKJENT – tiden før fra-datoen er ikke dokumentert for denne parameteren (skal gi not_calculated)",
-     "afterTo": null,
-     "legalRule": "Gruppe a 2026: 260 kr/kg over 1 200 kg.",
+     "afterTo": "UKJENT – 2027-satser er ikke del av kildepakken (Avgiftssatser 2026); ikke anta 2026-satsene",
+     "legalRule": "Gruppe a 2026: tillegg 260 kr/kg over 1 200 kg for motorvogn med stempeldrevet forbrenningsmotor.",
      "implementationAssumptionsNotApproved": [
-      "Om regelen endres for gruppe a etter 2026-09-01 er IKKE oppgitt (to=null betyr «ingen endring dokumentert», ikke «bekreftet ut året»)",
-      "Styrende hendelsesdato og rekkefølge mot bruksfradrag er ikke gitt",
-      "Plug-in hybrid: vektfradrag-spørsmålet (U-005) er åpent"
+      "Endelig vedtakstekst ikke lest (T40 + forslag T41)",
+      "Senere endring i 2026 etter 2026-05-01 ikke kontrollert",
+      "Avrunding ikke kilde-belagt"
+     ],
+     "appliesTo": "stempeldrevet forbrenningsmotor (ICE, HEV, PHEV)",
+     "toBasis": "Konservativ: budsjettårets omfang. Kilden oppgir ingen eksplisitt sluttdato.",
+     "sourceRefs": [
+      "T40 PDF s. 3",
+      "T41 § 3 a 1"
+     ]
+    },
+    {
+     "id": "DP-WEIGHT-GEN-A-2026",
+     "series": "WEIGHT-GEN-A",
+     "group": "a",
+     "component": "Vektkomponent, generell (§ 2), avgiftsgruppe a – alle personbiler inkl. elbil",
+     "from": "2026-01-01",
+     "to": "2026-12-31",
+     "unit": "NOK per kg over terskel",
+     "thresholdKg": 500,
+     "rate": 12.71,
+     "evidence": "E1",
+     "beforeFrom": "UKJENT – tiden før fra-datoen er ikke dokumentert for denne parameteren (skal gi not_calculated)",
+     "afterTo": "UKJENT – 2027-satser er ikke del av kildepakken (Avgiftssatser 2026); ikke anta 2026-satsene",
+     "legalRule": "Gruppe a 2026: 12,71 kr/kg over 500 kg for alle personbiler.",
+     "implementationAssumptionsNotApproved": [
+      "Endelig vedtakstekst ikke lest (T40 + forslag T41)",
+      "Senere endring i 2026 etter 2026-05-01 ikke kontrollert",
+      "Avrunding ikke kilde-belagt"
+     ],
+     "appliesTo": "alle personbiler (M1) i avgiftsgruppe a",
+     "toBasis": "Konservativ: budsjettårets omfang. Kilden oppgir ingen eksplisitt sluttdato.",
+     "sourceRefs": [
+      "T40 PDF s. 3",
+      "T41 § 2"
      ]
     }
    ]
@@ -537,7 +620,7 @@
     "kilde i vognkort/typegodkjenning"
    ],
    "formulaStructure": "komponent = sats-trapp over CO2-bånd; CO2 fra registrert verdi, ellers anslag",
-   "amountUnitAndRounding": "Gruppe a 2026: 800/1 600/3 200/5 000 kr per g/km for 0–100/101–150/151–225/>225 (E1X). Gruppe b: se R-OTA-008. NEDC-faktor 1,24 (a/j), 1,22 (b) (E1X, stemmer med rundskriv 3.2.5). Avrunding og andre grupper: IKKE KONTROLLERT.",
+   "amountUnitAndRounding": "Gruppe a 2026 (E1): marginale/progressive bånd: første 100 g/km 800 kr/g, neste 50 g/km 1 600, neste 75 g/km 3 200, resten 5 000. NEDC-faktor 1,24 (a/j), 1,22 (b). Gruppe b: se R-OTA-008. Avrunding: IKKE KONTROLLERT (ingen kilde).",
    "orderInCalculation": null,
    "validity": {
     "from": "2026-01-01",
@@ -560,10 +643,18 @@
     },
     {
      "id": "T30"
+    },
+    {
+     "id": "T40",
+     "section": "PDF s. 3"
+    },
+    {
+     "id": "T41",
+     "section": "§ 3 a 2"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_og_E1X_gruppe_a_og_b",
+   "status": "E1_gruppe_a_sats_lest_marginal_parameter_ikke_godkjent",
    "leads": [
     {
      "claim": "Hvis Statens vegvesen har registrert CO2, brukes den som hovedregel.",
@@ -576,9 +667,9 @@
     }
    ],
    "openQuestions": [
+    "Avrunding av CO2-grunnlag (spesielt NEDC × 1,24 og egenvekt/10) og av avgiften er ikke omtalt i noen lest kilde.",
+    "Gruppe a-satsene er verifisert mot oversikt datert 2026-05-01 (T40) og forslag (T41); endelig vedtakstekst ikke lest; senere endringer ikke kontrollert.",
     "Overgangsregler ved registrering nær årsskifte.",
-    "Gruppe a/b-satser er E1X, ikke E1 (ingen kildefil/hash).",
-    "Trinnvis/marginal beregning, styrende hendelsesdato, avrunding og samspill med bruksfradrag er ikke gitt.",
     "Satser for andre avgiftsgrupper (c, j …) er ikke gitt."
    ],
    "usableAsRuleParameter": false,
@@ -614,6 +705,24 @@
      "source": "T03",
      "locator": "3.2.6",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Gruppe a, personbiler med forbrenningsmotor, CO2-utslipp kr per g/km: første 100 g/km 800; neste 50 g/km 1 600; neste 75 g/km 3 200; resten 5 000 (kolonne «Enighet 2026»; 2025-regler «-»). Satsen gjelder for gram i hvert intervall (marginalt/progressivt).",
+     "source": "T40",
+     "locator": "PDF s. 3, «CO2-utslipp, kr per g/km»",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "FORSLAG: § 3 a 2 – CO2-tabell per g/km: 0–100: 800; 101–150: 1 600; 151–225: 3 200; over 225: 5 000 (tabellen alene sier ikke eksplisitt marginal/flat; T40 gjør det).",
+     "source": "T41",
+     "locator": "PDF s. 2, § 3 a 2",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "WLTP-godkjent kjøretøy i gruppe a: CO2 fra feltet «kombinert» i samsvarssertifikatet; ladbar hybrid: feltet «vektet kombinert». NEDC: verdi × 1,24 (gruppe a og j), × 1,22 (gruppe b). Ikke godkjent etter WLTP/NEDC: CO2 = egenvekt (kg) / 10. Uten kjent testmetode: WLTP hvis første registrering i utlandet 1.9.2018 eller senere eller ikke tidligere registrert; ellers NEDC. EPA/NRCan behandles som WLTP.",
+     "source": "T05",
+     "locator": "§ 3-1 andre til sjette ledd (PDF s. 5)",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -650,7 +759,7 @@
      "group": "a",
      "component": "CO2-komponent, avgiftsgruppe a",
      "from": "2026-01-01",
-     "to": null,
+     "to": "2026-12-31",
      "unit": "NOK per g/km",
      "bands": [
       {
@@ -674,14 +783,21 @@
        "rate": 5000
       }
      ],
-     "evidence": "E1X",
+     "evidence": "E1",
      "beforeFrom": "UKJENT – tiden før fra-datoen er ikke dokumentert for denne parameteren (skal gi not_calculated)",
-     "afterTo": null,
-     "legalRule": "Gruppe a 2026 CO2-satser.",
+     "afterTo": "UKJENT – 2027-satser er ikke del av kildepakken (Avgiftssatser 2026); ikke anta 2026-satsene",
+     "legalRule": "Gruppe a 2026 CO2-satser, marginale bånd.",
      "implementationAssumptionsNotApproved": [
-      "Trinnvis (marginal) eller flat sats i hvert intervall er IKKE gitt",
-      "Om gruppe a endres etter 2026-09-01 er IKKE oppgitt",
-      "Disse satsene må ikke brukes for gruppe b"
+      "Endelig vedtakstekst ikke lest (T40 + forslag T41)",
+      "Senere endring i 2026 etter 2026-05-01 ikke kontrollert",
+      "Avrunding ikke kilde-belagt"
+     ],
+     "bandSemantics": "marginal",
+     "appliesTo": "stempeldrevet forbrenningsmotor (ICE, HEV, PHEV)",
+     "toBasis": "Konservativ: budsjettårets omfang. Kilden oppgir ingen eksplisitt sluttdato.",
+     "sourceRefs": [
+      "T40 PDF s. 3",
+      "T41 § 3 a 2"
      ]
     }
    ]
@@ -801,6 +917,12 @@
      "source": "T03",
      "locator": "3.2.6",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Forskrift § 3-1 sjette ledd: for motorvogner i gruppe a, b og j som ikke er godkjent etter WLTP eller NEDC (eller omfattet av femte ledd) settes CO2-utslippet i g/km til egenvekt i kg dividert med 10.",
+     "source": "T05",
+     "locator": "§ 3-1 siste ledd (PDF s. 5)",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -847,10 +969,18 @@
     },
     {
      "id": "T03"
+    },
+    {
+     "id": "T41",
+     "section": "§ 3"
+    },
+    {
+     "id": "T40",
+     "section": "PDF s. 3"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_og_E1X_co2_grunnlag_besvart_vektfradrag_uavklart",
+   "status": "delvis_E1_co2_grunnlag_og_ingen_vektfradrag_2026",
    "leads": [
     {
      "claim": "Eldre forskriftstekst: CO2 for ladbar hybrid tas fra «vektet kombinert»; for gruppe a og j multipliseres med 1,24.",
@@ -870,13 +1000,13 @@
     {
      "claim": "Skatteetatens side (sammendrag) sier at ladbar hybrid får fradrag i vektavgiftsgrunnlaget på inntil 10 % (stortingsvedtaket § 8 og forskriften § 3-1).",
      "source": "T05",
-     "note": "MOTSIER rundskriv 2026 punkt 3.3.11 (E1): vektfradraget for ladbare hybrider er opphevet fra 1.1.2024. Mulig utdatert sammendrag; uavklart. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+     "note": "MOTSIER rundskriv 2026 punkt 3.3.11 (E1): vektfradraget for ladbare hybrider er opphevet fra 1.1.2024. Mulig utdatert sammendrag; uavklart. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter] [ECON-002: motsagt av T03 3.3.11 og av fraværet av vektfradrag i T41 §§ 2–3 og T05 § 3-1; U-005 lukket]"
     }
    ],
    "openQuestions": [
-    "Vektfradrag for ladbar hybrid: rundskriv 2026 punkt 3.3.11 (E1) sier opphevet fra 1.1.2024; et E2-søkesammendrag av Skatteetaten sier «inntil 10 %». Pakken i TAX-001E adresserer ikke dette, så motsigelsen er IKKE løst.",
-    "Forskrift § 3-1 gjelder CO2-grunnlag (vektet kombinert, besvart av E1X), ikke vektfradraget.",
-    "Elektrisk rekkevidde-regel (hvis noen) ikke gitt."
+    "Ladbar hybrid er ikke eksplisitt nevnt som omfattet av § 3-komponentene i noen lest tekst; konklusjonen at den betaler tilleggsvekt og CO2 følger av kriteriet «stempeldrevet forbrenningsmotor» (T03 6.12, T41 § 3). Endelig vedtakstekst ikke lest.",
+    "Elektrisk rekkevidde har ingen 2026-regel i leste kilder (ingen avgiftseffekt funnet).",
+    "Avrunding av vektet kombinert CO2 (heltall g/km forutsettes) er ikke omtalt."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -887,6 +1017,24 @@
      "source": "T03",
      "locator": "3.3.11",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Ladbare hybridbiler: CO2-grunnlaget er feltet «vektet kombinert» (både WLTP og NEDC); NEDC-verdi × 1,24 i gruppe a.",
+     "source": "T05",
+     "locator": "§ 3-1 andre og tredje ledd (PDF s. 5)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Avgiften etter § 3 (forbrenningsmotorkomponentene: tilleggsvekt og CO2) ilegges motorvogner med stempeldrevet forbrenningsmotor; elektriske motorvogner i gruppe a betaler bare § 2.",
+     "source": "T03",
+     "locator": "6.12",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "FORSLAG § 3: kriteriet er «stempeldrevet forbrenningsmotor»; det finnes ingen bestemmelse om vektfradrag i § 2 eller § 3 for ladbar hybrid.",
+     "source": "T41",
+     "locator": "PDF s. 1–2",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -990,10 +1138,18 @@
     },
     {
      "id": "T03"
+    },
+    {
+     "id": "T40",
+     "section": "PDF s. 3"
+    },
+    {
+     "id": "T41",
+     "section": "§ 2, § 3"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_satser_mangler",
+   "status": "delvis_E1_generell_vektkomponent_ingen_ice_tillegg",
    "leads": [
     {
      "claim": "Elbiler omfattes bare av vektkomponenten (sammendrag).",
@@ -1001,8 +1157,10 @@
     }
    ],
    "openQuestions": [
-    "Vektkomponentens satser (stortingsvedtaket § 2) ikke lest.",
-    "Konsekvens av lest tekst: elektrisk varebil klasse 2 (gruppe b) → ingen engangsavgift; elektrisk personbil og varebil klasse 1 (gruppe a) → engangsavgift. Avhenger av korrekt klassifisering (SVV)."
+    "Bare avgiftsgruppe a (personbil) er dekket; elbil i andre grupper betaler ikke engangsavgift (T03 6.12) men klassifisering må dokumenteres.",
+    "Endelig vedtakstekst ikke lest.",
+    "Avrunding ikke omtalt i kildene.",
+    "Hydrogen-/brenselcellebiler er ikke vurdert (utenfor støttet profil)."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -1019,6 +1177,18 @@
      "source": "T03",
      "locator": "6.12",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Elbil (avgiftsgruppe a) betaler engangsavgift bare etter § 2 (generell vektkomponent 12,71 kr/kg over 500 kg); komponentene for forbrenningsmotor (tillegg 260 kr/kg over 1 200 kg og CO2) gjelder ikke.",
+     "source": "T40",
+     "locator": "PDF s. 3 (rad «Alle personbiler» mot rad «med forbrenningsmotor»)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "FORSLAG § 2 gjelder alle personbiler i gruppe a; § 3 gjelder bare motorvogner med stempeldrevet forbrenningsmotor.",
+     "source": "T41",
+     "locator": "PDF s. 1–2, § 2 og § 3",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -1342,10 +1512,18 @@
     },
     {
      "id": "T03"
+    },
+    {
+     "id": "T05",
+     "section": "§ 3-3"
+    },
+    {
+     "id": "T42",
+     "section": "PDF s. 1–2"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_tabell_ikke_avstemt_mot_forskrift",
+   "status": "delvis_E1_tabell_avstemt_mot_forskrift_ikke_godkjent",
    "leads": [
     {
      "claim": "Standardiserte prosentsatser etter alder; alternativ individuell metode finnes (utenfor første motor).",
@@ -1358,10 +1536,11 @@
     }
    ],
    "openQuestions": [
-    "Forskrift § 3-3 ikke lest: tabellen er ikke avstemt mot forskriftstekst.",
-    "Uavklart språkforskjell U-002 (production vs første registrering).",
-    "Gjelder månedstrinn samme dato-til-dato-prinsipp som rundskrivets årseksempel?",
-    "Reduseres vrakpantavgift av bruksfradrag? (se R-IMP-OTH-001)"
+    "Trinn for måneder: T42 sier eksplisitt at neste steg oppnås på dagen kjøretøyet «fyller år»; dato-til-dato-prinsippet er eksemplifisert bare for hele år (T03 4.2). At månedstrinn også oppnås på dagen i måneden (inklusiv) er en tolkning (E1P).",
+    "Hvilken dato som gjelder når første registrering har dag 29–31 og målmåneden er kortere er ikke spesifisert; motoren blokkerer når utfallet avhenger av valget.",
+    "Dato for «første gangs registrering i Norge» (styrende hendelse) er forskrift § 1-2 nr. 1: første gangs registrering i det sentrale motorvognregisteret; forventet norsk registreringsdato er en forutsetning (ECON-001).",
+    "Avrunding av fradraget eller resultatet er ikke omtalt i noen lest kilde.",
+    "Alternativ beregning (§ 3-4) er utenfor MVP (bindende når valgt)."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -1378,6 +1557,30 @@
      "source": "T07",
      "locator": "tabell",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "§ 3-3: «Ved første gangs registrering av brukte motorvogner gjøres det følgende fradrag i avgiften» – tabell «Alder over 1 måned 2 pst.» … «Alder over 18 år 98 pst», «Alder 20 år eller eldre 100 pst» (41 trinn; identisk med T07/T42).",
+     "source": "T05",
+     "locator": "§ 3-3 første ledd (PDF s. 5–6)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "§ 3-3: «Ved fastsettelse av motorvognens alder skal tidspunktet for første gangs registrering legges til grunn. En motorvogn anses å være 20 år 1. januar i det året det har gått 20 år siden første gangs registrering.»",
+     "source": "T05",
+     "locator": "§ 3-3 tredje ledd (PDF s. 6)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Bruksfradraget regnes fra første gang registrert i utlandet til første gang registrert i Norge. «Merk at neste steg i bruksfradragstabellen oppnås på dagen kjøretøyet \"fyller år\", med unntak for siste steg, da ansees kjøretøyet å være 20 år fra og med 1. januar dette året.»",
+     "source": "T42",
+     "locator": "PDF s. 1–2",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Norsk, juridisk ordlyd bruker «første gangs registrering» (ikke «production» som i den engelske satssiden T07).",
+     "source": "T05",
+     "locator": "§ 3-3 tredje ledd",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -1400,7 +1603,8 @@
      "verifiedDate": "2026-10-16",
      "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
     }
-   ]
+   ],
+   "governingEvent": null
   },
   {
    "id": "R-OTA-011",
@@ -1438,14 +1642,22 @@
     },
     {
      "id": "T03"
+    },
+    {
+     "id": "T05",
+     "section": "§ 3-3"
+    },
+    {
+     "id": "T42",
+     "section": "PDF s. 2"
     }
    ],
    "evidenceLevel": "E1P",
    "status": "delvis_E1_forskrift_ikke_lest",
    "leads": [],
    "openQuestions": [
-    "Språkforskjell U-002.",
-    "Forskrift § 3-3 tredje ledd ikke lest."
+    "Hvilken avgift «motorvogner som er 20 år eller eldre» svarer (bare vrakpantavgift?) er ikke utledet; motoren gir 100 % fradrag og vrakpant og markerer resultatet som uavklart.",
+    "Endelig vedtakstekst (fritak for 20 år) ikke lest."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -1468,6 +1680,18 @@
      "source": "T07",
      "locator": "forklaringstekst",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "«En motorvogn anses å være 20 år 1. januar i det året det har gått 20 år siden første gangs registrering.» Tabellen går til 100 % ved 20 år. «Avgiften kan likevel ikke settes lavere enn den avgift som skal svares for motorvogner som på innførselstidspunktet er 20 år eller eldre.»",
+     "source": "T05",
+     "locator": "§ 3-3 andre og tredje ledd (PDF s. 6)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Siste steg (20 år) ble innført 1. januar 2024 for å ivareta avviklingen av stortingsvedtakets fritak for motorvogner som er 20 år eller eldre.",
+     "source": "T42",
+     "locator": "PDF s. 2",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -1627,13 +1851,17 @@
     },
     {
      "id": "T20"
+    },
+    {
+     "id": "T41",
+     "section": "§ 4, § 5"
     }
    ],
    "evidenceLevel": "E1",
    "status": "dokumentert_E1_parameter_ikke_godkjent",
    "leads": [],
    "openQuestions": [
-    "Reduseres vrakpantavgiften av bruksfradrag for brukte kjøretøy? Lest tekst sier bruksfradrag gis «i den utregnede engangsavgiften» (4.1/4.3); vrakpantavgiften omtales som del av engangsavgiften, men at den omfattes av bruksfradrag er IKKE lest. Ikke avgjort.",
+    "Reduseres vrakpantavgiften av bruksfradrag? Forslaget (T41 § 4) knytter bruksfradrag til avgiften etter §§ 2 og 3, ikke § 5, og rundskriv 3.4 beskriver et fast beløp ved første gangs registrering. Tolkningen «ikke redusert» er støttet av forslag og rundskriv, men endelig vedtakstekst er ikke lest.",
     "Fritak etter stortingsvedtaket § 9 a–c gir også fritak for vrakpantavgift; relevans for forhandler ikke vurdert.",
     "Uavhengig kalkulatorreferanse mangler."
    ],
@@ -1658,6 +1886,18 @@
      "source": "T20",
      "locator": "innledning",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "FORSLAG § 5: vrakpantavgift for motorvogner i avgiftsgruppe a, b, c, g og j: 2 400 kr per enhet.",
+     "source": "T41",
+     "locator": "PDF s. 6, § 5 tabell",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "FORSLAG § 4: bruksfradrag gjøres «i den avgift som beregnes etter §§ 2 og 3» (ikke § 5); vrakpantavgiften er et eget, fast beløp.",
+     "source": "T41",
+     "locator": "PDF s. 5, § 4",
+     "readDate": "2026-10-18"
     }
    ],
    "governingEvent": "Første gangs registrering i Kjøretøyregisteret (rundskriv 2.1.1 og 3.4); betales sammen med engangsavgiften (T20)",
@@ -2384,13 +2624,13 @@
   {
    "id": "U-002",
    "claim": "Engelsk bruksfradragsside sier at neste trinn nås på 'date of the vehicle's production', mens rundskriv 4.2/6.21 regner fra første gangs registrering i utlandet, dato til dato.",
-   "status": "uavklart språkforskjell",
-   "note": "Forskrift § 3-3 er ikke lest. Ikke gjettet.",
+   "status": "lukket (E1): første gangs registrering, dato til dato; månedstrinn og dag-overflyt åpne (U-009)",
+   "note": "T05 § 3-3 tredje ledd og T42 bruker «første gangs registrering»; «production» er bare i den engelske satssiden T07 og er ikke gjeldende rett. Steg oppnås på dagen kjøretøyet «fyller år» (T42). Månedstrinn og dag-overflyt: se U-009.",
    "affects": [
     "R-OTA-010",
     "R-OTA-011"
    ],
-   "state": "open"
+   "state": "closed"
   },
   {
    "id": "U-003",
@@ -2417,12 +2657,12 @@
   {
    "id": "U-005",
    "claim": "Ladbar hybrid: sammendrag nevner 10 % vektfradrag, rundskriv 2026 (E1) sier vektfradraget er opphevet fra 1.1.2024.",
-   "status": "åpen, innsnevret",
-   "note": "CO2-grunnlag for ladbar hybrid (vektet kombinert) og tolkningen av 1,24 er besvart (E1X). Motsigelsen om 10 % vektfradrag (rundskriv E1: opphevet 2024; E2-sammendrag: inntil 10 %) er ikke adressert og forblir åpen.",
+   "status": "lukket (E1): ingen vektfradrag for ladbar hybrid i 2026",
+   "note": "T03 3.3.11: vektfradraget er opphevet fra 1.1.2024; T41 §§ 2–3 og T05 § 3-1 inneholder ingen slik bestemmelse; «inntil 10 %» i E2-sammendraget er utdatert. Endelig vedtakstekst ikke lest (U-011).",
    "affects": [
     "R-OTA-005"
    ],
-   "state": "open"
+   "state": "closed"
   },
   {
    "id": "U-006",
@@ -2453,14 +2693,49 @@
     "R-IMP-FX-001"
    ],
    "state": "open"
+  },
+  {
+   "id": "U-009",
+   "claim": "Månedstrinn i bruksfradrag og dag-overflyt (første registrering dag 29–31).",
+   "status": "åpen",
+   "note": "T42 sier «fyller år» (år); rundskriv 4.2 eksemplifiserer år. Motoren behandler månedstrinn likt (inklusivt) og blokkerer når 29–31-overflyt avgjør trinnet.",
+   "affects": [
+    "R-OTA-010"
+   ],
+   "state": "open"
+  },
+  {
+   "id": "U-010",
+   "claim": "Avrunding av engangsavgiften (komponenter, sum, bruksfradrag, CO2-grunnlag).",
+   "status": "åpen – ingen lest kilde omtaler avrunding",
+   "note": "Søkt i T03 (tekst) og lest §§ 3-1 til 3-4 i T05 samt T40/T41/T42. Regel kan ikke utledes fra de gyldne casene (valideringsreferanser, ikke regelkilder). Motoren leverer eksakt desimal og heltallsgrenser, ikke et avrundet beløp.",
+   "affects": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-010"
+   ],
+   "state": "open"
+  },
+  {
+   "id": "U-011",
+   "claim": "Endelig vedtatt stortingsvedtak (FOR-2025-12-18-2755, inkl. revidert 2026) er ikke lest; satser er verifisert mot Finansdepartementets oversikt (T40, dato 2026-05-01) og forslag (T41).",
+   "status": "åpen",
+   "note": "Senere endringer i gruppe a etter 2026-05-01 er ikke kontrollert.",
+   "affects": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-007",
+    "R-IMP-OTH-001"
+   ],
+   "state": "open"
   }
  ],
  "foundationStatus": {
   "status": "REVIEW",
-  "date": "2026-10-16",
+  "date": "2026-10-18",
   "approvedParameters": 0,
   "class1References": 0,
-  "reason": "TAX-001E: gruppe a/b-satser, § 3-1-regler, klimagass og importfakta lagt inn som E1X; fortsatt ingen E1-kildefil med hash, ingen godkjent parameter og ingen klasse 1. Se docs/tax/TAX-001E-evidence-status.md.",
+  "reason": "ECON-002 18.10.2026: kildepakke (T03, T05, T40, T41, T42) lest og registrert som E1 for gruppe a personbil-regler (vekt, CO2 marginalt, bruksfradrag, vrakpant). Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene er ikke dokumentert med inputs/skjermbilder) og åpne U-003, U-008, U-009, U-010, U-011. Se reviews/ECON-002.md.",
   "doneRequires": [
    "minst én godkjent parameter per implementert komponent (rules.parameterApproval.approved=true med godkjenner)",
    "minst ett klasse 1-tilfelle per profil i omfang",
