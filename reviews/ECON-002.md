@@ -384,7 +384,7 @@ Skillet gjelder fortsatt: **kildebelagt** (lest, E1/E1P), **implementert** (`src
 | Prosentfradrag (avgift × (100 − p)/100, inntil fire desimaler) | ja | nettobeløp eller fradragsbeløp (avgift × p/100) avrundes før subtraksjon | inntil 1 kr |
 | Vrakpant | nei | – | 0 |
 | NEDC × 1,24 / egenvekt ÷ 10 (CO₂) | ja (desimal-CO₂) | CO₂-grunnlaget | opptil flere hundre kr per g/km-brøk × sats ⇒ **støttes ikke** (blokkert) |
-Teoretisk verste tilfelle for støttede input: **inntil 2 kr** (ett punkt i vekt, ett i fradrag). Sensitivitetsanalysen i testen (generell vekt ned/nærmeste/opp, sum ned, fradragsbeløp nærmeste/ned) gir for de tre valideringscasene høyst **+1 kr** avvik fra motorens sluttkrav; det er informasjon om usikkerhetens størrelse, **ikke** et valg av regel, og motoren velger ingen variant.
+*(Rettet i runde 6, §16.3: «inntil 2 kr» er ikke en generell garanti — den gjelder bare det definerte variantsettet og inputområdet.)* Sensitivitetsanalysen gir for de tre valideringscasene høyst **+1 kr** avvik; det er informasjon om usikkerhetens størrelse, **ikke** et valg av regel, og motoren velger ingen variant.
 **Separat observasjon (ikke kilde, ikke konflikt):** i kalkulatorresultatene for import-MVA er 16 665,75 og 102 872,75 vist som 16 666 og 102 873 (ikke nedrundet). Skattebetalingsforskriften § 10-4-4 gjelder i teksten alle «skatte- og avgiftskrav», også merverdiavgift (§ 1-1 (2) g). Det er et valideringssignal om at § 10-4-4 ikke uten videre kan generaliseres til MVA-linjen i landed cost (ECON-004: egen kilde kreves for MVA-avrunding). Det endrer ikke engangsavgiften.
 
 ### 15.3 PHEV revurdert: E1 på regelnivå
@@ -404,7 +404,7 @@ Teoretisk verste tilfelle for støttede input: **inntil 2 kr** (ett punkt i vekt
 | Valideringsstatus på beløpet (`validation`) | – (designkrav) | ja | ja (gating-tester) | – |
 | PHEV | **E1** (teknisk vilkår + § 3-1 + fravær av unntak) | ja | ja | nei |
 | Sluttkrav nedrundet (`finalClaim`) | E1P (R-OTA-014) | ja | ja | nei |
-| Mellomledd eksakte | ingen bestemmelse (U-012; ikke konflikt) | ja | ja (sensitivitet ≤ 1 kr i casene; ≤ 2 kr teoretisk) | nei |
+| Mellomledd eksakte | ingen bestemmelse (U-012; ikke konflikt) | ja | ja (sensitivitet avgrenset, se §16.3) | nei |
 | Øvrige rader | uendret fra §14.9 | | | |
 
 ### 15.6 Godkjenningsmatrise — endring
@@ -420,4 +420,48 @@ R-OTA-005 (PHEV): «med forbehold» → **klar (kildesiden)**; inputkrav per kj�
 4. R-OTA-014 anvendelse via kapittel 10-hjemmel (E1P); U-012 (mellomledd) uten bestemmelse; MVA-avrunding trenger egen kilde i ECON-004.
 5. R-OTA-002 marginal lesning kun via T40; NEDC/fallback-CO₂ støttes ikke.
 6. Endringer etter 2026-10-18 og lov 19. juni 2026 nr. 41 er ikke kontrollert; ingen eksplisitt sluttdato (intern sperre).
+**Sluttstatus: REVIEW.**
+
+## 16. Runde 6 — valideringsgrunnlag: nye golden-kjøringer, R-OTA-014, sensitivitetens grenser (18.10.2026)
+Ingen parameter er godkjent; ECON-003 og ECON-004 er ikke startet; eksakte mellomregninger og blokkeringen for U-009 er uendret. Skillet kildebelagt / implementert / testet / godkjent gjelder fortsatt.
+
+### 16.1 Nye golden-kjøringer (PHEV, EV, diesel): forberedt, **ikke kjørt**
+**Kalkulatoren er ikke tilgjengelig for meg** (`skatteetaten.no` → CONNECT 403, kontrollert igjen i dag), og nødvendig input finnes ikke. Ingen kjøring er utført; derfor finnes ingen kjøredato, URL, skjermbilder, hash, resultat eller nedbrytning. Levert: `docs/tax/golden-runs/GR-PENDING-PHEV.md`, `GR-PENDING-EV.md`, `GR-PENDING-DIESEL.md` (utfylt etter malen med bare det som er dokumentert, resten merket **MANGLER**) og `docs/tax/golden-runs/README.md` med tabellen under. Det forventede resultatet fra tidligere validering er bevisst ikke forhåndsutfylt. 18.10.2026 forblir historisk testdato for CASE-001/002/003 og er ikke brukt som kjøredato. Ny referanse-ID settes til `GR-<åååååmmdd>-<nn>` ved kjøring. En test (`tests/tax-golden-runs.test.ts`) sikrer at filene ikke inneholder gjettet kjøredato, URL, hash eller resultat, at dokumenterte verdier er ordrett de eksisterende, og at statusene stemmer med fixturens sjekkliste.
+| Kjøretøy | Dokumentert fra før | Christian må fremskaffe |
+|---|---|---|
+| **PHEV** (Urus) | arbeidsdato 01.09.2026 (måned); 2 610 kg (ref.); WLTP 140 g/km | faktisk 1. reg.dag; variant; vektdefinisjon + dokument; CO₂-felt «vektet kombinert»; drivlinjebevis (stempeldrevet motor + ladbar); norsk reg.dato tastet; kjøredato/-tid; URL/versjon; alle input; skjermbilder (SHA-256); nedbrytning |
+| **EV** (iX3) | arbeidsdato 01.08.2023; 2 185 kg (ref.); CO₂ 0 | faktisk 1. reg.dag; variant; vektdefinisjon + dokument; drivlinjebevis (ingen stempeldrevet motor); norsk reg.dato; kjøredato/-tid; URL/versjon; alle input; skjermbilder; nedbrytning |
+| **Diesel** (E 400 d) | arbeidsdato 01.11.2023; 1 976 kg (ref.); WLTP 179 g/km | faktisk 1. reg.dag; variant; vektdefinisjon + dokument; CO₂-felt «kombinert»; drivlinjebevis; norsk reg.dato; kjøredato/-tid; URL/versjon; alle input; skjermbilder; nedbrytning |
+
+### 16.2 R-OTA-014: hva som kreves for å gå fra E1P til E1
+Prosjektets evidensmodell (`rules.json evidenceLevels`): **E1** = primærkilde lest direkte og påstandene i regelens e1Findings er dekket av lest tekst; **E1P** = avgrensede påstander er E1, resten uavklart (openQuestions). Registrert i regelen som `e1UpgradeRequirements`; **klassifiseringen er ikke endret**.
+| Lag | Innhold | Status |
+|---|---|---|
+| **Dokumentert ordlyd** (E1, lest) | forskrift § 10-4-4 «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone» (T46); håndbok T45; skattebetalingsloven § 1-1 (2) i (særavgifter etter lov 1959 nr. 2 = skatte- og avgiftskrav) og § 10-40 (1) c (engangsavgift) (T49); forskrift § 10-4-1 d (engangsavgift nevnt i § 10-4) (T46) | belagt |
+| **Anvendelsesvurdering** (grunnen til E1P) | at § 10-4-4 gjelder når selve engangsavgiften *beregnes*: § 10-4-4 nevner ikke engangsavgift; hjemmelen (skattebetalingsloven § 10-4) gjelder «dette kapitlet» (kap. 10 Forfall); ingen tekst i engangsavgiftsregelverket (vedtak, forskrift, rundskriv) nevner avrunding | slutning fra virkeområdet, ikke uttrykkelig |
+| **Manglende belegg** (én av) | (A) uttrykkelig tekst som anvender avrunding ned til hele kroner på engangsavgiftens beregning; (B) forarbeider/merknader til forskrift § 10-4-4 (endringsforskrift 25.3.2010 nr. 462 med høringsnotat/merknader) og til skattebetalingsloven § 10-4 (via håndbokens «Vis forskrifter og forarbeider») som viser at regelen gjelder beregningen av alle kapittel 10-krav inkl. engangsavgift; (C) en dokumentert vurdering fra Christian/Codex som uttrykkelig aksepterer virkeområdekjeden som tilstrekkelig for E1 (juridisk vurdering, ikke gjort av meg) | mangler |
+Utenfor R-OTA-014s påstand (og ikke krav for E1 av denne regelen): mellomledd (U-012) og MVA-avrunding (U-013). Klasse 1-referanse er et separat godkjenningskrav og løfter ikke evidensnivået.
+
+### 16.3 Sensitivitetsanalysens forutsetninger (presisert; ikke en generell garanti)
+| Dimensjon | Undersøkt |
+|---|---|
+| Alternative mellomavrundinger | generell vekt (kg × 12,71) eksakt/ned/nærmeste/opp, hver kombinert med enten (a) eksakt netto, (b) avrundet fradragsbeløp (ned/nærmeste/opp) eller (c) avrundet sum før fradrag (ned/nærmeste/opp); sluttkravet nedrundes alltid én gang (§ 10-4-4) |
+| Inputområde | vekt 500–4 000 kg, alle heltall; alle 41 fradragstrinn + 0 %; ICE/PHEV med CO₂ 0/60/99/100/101/140/150/151/179/225/226/300/400 g/km (tillegg (kg − 1 200) × 260), og BEV; > 10 mill. punkter |
+| Resultat | avvik fra motorens `finalClaim` **−1 … +2 kr** (verste punkt: 501 kg BEV, 6 %: generell vekt oppad + fradragsbeløp nedad). De tre valideringscasene: høyst +1 kr for seks manuelle varianter |
+| **Ikke undersøkt** | avrunding av satser eller prosent; per-gram-avrunding; andre rekkefølger; andre CO₂-verdier enn listen; vekt utenfor 500–4 000 kg; NEDC- og egenvekt/10-CO₂ (blokkert); andre avgiftsgrupper; avrunding av MVA; at Skatteetaten kan bruke en rekkefølge utenfor settet |
+**Konklusjon:** «inntil 2 kr» er en observert grense for dette variantsettet og inputområdet — ikke en garanti. Uttrykket i §15.2 er rettet. Analysen er informasjon om usikkerhetens størrelse; den velger ingen regel og motoren er uendret (eksakte mellomledd). Testen `SENSITIVITET (avgrenset)` låser området og kontrollerer rutenettformelen mot motoren på et utvalg.
+
+### 16.4 MVA-avrunding: åpent punkt for ECON-004 (U-013), ikke implementert
+Merverdiavgift er «skatte- og avgiftskrav» (§ 1-1 (2) g), men ingen lest kilde sier hvordan import-MVA beregnes og avrundes; kalkulatorresultatene (16 665,75 → 16 666; 102 872,75 → 102 873) er ikke nedrundet — valideringssignal, ikke kilde. Registrert som U-013 i `rules.json` og som avhengighet på ECON-004 i `MVP_BACKLOG.md`. Ingen MVA-logikk er innført.
+
+### 16.5 Godkjenningsoversikt (ingenting er godkjent; kun til din vurdering)
+| Kan vurderes godkjent (kildesiden komplett; krever likevel din godkjenning + klasse 1) | Mangler før godkjenning | Handling fra Christian |
+|---|---|---|
+| Generell vekt 12,71 kr/kg > 500 kg; ICE-tillegg 260 kr/kg > 1 200 kg; EV-behandling (bare § 2); PHEV (teknisk vilkår, E1); NOx fjernet; vrakpant 2 400 utenfor fradraget; styrende hendelse | **klasse 1-referanser** (ingen finnes); regelnivå E1 ✔; eksplisitt `parameterApproval` | utfør de tre nye kjøringene (README i `docs/tax/golden-runs/`) → klasse 1; godkjenn deretter regel for regel |
+| (med forbehold) CO₂-bånd (marginal lesning via T40); bruksfradrag (U-009); sluttavrunding R-OTA-014 (E1P) | marginal-bekreftelse; månedstrinn/dag 29–31; E1-løft av R-OTA-014 (§16.2) | beslutt om T40 er tilstrekkelig for marginal; tilby forarbeider eller aksepter virkeområdekjeden (C); ev. oppgi regel for dag 29–31 |
+| – | mellomledd (U-012), MVA-avrunding (U-013), endringer etter 2026-10-18, sluttdato | ingen handling nå; U-013 ligger i ECON-004 |
+Ikke godkjent: alle parametere (0 av 0 godkjent; 0 klasse 1).
+
+### 16.6 Kontroller kjørt (runde 6)
+`npx tsc --noEmit` OK; `npx eslint .` OK; `npx vitest run` — **31 filer, 731 tester bestått** (`tax-engine`: 86, `tax-golden-runs`: 10); `node docs/tax/check-docs.mjs` OK. Ikke kjørt: `npm run build`, e2e, DB-suiter; ingen kalkulatorkjøring.
 **Sluttstatus: REVIEW.**

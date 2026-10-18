@@ -2909,7 +2909,26 @@
     "approved": false,
     "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
    },
-   "e1xFindings": []
+   "e1xFindings": [],
+   "e1UpgradeRequirements": {
+    "currentLevel": "E1P",
+    "modelDefinition": "E1 = primærkilde lest direkte og påstandene i e1Findings er dekket av lest tekst; E1P = avgrensede påstander er E1, resten er uavklart (openQuestions) — docs/tax/rules.json evidenceLevels.",
+    "documentedWording (E1, lest)": [
+     "Skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone.» (T46)",
+     "Håndbok T45: samme setning; «… regnskapene ikke vil inneholde ørebeløp»",
+     "Skattebetalingsloven § 1-1 (2) i: særavgifter etter lov 19. juni 1959 nr. 2 er skatte- og avgiftskrav (T49)",
+     "Skattebetalingsloven § 10-40 (1) c: engangsavgift for registrerte virksomheter forfaller den 18. i måneden etter (T49)",
+     "Skattebetalingsforskriften § 10-4-1 d: engangsavgift på motorvogner nevnt i samme § 10-4 (T46)"
+    ],
+    "applicationAssessment (E1P-grunnen, ikke belagt av uttrykkelig tekst)": "At § 10-4-4 gjelder når selve engangsavgiften BEREGNES: § 10-4-4 nevner ikke engangsavgift; forskriftshjemmelen i skattebetalingsloven § 10-4 gjelder «bestemmelsene i dette kapitlet» (kapittel 10 Forfall); ingen tekst i engangsavgiftsregelverket (vedtak, forskrift om engangsavgift, rundskriv) nevner avrunding. Anvendelsen er en slutning fra virkeområdet, ikke en uttrykkelig bestemmelse.",
+    "missingEvidence": [
+     "(A) En uttrykkelig tekst som anvender avrunding ned til hele kroner på engangsavgiftens beregning (f.eks. i Skattedirektoratets engangsavgiftsregelverk, eller en utfyllende forskrift/Skatteetaten-veiledning for engangsavgift), ELLER",
+     "(B) forarbeider/merknader til skattebetalingsforskriften § 10-4-4 (endringsforskrift 25. mars 2010 nr. 462 med tilhørende høringsnotat/merknader) og til skattebetalingsloven § 10-4 (stilles tilgjengelig via håndbokens «Vis forskrifter og forarbeider»), som viser at avrundingsregelen er ment å gjelde beregningen av alle krav under kapittel 10, inkl. engangsavgift",
+     "(C) alternativt: en dokumentert vurdering fra Christian/Codex som uttrykkelig aksepterer virkeområdekjeden som tilstrekkelig for E1 (juridisk vurdering; ikke gjort av Claude)"
+    ],
+    "notRequiredForE1OfThisRule": "Mellomledd (U-012) og MVA-avrunding (U-013) er egne åpne punkter og er utenfor R-OTA-014s påstand (avrunding av sluttkravet).",
+    "classificationNote": "Klassifiseringen er ikke endret for å passere godkjenningskravet. Klasse 1-referanse er et eget krav for godkjenning og løfter ikke evidensnivået."
+   }
   }
  ],
  "approvalRequirements": [
@@ -3044,12 +3063,25 @@
    "id": "U-012",
    "claim": "Avrunding av mellomledd (kg × sats med to desimaler, CO2-bånd, sum før fradrag, prosentfradrag, evt. NEDC-omregnet CO2 og egenvekt/10).",
    "status": "åpen – ingen kilde omtaler avrunding av mellomledd",
-   "note": "Mangler uttrykkelig bestemmelse — ikke påvist regelkonflikt. Skattebetalingsforskriften § 10-4-4 gjelder «skatte- og avgiftskrav» (sluttkravet); ingen lest tekst (vedtak, forskrift, rundskriv, håndbok) avrunder komponenter, og ingen kilde motsier at mellomledd holdes eksakte. Konkrete mellomregningspunkter som KAN påvirke sluttbeløpet: (1) generell vekt = kg × 12,71 er det eneste leddet med brøk (to desimaler); tilleggsvekt (kg × 260), CO2-bånd (heltall g/km × heltallssatser) og vrakpant er heltall; (2) summen før fradrag (desimal hvis (1) ikke avrundes); (3) prosentfradraget: avgift × (100 − p)/100 gir inntil fire desimaler, og kan i prinsippet regnes som netto-beløp eller som fradragsbeløp (avgift × p/100) som avrundes før det trekkes fra. Maksimalt utslag: ledd (1) og (3) kan hver forskyve sluttbeløpet med inntil 1 krone (til sammen inntil 2 kroner i verste fall); ingen andre mellomledd har brøk. Sensitivitetsanalyse (kun informasjon, ikke regelutledning) viser at de testede varianter avviker med høyst +1 kr fra motorens beløp i de tre valideringscasene. Motoren beholder eksakte mellomledd og avrunder bare sluttkravet. Egen, adskilt observasjon: kalkulatorresultatet for import-MVA i casene (16 666 og 102 873) er ikke nedrundet (16 665,75 og 102 872,75) — § 10-4-4 må derfor ikke generaliseres til MVA-linjen i ECON-004 uten kilde (merverdiavgift er også «skatte- og avgiftskrav», § 1-1 (2) g); dette er et valideringssignal om anvendelsen av § 10-4-4 i verktøyet, ikke en påvist regelkonflikt i kildene og ikke en kilde for engangsavgift. NEDC-omregnet CO2 og egenvekt/10 forblir ikke støttet.",
+   "note": "Mangler uttrykkelig bestemmelse — ikke påvist regelkonflikt. Skattebetalingsforskriften § 10-4-4 gjelder «skatte- og avgiftskrav» (sluttkravet); ingen lest tekst (vedtak, forskrift, rundskriv, håndbok) avrunder komponenter, og ingen kilde motsier at mellomledd holdes eksakte. Konkrete mellomregningspunkter som KAN påvirke sluttbeløpet: (1) generell vekt = kg × 12,71 er det eneste leddet med brøk (to desimaler); tilleggsvekt (kg × 260), CO2-bånd (heltall g/km × heltallssatser) og vrakpant er heltall; (2) summen før fradrag (desimal hvis (1) ikke avrundes); (3) prosentfradraget: avgift × (100 − p)/100 gir inntil fire desimaler, og kan i prinsippet regnes som netto-beløp eller som fradragsbeløp (avgift × p/100) som avrundes før det trekkes fra. Utslag (AVGRENSET til de undersøkte variantene og inputområdet, ikke en generell garanti): generell vekt avrundet eksakt/ned/nærmeste/opp, hver kombinert med enten eksakt netto, avrundet fradragsbeløp (ned/nærmeste/opp) eller avrundet sum (ned/nærmeste/opp); vekt 500–4 000 kg (heltall); alle 41 fradragstrinn + 0 %; CO2 0/60/99/100/101/140/150/151/179/225/226/300/400 g/km (ICE/PHEV) og BEV. Avvik fra motorens sluttkrav: −1…+2 kr over >10 mill. punkter. Andre mellomavrundinger (f.eks. avrundet sats, per-gram-avrunding, avrunding av prosent), NEDC/egenvekt÷10-CO2 og andre klasser er ikke undersøkt. I de tre valideringscasene er avviket høyst +1 kr for de seks variantene som ble regnet manuelt (informasjon, ikke regelutledning). Motoren beholder eksakte mellomledd og avrunder bare sluttkravet. Egen, adskilt observasjon: kalkulatorresultatet for import-MVA i casene (16 666 og 102 873) er ikke nedrundet (16 665,75 og 102 872,75) — § 10-4-4 må derfor ikke generaliseres til MVA-linjen i ECON-004 uten kilde (merverdiavgift er også «skatte- og avgiftskrav», § 1-1 (2) g); dette er et valideringssignal om anvendelsen av § 10-4-4 i verktøyet, ikke en påvist regelkonflikt i kildene og ikke en kilde for engangsavgift. NEDC-omregnet CO2 og egenvekt/10 forblir ikke støttet.",
    "affects": [
     "R-OTA-001",
     "R-OTA-002",
     "R-OTA-010",
     "R-OTA-014"
+   ],
+   "state": "open"
+  },
+  {
+   "id": "U-013",
+   "claim": "Avrunding av import-merverdiavgift (og tollverdi/valutaomregning) i landed-cost.",
+   "status": "åpen – ingen kilde lest; overføres til ECON-004",
+   "note": "Merverdiavgift er «skatte- og avgiftskrav» (skattebetalingsloven § 1-1 (2) g), så skattebetalingsforskriften § 10-4-4 kan i teksten omfatte den, men ingen lest kilde angir hvordan import-MVA beregnes og avrundes (Tolletatens deklarasjon, tollkurs U-008). Valideringsresultatene i ECON-001 (16 665,75 → 16 666; 102 872,75 → 102 873) er ikke nedrundet; det er et valideringssignal, ikke en regelkilde. § 10-4-4 skal ikke implementeres for MVA i ECON-002; ECON-004 må finne kilde (merverdiavgiftsloven/Tolletaten/avgiftsberegning ved innførsel) før noe avrundes.",
+   "affects": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-VAT-003",
+    "R-IMP-FX-001"
    ],
    "state": "open"
   }

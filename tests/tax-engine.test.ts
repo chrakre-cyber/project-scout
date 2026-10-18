@@ -171,27 +171,42 @@ describe("U-012: bare generell vekt har brøk; sensitivitet for mellomavrunding 
       }
     }
   });
-  it("alternative mellomavrundinger (generell vekt, sum, fradragsbeløp) avviker fra motorens sluttkrav med høyst 1 kr i valideringscasene; motoren velger ingen av dem", () => {
-    const cases = GOLDEN_CASES.map((c) => {
-      const r = calculateNorwegianVehicleTax(c.input);
-      const [gen, ...rest] = r.components.map((x) => dec(x.amountExact));
-      const fixed = rest.reduce((a, b) => add(a, b), decInt(0));
-      const p = r.ageDeduction!.percent;
-      return { gen: gen!, fixed, p, engine: r.finalClaim!.totalRegistrationTaxesNok };
-    });
-    const factor = (p: number) => ({ units: BigInt(100 - p), scale: 2 });
-    const net = (pre: ReturnType<typeof dec>, p: number) => floorInt(mul(pre, factor(p)));
-    const rnd = (d: ReturnType<typeof dec>) => roundHalfUpInt(d);
-    for (const c of cases) {
-      const variants = [
-        net(add(decInt(floorInt(c.gen)), c.fixed), c.p), // generell vekt ned
-        net(add(decInt(rnd(c.gen)), c.fixed), c.p), // generell vekt nærmeste
-        net(add(decInt(ceilInt(c.gen)), c.fixed), c.p), // generell vekt opp
-        net(decInt(floorInt(add(c.gen, c.fixed))), c.p), // sum ned
-        floorInt(add(add(c.gen, c.fixed), { units: -rnd(mul(add(c.gen, c.fixed), { units: BigInt(c.p), scale: 2 })), scale: 0 })), // fradragsbeløp nærmeste
-        floorInt(add(add(c.gen, c.fixed), { units: -floorInt(mul(add(c.gen, c.fixed), { units: BigInt(c.p), scale: 2 })), scale: 0 })), // fradragsbeløp ned
-      ].map((v) => Number(v) + 2400);
-      for (const v of variants) expect(Math.abs(v - c.engine)).toBeLessThanOrEqual(1);
+  it("SENSITIVITET (avgrenset): alternative mellomavrundinger avviker fra motorens sluttkrav med −1…+2 kr over det definerte variantsettet og inputområdet — ingen generell garanti", () => {
+    // Heltallsaritmetikk i hundredeler (kun testhjelp). Motorens formel: floor((gen + I) × (100 − p)/100) der gen = (kg − 500) × 12,71 og I er heltall (ICE-tillegg + CO₂).
+    const PCTS = [...new Set([0, ...DEDUCTION_STEPS_2026.map((s) => s.percent)])]; // alle 41 trinn + 0 %
+    const co2 = (g: number) => [[0, 100, 800], [100, 150, 1600], [150, 225, 3200], [225, 1e9, 5000]].reduce((s, [lo, hi, r]) => s + Math.max(0, Math.min(g, hi!) - lo!) * r!, 0);
+    const G = [0, 60, 99, 100, 101, 140, 150, 151, 179, 225, 226, 300, 400];
+    const ceil = (n: number, d: number) => Math.ceil(n / d);
+    const near = (n: number, d: number) => Math.floor((2 * n + d) / (2 * d));
+    let max = -Infinity;
+    let min = Infinity;
+    let points = 0;
+    for (let kg = 500; kg <= 4000; kg++) {
+      const gen = (kg - 500) * 1271; // hundredeler
+      for (const ice of [false, true]) {
+        const Is = ice ? [...new Set(G.map((g) => Math.max(0, kg - 1200) * 260 + co2(g)))] : [0];
+        for (const I of Is) for (const p of PCTS) {
+          const f = 100 - p;
+          const engine = Math.floor(((gen + I * 100) * f) / 10000);
+          for (const gv of [gen, Math.floor(gen / 100) * 100, near(gen, 100) * 100, ceil(gen, 100) * 100]) {
+            const pre = gv + I * 100;
+            const variants = [Math.floor((pre * f) / 10000)];
+            for (const ded of [Math.floor((pre * p) / 10000), near(pre * p, 10000), ceil(pre * p, 10000)]) variants.push(Math.floor(pre / 100 - ded));
+            for (const s of [Math.floor(pre / 100), near(pre, 100), ceil(pre, 100)]) variants.push(Math.floor((s * f) / 100));
+            for (const v of variants) { max = Math.max(max, v - engine); min = Math.min(min, v - engine); points++; }
+          }
+        }
+      }
+    }
+    expect(points).toBeGreaterThan(10_000_000);
+    expect(max).toBe(2);
+    expect(min).toBe(-1);
+    // rutenettformelen er motorens egen: sjekk mot den faktiske motoren på et utvalg (BEV og ICE)
+    for (const [kg, g] of [[2185, 0], [1976, 179], [2610, 140], [1500, 99], [3100, 226]] as const) {
+      const ev = g === 0;
+      const r = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: !ev, externallyChargeable: false, evidence: "type_approval" }, norwegianTaxWeight: { kg, basis: "vehicle_register" }, co2: { gramsPerKm: ev ? null : g, method: "wltp_combined" }, firstRegistration: { precision: "none", value: null } }));
+      const I = ev ? 0 : Math.max(0, kg - 1200) * 260 + co2(g);
+      expect(r.finalClaim!.oneOffTaxNok, `${kg}/${g}`).toBe(Math.floor(((kg - 500) * 1271 + I * 100) * 100 / 10000));
     }
   });
 });
