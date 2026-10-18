@@ -116,6 +116,7 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
     "R-OTA-014 er E1P: skattebetalingsforskriften § 10-4-4 nevner ikke engangsavgift uttrykkelig (anvendelsen følger av skattebetalingsloven § 1-1 (2) i, § 10-40 (1) c og forskriften § 10-4-1 d)",
     "U-009 / R-OTA-016: trinndato som ikke finnes i målmåneden (dag 29–31) er ikke spesifisert; blokkert i vinduet",
+    "20 år eller eldre: § 3-3-setningen om minimumsavgift er ikke utledet (R-OTA-011); motoren blokkerer (twenty_year_minimum_unresolved) og gir ikke sluttkrav",
     "R-OTA-015: NEDC, egenvekt/10 og desimal-CO₂ er blokkert (avrunding av desimaler mangler kilde)",
     "PHEV: anvendelsen hviler på det tekniske vilkåret i § 3 og på forskrift § 3-1 (E1-tekst); forutsetter dokumentert stempeldrevet motor og ekstern lading per kjøretøy",
     "Ingen eksplisitt sluttdato for 2026-satsene (intern sikkerhetssperre); endringer etter hentedato 2026-10-18 og lov 19 juni 2026 nr. 41 er ikke kontrollert",

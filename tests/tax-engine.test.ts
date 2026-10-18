@@ -704,3 +704,27 @@ describe("regelregisteret: avgrensede regler og godkjenningsforutsetninger for a
     expect(weak).toEqual(["R-OTA-014"]);
   });
 });
+
+describe("20 år eller eldre: ingen tilsynelatende komplett sluttkrav uten belegg for minimumssetningen i § 3-3", () => {
+  const at = (first: { precision: "day" | "month"; value: string }) =>
+    calculateNorwegianVehicleTax(ice({ firstRegistration: first, norwegianRegistration: { date: "2026-10-18", kind: "expected" } }));
+  it("20 år (dag): blokkert uten finalClaim, total eller validation", () => {
+    const r = at({ precision: "day", value: "2006-06-15" });
+    expect(r.status).toBe("blocked");
+    expect(r.blocked.map((b) => b.code)).toEqual(["twenty_year_minimum_unresolved"]);
+    expect([r.finalClaim, r.totalRegistrationTaxesExact, r.oneOffTaxExact, r.validation]).toEqual([null, null, null, null]);
+  });
+  it("bare måned der siste dag i måneden gir 20 år: blokkert (ikke et lavere/høyere anslag)", () => {
+    const r = at({ precision: "month", value: "2006-12" });
+    expect(r.status).toBe("blocked");
+    expect(r.blocked.map((b) => b.code)).toContain("twenty_year_minimum_unresolved");
+  });
+  it("under 20 år (19 år og 9 måneder) beregnes som før: 98 %, ikke 20-årsregelen", () => {
+    const r = at({ precision: "day", value: "2006-12-31" });
+    expect(r.status).toBe("blocked"); // 20-årsregelen: 100 % fra 1. januar 2026 for første registrering 2006-12-31
+    const r19 = at({ precision: "day", value: "2007-01-02" });
+    expect(r19.status).toBe("calculated_unverified");
+    expect(r19.ageDeduction?.percent).toBe(98);
+  });
+});
+

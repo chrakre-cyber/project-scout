@@ -211,8 +211,12 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     if (main.ambiguous || alt?.ambiguous) {
       return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: weakest(prof), profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [ambiguityBlocker(main.ambiguity ?? alt?.ambiguity ?? null, norDate, !main.ambiguity)], warnings, implementationConclusions: [], validation: null };
     }
-    ded = { percent: main.percent, ageCompletedMonths: main.completedMonths, stepLabel: main.stepLabel, workingFirstRegistration: working, workingDateDerived: derived, norwegianRegistrationDate: norDate, norwegianRegistrationKind: nor.kind, twentyYearRule: main.twentyYearRule };
-    if (main.twentyYearRule) warnings.push({ code: "twenty_year_rule_unverified", message: "20-årsregelen gir 100 % fradrag; hvilken avgift som ellers gjelder for 20 år gamle motorvogner er ikke utledet (R-OTA-011)." });
+    if (main.twentyYearRule || alt?.twentyYearRule) {
+      // Forskrift § 3-3: «Avgiften kan likevel ikke settes lavere enn den avgift som skal svares for motorvogner som på innførselstidspunktet er 20 år eller eldre.»
+      // Hva denne avgiften er, er ikke utledet (R-OTA-010 utenfor omfang; R-OTA-011). Et 100 %-fradrag gir derfor ikke et komplett sluttkrav: ingen finalClaim.
+      return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: weakest(prof), profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [{ code: "twenty_year_minimum_unresolved", message: "Motorvognen er 20 år eller eldre: 100 % fradrag er belagt, men forskrift § 3-3 sier at avgiften ikke kan settes lavere enn avgiften som skal svares for motorvogner på 20 år eller eldre, og hva den er, er ikke utledet (R-OTA-010 utenfor omfang, R-OTA-011). Ingen sluttkrav beregnes." }], warnings, implementationConclusions: [], validation: null };
+    }
+    ded = { percent: main.percent, ageCompletedMonths: main.completedMonths, stepLabel: main.stepLabel, workingFirstRegistration: working, workingDateDerived: derived, norwegianRegistrationDate: norDate, norwegianRegistrationKind: nor.kind, twentyYearRule: false };
     if (alt && alt.percent !== main.percent) {
       monthSensitivity = {
         alternativeWorkingDate: altWorking!,

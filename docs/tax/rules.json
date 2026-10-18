@@ -630,17 +630,36 @@
     "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
     "sources": [
      {
-      "id": "T02"
+      "id": "T02",
+      "evidenceLevel": "E2",
+      "title": "Hva er engangsavgiften? (en: What is the one-off registration tax?)",
+      "role": "lead i `leads` (ikke regel)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      },
      {
       "id": "T04",
-      "section": "§ 3"
+      "evidenceLevel": "E2",
+      "title": "Stortingsvedtak om engangsavgift på motorvogner mv. for 2026 (FOR-2025-12-18-2755)",
+      "role": "lead i `leads` (ikke regel); nevnt i uløst kildepåstand U-001",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      },
      {
-      "id": "T26"
+      "id": "T26",
+      "evidenceLevel": "E2",
+      "title": "Skatter og avgifter 2026 – stortingsvedtak (oversikt)",
+      "role": "lead i `leads` (ikke regel)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      },
      {
-      "id": "T30"
+      "id": "T30",
+      "evidenceLevel": "E1X",
+      "title": "Stortinget – Vedtak 220: Engangsavgift på motorvogner mv. for 2026",
+      "role": "E1X-funn i `e1xFindings` (eksternt verifisert, ikke lest av Claude)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      }
     ]
    }
@@ -845,7 +864,37 @@
     "traceability": "Kilder og funn for NEDC/fallback/andre grupper er flyttet uendret til R-OTA-015; tidligere formulering ligger i git-historikken (commit før runde 12)."
    },
    "evidenceJudgement": "2026-10-18: Christian bestemte at T40s uttrykkelige «første / neste / resten», sammen med vedtakets satser, er tilstrekkelig belegg for den marginale strukturen innen avgrenset omfang. Evidensnivået følger lest kildetekst (T40 er E1-kilde); beslutningen om tilstrekkelighet er registrert her og er ikke en parametergodkjenning.",
-   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)"
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)",
+   "nonE1SourcesMoved": {
+    "movedOn": "2026-10-18",
+    "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
+    "sources": [
+     {
+      "id": "T02",
+      "evidenceLevel": "E2",
+      "title": "Hva er engangsavgiften? (en: What is the one-off registration tax?)",
+      "role": "lead i `leads` (ikke regel)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret (gruppe b-funnet T31 og NEDC/fallback-funn ligger i R-OTA-015)"
+     },
+     {
+      "id": "T04",
+      "evidenceLevel": "E2",
+      "title": "Stortingsvedtak om engangsavgift på motorvogner mv. for 2026 (FOR-2025-12-18-2755)",
+      "role": "lead i `leads` (ikke regel)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret (gruppe b-funnet T31 og NEDC/fallback-funn ligger i R-OTA-015)"
+     },
+     {
+      "id": "T30",
+      "evidenceLevel": "E1X",
+      "title": "Stortinget – Vedtak 220: Engangsavgift på motorvogner mv. for 2026",
+      "role": "E1X-funn i `e1xFindings` (eksternt verifisert, ikke lest av Claude)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret (gruppe b-funnet T31 og NEDC/fallback-funn ligger i R-OTA-015)"
+     }
+    ]
+   }
   },
   {
    "id": "R-OTA-003",
@@ -1145,7 +1194,12 @@
     "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
     "sources": [
      {
-      "id": "T19"
+      "id": "T19",
+      "evidenceLevel": "E2",
+      "title": "Forskrift om endring i forskrift om engangsavgift på motorvogner (FOR-2022-12-16-2271)",
+      "role": "lead i `leads` (ikke regel)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      }
     ]
    }
@@ -1303,10 +1357,20 @@
     "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
     "sources": [
      {
-      "id": "T02"
+      "id": "T02",
+      "evidenceLevel": "E2",
+      "title": "Hva er engangsavgiften? (en: What is the one-off registration tax?)",
+      "role": "lead i `leads` (ikke regel)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      },
      {
-      "id": "T04"
+      "id": "T04",
+      "evidenceLevel": "E2",
+      "title": "Stortingsvedtak om engangsavgift på motorvogner mv. for 2026 (FOR-2025-12-18-2755)",
+      "role": "tidligere kilde-listing; ingen funn bygger på den; beholdt i kildregisteret (`sources.json`) som støttemateriale",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      }
     ]
    }
@@ -1698,7 +1762,7 @@
    ],
    "openQuestions": [
     "U-009 → R-OTA-016: trinndato som ikke finnes i målmåneden (dag 29–31); motoren blokkerer i vinduet.",
-    "Motorvogn 20 år eller eldre: minimumssetningen i § 3-3 («ikke lavere enn avgift for 20 år eller eldre») er ikke utledet (R-OTA-011); advarsel, ikke blokkering.",
+    "Motorvogn 20 år eller eldre: minimumssetningen i § 3-3 («ikke lavere enn avgift for 20 år eller eldre») er ikke utledet (R-OTA-011); motoren blokkerer (twenty_year_minimum_unresolved). For motorvogner under 20 år er setningen heller ikke utledet; den kan bare binde hvis avgiften for 20 år eller eldre er høyere enn den fradragsberegnede, noe ingen lest kilde viser (ikke brukt som belegg).",
     "Alternativ beregning (§ 3-4) er utenfor MVP.",
     "Avrunding: R-OTA-014; prosentfradrag og mellomsummer avrundes ikke (U-012).",
     "Forventet norsk registreringsdato er en forutsetning (ECON-001); styrende hendelse er faktisk første registrering."
@@ -1820,7 +1884,7 @@
     ],
     "outOfScopeUnresolved": [
      "trinndato som ikke finnes i målmåneden (første registrering dag 29–31): R-OTA-016 / U-009; blokkert i vinduet",
-     "motorvogn 20 år eller eldre: 100 pst fradrag er belagt, men setningen «Avgiften kan likevel ikke settes lavere enn den avgift som skal svares for motorvogner som på innførselstidspunktet er 20 år eller eldre» er ikke utledet (R-OTA-011); motoren gir advarsel, ikke blokkering",
+     "motorvogn 20 år eller eldre: 100 pst fradrag er belagt, men setningen «Avgiften kan likevel ikke settes lavere enn den avgift som skal svares for motorvogner som på innførselstidspunktet er 20 år eller eldre» er ikke utledet (R-OTA-011). Motoren BLOKKERER (twenty_year_minimum_unresolved) og gir ikke noe sluttkrav; minimumsregelen er ikke implementert uten belegg",
      "alternativ beregning (§ 3-4): utenfor MVP"
     ],
     "traceability": "Det uavklarte (dag 29–31) er flyttet til R-OTA-016."
@@ -1831,11 +1895,20 @@
     "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
     "sources": [
      {
-      "id": "T06"
+      "id": "T06",
+      "evidenceLevel": "E2",
+      "title": "Bruksfradrag (engangsavgift)",
+      "role": "lead i `leads` (ikke regel)",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      },
      {
       "id": "T04",
-      "section": "§ 4"
+      "evidenceLevel": "E2",
+      "title": "Stortingsvedtak om engangsavgift på motorvogner mv. for 2026 (FOR-2025-12-18-2755)",
+      "role": "tidligere kilde-listing; ingen funn bygger på den; beholdt i kildregisteret (`sources.json`) som støttemateriale",
+      "movedBecause": "godkjenningsporten krever at alle `sources` er E1; kilden er ikke E1 og skal ikke fremstå som belegg",
+      "forbeholdBevart": "leads/e1xFindings/openQuestions/uløste kildepåstander er uendret"
      }
     ]
    }
@@ -2984,35 +3057,58 @@
     "evidenceVsApproval": "Evidensklassifisering (rules.json evidenceLevel) følger bare lest kildetekst (E1/E1P…). Godkjenningsbeslutning (parameterApproval) er Christians. Godkjenningsporten krever E1 og klasse 1; å godkjenne R-OTA-014 mens den er E1P ville kreve en eksplisitt, egen beslutning om evidensmodellen/portene — det er utenfor ECON-002, og kravet om E1 er ikke svekket.",
     "sourceInvestigation": {
      "date": "2026-10-18",
-     "decision": "Videre kildeundersøkelse (ikke beslutning som omgår E1-kravet). E1P beholdes inntil undersøkelsen er ferdig.",
-     "searchedInReadSources": {
-      "T03 (rundskriv engangsavgift 2026), T47/T06 (vedtak), Lovdata engangsavgift 2026 (T10-fil), endringsvedtak FOR-2026-06-19-1246": "ingen omtale av avrunding (tekstsøk «avrund» uten treff; forskriften om engangsavgift T05 er lest visuelt, ikke tekstsøkt)",
-      "T45/T46/T49": "generell regel og kjede som i e1Findings; ingen uttrykkelig engangsavgift-anvendelse; håndbokens avsnitt viser til «Vis forskrifter og forarbeider», men selve forarbeidene er ikke lest"
-     },
-     "access": "Nettverk til norske verter er blokkert i denne miljøet (ingen tilkobling), så forarbeider og myndighetsforklaringer kunne ikke hentes.",
-     "requestedDocuments": [
+     "status": "åpen: kildebestilling; E1P beholdes",
+     "question": "Gjelder skattebetalingsforskriften § 10-4-4 («Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone») ved beregningen av det engangsavgiftskravet som betales ved første gangs registrering, slik at sluttkravet (avgift etter bruksfradrag + vrakpantavgift) fastsettes i hele kroner ned? Eller gjelder den bare krav slik de håndteres etter kapittel 10 (forfall/innkreving/utbetaling)?",
+     "alreadyRead": "T46 § 10-4-4 (fotnote: «Endret ved forskrift 25 mars 2010 nr. 462 (i kraft 1 april 2010, tidligere § 10-4-3)»), T45, T49 § 1-1 (2) i, § 10-4, § 10-40 (1) c. Tekstsøk (ordet «avrund») i T03, vedtaket (T47/T06), Lovdata-vedtaksfilen og endringsvedtaket: ingen treff. Forskriften om engangsavgift (T05) er lest visuelt, ikke tekstsøkt.",
+     "access": "Nettverk til norske verter er blokkert i dette miljøet; ingenting under er hentet eller åpnet.",
+     "verifiedTitleAndUrl": [
       {
-       "title": "Forskrift 25. mars 2010 nr. 462 (endring av skattebetalingsforskriften, i kraft 1. april 2010; innfører § 10-4-4 med dagens nummer) med eventuelle merknader/høringsnotat",
-       "url": "https://lovdata.no/forskrift/2010-03-25-462",
-       "urlStatus": "mønster og forskrifts-ID er hentet fra lenker i den leste T46-siden; ikke åpnet; tittelen må bekreftes i Lovdata"
+       "title": "Forskrift til utfylling og gjennomføring mv. av skattebetalingsloven (skattebetalingsforskriften), FOR-2007-12-21-1766",
+       "url": "https://lovdata.no/dokument/SF/forskrift/2007-12-21-1766",
+       "basis": "T46 (lest, hash i sources.json)",
+       "expectedToClarify": "Hele § 10-4-4 og endringshistorikken per paragraf; Lovdata-fanen for endringsforskrifter/merknader kan peke på det som forklarer 2010-endringen."
       },
       {
-       "title": "Skattebetalingsloven (LOV-2005-06-17-67) § 10-4, fanen «Forarbeider» (lovproposisjonen til skattebetalingsloven og Stortingets behandling)",
+       "title": "Lov om betaling og innkreving av skatte- og avgiftskrav (skattebetalingsloven), LOV-2005-06-17-67",
        "url": "https://lovdata.no/dokument/NL/lov/2005-06-17-67",
-       "urlStatus": "URL er T49 (lest side); selve forarbeidene ikke åpnet. Proposisjonsnummeret er ikke verifisert (antatt Ot.prp. nr. 83 (2004–2005) — må bekreftes)"
+       "basis": "T49 (lest, hash i sources.json)",
+       "expectedToClarify": "Rekkevidden av forskriftshjemmelen i § 10-4 («utfylling og gjennomføring av bestemmelsene i dette kapitlet») og om lovens forarbeider (Lovdata-fanen) omtaler avrunding av krav."
       },
       {
-       "title": "Skattebetalingshåndboken § 10-4 «Vis forskrifter og forarbeider» (Skattedirektoratet)",
+       "title": "Skattebetalingshåndboken, kap. 10 § 10-4 inkl. avsnittet «Avrunding» (Skattedirektoratet)",
        "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/skattebetalingshandboken/gjeldende/SKTB_ID-10-0.001/SKTB_ID-10-4.001/SKTB_ID-10-4.003",
-       "urlStatus": "URL er T45 (lest side); lenkene til forarbeider er ikke fulgt"
-      },
-      {
-       "title": "Finansdepartementets/Skattedirektoratets høringsnotat og merknader til endringen av skattebetalingsforskriften i 2010 (avrundingsbestemmelsen)",
-       "url": null,
-       "urlStatus": "dokumenttittel og URL er ikke verifisert; må finnes via regjeringen.no høringssøk eller Lovdata-fanen for forskrift 2010-03-25-462"
+       "basis": "T45 (lest, hash i sources.json)",
+       "expectedToClarify": "Hvilke forskrifter og forarbeider Skatteetaten selv viser til for § 10-4 («Vis forskrifter og forarbeider»); lenkene er ikke fulgt."
       }
      ],
-     "note": "Ingenting av dette er lest; ingen e1Finding er lagt til."
+     "searchLeadsOnly": [
+      {
+       "lead": "Forarbeider til skattebetalingsloven § 10-4 (via Lovdata-fanen til loven)",
+       "status": "Kun søkespor: dokumenttype (proposisjon, innstilling) og nummer er IKKE verifisert.",
+       "expectedToClarify": "Om avrundingsforskriften er ment å gjelde beregningen av alle krav under loven, inkl. særavgifter."
+      },
+      {
+       "lead": "Merknader/høringsnotat til forskrift 25. mars 2010 nr. 462 (ID verifisert via fotnoter i T46; tittel og URL ikke verifisert)",
+       "status": "Kun søkespor: det er ikke påvist at det finnes et forarbeid utover forskriftsteksten selv, og det skal ikke antas å være en proposisjon.",
+       "expectedToClarify": "Hvorfor § 10-4-3 ble § 10-4-4 og om avrundingen omfatter engangsavgift."
+      },
+      {
+       "lead": "Høringsnotat/merknader til den opprinnelige skattebetalingsforskriften (FOR-2007-12-21-1766), der bestemmelsen stod som § 10-4-3",
+       "status": "Kun søkespor: ikke verifisert at slikt dokument finnes.",
+       "expectedToClarify": "Opprinnelig begrunnelse og virkeområde for avrundingsregelen."
+      },
+      {
+       "lead": "Skatteetatens veiledning om engangsavgift/utregning (utover rundskriv T03)",
+       "status": "Kun søkespor: ikke identifisert.",
+       "expectedToClarify": "Om Skatteetaten uttrykkelig oppgir at engangsavgiften avrundes ned til hele kroner."
+      },
+      {
+       "lead": "Lov 19. juni 2026 nr. 41 (endrer skattebetalingsloven § 1-1 og § 10-40; nevnt i T49-siden)",
+       "status": "Kun søkespor: tittel og URL ikke verifisert; ikke i kraft per hentedato.",
+       "expectedToClarify": "Om kjeden engangsavgift → avgiftskrav → kapittel 10 endres."
+      }
+     ],
+     "note": "Ingenting av dette er lest; ingen e1Finding er lagt til; R-OTA-014 forblir E1P."
     }
    },
    "governingEvent": "Beregning av skatte- og avgiftskravet (skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav»); for engangsavgift skjer beregningen ved første gangs registrering (vedtak § 1)"

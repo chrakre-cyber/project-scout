@@ -71,6 +71,7 @@ export type BlockCode =
   | "norwegian_registration_invalid"
   | "norwegian_registration_before_first_registration"
   | "age_step_boundary_ambiguous"
+  | "twenty_year_minimum_unresolved"
   | "no_profile_for_date"
   | "profile_not_valid_for_date"
   | "profile_internal_limit_exceeded";
@@ -88,7 +89,6 @@ export type WarningCode =
   | "weight_basis_not_verified"
   | "propulsion_dealer_entered"
   | "month_precision_sensitivity"
-  | "twenty_year_rule_unverified"
   | "new_vehicle_no_deduction";
 
 export interface Warning {
