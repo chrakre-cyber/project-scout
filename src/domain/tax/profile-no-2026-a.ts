@@ -50,7 +50,7 @@ export interface TaxProfile {
   /** Brukes når registrering skjer 20 år eller mer etter første registrering (1. januar-regelen, forskrift § 3-3). */
   deductionRuleRef: string;
   sources: readonly string[];
-  /** `class1References`: antall klasse 1-referanser (docs/tax/references.json) som dekker profilen. 0 i dag. */
+  /** `class1References`: antall klasse 1-referanser (docs/tax/references.json) som dekker profilen. 2 i dag (EV, diesel). */
   approval: { approved: boolean; class1References: number; reason: string };
   /** Regelnivå (docs/tax/rules.json evidenceLevel) per regel profilen anvender; en test holder dem lik registeret. */
   ruleEvidence: Readonly<Record<string, "E1" | "E1P">>;
@@ -109,8 +109,8 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
   },
   approval: {
     approved: false,
-    class1References: 0,
-    reason: "Ingen eksplisitt parameterApproval og ingen klasse 1-referanser (docs/tax/rules.json foundationStatus).",
+    class1References: 2,
+    reason: "Ingen eksplisitt parameterApproval. To klasse 1-referanser (EV og diesel, 18.10.2026) er registrert; klasse 1 er ikke godkjenning, og R-OTA-002/-010/-014 er E1P (docs/tax/rules.json foundationStatus).",
   },
   openItems: [
     "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",

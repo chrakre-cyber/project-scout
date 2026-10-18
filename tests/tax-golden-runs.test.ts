@@ -50,7 +50,7 @@ describe("forberedte golden-kjøringer: ingen kjøring, ingen gjetting", () => {
     for (const v of ["PHEV", "EV", "Diesel"]) expect(md).toContain(`**${v}**`);
     for (const need of ["kjøredato", "vektdefinisjon", "drivlinjebevis", "SHA-256", "norsk registreringsdato"]) expect(md, need).toContain(need);
     expect(md).toMatch(/Kjøringene av 18\.10\.2026 er mottatt/);
-    expect(md).toMatch(/ikke klasse 1/);
+    expect(md).toMatch(/klasse 1 for EV og diesel/);
     expect(md).toMatch(/historisk testdato/);
     expect(md).toMatch(/U-009/);
   });

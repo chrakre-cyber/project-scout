@@ -20,5 +20,7 @@
 | `resultBreakdown` | avgift, vrakpantavgift, bruksfradrag-prosent og eventuelle delposter **slik kalkulatoren viste dem**; samlet beløp | |
 | `notes` | avvik, advarsler fra kalkulatoren, hva som er uklart | |
 
+**Merk (runde 9):** malen er et anbefalt dokumentasjonssett, ikke definisjonen av klasse 1. Minstekravet følger evidensmodellen og referanseregisteret (`docs/tax/golden-runs/2026-10-18/REGISTRERING.md` §4); «alle punktene» gjelder for en fullstendig, kjøretøyspesifikk referanse.
+
 **Erklæring:** «Dette er en ny kjøring utført <dato>; den er ikke en rekonstruksjon av tidligere case. Alle verdier er hentet fra kalkulatorens skjermbilder og de oppgitte dokumentene.» — signatur/initialer: ____
 **Kryss av før innlevering:** ☐ alle felt-ID-er fylt (ingen gjettede verdier) ☐ to skjermbilder med hash ☐ teknisk dokumentasjon vedlagt ☐ kjøredato ≠ testdato med mindre den faktisk er samme dag.

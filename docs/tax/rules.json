@@ -3091,8 +3091,8 @@
   "status": "REVIEW",
   "date": "2026-10-18",
   "approvedParameters": 0,
-  "class1References": 0,
-  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001, R-OTA-005 og R-OTA-007 på E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md. Runde 5: R-OTA-005 (PHEV) E1 etter revurdering av det tekniske vilkåret.",
+  "class1References": 2,
+  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001, R-OTA-005 og R-OTA-007 på E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md. Runde 5: R-OTA-005 (PHEV) E1 etter revurdering av det tekniske vilkåret. Runde 9 (18.10.2026): to klasse 1-referanser registrert (EV og diesel, `explicit_inputs`); PHEV venter på dokumentasjon av steg 11. Klasse 1 er ikke godkjenning, og R-OTA-002/-010/-014 er fortsatt E1P.",
   "doneRequires": [
    "minst én godkjent parameter per implementert komponent (rules.parameterApproval.approved=true med godkjenner)",
    "minst ett klasse 1-tilfelle per profil i omfang",

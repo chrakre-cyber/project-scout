@@ -1,6 +1,6 @@
 # ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 5: §15)
 
-**Status: REVIEW.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; ingen klasse 1 registrert; ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Status: REVIEW.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for EV og diesel (runde 9, §19); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -531,13 +531,35 @@ Ni originalbilder: SHA-256 og størrelse stemmer med manifestet (kontrollert av 
 ### 18.3 Motoren mot observasjonene
 Motoren (`NO-OTA-2026-A-PB`, dato 2026-10-18, dagpresisjon, uendret kode og regler) gir sluttkrav **529 069 / 16 748 / 333 723**, lik de viste totalene; engangsavgift (eksakt 526 669,738 / 14 348,9545 / 331 323,972) stemmer med viste 526 669,74 / 14 348,95 / 331 323,97. Ingen kalibrering. Status er fortsatt `calculated_unverified`. Samsvaret lukker ikke U-012 og løfter ikke R-OTA-014 (E1P); ørebeløp er visningsverdier. Bruksfradragsprosentene (2 / 33 / 30 %) er motorens egne, ikke observert.
 
-### 18.4 Klasse 1 — ikke registrert
-Formelt minimum i `check-docs.mjs` (tool, runDate, output) kunne vært fylt, men runDate er bare brukerbekreftet, og malen/sjekklisten krever også URL/versjon, klokkeslett og bruksfradragsprosent, samt fullt input for nedbrytningsversjonene (PHEV, EV). Jeg har ikke oppgradert automatisk (`class1References` = 0). Å la minimumsdefinisjonen alene være nok er Christians beslutning. R-OTA-002, -010 og -014 er uansett E1P.
+### 18.4 Klasse 1 — se §19
+Runde 8 behandlet klasse 1 for strengt (malens tilleggspunkter). **§19 overstyrer dette punktet.**
 
 ### 18.5 Mva. og åpne punkter
 Mva.-beløpene er registrert som observasjoner for ECON-004 (ikke implementert; U-013 åpen). U-009, U-012, U-003, U-008 uendret.
 
 ### 18.6 Kontroller
 Kjørt: `node docs/tax/check-docs.mjs`, `npx vitest run` — **32 filer, 743 tester bestått**; `npm run typecheck`, nye tester `tests/tax-calculator-observations.test.ts` (12) og justert README-sjekk i `tests/tax-golden-runs.test.ts`. Ikke kjørt: `npm run build`, e2e, DB, selve kalkulatoren (utilgjengelig for meg).
+
+## 19. Runde 9 — klasse 1 etter eksisterende styrende dokumenter (18.10.2026)
+
+Detaljer: `docs/tax/golden-runs/2026-10-18/REGISTRERING.md` §4.
+
+### 19.1 Definisjonen og lagene
+Klassen er definert av evidensmodellen (`DECISIONS.md` DEC-032 pkt. 2 — merket FORSLAG, men behandlet som styrende, jf. `reviews/ECON-001.md` D1 — og `references.json` `classes["1"]` + `note`: uavhengig offisiell kalkulator-/vedtaksreferanse, ikke håndregning). `rules.json` `approvalRequirements` skiller klasse 1 fra godkjenning. Dokumentasjonsformen følger `references.json` `requiredToUpgrade` («eksakte input; lagre input, dato, resultat og skjermbilde uten persondata») og `IMPORT_ENGINE_SPEC.md` linje 77/79 («input/dato/kilde, output og avvik»). `check-docs.mjs` er bare en minimumskontroll (`tool`, `runDate`, `output` + E1-regelkilder). `golden-run-template.md`/`SJEKKLISTE.md`/guidene er Claudes anbefalte dokumentasjonssett (runde 6–7) og omdefinerer ikke klassen; de er merket slik.
+
+### 19.2 Konklusjon per referanse (input-/resultatbildene ved oppgitt pris)
+- **EV (350 000): oppfyller.** Alle sju steg vises; resultat 16 748,00; skjermbilder hashet; dato brukerbekreftet. Registrert `C1-GR-20261018-02`.
+- **Diesel (350 000): oppfyller.** Steg 1–11 dekket av bildene (steg 11 uten verdi); resultat 333 723,00. Registrert `C1-GR-20261018-03`.
+- **PHEV (600 000): oppfyller ikke ennå.** Én mangel: steg 11 «Alternativ beregning» er ikke vist og ikke bekreftet. Alt annet er oppfylt. Ikke registrert.
+Nedbrytningsbilder med andre priser er separate observasjoner og påvirker ikke disse konklusjonene.
+
+### 19.3 Dato og CO₂-antakelse
+Kjøredato og automatisk dagsdato 18.10.2026 er uttrykkelig brukerbekreftet og registrert med den proveniensen; definisjonen krever at datoen *lagres*, ikke at den er synlig i bildet. Klokkeslett kreves ikke. PHEV: observert input er 140 g/km + «WLTP»; «vektet kombinert» er en motorantakelse og er ikke observert.
+
+### 19.4 Effekt
+`class1References` = 2 (foundationStatus og profil `NO-OTA-2026-A-PB`); `validation.status` er fortsatt `estimate_not_approved` (profil ikke godkjent, R-OTA-002/-010/-014 E1P). Ingen parameter godkjent; R-OTA-014 og U-012 uendret; ECON-003/004 ikke startet. Klasse, regelnivå og godkjenning er behandlet separat.
+
+### 19.5 Kontroller
+`check-docs.mjs` OK (110 tilfeller, klasse 1 = 2); `npx vitest run` — 32 filer, 743 tester bestått (sentinelltestene for «0 klasse 1» er oppdatert til faktisk status); `npm run typecheck` rent. Ikke kjørt: build, e2e, DB, kalkulator.
 
 **Sluttstatus: REVIEW.**

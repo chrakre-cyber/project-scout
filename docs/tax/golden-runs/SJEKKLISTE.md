@@ -1,5 +1,7 @@
 # Sjekkliste: tre manuelle kalkulatorkjøringer (PHEV, EV, diesel)
 
+> **Merk (runde 9):** §B er et *anbefalt* dokumentasjonssett. Det som kreves for klasse 1 følger evidensmodellen og referanseregisteret (`2026-10-18/REGISTRERING.md` §4): uavhengig kalkulator, eksakte input, dato, resultat og skjermbilde. URL/versjon, klokkeslett og bruksfradragsprosent er ønskelig, men kreves ikke; denne sjekklisten omdefinerer ikke klassen.
+
 Du leverer filene; jeg beregner SHA-256 og registrerer proveniens. Ingen hash- eller kodearbeid for deg.
 
 ## A. Før hver kjøring (enkelt)

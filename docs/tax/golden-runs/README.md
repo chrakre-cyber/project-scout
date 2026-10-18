@@ -1,6 +1,6 @@
 # Nye golden-kjøringer (PHEV, EV, diesel) — det Christian må fremskaffe
 
-Tre forberedte underlag: `GR-PENDING-PHEV.md`, `GR-PENDING-EV.md`, `GR-PENDING-DIESEL.md` (utfyllbare ihht. `../golden-run-template.md`). **Kjøringene av 18.10.2026 er mottatt som skjermbilder og registrert i `2026-10-18/REGISTRERING.md` (ikke klasse 1; ingen parametere godkjent); malene `GR-PENDING-*` forblir uutfylte.** 18.10.2026 er historisk testdato for de eksisterende fixturene; at de nye kjøringene også ble utført 18.10.2026 er brukerbekreftet, ikke synlig i bildene. Ingenting er gjettet; manglende felt er merket **MANGLER**.
+Tre forberedte underlag: `GR-PENDING-PHEV.md`, `GR-PENDING-EV.md`, `GR-PENDING-DIESEL.md` (utfyllbare ihht. `../golden-run-template.md`). **Kjøringene av 18.10.2026 er mottatt som skjermbilder og registrert i `2026-10-18/REGISTRERING.md` (klasse 1 for EV og diesel, PHEV venter på steg 11; ingen parametere godkjent); malene `GR-PENDING-*` forblir uutfylte.** 18.10.2026 er historisk testdato for de eksisterende fixturene; at de nye kjøringene også ble utført 18.10.2026 er brukerbekreftet, ikke synlig i bildene. Ingenting er gjettet; manglende felt er merket **MANGLER**.
 
 | Kjøretøy | Dokumentert fra før (gjenbrukt ordrett) | Må fremskaffes av Christian (alle felt-ID-er under er MANGLER) |
 |---|---|---|

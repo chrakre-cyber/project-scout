@@ -1,6 +1,6 @@
 # Registrering: kalkulatorobservasjoner 18.10.2026 (GR-20261018-01 PHEV, -02 EV, -03 diesel)
 
-**Status: REVIEW. Ingen parametere er godkjent. Ingen klasse 1 er registrert.** `referenceScope = explicit_inputs`: bildene dokumenterer hva kalkulatoren viste for disse inputene, ikke de konkrete bilene (kjøretøynavn er testetiketter; VIN, variant og teknisk dokumentasjon finnes ikke). Dette er nye referanser og er ikke dokumentasjon av CASE-001/002/003. Maskinlesbar registrering: `docs/tax/references.json` → `calculatorObservations`. Test: `tests/tax-calculator-observations.test.ts`.
+**Status: REVIEW. Ingen parametere er godkjent. Klasse 1 er registrert for EV (`C1-GR-20261018-02`) og diesel (`C1-GR-20261018-03`) etter eksisterende definisjon (§4); PHEV (`-01`) venter på én opplysning.** `referenceScope = explicit_inputs`: bildene dokumenterer hva kalkulatoren viste for disse inputene, ikke de konkrete bilene (kjøretøynavn er testetiketter; VIN, variant og teknisk dokumentasjon finnes ikke). Dette er nye referanser og er ikke dokumentasjon av CASE-001/002/003. Maskinlesbar registrering: `docs/tax/references.json` → `calculatorObservations`. Test: `tests/tax-calculator-observations.test.ts`.
 
 ## 1. Proveniens (hva som er observert, brukerbekreftet og ukjent)
 | Opplysning | Status | Merknad |
@@ -43,11 +43,36 @@ Det er ikke antatt at bare prisen ble endret mellom versjonene. At avgiften er l
 | CO₂-målemetode i motoren | `wltp_weighted_combined` | – | `wltp_combined` | **testantakelse**: «WLTP» er observert, etikettene «vektet kombinert»/«kombinert» er ikke synlige. Motoren blokkerer `wltp_combined` for PHEV |
 | Norsk registreringsdato | 2026-10-18 | 2026-10-18 | 2026-10-18 | brukerbekreftet |
 
-## 4. Klassevurdering (eksisterende definisjon, ingen oppgradering)
-- **Formelt minimum i `check-docs.mjs`** (`independentReference` med tool, runDate, output): tool er oppgitt av bruker, runDate er brukerbekreftet (bare dato), output er de hashede bildene. Det er oppfylt i form, men støttet av brukerbekreftelse og ikke av bildene.
-- **Registreringsmalen** (`docs/tax/golden-run-template.md`) og `SJEKKLISTE.md` ber i tillegg om kalkulatorens URL/versjon og klokkeslett (S00), og om nedbrytning med bruksfradragsprosent (S-res2). **Ingen av dem er levert.** For PHEV og EV mangler dessuten fullt inputbilde for nedbrytningsversjonen.
-- **Vurdering:** jeg har ikke registrert noen av kjøringene som klasse 1 (`evidenceClass = null`, `class1References = 0`). Å godta minimumsdefinisjonen alene, uten malens punkter, ville svekke klasse 1; det er en beslutning for Christian, ikke for meg. Manglende dokumentasjon som hindrer klasse 1 etter malen: URL/versjon, klokkeslett, bruksfradragsprosent/«Engangsavgiften består av», og (PHEV, EV) fullt input for nedbrytningsbildet.
-- Selv med klasse 1 er R-OTA-002, R-OTA-010 og R-OTA-014 E1P og dermed ikke godkjenningsklare. Ingen godkjenning er gitt.
+## 4. Klasse 1 etter eksisterende styrende dokumenter (runde 9)
+
+### 4.1 Den autoritative definisjonen — og hva som ikke er den
+| Lag | Kilde (fil, sted) | Innhold | Rolle |
+|---|---|---|---|
+| **Evidensmodellen (definisjonen)** | `DECISIONS.md` DEC-032 pkt. (2) (overskriften sier «FORSLAG», men `reviews/ECON-001.md` D1 (linje 46) og praksis i TAX-001A–E og ECON-002 behandler den som styrende); `docs/tax/references.json` `classes["1"]` = «uavhengig kontrollert referanse» og `note` («uavhengig offisiell referanse/kalkulator»; håndregning er klasse 2, ikke 1) | klasse 1 = uavhengig offisiell kalkulator-/vedtaksreferanse | **definerer klassen** |
+| **Krav til bruk i godkjenning** | `docs/tax/rules.json` `approvalRequirements` (4. punkt) og `docs/tax/TAX-001A-rules.md` linje 21: «minst ett uavhengig klasse 1-referansetilfelle (offisiell kalkulator/vedtak)» | klasse 1 er ett av flere godkjenningskrav (E1-regel, E1-kilder, `validity.from`/`governingEvent`, uttrykkelig `parameterApproval`) | skiller klasse fra godkjenning |
+| **Dokumentasjonsform** | `references.json` `requiredToUpgrade` (36 tilfeller): «Kjør Skatteetatens importkalkulator (S07) med eksakte input; lagre **input, dato, resultat og skjermbilde** uten persondata»; `IMPORT_ENGINE_SPEC.md` linje 77 og 79 («uavhengige referanser»; «behold **input/dato/kilde, output og avvik**»); `reviews/TAX-001B.md` linje 88 («lagret input/dato/output»); `reviews/ECON-001.md` linje 151 (inputs inkl. norsk registreringsdato, kjøredato, skjermbilde/utskrift) | hva som må lagres | **minstekrav til belegg** |
+| Minimumskontroll | `docs/tax/check-docs.mjs` linje 175: `independentReference` med `tool`, `runDate`, `output`; for klasse ≤ 2 også E1-kilder (regelkildene) | mekanisk sperre | **validator, ikke definisjon** |
+| Senere tillegg | `docs/tax/golden-run-template.md`, `SJEKKLISTE.md`, `GUIDE-*.md` (utarbeidet av Claude i runde 6–7; ikke besluttet av Christian) | URL/versjon, klokkeslett, bruksfradragsprosent, kjøretøyidentifikasjon, drivlinjebevis, vektdefinisjon | **anbefalt dokumentasjonssett**; omdefinerer ikke klassen |
+
+Verken validatoren eller sjekklisten definerer klassen. Det som kreves for klasse 1 er derfor: (i) uavhengig offisiell kalkulator som kilde, (ii) eksakte input lagret, (iii) dato lagret, (iv) resultat lagret, (v) skjermbilde uten persondata, (vi) ingen avledning fra motoren eller forventet verdi. Klokkeslett, URL/versjon, bruksfradragsprosent, kjøretøyidentifikasjon og teknisk dokumentasjon kreves ikke av definisjonen (de gjelder malen, eller `vehicle_specific`). Dette er en forklaring av eksisterende krav, ikke en svekkelse: klassen er uendret, og reglenes E1/E1P-nivå og parametergodkjenning behandles separat.
+
+### 4.2 Dato (punkt 3)
+Kjøredato 18.10.2026 og at kalkulatoren automatisk bruker dagens dato som norsk registreringsdato er **uttrykkelig brukerbekreftet** og registrert slik (`runDateProvenance = user_confirmed`). Ingen styrende kilde krever at datoen er synlig i skjermbildet; kravet er at datoen **lagres** (IMPORT_ENGINE_SPEC linje 79; `requiredToUpgrade`; `check-docs.mjs` `runDate`). Datoen er derfor ikke ukjent. Klokkeslett kreves ikke av noe styrende dokument.
+
+### 4.3 Konklusjon per referanse (input- og resultatbildene ved oppgitt pris)
+| Referanse | Bilder | Konklusjon | Begrunnelse |
+|---|---|---|---|
+| **GR-20261018-02 EV, pris 350 000** | `02_input_pris_350000`, `01_resultat_pris_350000` | **Oppfyller eksisterende klasse 1-krav.** Registrert som `C1-GR-20261018-02` | alle sju inputsteg vises (steg 7 alternativ beregning uten verdi); resultat 16 748,00 vises; skjermbilder hashet, uten persondata; kilde = Skatteetatens kalkulator (oppgitt, tittel synlig); dato brukerbekreftet; uavhengig av motoren (motoren ble kjørt etterpå). CO₂ vises ikke for elbil og er ikke registrert som observert |
+| **GR-20261018-03 diesel, pris 350 000** | alle tre (samme pris) | **Oppfyller eksisterende klasse 1-krav.** Registrert som `C1-GR-20261018-03` | steg 1–10 i inputbildet, steg 11 (uten verdi) i resultatbildet; resultat og nedbrytning 333 723,00 (331 323,97 + 2 400,00); samme øvrige begrunnelse som EV |
+| **GR-20261018-01 PHEV, pris 600 000** | `02_input_pris_600000`, `01_resultat_pris_600000` | **Oppfyller ikke ennå.** Ikke registrert som klasse 1 | **én mangel:** steg 11 «Alternativ beregning (valgfritt)» er verken vist i bildene eller bekreftet; definisjonen krever eksakte input, og feltet kan endre resultatet. Alt annet er som for EV/diesel. Det som trengs er én uttrykkelig brukerbekreftet opplysning om steg 11 (f.eks. «ikke utfylt») eller et bilde av steget. Resultatsamsvar med standardfradraget kan ikke brukes til å fylle feltet |
+
+Nedbrytningsbildene med andre priser (PHEV 2 600 000, EV 300 000) er **separate observasjoner** (`calculatorObservations`) og inngår ikke i klasse 1-tilfellene; at de mangler inputkobling diskvalifiserer ikke input-/resultatsettene ved 600 000 og 350 000.
+
+### 4.4 PHEV: CO₂-antakelsen (punkt 4)
+Observert input er CO₂ 140 g/km og målemetode «WLTP». «Vektet kombinert» er en **motorantakelse** (testintensjon) som trengs fordi motoren blokkerer `wltp_combined` for PHEV; den er ikke observert og blir ikke observert av at totalen stemmer. Antakelsen påvirker ikke hva kalkulatorreferansen dokumenterer (kalkulatorens egne input), men den må stå ved enhver bruk av referansen til å validere motorens PHEV-regel (R-OTA-005/-002). Den er beholdt i `co2MethodAssumption` og i testen.
+
+### 4.5 Det klasse 1 ikke betyr
+Klasse 1 er ikke godkjenning. R-OTA-002, R-OTA-010 og R-OTA-014 er fortsatt E1P og er ikke godkjenningsklare. Ingen parameter er godkjent. EV/diesel-referansene dekker bare de reglene motoren anvendte for disse inputene (`ruleIds`); de beviser ikke enkeltregler isolert (kalkulatoren viser ikke delregler her).
 
 ## 5. Motoren mot observasjonene (18.10.2026, profil `NO-OTA-2026-A-PB`, ingen kalibrering)
 | | PHEV | EV | Diesel |
@@ -70,4 +95,4 @@ Det er ikke antatt at bare prisen ble endret mellom versjonene. At avgiften er l
 PHEV 25 % av innkjøpspris (150 000 av 600 000; 650 000 av 2 600 000), diesel 87 500 av 350 000, EV 12 500 av 350 000 og 0 av 300 000. Grunnlaget (om avgift inngår, EV-terskel) er ikke utledet her. Avrunding av mva. (U-013) og alt annet mva.-arbeid ligger i ECON-004, som ikke er startet.
 
 ## 7. Hva som mangler for gjeldende gate
-Se §4. Konkret, per kjøring, bare hvis du vil ha klasse 1 etter malen: (a) ett bilde av adresselinje + kalkulatorside, og klokkeslett; (b) «Engangsavgiften består av» åpnet (viser bruksfradragsprosent); (c) PHEV og EV: samme kjøring uten prisendring, slik at input og nedbrytning hører sammen. Alternativt kan du uttrykkelig beslutte at minimumsdefinisjonen er nok. Jeg har ikke tatt den beslutningen.
+Bare dette kreves av den styrende definisjonen: **PHEV:** tilstanden til steg 11 «Alternativ beregning» for kjøringen ved pris 600 000 (brukerbekreftelse eller bilde). Alt annet som tidligere ble listet (klokkeslett, URL/versjon, bruksfradragsprosent, fullt input for nedbrytningsbildene) hører til malen eller til separate observasjoner og kreves ikke for klasse 1. For godkjenning av parametere kreves fortsatt E1-regler (R-OTA-002/-010/-014 er E1P) og din uttrykkelige godkjenning.

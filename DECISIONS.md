@@ -118,3 +118,5 @@ Ikke endret: database, RLS, auth, serveractions, providers, prototypen. Åpent: 
 - **Gyldighet:** kildedokumentert start 2026-01-01; ingen dokumentert slutt (`documentedValidTo = null`). 2026-12-31 er en INTERN sikkerhetssperre (`internalSafetyLimit`), ikke et kildedokumentert opphør, og har egen feilkode.
 
 - **Runde 8 (18.10.2026):** kalkulatorkjøringer mottatt og registrert som `explicit_inputs` (`GR-20261018-01…03`); motoren stemmer på sluttbeløp uten kalibrering. Klasse 1 er **ikke** registrert (URL/versjon, klokkeslett, bruksfradragsprosent og fullt input for nedbrytningsversjonene mangler); å godta minimumsdefinisjonen alene er Christians beslutning. Ingen parametere godkjent; R-OTA-014 forblir E1P; U-012 åpen.
+
+- **Runde 9 (18.10.2026):** klasse 1 avklart etter evidensmodellen (DEC-032 pkt. 2, `references.json`, `approvalRequirements`), med dokumentasjonsform fra `requiredToUpgrade`/IMPORT_ENGINE_SPEC; `check-docs.mjs` er minimumskontroll og mal/sjekkliste er anbefalinger. Registrert klasse 1: EV og diesel (`explicit_inputs`, brukerbekreftet dato); PHEV venter på steg 11. Klasse 1 er ikke godkjenning; E1P-regler og parametergodkjenning uendret.
