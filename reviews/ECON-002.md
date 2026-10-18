@@ -593,4 +593,34 @@ Modellens E1: påstanden må være dekket av lest tekst. Hver premiss er lest (E
 ### 21.6 Kontroller
 Ingen kode- eller registerendring og ingen nye tester. Kontroll: T40 s. 3 og vedtakstekst lest på nytt; regelregisteret lest. Ikke kjørt: nye tester, build.
 
-**Sluttstatus: REVIEW.** 0 godkjente parametere; klasse 1 = 3; R-OTA-002/-010/-014 uendret E1P; ECON-003/004 ikke startet.
+**Sluttstatus: REVIEW.** 0 godkjente parametere; klasse 1 = 3; R-OTA-002/-010/-014 uendret E1P; EC
+
+## 22. Runde 12 — opprydding av R-OTA-002, -010, -005, -014 (18.10.2026)
+
+Status **REVIEW**. Ingen parametere godkjent; ECON-003/004 ikke startet. Beregningsresultatene er uendret (ingen sats, regel eller formel endret; golden cases og klasse 1-referanser ble ikke brukt som regelkilde).
+
+### 22.1 Hva som er gjort
+1. **R-OTA-002** er avgrenset til *gruppe a, WLTP, hele g/km, stempeldrevet forbrenningsmotor* (inkl. ladbar hybrid med «vektet kombinert») og er **E1**. Belegg for marginal struktur innen omfanget: T40 s. 3 (uttrykkelig «første / neste / resten»), sammen med vedtakets satser (T47 § 3 a nr 2); Christians vurdering av tilstrekkelighet er registrert som `evidenceJudgement`. NEDC (× 1,24), egenvekt/10, desimal-CO₂ og andre grupper er flyttet uendret til ny **R-OTA-015 (E1P, blokkert)**; regel-ID 002 er gjenbrukt for kjernen, og `scope`/`splitFrom` gir sporbarhet. Innen omfanget gir heltall × heltallssats hele kroner, så avrundingsspørsmålet (U-012) berører ikke CO₂-komponenten der.
+2. **R-OTA-010** er lest på nytt mot hele ordlyden (forskrift § 3-3 med tabell «Alder over …», fotnote om endring 1. jan 2024; rundskriv 4.2 «regnes fra dato til dato»; T42 «neste steg … oppnås på dagen kjøretøyet fyller år, med unntak for siste steg»). Kildene støtter: tabellen, fradrag i avgiften etter §§ 2 og 3 (ikke vrakpant), alder fra første registrering til registrering her, dato til dato, trinn på dagen, 20-årsregelen. «Dato til dato» er formulert generelt, og «neste steg» omfatter etter ordlyden alle steg med bare siste steg som unntak; månedstrinn behandles derfor likt, uten ny blokkering. Det finnes imidlertid **ikke noe eksplisitt månedseksempel**; dette er registrert som en lesing (`scopeDecision`). Uavklart og beholdt som uavklart: trinndato som ikke finnes i målmåneden (dag 29–31), flyttet til **R-OTA-016 (E1P)**; **U-009-blokkeringen er uendret**. R-OTA-010 er **E1** innen resten. 20 år eller eldre: 100 pst er belagt, men setningen om minimumsavgift i § 3-3 er ikke utledet (R-OTA-011; advarsel, ikke blokkering) og er oppført som utenfor omfang.
+3. **governingEvent og validity.from** er fylt der de kan kildebelegges: R-OTA-002 (vedtak § 1; forskrift § 1-2 nr. 1; 2026-01-01), -003, -004, -005 (2026-01-01 etter vedtak § 1; gammel «2022 (historisk lead)» fjernet), -007 (2026-01-01), -010 (2024-01-01 = ikrafttredelse av gjeldende tabellversjon, forskrift 18.12.2023 nr. 2154 / T42; hendelse: første gangs registrering av brukte motorvogner, § 3-3), -014 (hendelse: «Ved beregning av skatte- og avgiftskrav», § 10-4-4; 2010-04-01 var allerede satt). Pakkedato og testdato er ikke brukt. For gate-konsistens er ikke-E1-kilder flyttet ut av `sources` for R-OTA-001/-005/-007/-010 (til `nonE1SourcesMoved`, uten endring i funn).
+4. **R-OTA-014** er **fortsatt E1P**. Kildeundersøkelse: tekstsøk i T03, vedtaket (T47/T06), Lovdata-vedtaksfilen og endringsvedtaket gir ingen omtale av avrunding; forskriften om engangsavgift er lest visuelt tidligere, ikke tekstsøkt. Forarbeider og myndighetsforklaringer til skattebetalingsforskriften § 10-4-4 og lovens § 10-4 kunne **ikke hentes** (nettverk blokkert). Konkrete dokumenter som må leses (registrert i `rules.json` `e1UpgradeRequirements.sourceInvestigation`; ikke åpnet): Lovdata forskrift 25.3.2010 nr. 462 (`https://lovdata.no/forskrift/2010-03-25-462`; ID hentet fra lenker i T46, tittel ikke verifisert); skattebetalingsloven LOV-2005-06-17-67, fanen «Forarbeider» for § 10-4 (`https://lovdata.no/dokument/NL/lov/2005-06-17-67`, T49; proposisjonsnummer ikke verifisert); Skattebetalingshåndboken § 10-4 «Vis forskrifter og forarbeider» (T45-URL); høringsnotat/merknader til 2010-endringen (tittel og URL ikke verifisert).
+
+### 22.2 Samlet oversikt etter oppryddingen
+Evidensoppgradering er kildebasert og skilt fra **uttrykkelig parametergodkjenning** (ingen er gitt). Godkjenningskravene er uendret: E1-regel, bare E1-kilder, `validity.from`, `governingEvent`, klasse 1-referanse og uttrykkelig `parameterApproval`. Klasse 1 = 3 (PHEV, EV, diesel) dekker reglene motoren anvendte.
+| Regel | Nivå | Avgrensning | Gyldighet (fra) | Styrende hendelse | Gjenværende godkjenningshindre |
+|---|---|---|---|---|---|
+| R-OTA-001 vekt | E1 | gruppe a personbil; § 2 + § 3 a 1 (forbrenningsmotor) | 2026-01-01 (ingen dokumentert slutt; intern sperre 2026-12-31) | første gangs registrering i Norge | uttrykkelig godkjenning |
+| **R-OTA-002 CO₂** | **E1 (avgrenset)** | gruppe a, WLTP, hele g/km, forbrenningsmotor inkl. PHEV; marginale bånd | 2026-01-01 | som R-OTA-001 | uttrykkelig godkjenning; R-OTA-015 utenfor |
+| R-OTA-005 PHEV | E1 | stempeldrevet motor + ekstern lading per kjøretøy; «vektet kombinert» | 2026-01-01 (ny; tidligere «2022 lead» fjernet) | som R-OTA-001 | uttrykkelig godkjenning; inputkrav per kjøretøy |
+| R-OTA-007 elbil | E1 | gruppe a: bare § 2 | 2026-01-01 | som R-OTA-001 | uttrykkelig godkjenning |
+| **R-OTA-010 bruksfradrag** | **E1 (avgrenset)** | tabell, dato til dato, månedstrinn lest etter generell ordlyd; trinndato finnes; < 20 år | 2024-01-01 (gjeldende tabellversjon) | første gangs registrering av brukte motorvogner (§ 3-3) | uttrykkelig godkjenning; R-OTA-016 og ≥ 20 år utenfor |
+| R-IMP-OTH-001 vrakpant | E1 | 2 400 kr, utenfor fradraget | 2026-01-01 | første gangs registrering i Kjøretøyregisteret | uttrykkelig godkjenning |
+| **R-OTA-014 avrunding** | **E1P** | sluttkrav ned til hele kroner; mellomledd ikke omtalt | 2010-04-01 | «ved beregning av skatte- og avgiftskrav» | **E1:** tekst om at engangsavgiftens beregning avrundes (A) eller forarbeider (B), ikke lest (nettverk); deretter godkjenning |
+| R-OTA-015 NEDC/egenvekt-10 | E1P, blokkert | desimal-CO₂; andre grupper | ikke fastsatt | som R-OTA-001 | kilde for avrunding av desimal-CO₂ (U-012) |
+| R-OTA-016 dag 29–31 | E1P, blokkert | trinndato som ikke finnes i målmåneden | ikke fastsatt | § 3-3 | kilde for datoregel (U-009) |
+R-OTA-003/-004 er E1 (governingEvent fylt) men ikke anvendt av motoren og uten klasse 1-tilfelle; R-OTA-003 har T02 (E2) i `sources`. Samlet nivå for motorresultatet er fortsatt `estimate_not_approved` (R-OTA-014 E1P; profil ikke godkjent).
+
+### 22.3 Kontroller
+`check-docs.mjs` OK (34 regler; E1 9, E1P 11; klasse 1 = 3); `npx vitest run` — bestått (743 + 3 nye registertester); typecheck. Ikke kjørt: build, e2e, DB. Én liten kodeendring: profilens `ruleEvidence` for R-OTA-002/-010 (E1) og henvisninger i blokkeringsmeldinger; ingen beregning endret.
+
+**Sluttstatus: REVIEW.**

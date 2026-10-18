@@ -175,8 +175,8 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   let co2Grams: number | null = null;
   if (powertrain === "ice" || powertrain === "phev") {
     const c = input.co2;
-    if (c.method === "nedc") block("co2_nedc_unsupported", "NEDC-verdi må ganges med 1,24 (§ 3-1), men avrunding av resultatet er ikke omtalt i kildene (U-010): ikke støttet.");
-    else if (c.method === "not_wltp_or_nedc_approved") block("co2_fallback_unsupported", "CO₂ = egenvekt/10 gir desimaler uten kilde for avrunding (U-010): ikke støttet.");
+    if (c.method === "nedc") block("co2_nedc_unsupported", "NEDC-verdi må ganges med 1,24 (§ 3-1), men avrunding av resultatet er ikke omtalt i kildene (R-OTA-015, U-012): ikke støttet.");
+    else if (c.method === "not_wltp_or_nedc_approved") block("co2_fallback_unsupported", "CO₂ = egenvekt/10 gir desimaler uten kilde for avrunding (R-OTA-015, U-012): ikke støttet.");
     else if (c.gramsPerKm === null) block("co2_missing", "CO₂-utslipp (g/km) mangler.", "co2.gramsPerKm");
     else if (!Number.isInteger(c.gramsPerKm) || c.gramsPerKm < 0 || c.gramsPerKm > 1000) block("co2_invalid", `Ugyldig CO₂-verdi: ${c.gramsPerKm}.`);
     else if (powertrain === "phev" && c.method !== "wltp_weighted_combined") block("phev_requires_weighted_combined_co2", "Ladbar hybrid skal bruke feltet «vektet kombinert» (§ 3-1).");

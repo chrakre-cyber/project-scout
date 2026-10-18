@@ -424,20 +424,7 @@
    },
    "sources": [
     {
-     "id": "T02"
-    },
-    {
      "id": "T03"
-    },
-    {
-     "id": "T04",
-     "section": "§ 3"
-    },
-    {
-     "id": "T26"
-    },
-    {
-     "id": "T30"
     },
     {
      "id": "T40",
@@ -637,12 +624,31 @@
      }
     }
    ],
-   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)"
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)",
+   "nonE1SourcesMoved": {
+    "movedOn": "2026-10-18",
+    "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
+    "sources": [
+     {
+      "id": "T02"
+     },
+     {
+      "id": "T04",
+      "section": "§ 3"
+     },
+     {
+      "id": "T26"
+     },
+     {
+      "id": "T30"
+     }
+    ]
+   }
   },
   {
    "id": "R-OTA-002",
    "component": "Engangsavgift gruppe a",
-   "title": "CO2-komponent",
+   "title": "CO2-komponent — gruppe a, WLTP, hele g/km, stempeldrevet forbrenningsmotor (avgrenset)",
    "profiles": [
     "PB-BEN",
     "PB-DIE",
@@ -654,34 +660,23 @@
     "VB-PHEV"
    ],
    "inputs": [
-    "CO2 g/km",
-    "testmetode (WLTP/NEDC)",
+    "CO2 g/km (heltall, WLTP; ladbar hybrid: «vektet kombinert»)",
     "kilde i vognkort/typegodkjenning"
    ],
-   "formulaStructure": "komponent = sats-trapp over CO2-bånd; CO2 fra registrert verdi, ellers anslag",
-   "amountUnitAndRounding": "Gruppe a 2026 (E1): marginale bånd (T40): første 100 g/km 800 kr/g, neste 50 g/km 1 600, neste 75 g/km 3 200, resten 5 000. NEDC-faktor 1,24 (a/j), 1,22 (b) (forskrift § 3-1). Avrunding: bare sluttkravet (R-OTA-014).",
+   "formulaStructure": "komponent = marginal sats-trapp over CO2-bånd av registrert WLTP-verdi (hele g/km)",
+   "amountUnitAndRounding": "Gruppe a 2026 (E1): marginale bånd (T40 + vedtaket): første 100 g/km 800 kr/g, neste 50 g/km 1 600, neste 75 g/km 3 200, resten 5 000. Heltall g/km × heltallssats ⇒ hele kroner; ingen mellomavrunding oppstår innen omfanget. Sluttkravet avrundes etter R-OTA-014. NEDC/egenvekt-10/andre grupper: R-OTA-015.",
    "orderInCalculation": null,
    "validity": {
     "from": "2026-01-01",
     "to": null,
-    "note": "Gruppe a 2026 (T40/T41). Dokumentert start 2026-01-01 (T41 § 1; T03 13.1). Ingen dokumentert sluttdato. Motoren har en INTERN sikkerhetssperre 2026-12-31 (ikke kildedokumentert)."
+    "note": "Vedtaket § 1: «Fra 1. januar 2026»; T03 13.1.1. Ingen dokumentert sluttdato; INTERN sikkerhetssperre 2026-12-31 (ikke kildedokumentert)."
    },
    "sources": [
-    {
-     "id": "T02"
-    },
     {
      "id": "T03"
     },
     {
-     "id": "T04",
-     "section": "§ 3"
-    },
-    {
      "id": "T05"
-    },
-    {
-     "id": "T30"
     },
     {
      "id": "T40",
@@ -704,8 +699,8 @@
      "section": "I"
     }
    ],
-   "evidenceLevel": "E1P",
-   "status": "E1_gruppe_a_vedtak_lest_marginal_via_T40_parameter_ikke_godkjent",
+   "evidenceLevel": "E1",
+   "status": "E1_avgrenset_gruppe_a_WLTP_hele_gkm_parameter_ikke_godkjent",
    "leads": [
     {
      "claim": "Hvis Statens vegvesen har registrert CO2, brukes den som hovedregel.",
@@ -718,10 +713,10 @@
     }
    ],
    "openQuestions": [
-    "Vedtaksteksten angir bare intervallene; marginal lesning hviler på Finansdepartementets satsoversikt (T40: «første/neste/resten»).",
-    "NEDC-omregning (× 1,24) og egenvekt/10-fallback gir desimal-CO2; ingen kilde omtaler avrunding av mellomledd (U-012) — motoren støtter ikke disse.",
-    "Sluttdato: se R-OTA-001 (intern sperre).",
-    "Satser for andre avgiftsgrupper er ikke registrert som parametere."
+    "Sluttdato: ingen dokumentert (R-OTA-001); motoren har intern sperre 2026-12-31.",
+    "Marginal struktur står i T40, ikke i vedtaksteksten; vurdert tilstrekkelig innen omfanget (evidenceJudgement).",
+    "Utenfor omfang og blokkert: NEDC, egenvekt/10, desimal-CO2, andre grupper (R-OTA-015).",
+    "Per kjøretøy: CO2-felt og målemetode må dokumenteres (inputkrav, ikke regelusikkerhet)."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -734,27 +729,9 @@
      "readDate": "2026-10-15"
     },
     {
-     "claim": "NEDC-godkjente kjøretøy: registrert CO2 justeres opp med fast faktor, 24 % i gruppe a og j og 22 % i gruppe b, før satstabellen.",
-     "source": "T03",
-     "locator": "3.2.5",
-     "readDate": "2026-10-15"
-    },
-    {
      "claim": "EPA/NRCan-målt CO2 beregnes som WLTP.",
      "source": "T03",
      "locator": "3.2.5",
-     "readDate": "2026-10-15"
-    },
-    {
-     "claim": "Målemetode ukjent: første registrering i utlandet før 1.9.2018 → NEDC-behandling; fra og med 1.9.2018 eller ikke tidligere registrert → WLTP.",
-     "source": "T03",
-     "locator": "3.2.5",
-     "readDate": "2026-10-15"
-    },
-    {
-     "claim": "Uten plikt til å oppgi CO2: anslått CO2 = egenvekt/10 (se R-OTA-004).",
-     "source": "T03",
-     "locator": "3.2.6",
      "readDate": "2026-10-15"
     },
     {
@@ -780,6 +757,12 @@
      "source": "T47",
      "locator": "§ 3 første ledd a nr 2; T40 s. 3",
      "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Vedtaket § 3 første ledd a nr 2 gir CO2-satsene som intervalltabell (0–100: 800; 101–150: 1 600; 151–225: 3 200; over 225: 5 000); Finansdepartementets satsoversikt T40 s. 3 viser de samme beløpene som «første 100 g/km / neste 50 g/km / neste 75 g/km / resten», kr per g/km. Innen omfanget (WLTP, hele g/km, gruppe a, forbrenningsmotor) er den marginale strukturen belagt av T40 uttrykkelig, sammen med vedtakets satser. Vedtaksteksten selv sier ikke «marginal» (vekten sier «den delen av egenvekten som overstiger»).",
+     "source": "T40",
+     "locator": "PDF s. 3 (visuelt lest); T47 § 3 første ledd a nr 2",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -788,23 +771,9 @@
    },
    "e1xFindings": [
     {
-     "claim": "CO2-komponenten for gruppe b er endret med virkning fra 2026-09-01 (450/600/1 200 kr per g/km); satser for gruppe a er ikke verifisert.",
-     "source": "T31",
-     "locator": "Vedtak 1131/1132",
-     "verifiedDate": "2026-10-16",
-     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
-    },
-    {
      "claim": "Gruppe a 2026: CO2 0–100 g/km 800 kr/g, 101–150 g/km 1 600, 151–225 g/km 3 200, over 225 g/km 5 000.",
      "source": "T30",
      "locator": "Vedtak 220 (gruppe a)",
-     "verifiedDate": "2026-10-16",
-     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
-    },
-    {
-     "claim": "§ 3-1: WLTP-kjøretøy bruker relevant kombinert CO2-verdi; der forskriften anvender NEDC-omregning er faktoren 1,24 for gruppe a/j og 1,22 for gruppe b.",
-     "source": "T05",
-     "locator": "Forskrift § 3-1",
      "verifiedDate": "2026-10-16",
      "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
     }
@@ -862,7 +831,21 @@
       "note": "INTERN sperre i motoren (ikke kildedokumentert opphør): ingen beregning etter denne datoen uten ny kildekontroll."
      }
     }
-   ]
+   ],
+   "scope": {
+    "narrowedOn": "2026-10-18",
+    "narrowedFrom": "R-OTA-002 (hele CO2-komponenten, E1P)",
+    "in": [
+     "avgiftsgruppe a personbil, stortingsvedtaket § 3 første ledd a nr 2",
+     "motorvogn med stempeldrevet forbrenningsmotor (inkl. ladbar hybrid)",
+     "WLTP-godkjent (EPA/NRCan behandles som WLTP); CO2 i HELE g/km fra feltet «kombinert» (ladbar hybrid: «vektet kombinert»)",
+     "marginale bånd: første 100 / neste 50 / neste 75 / resten"
+    ],
+    "outOfScopeBlocked": "NEDC (× 1,24), CO2 = egenvekt/10, desimal-CO2 og andre avgiftsgrupper: se R-OTA-015 (E1P; motoren blokkerer dem)",
+    "traceability": "Kilder og funn for NEDC/fallback/andre grupper er flyttet uendret til R-OTA-015; tidligere formulering ligger i git-historikken (commit før runde 12)."
+   },
+   "evidenceJudgement": "2026-10-18: Christian bestemte at T40s uttrykkelige «første / neste / resten», sammen med vedtakets satser, er tilstrekkelig belegg for den marginale strukturen innen avgrenset omfang. Evidensnivået følger lest kildetekst (T40 er E1-kilde); beslutningen om tilstrekkelighet er registrert her og er ikke en parametergodkjenning.",
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)"
   },
   {
    "id": "R-OTA-003",
@@ -920,7 +903,8 @@
     "approved": false,
     "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
    },
-   "e1xFindings": []
+   "e1xFindings": [],
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)"
   },
   {
    "id": "R-OTA-004",
@@ -999,7 +983,8 @@
      "verifiedDate": "2026-10-16",
      "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
     }
-   ]
+   ],
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)"
   },
   {
    "id": "R-OTA-005",
@@ -1018,16 +1003,13 @@
    "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
    "orderInCalculation": null,
    "validity": {
-    "from": "2022 (historisk lead)",
+    "from": "2026-01-01",
     "to": null,
-    "note": "2026-gyldighet ukjent."
+    "note": "Anvendes under 2026-vedtaket (§ 1: «Fra 1. januar 2026»; § 3 innledning: stempeldrevet forbrenningsmotor). Tidligere «2022 (historisk lead)» er fjernet fordi den ikke er kildebelagt for 2026; opphevelsen av vektfradraget (1. januar 2024, T03 3.3.11) er bakgrunn, ikke startdato."
    },
    "sources": [
     {
      "id": "T05"
-    },
-    {
-     "id": "T19"
     },
     {
      "id": "T03"
@@ -1156,6 +1138,16 @@
     "applicableProvision": "Vedtaket § 3 første ledd a nr 1 (tilleggsvekt 260 kr/kg over 1 200 kg) og nr 2 (CO2-bånd), begge under samme vilkår; forskrift § 3-1 gir CO2-feltet «vektet kombinert» for ladbare hybridbiler (forutsetter at § 3-CO2-komponenten gjelder dem). Ingen bestemmelse i §§ 2–4 gir PHEV vektfradrag eller unntak.",
     "circular": "Rundskriv 3.3.11 (vektfradrag for ladbare hybridbiler opphevet 1.1.2024 – altså full vekt etter § 3) og 6.12 (§ 3 ilegges «motorvogner med stempeldrevet forbrenningsmotor»).",
     "gap": "Ingen tekst nevner ladbar hybrid uttrykkelig under § 3, og det kreves ikke: anvendelsen følger av vilkåret og av at § 3-1 behandler PHEV innenfor § 3-komponentene. Gjenstår som FAKTISK krav per kjøretøy (ikke regelusikkerhet): dokumentert stempeldrevet motor, ekstern lading, «vektet kombinert»-verdi og minimumsvekt fra typegodkjenning/CoC. Vurdering: evidensen er tilstrekkelig for E1 på regelnivå."
+   },
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)",
+   "nonE1SourcesMoved": {
+    "movedOn": "2026-10-18",
+    "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
+    "sources": [
+     {
+      "id": "T19"
+     }
+    ]
    }
   },
   {
@@ -1232,17 +1224,11 @@
    "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
    "orderInCalculation": null,
    "validity": {
-    "from": "2026-01-01 (lead)",
+    "from": "2026-01-01",
     "to": null,
-    "note": "Se R-OTA-001."
+    "note": "Vedtaket § 1: «Fra 1. januar 2026»; § 2 gjelder alle personbiler i gruppe a, § 3 bare stempeldrevet forbrenningsmotor. Ingen dokumentert sluttdato; intern sikkerhetssperre 2026-12-31 (R-OTA-001)."
    },
    "sources": [
-    {
-     "id": "T02"
-    },
-    {
-     "id": "T04"
-    },
     {
      "id": "T03"
     },
@@ -1310,7 +1296,20 @@
     "approved": false,
     "reason": "Regel dokumentert (helt eller delvis), men parameter ikke godkjent: se approvalRequirements"
    },
-   "e1xFindings": []
+   "e1xFindings": [],
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)",
+   "nonE1SourcesMoved": {
+    "movedOn": "2026-10-18",
+    "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
+    "sources": [
+     {
+      "id": "T02"
+     },
+     {
+      "id": "T04"
+     }
+    ]
+   }
   },
   {
    "id": "R-OTA-008",
@@ -1634,7 +1633,7 @@
   {
    "id": "R-OTA-010",
    "component": "Bruksfradrag",
-   "title": "Ordinært bruksfradrag: tabellmetode",
+   "title": "Ordinært bruksfradrag: tabellmetode (avgrenset: trinndato finnes; ikke U-009-vinduet; under 20 år)",
    "profiles": [
     "PB-BEN",
     "PB-DIE",
@@ -1652,24 +1651,17 @@
     "planlagt norsk registreringsdato",
     "grunnlaget fradraget gjelder"
    ],
-   "formulaStructure": "fradrag = prosent (alder) av beregnet engangsavgift; alder = tid fra første utenlandske registrering til første norske registrering",
-   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "formulaStructure": "fradrag = prosent (alder, dato til dato) av beregnet engangsavgift etter §§ 2 og 3; alder = tid fra første registrering i utlandet til første registrering i Norge",
+   "amountUnitAndRounding": "Prosenttrinn 2–100 pst etter tabell i forskrift § 3-3 (41 trinn; T05, T07, T42 identiske). Fradraget gjøres i avgiften etter §§ 2 og 3 (vedtak § 4). Avrunding: sluttkravet (R-OTA-014); prosentfradrag og mellomsummer avrundes ikke (U-012, ikke omtalt i kilder).",
    "orderInCalculation": null,
    "validity": {
-    "from": null,
+    "from": "2024-01-01",
     "to": null,
-    "note": "Tabellens ikrafttredelse ikke dokumentert i filen; endret 1.1.2024 (ett ekstra trinn)."
+    "note": "Gjeldende tabellversjon i kraft 1. januar 2024 (forskrift 18. des 2023 nr. 2154; T42). Ingen dokumentert sluttdato. Anvendelsen i 2026 følger vedtaket § 4 (fra 1. januar 2026)."
    },
    "sources": [
     {
-     "id": "T06"
-    },
-    {
      "id": "T07"
-    },
-    {
-     "id": "T04",
-     "section": "§ 4"
     },
     {
      "id": "T03"
@@ -1691,8 +1683,8 @@
      "section": "§ 4"
     }
    ],
-   "evidenceLevel": "E1P",
-   "status": "delvis_E1_vedtak_og_forskrift_lest_maanedstrinn_uavklart_U009",
+   "evidenceLevel": "E1",
+   "status": "E1_avgrenset_U009_i_R-OTA-016_parameter_ikke_godkjent",
    "leads": [
     {
      "claim": "Standardiserte prosentsatser etter alder; alternativ individuell metode finnes (utenfor første motor).",
@@ -1705,11 +1697,11 @@
     }
    ],
    "openQuestions": [
-    "Trinn for måneder: T42 sier eksplisitt at neste steg oppnås på dagen kjøretøyet «fyller år»; dato-til-dato-prinsippet er eksemplifisert bare for hele år (T03 4.2). At månedstrinn også oppnås på dagen i måneden (inklusiv) er en tolkning (E1P).",
-    "Hvilken dato som gjelder når første registrering har dag 29–31 og målmåneden er kortere er ikke spesifisert; motoren blokkerer når utfallet avhenger av valget.",
-    "Dato for «første gangs registrering i Norge» (styrende hendelse) er forskrift § 1-2 nr. 1: første gangs registrering i det sentrale motorvognregisteret; forventet norsk registreringsdato er en forutsetning (ECON-001).",
-    "Alternativ beregning (§ 3-4) er utenfor MVP (bindende når valgt).",
-    "Avrunding: sluttkravet R-OTA-014; prosentfradraget og mellomsummer avrundes ikke (U-012)."
+    "U-009 → R-OTA-016: trinndato som ikke finnes i målmåneden (dag 29–31); motoren blokkerer i vinduet.",
+    "Motorvogn 20 år eller eldre: minimumssetningen i § 3-3 («ikke lavere enn avgift for 20 år eller eldre») er ikke utledet (R-OTA-011); advarsel, ikke blokkering.",
+    "Alternativ beregning (§ 3-4) er utenfor MVP.",
+    "Avrunding: R-OTA-014; prosentfradrag og mellomsummer avrundes ikke (U-012).",
+    "Forventet norsk registreringsdato er en forutsetning (ECON-001); styrende hendelse er faktisk første registrering."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -1762,6 +1754,36 @@
      "source": "T47",
      "locator": "§ 4",
      "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Forskrift § 3-3 første ledd: «Ved første gangs registrering av brukte motorvogner gjøres det følgende fradrag i avgiften»; tabellen angir «Alder over 1 måned 2 pst.» … «Alder over 18 år 98 pst», «Alder 20 år eller eldre 100 pst».",
+     "source": "T05",
+     "locator": "§ 3-3 første ledd (PDF s. 5–6)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Rundskriv 4.2: «Motorvognens alder regnes fra det tidspunktet motorvognen ble registrert første gang i utlandet og frem til tidspunktet motorvognen registreres her i landet. Bruksfradraget skal regnes fra dato til dato.» Eksempelet (15. januar → ett-års fradrag 15. januar året etter) er et årseksempel, men setningen «regnes fra dato til dato» er generell og ikke avgrenset til hele år.",
+     "source": "T03",
+     "locator": "4.2",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "T42: «Merk at neste steg i bruksfradragstabellen oppnås på dagen kjøretøyet «fyller år», med unntak for siste steg, da ansees kjøretøyet å være 20 år fra og med 1. januar dette året.» Ordlyden gjelder «neste steg» i tabellen (som har både måneds- og årstrinn), og den eneste uttrykte unntaket er siste steg. «Fyller år» er årsformulert; det finnes ikke noe eksplisitt månedseksempel, og ingen kilde gir en annen regel for månedstrinn. Tabellen sier «Alder over …», men T42 presiserer at steget oppnås på dagen.",
+     "source": "T42",
+     "locator": "PDF s. 1–2 (visuelt lest)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Forskrift § 3-3 tredje ledd: «Ved fastsettelse av motorvognens alder skal tidspunktet for første gangs registrering legges til grunn.»",
+     "source": "T05",
+     "locator": "§ 3-3 tredje ledd (PDF s. 6)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "§ 3-3 er sist endret ved forskrift 18. des 2023 nr. 2154 (i kraft 1. jan 2024); T42: «Med virkning fra 1. januar 2024 er det gjort endringer i bruksfradragstabellen … nytt steg (20 år).» Dette er ikrafttredelsen av gjeldende tabellversjon.",
+     "source": "T05",
+     "locator": "§ 3-3, fotnote om endringer (PDF s. 6); T42 PDF s. 2",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -1785,7 +1807,38 @@
      "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
     }
    ],
-   "governingEvent": null
+   "governingEvent": "Første gangs registrering av brukte motorvogner i Norge (forskrift § 3-3 første ledd; vedtak § 4)",
+   "scope": {
+    "narrowedOn": "2026-10-18",
+    "narrowedFrom": "R-OTA-010 (E1P)",
+    "in": [
+     "ordinær tabellmetode (forskrift § 3-3) med 41 trinn",
+     "alder fra første gangs registrering i utlandet til første gangs registrering her i landet, dato til dato",
+     "trinn nås på dagen for trinndatoen, også månedstrinn (kildens ordlyd, se e1Findings)",
+     "fradrag i avgiften etter §§ 2 og 3, ikke i vrakpantavgiften",
+     "20-årsregelen: 20 år fra 1. januar i året 20 år er gått"
+    ],
+    "outOfScopeUnresolved": [
+     "trinndato som ikke finnes i målmåneden (første registrering dag 29–31): R-OTA-016 / U-009; blokkert i vinduet",
+     "motorvogn 20 år eller eldre: 100 pst fradrag er belagt, men setningen «Avgiften kan likevel ikke settes lavere enn den avgift som skal svares for motorvogner som på innførselstidspunktet er 20 år eller eldre» er ikke utledet (R-OTA-011); motoren gir advarsel, ikke blokkering",
+     "alternativ beregning (§ 3-4): utenfor MVP"
+    ],
+    "traceability": "Det uavklarte (dag 29–31) er flyttet til R-OTA-016."
+   },
+   "scopeDecision": "Månedstrinn behandles som øvrige trinn (dato til dato; neste steg på dagen) fordi ordlyden i T03 4.2 og T42 er generell og eneste uttrykte unntak er siste steg. Det er en lesing av hele ordlyden, ikke et eksplisitt månedseksempel i kilden. Ingen ny blokkering på månedstrinndager er innført; U-009 beholdes uendret.",
+   "nonE1SourcesMoved": {
+    "movedOn": "2026-10-18",
+    "reason": "Godkjenning krever at alle `sources` er E1 (check-docs). Ikke-E1-kilder er flyttet hit uten endring i funn; de er leads/E1X og brukes ikke som belegg.",
+    "sources": [
+     {
+      "id": "T06"
+     },
+     {
+      "id": "T04",
+      "section": "§ 4"
+     }
+    ]
+   }
   },
   {
    "id": "R-OTA-011",
@@ -2928,7 +2981,222 @@
     "notRequiredForE1OfThisRule": "Mellomledd (U-012) og MVA-avrunding (U-013) er egne åpne punkter og er utenfor R-OTA-014s påstand (avrunding av sluttkravet).",
     "classificationNote": "Klassifiseringen er ikke endret for å passere godkjenningskravet. Klasse 1-referanse er et eget krav for godkjenning og løfter ikke evidensnivået.",
     "acceptedAssessment": "En senere aksept av en begrunnet juridisk vurdering (virkeområdekjeden) er IKKE en ny primærkildetekst og registreres aldri som e1Finding eller kilde. Den registreres som en beslutning (DECISIONS.md / parameterApproval-begrunnelse) med hvem, dato og tekst. Den endrer ikke evidensnivået av seg selv.",
-    "evidenceVsApproval": "Evidensklassifisering (rules.json evidenceLevel) følger bare lest kildetekst (E1/E1P…). Godkjenningsbeslutning (parameterApproval) er Christians. Godkjenningsporten krever E1 og klasse 1; å godkjenne R-OTA-014 mens den er E1P ville kreve en eksplisitt, egen beslutning om evidensmodellen/portene — det er utenfor ECON-002, og kravet om E1 er ikke svekket."
+    "evidenceVsApproval": "Evidensklassifisering (rules.json evidenceLevel) følger bare lest kildetekst (E1/E1P…). Godkjenningsbeslutning (parameterApproval) er Christians. Godkjenningsporten krever E1 og klasse 1; å godkjenne R-OTA-014 mens den er E1P ville kreve en eksplisitt, egen beslutning om evidensmodellen/portene — det er utenfor ECON-002, og kravet om E1 er ikke svekket.",
+    "sourceInvestigation": {
+     "date": "2026-10-18",
+     "decision": "Videre kildeundersøkelse (ikke beslutning som omgår E1-kravet). E1P beholdes inntil undersøkelsen er ferdig.",
+     "searchedInReadSources": {
+      "T03 (rundskriv engangsavgift 2026), T47/T06 (vedtak), Lovdata engangsavgift 2026 (T10-fil), endringsvedtak FOR-2026-06-19-1246": "ingen omtale av avrunding (tekstsøk «avrund» uten treff; forskriften om engangsavgift T05 er lest visuelt, ikke tekstsøkt)",
+      "T45/T46/T49": "generell regel og kjede som i e1Findings; ingen uttrykkelig engangsavgift-anvendelse; håndbokens avsnitt viser til «Vis forskrifter og forarbeider», men selve forarbeidene er ikke lest"
+     },
+     "access": "Nettverk til norske verter er blokkert i denne miljøet (ingen tilkobling), så forarbeider og myndighetsforklaringer kunne ikke hentes.",
+     "requestedDocuments": [
+      {
+       "title": "Forskrift 25. mars 2010 nr. 462 (endring av skattebetalingsforskriften, i kraft 1. april 2010; innfører § 10-4-4 med dagens nummer) med eventuelle merknader/høringsnotat",
+       "url": "https://lovdata.no/forskrift/2010-03-25-462",
+       "urlStatus": "mønster og forskrifts-ID er hentet fra lenker i den leste T46-siden; ikke åpnet; tittelen må bekreftes i Lovdata"
+      },
+      {
+       "title": "Skattebetalingsloven (LOV-2005-06-17-67) § 10-4, fanen «Forarbeider» (lovproposisjonen til skattebetalingsloven og Stortingets behandling)",
+       "url": "https://lovdata.no/dokument/NL/lov/2005-06-17-67",
+       "urlStatus": "URL er T49 (lest side); selve forarbeidene ikke åpnet. Proposisjonsnummeret er ikke verifisert (antatt Ot.prp. nr. 83 (2004–2005) — må bekreftes)"
+      },
+      {
+       "title": "Skattebetalingshåndboken § 10-4 «Vis forskrifter og forarbeider» (Skattedirektoratet)",
+       "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/skattebetalingshandboken/gjeldende/SKTB_ID-10-0.001/SKTB_ID-10-4.001/SKTB_ID-10-4.003",
+       "urlStatus": "URL er T45 (lest side); lenkene til forarbeider er ikke fulgt"
+      },
+      {
+       "title": "Finansdepartementets/Skattedirektoratets høringsnotat og merknader til endringen av skattebetalingsforskriften i 2010 (avrundingsbestemmelsen)",
+       "url": null,
+       "urlStatus": "dokumenttittel og URL er ikke verifisert; må finnes via regjeringen.no høringssøk eller Lovdata-fanen for forskrift 2010-03-25-462"
+      }
+     ],
+     "note": "Ingenting av dette er lest; ingen e1Finding er lagt til."
+    }
+   },
+   "governingEvent": "Beregning av skatte- og avgiftskravet (skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav»); for engangsavgift skjer beregningen ved første gangs registrering (vedtak § 1)"
+  },
+  {
+   "id": "R-OTA-015",
+   "component": "Engangsavgift gruppe a",
+   "title": "CO2-grunnlag utenfor WLTP-heltall: NEDC (× 1,24/1,22), egenvekt/10-anslag, desimal-CO2 og andre avgiftsgrupper (blokkert)",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV"
+   ],
+   "inputs": [
+    "CO2 g/km",
+    "testmetode (WLTP/NEDC)",
+    "kilde i vognkort/typegodkjenning"
+   ],
+   "formulaStructure": "komponent = sats-trapp over CO2-bånd; CO2 fra registrert verdi, ellers anslag",
+   "amountUnitAndRounding": "NEDC-faktor 1,24 (gruppe a/j) og 1,22 (gruppe b) (T05 § 3-1; T03 3.2.5); anslått CO2 = egenvekt (kg) / 10. Resultatet gir desimaler; avrunding er IKKE kildebelagt (U-012). Ikke beregnet.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikke fastsatt for denne regelen; blokkert. Gyldighet kildebelegges ved senere løfting."
+   },
+   "sources": [
+    {
+     "id": "T03"
+    },
+    {
+     "id": "T05"
+    },
+    {
+     "id": "T47",
+     "section": "§ 3"
+    }
+   ],
+   "evidenceLevel": "E1P",
+   "status": "E1P_blokkert_i_motor_desimal_CO2_uten_avrundingskilde",
+   "leads": [],
+   "openQuestions": [
+    "Avrunding av CO2 etter × 1,24 / egenvekt/10 (desimaler) er ikke omtalt i noen kilde (U-012): resultatet kan ikke beregnes.",
+    "Andre avgiftsgrupper (b, c, j …) er ikke registrert som parametere.",
+    "Gruppe b CO2 endret fra 2026-09-01 (E1X; R-OTA-008)."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-15",
+   "researchDate": "2026-10-16",
+   "e1Findings": [
+    {
+     "claim": "NEDC-godkjente kjøretøy: registrert CO2 justeres opp med fast faktor, 24 % i gruppe a og j og 22 % i gruppe b, før satstabellen.",
+     "source": "T03",
+     "locator": "3.2.5",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Målemetode ukjent: første registrering i utlandet før 1.9.2018 → NEDC-behandling; fra og med 1.9.2018 eller ikke tidligere registrert → WLTP.",
+     "source": "T03",
+     "locator": "3.2.5",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Uten plikt til å oppgi CO2: anslått CO2 = egenvekt/10 (se R-OTA-004).",
+     "source": "T03",
+     "locator": "3.2.6",
+     "readDate": "2026-10-15"
+    },
+    {
+     "claim": "WLTP-godkjent kjøretøy i gruppe a: CO2 fra feltet «kombinert» i samsvarssertifikatet; ladbar hybrid: feltet «vektet kombinert». NEDC: verdi × 1,24 (gruppe a og j), × 1,22 (gruppe b). Ikke godkjent etter WLTP/NEDC: CO2 = egenvekt (kg) / 10. Uten kjent testmetode: WLTP hvis første registrering i utlandet 1.9.2018 eller senere eller ikke tidligere registrert; ellers NEDC. EPA/NRCan behandles som WLTP.",
+     "source": "T05",
+     "locator": "§ 3-1 andre til sjette ledd (PDF s. 5)",
+     "readDate": "2026-10-18"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "E1P og blokkert i motoren; ikke godkjenningsklar."
+   },
+   "e1xFindings": [
+    {
+     "claim": "CO2-komponenten for gruppe b er endret med virkning fra 2026-09-01 (450/600/1 200 kr per g/km); satser for gruppe a er ikke verifisert.",
+     "source": "T31",
+     "locator": "Vedtak 1131/1132",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
+    },
+    {
+     "claim": "§ 3-1: WLTP-kjøretøy bruker relevant kombinert CO2-verdi; der forskriften anvender NEDC-omregning er faktoren 1,24 for gruppe a/j og 1,22 for gruppe b.",
+     "source": "T05",
+     "locator": "Forskrift § 3-1",
+     "verifiedDate": "2026-10-16",
+     "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
+    }
+   ],
+   "datedParameters": [],
+   "scope": {
+    "splitFrom": "R-OTA-002",
+    "splitOn": "2026-10-18",
+    "blockedInEngine": [
+     "co2_nedc_unsupported",
+     "co2_fallback_unsupported"
+    ],
+    "note": "Dokumenterte formler beholdes som funn; resultatet er ikke beregnbart fordi avrunding av desimal-CO2 mangler kilde (U-012). Andre grupper (b, c, j …) er ikke registrert som parametere."
+   },
+   "governingEvent": "Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)"
+  },
+  {
+   "id": "R-OTA-016",
+   "component": "Bruksfradrag",
+   "title": "Månedstrinn der målmånedens dato ikke finnes (første registrering dag 29–31) — uavklart og blokkert",
+   "profiles": [
+    "PB-BEN",
+    "PB-DIE",
+    "PB-HEV",
+    "PB-PHEV",
+    "PB-BEV",
+    "VB-BEN",
+    "VB-DIE",
+    "VB-HEV",
+    "VB-PHEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "første registreringsdag (29–31)",
+    "norsk registreringsdato"
+   ],
+   "formulaStructure": "Ikke fastsatt: kilden angir ikke hvilken dato et trinn nås når målmåneden er kortere enn registreringsdagen.",
+   "amountUnitAndRounding": "Ikke fastsatt. Motoren regner begge kandidater (siste dag i måneden / 1. i neste måned) og blokkerer med age_step_boundary_ambiguous bare når norsk registreringsdato ligger i vinduet mellom dem.",
+   "orderInCalculation": null,
+   "validity": {
+    "from": null,
+    "to": null,
+    "note": "Ikke fastsatt (kilden er taus)."
+   },
+   "sources": [
+    {
+     "id": "T05",
+     "section": "§ 3-3"
+    },
+    {
+     "id": "T42",
+     "section": "PDF s. 1–2"
+    },
+    {
+     "id": "T03",
+     "section": "4.2"
+    }
+   ],
+   "leads": [],
+   "evidenceLevel": "E1P",
+   "status": "E1P_uavklart_blokkert_i_vinduet_U009",
+   "openQuestions": [
+    "U-009: hva som skjer når trinndatoen ikke finnes i målmåneden (f.eks. første registrering 31. januar, trinn «1 måned»): ingen kilde sier om trinnet nås siste dag i måneden eller 1. i neste måned.",
+    "Utenfor vinduet er utfallet identisk under begge lesninger (motoren regner begge)."
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": "2026-10-18",
+   "researchDate": "2026-10-18",
+   "e1Findings": [
+    {
+     "claim": "Forskrift § 3-3, tabellen og T42 inneholder ingen bestemmelse om trinndato når registreringsdagen (29–31) ikke finnes i målmåneden. Rundskriv 4.2 gir bare eksempelet 15. januar → 15. januar året etter, og T42 sier at neste steg nås på dagen kjøretøyet «fyller år».",
+     "source": "T05",
+     "locator": "§ 3-3 (PDF s. 5–6); T42 PDF s. 1–2; T03 4.2",
+     "readDate": "2026-10-18"
+    }
+   ],
+   "parameterApproval": {
+    "approved": false,
+    "reason": "E1P, uavklart og blokkert (U-009)."
+   },
+   "e1xFindings": [],
+   "governingEvent": "Første gangs registrering av brukte motorvogner i Norge (forskrift § 3-3 første ledd)",
+   "scope": {
+    "splitFrom": "R-OTA-010",
+    "splitOn": "2026-10-18",
+    "blockedInEngine": [
+     "age_step_boundary_ambiguous"
+    ]
    }
   }
  ],
@@ -3029,9 +3297,9 @@
    "id": "U-009",
    "claim": "Månedstrinn i bruksfradrag og dag-overflyt (første registrering dag 29–31).",
    "status": "åpen",
-   "note": "Kilden sier at steg nås på dagen kjøretøyet «fyller» alderen (T42; rundskriv 4.2: 15. januar → 15. januar). Den sier ikke noe om dag 29–31 når målmåneden er kortere (eksempel: første registrering 31. januar, trinn «1 måned»: er trinnet nådd 28. februar eller 1. mars?). Motoren regner begge kandidater og blokkerer bare når norsk registreringsdato ligger i vinduet [siste dag i målmåneden, første dag i neste måned). Konkrete grenseeksempler: reviews/ECON-002.md §4. Runde 4: vedtak § 4 og forskrift § 3-3 gir ingen regel for dag 29–31; uendret åpen, motoren blokkerer i vinduet.",
+   "note": "Kilden sier at steg nås på dagen kjøretøyet «fyller» alderen (T42; rundskriv 4.2: 15. januar → 15. januar). Den sier ikke noe om dag 29–31 når målmåneden er kortere (eksempel: første registrering 31. januar, trinn «1 måned»: er trinnet nådd 28. februar eller 1. mars?). Motoren regner begge kandidater og blokkerer bare når norsk registreringsdato ligger i vinduet [siste dag i målmåneden, første dag i neste måned). Konkrete grenseeksempler: reviews/ECON-002.md §4. Runde 4: vedtak § 4 og forskrift § 3-3 gir ingen regel for dag 29–31; uendret åpen, motoren blokkerer i vinduet. Runde 12: uavklart del er skilt ut i R-OTA-016 (E1P, blokkert); R-OTA-010 er avgrenset til datoer der trinndatoen finnes.",
    "affects": [
-    "R-OTA-010"
+    "R-OTA-016"
    ],
    "state": "open"
   },
@@ -3069,7 +3337,8 @@
     "R-OTA-001",
     "R-OTA-002",
     "R-OTA-010",
-    "R-OTA-014"
+    "R-OTA-014",
+    "R-OTA-015"
    ],
    "state": "open"
   },
@@ -3092,7 +3361,7 @@
   "date": "2026-10-18",
   "approvedParameters": 0,
   "class1References": 3,
-  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001, R-OTA-005 og R-OTA-007 på E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md. Runde 5: R-OTA-005 (PHEV) E1 etter revurdering av det tekniske vilkåret. Runde 9 (18.10.2026): to klasse 1-referanser registrert (EV og diesel, `explicit_inputs`); PHEV venter på dokumentasjon av steg 11. Klasse 1 er ikke godkjenning, og R-OTA-002/-010/-014 er fortsatt E1P. Runde 10 (18.10.2026): PHEV registrert som klasse 1 etter brukerbekreftelse av steg 11 (tre klasse 1-referanser). Klasse 1 er ikke godkjenning; R-OTA-002/-010/-014 er E1P.",
+  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001, R-OTA-005 og R-OTA-007 på E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md. Runde 5: R-OTA-005 (PHEV) E1 etter revurdering av det tekniske vilkåret. Runde 9 (18.10.2026): to klasse 1-referanser registrert (EV og diesel, `explicit_inputs`); PHEV venter på dokumentasjon av steg 11. Klasse 1 er ikke godkjenning, og R-OTA-002/-010/-014 er fortsatt E1P. Runde 10 (18.10.2026): PHEV registrert som klasse 1 etter brukerbekreftelse av steg 11 (tre klasse 1-referanser). Klasse 1 er ikke godkjenning; R-OTA-002/-010/-014 er E1P. Runde 12 (18.10.2026): R-OTA-002 avgrenset (gruppe a, WLTP, hele g/km) og R-OTA-010 avgrenset (trinndato finnes) er E1 etter kildetekst; uavklart del skilt ut i R-OTA-015 (NEDC/egenvekt-10/desimal-CO₂) og R-OTA-016 (dag 29–31), begge E1P og blokkert; R-OTA-014 er fortsatt E1P (videre kildeundersøkelse, nettverk blokkert). 0 godkjente parametere.",
   "doneRequires": [
    "minst én godkjent parameter per implementert komponent (rules.parameterApproval.approved=true med godkjenner)",
    "minst ett klasse 1-tilfelle per profil i omfang",

@@ -73,7 +73,7 @@ Nedbrytningsbildene med andre priser (PHEV 2 600 000, EV 300 000) er **separate 
 Observert input er CO₂ 140 g/km og målemetode «WLTP». «Vektet kombinert» er en **motorantakelse** (testintensjon) som trengs fordi motoren blokkerer `wltp_combined` for PHEV; den er ikke observert og blir ikke observert av at totalen stemmer. Antakelsen påvirker ikke hva kalkulatorreferansen dokumenterer (kalkulatorens egne input), men den må stå ved enhver bruk av referansen til å validere motorens PHEV-regel (R-OTA-005/-002). Den er beholdt i `co2MethodAssumption` og i testen.
 
 ### 4.5 Det klasse 1 ikke betyr
-Klasse 1 er ikke godkjenning. R-OTA-002, R-OTA-010 og R-OTA-014 er fortsatt E1P og er ikke godkjenningsklare. Ingen parameter er godkjent. EV/diesel-referansene dekker bare de reglene motoren anvendte for disse inputene (`ruleIds`); de beviser ikke enkeltregler isolert (kalkulatoren viser ikke delregler her).
+Klasse 1 er ikke godkjenning. R-OTA-014 er fortsatt E1P og er ikke godkjenningsklar (R-OTA-002 og R-OTA-010 ble avgrenset og er E1 fra runde 12, se `reviews/ECON-002.md` §22). Ingen parameter er godkjent. EV/diesel-referansene dekker bare de reglene motoren anvendte for disse inputene (`ruleIds`); de beviser ikke enkeltregler isolert (kalkulatoren viser ikke delregler her).
 
 ## 5. Motoren mot observasjonene (18.10.2026, profil `NO-OTA-2026-A-PB`, ingen kalibrering)
 | | PHEV | EV | Diesel |

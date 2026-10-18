@@ -683,3 +683,24 @@ describe("domenekode for avgift er uavhengig og uten float", () => {
     }
   });
 });
+
+describe("regelregisteret: avgrensede regler og godkjenningsforutsetninger for anvendte regler (runde 12)", () => {
+  const rules = json("rules.json").rules as Array<{ id: string; evidenceLevel: string; governingEvent?: string | null; validity?: { from: string | null }; scope?: Record<string, unknown> }>;
+  const byId = (id: string) => rules.find((r) => r.id === id)!;
+  it("hver regel motoren anvender har validity.from og governingEvent (godkjenningsforutsetning, ikke evidens)", () => {
+    for (const ref of Object.keys(NO_OTA_2026_A_PB.ruleEvidence)) {
+      expect(byId(ref).validity?.from, ref).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(byId(ref).governingEvent, ref).toBeTruthy();
+    }
+  });
+  it("R-OTA-002 og R-OTA-010 er avgrenset (E1 med scope); det uavklarte ligger i R-OTA-015/-016 (E1P) som motoren blokkerer", () => {
+    for (const id of ["R-OTA-002", "R-OTA-010"]) expect([byId(id).evidenceLevel, !!byId(id).scope], id).toEqual(["E1", true]);
+    for (const id of ["R-OTA-015", "R-OTA-016"]) expect(byId(id).evidenceLevel, id).toBe("E1P");
+    expect(Object.keys(NO_OTA_2026_A_PB.ruleEvidence)).not.toEqual(expect.arrayContaining(["R-OTA-015"]));
+    expect(Object.keys(NO_OTA_2026_A_PB.ruleEvidence)).not.toEqual(expect.arrayContaining(["R-OTA-016"]));
+  });
+  it("R-OTA-014 er fortsatt E1P og er det eneste anvendte regelnivået som holder resultatet på estimate_not_approved", () => {
+    const weak = Object.entries(NO_OTA_2026_A_PB.ruleEvidence).filter(([, l]) => l === "E1P").map(([k]) => k);
+    expect(weak).toEqual(["R-OTA-014"]);
+  });
+});

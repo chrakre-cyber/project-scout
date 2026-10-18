@@ -100,22 +100,23 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
   sources: ["T03", "T05", "T40", "T42", "T43", "T44", "T45", "T46", "T47", "T48", "T49"],
   ruleEvidence: {
     "R-OTA-001": "E1",
-    "R-OTA-002": "E1P",
+    "R-OTA-002": "E1", // avgrenset: gruppe a, WLTP, hele g/km (NEDC/egenvekt-10 = R-OTA-015, blokkert)
     "R-OTA-005": "E1",
     "R-OTA-007": "E1",
-    "R-OTA-010": "E1P",
+    "R-OTA-010": "E1", // avgrenset: trinndato finnes; dag 29–31 = R-OTA-016 (U-009), blokkert i vinduet
     "R-IMP-OTH-001": "E1",
     "R-OTA-014": "E1P",
   },
   approval: {
     approved: false,
     class1References: 3,
-    reason: "Ingen eksplisitt parameterApproval. Tre klasse 1-referanser (PHEV, EV og diesel, 18.10.2026) er registrert; klasse 1 er ikke godkjenning, og R-OTA-002/-010/-014 er E1P (docs/tax/rules.json foundationStatus).",
+    reason: "Ingen eksplisitt parameterApproval. Tre klasse 1-referanser (PHEV, EV og diesel, 18.10.2026) er registrert; klasse 1 er ikke godkjenning, og R-OTA-014 er E1P (docs/tax/rules.json foundationStatus).",
   },
   openItems: [
     "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
     "R-OTA-014 er E1P: skattebetalingsforskriften § 10-4-4 nevner ikke engangsavgift uttrykkelig (anvendelsen følger av skattebetalingsloven § 1-1 (2) i, § 10-40 (1) c og forskriften § 10-4-1 d)",
-    "U-009: månedstrinn i bruksfradrag og dag-overflyt (dag 29–31) er ikke spesifisert",
+    "U-009 / R-OTA-016: trinndato som ikke finnes i målmåneden (dag 29–31) er ikke spesifisert; blokkert i vinduet",
+    "R-OTA-015: NEDC, egenvekt/10 og desimal-CO₂ er blokkert (avrunding av desimaler mangler kilde)",
     "PHEV: anvendelsen hviler på det tekniske vilkåret i § 3 og på forskrift § 3-1 (E1-tekst); forutsetter dokumentert stempeldrevet motor og ekstern lading per kjøretøy",
     "Ingen eksplisitt sluttdato for 2026-satsene (intern sikkerhetssperre); endringer etter hentedato 2026-10-18 og lov 19 juni 2026 nr. 41 er ikke kontrollert",
     "Ingen parameter er godkjent og ingen klasse 1-referanse finnes",
