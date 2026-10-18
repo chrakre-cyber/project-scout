@@ -1,0 +1,69 @@
+{
+  "packageDate": "2026-10-18",
+  "scope": "user-provided calculator screenshots; no parameter approval",
+  "files": [
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/01_resultat_pris_600000.png",
+      "originalAttachmentName": "codex-clipboard-428ced70-efbf-4489-b2f1-29cb610ef90b.png",
+      "bytes": 53339,
+      "sha256": "c0ce1d9779ef863652bf19593d29472afac510ca182b9d63281fbcc92462fd44",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/02_input_pris_600000.png",
+      "originalAttachmentName": "codex-clipboard-ea94828f-caa0-4b7c-b912-ae91861d7d38.png",
+      "bytes": 42609,
+      "sha256": "f3a48cce0d2262112de0755e5146a3c8ebb06f3aa2cadee740b10ee4f3d8e0d5",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/03_nedbrytning_pris_2600000.png",
+      "originalAttachmentName": "codex-clipboard-aee9ad63-1b09-42f0-87d8-83a3dd57cbda.png",
+      "bytes": 45259,
+      "sha256": "bd1fcf4033bf372f042975e9541464075a69a0c05bf9c76abdefdb3c24347b89",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/02_EV/01_resultat_pris_350000.png",
+      "originalAttachmentName": "codex-clipboard-f8cb4f36-9848-4580-8c2f-2308df13dc91.png",
+      "bytes": 59608,
+      "sha256": "c5b0b890ca64fd372f0d97f72922ce1916497bb694c9e7a3e2ca422c8207101d",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/02_EV/02_input_pris_350000.png",
+      "originalAttachmentName": "codex-clipboard-0cb6d8c1-b4cb-40bd-8eac-85cd13ed6875.png",
+      "bytes": 59385,
+      "sha256": "fa4f7906c85055e997761aeff2ee23d36a80347c40fc0a78ae63c9b2845a304e",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/02_EV/03_nedbrytning_pris_300000.png",
+      "originalAttachmentName": "codex-clipboard-61cb13c9-4cc0-4b52-8346-358fb8fee0d9.png",
+      "bytes": 56858,
+      "sha256": "61fc7f86f67b4d0882dc78e96f40cc5831ac3373a83a90aeb1e17000628a5e44",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/01_resultat_pris_350000.png",
+      "originalAttachmentName": "codex-clipboard-5bb34111-b7fe-4294-a7b8-ce51f4f00234.png",
+      "bytes": 58507,
+      "sha256": "5741720423d549572d5449964fff8752d89eeb3159c2e1c5e7b95fc6f676b37b",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/02_input_pris_350000.png",
+      "originalAttachmentName": "codex-clipboard-0886e5f9-83bc-4130-9abb-51f61d8362bc.png",
+      "bytes": 42648,
+      "sha256": "5801f85928a803efbc6d982f36fed896d9b7e1e023d282cdd3df7049f02367f1",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    },
+    {
+      "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/03_nedbrytning_pris_350000.png",
+      "originalAttachmentName": "codex-clipboard-70e47298-0630-407a-a85c-83af2addbe8c.png",
+      "bytes": 40504,
+      "sha256": "9d44331d14bf5a99e6b244a9dbdf056c8768907e37d7feae4b8c35d59c51efc5",
+      "provenance": "Brukeropplastet skjermbilde i denne samtalen; uendrede filbyte."
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 5: §15)
 
-**Status: REVIEW.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Status: REVIEW.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; ingen klasse 1 registrert; ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -513,4 +513,31 @@ Uten teknisk dokumentasjon registreres kjøringen som type 1 (`referenceScope = 
 
 ### 17.7 Kontroller
 `node docs/tax/check-docs.mjs` OK (R-OTA-014-tekst rettet); `npx vitest run` — **31 filer, 731 tester bestått** (uendret; ingen nye tester); ingen kodeendring. Ikke kjørt: `npm run build`, e2e, DB, kalkulator.
+
+## 18. Runde 8 — kalkulatorkjøringene mottatt (18.10.2026)
+
+Detaljer og tabeller: `docs/tax/golden-runs/2026-10-18/REGISTRERING.md`; maskinlesbart: `references.json` → `calculatorObservations`; test: `tests/tax-calculator-observations.test.ts`.
+
+### 18.1 Kontroll av leveransen
+Ni originalbilder: SHA-256 og størrelse stemmer med manifestet (kontrollert av meg; automatisert i testen). Transkripsjonen er avstemt mot bildene uten avvik. Nye referanse-ID-er `GR-20261018-01` (PHEV), `-02` (EV), `-03` (diesel); CASE-001/002/003 er urørt og fremstilles ikke som bildenes opprinnelige dokumentasjon.
+
+### 18.2 Hva som er observert, brukerbekreftet og ukjent
+- **Observert i bildene:** alle inputfelt som er vist, resultat, delposter (engangsavgift, vrakpant, total) og mva.
+- **Brukerbekreftet, ikke synlig i bildene:** kjøredato 18.10.2026 og at norsk registreringsdato = kalkulatorens automatiske dagsdato 18.10.2026 (samme proveniens).
+- **Ukjent:** klokkeslett, URL, kalkulatorversjon, bruksfradragsprosent (lenken «Engangsavgiften består av» er ikke åpnet).
+- **Prisversjoner holdt adskilt:** PHEV 600 000 (input + resultat) og 2 600 000 (nedbrytning); EV 350 000 (input + resultat) og 300 000 (nedbrytning); diesel 350 000 (alle bilder). Nedbrytningsbildene for PHEV og EV har ikke eget inputbilde; det er ikke antatt at bare pris ble endret. PHEV-inputbildet slutter ved egenvekt.
+- **Testantakelser (ikke observert):** CO₂-metode «vektet kombinert» (PHEV) og «kombinert» (diesel); drivlinjeflagg utledet fra valg i kalkulatoren; ingen CO₂-verdi for elbil (resultatet er uavhengig av den); egenvektdefinisjon ukjent.
+
+### 18.3 Motoren mot observasjonene
+Motoren (`NO-OTA-2026-A-PB`, dato 2026-10-18, dagpresisjon, uendret kode og regler) gir sluttkrav **529 069 / 16 748 / 333 723**, lik de viste totalene; engangsavgift (eksakt 526 669,738 / 14 348,9545 / 331 323,972) stemmer med viste 526 669,74 / 14 348,95 / 331 323,97. Ingen kalibrering. Status er fortsatt `calculated_unverified`. Samsvaret lukker ikke U-012 og løfter ikke R-OTA-014 (E1P); ørebeløp er visningsverdier. Bruksfradragsprosentene (2 / 33 / 30 %) er motorens egne, ikke observert.
+
+### 18.4 Klasse 1 — ikke registrert
+Formelt minimum i `check-docs.mjs` (tool, runDate, output) kunne vært fylt, men runDate er bare brukerbekreftet, og malen/sjekklisten krever også URL/versjon, klokkeslett og bruksfradragsprosent, samt fullt input for nedbrytningsversjonene (PHEV, EV). Jeg har ikke oppgradert automatisk (`class1References` = 0). Å la minimumsdefinisjonen alene være nok er Christians beslutning. R-OTA-002, -010 og -014 er uansett E1P.
+
+### 18.5 Mva. og åpne punkter
+Mva.-beløpene er registrert som observasjoner for ECON-004 (ikke implementert; U-013 åpen). U-009, U-012, U-003, U-008 uendret.
+
+### 18.6 Kontroller
+Kjørt: `node docs/tax/check-docs.mjs`, `npx vitest run` — **32 filer, 743 tester bestått**; `npm run typecheck`, nye tester `tests/tax-calculator-observations.test.ts` (12) og justert README-sjekk i `tests/tax-golden-runs.test.ts`. Ikke kjørt: `npm run build`, e2e, DB, selve kalkulatoren (utilgjengelig for meg).
+
 **Sluttstatus: REVIEW.**

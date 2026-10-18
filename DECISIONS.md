@@ -117,3 +117,4 @@ Ikke endret: database, RLS, auth, serveractions, providers, prototypen. Åpent: 
 - **Blokkering:** NEDC/egenvekt-fallback, bare år, dag 29–31-overflyt (bare i vinduet der kilden er taus, U-009), ukjent profil, ikke-støttet klasse og dato etter den interne sikkerhetssperren gir `blocked` med årsak, aldri 0.
 - **Gyldighet:** kildedokumentert start 2026-01-01; ingen dokumentert slutt (`documentedValidTo = null`). 2026-12-31 er en INTERN sikkerhetssperre (`internalSafetyLimit`), ikke et kildedokumentert opphør, og har egen feilkode.
 
+- **Runde 8 (18.10.2026):** kalkulatorkjøringer mottatt og registrert som `explicit_inputs` (`GR-20261018-01…03`); motoren stemmer på sluttbeløp uten kalibrering. Klasse 1 er **ikke** registrert (URL/versjon, klokkeslett, bruksfradragsprosent og fullt input for nedbrytningsversjonene mangler); å godta minimumsdefinisjonen alene er Christians beslutning. Ingen parametere godkjent; R-OTA-014 forblir E1P; U-012 åpen.

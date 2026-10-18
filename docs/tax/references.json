@@ -3512,5 +3512,161 @@
    ],
    "notes": "Datosplitt gruppe b: til og med 2026-08-31 / fra 2026-09-01 (E1X)."
   }
- ]
+ ],
+ "calculatorObservations": [
+  {
+   "id": "GR-20261018-01",
+   "label": "PHEV (testetikett Urus)",
+   "referenceScope": "explicit_inputs",
+   "evidenceClass": null,
+   "classAssessment": "ikke klasse 1 ennå (se REGISTRERING.md §4)",
+   "profileId": "NO-OTA-2026-A-PB",
+   "tool": "Skatteetatens importkalkulator (oppgitt av bruker)",
+   "runDate": "2026-10-18",
+   "runDateProvenance": "user_confirmed (ikke synlig i bildene)",
+   "runTime": null,
+   "norwegianRegistrationDateUsed": "2026-10-18",
+   "norwegianRegistrationDateProvenance": "user_confirmed: kalkulatoren bruker dagens dato automatisk; feltet kan ikke velges (ikke synlig i bildene)",
+   "observedTotalAvgiftNok": 529069,
+   "priceVersions": [
+    {
+     "priceNok": 600000,
+     "role": "input+resultat",
+     "fullInputDocumented": false,
+     "note": "inputbildet slutter ved egenvekt (steg 10); steg 11 alternativ beregning ikke synlig"
+    },
+    {
+     "priceNok": 2600000,
+     "role": "nedbrytning",
+     "fullInputDocumented": false,
+     "note": "eget inputbilde finnes ikke; ikke anta at bare pris ble endret"
+    }
+   ],
+   "files": [
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/01_resultat_pris_600000.png",
+     "sha256": "c0ce1d9779ef863652bf19593d29472afac510ca182b9d63281fbcc92462fd44",
+     "bytes": 53339
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/02_input_pris_600000.png",
+     "sha256": "f3a48cce0d2262112de0755e5146a3c8ebb06f3aa2cadee740b10ee4f3d8e0d5",
+     "bytes": 42609
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/03_nedbrytning_pris_2600000.png",
+     "sha256": "bd1fcf4033bf372f042975e9541464075a69a0c05bf9c76abdefdb3c24347b89",
+     "bytes": 45259
+    }
+   ],
+   "engineComparison": "totalen 529 069 stemmer; motoren er ikke kalibrert",
+   "stillMissing": [
+    "klokkeslett for kjøringen (ukjent)",
+    "kalkulatorens URL/adresselinje og versjon (ikke synlig; tittelen «Regn ut hva det koster å importere bil til Norge» er bare synlig i EV-inputbildet)",
+    "bruksfradragsprosent og «Engangsavgiften består av» (ikke åpnet i noe bilde)",
+    "fullt inputbilde for nedbrytningsversjonen (pris 2 600 000)",
+    "feltetikett for CO₂-målemetode (vektet kombinert)"
+   ]
+  },
+  {
+   "id": "GR-20261018-02",
+   "label": "Elbil (testetikett iX3)",
+   "referenceScope": "explicit_inputs",
+   "evidenceClass": null,
+   "classAssessment": "ikke klasse 1 ennå (se REGISTRERING.md §4)",
+   "profileId": "NO-OTA-2026-A-PB",
+   "tool": "Skatteetatens importkalkulator (oppgitt av bruker)",
+   "runDate": "2026-10-18",
+   "runDateProvenance": "user_confirmed (ikke synlig i bildene)",
+   "runTime": null,
+   "norwegianRegistrationDateUsed": "2026-10-18",
+   "norwegianRegistrationDateProvenance": "user_confirmed: kalkulatoren bruker dagens dato automatisk; feltet kan ikke velges (ikke synlig i bildene)",
+   "observedTotalAvgiftNok": 16748,
+   "priceVersions": [
+    {
+     "priceNok": 350000,
+     "role": "input+resultat",
+     "fullInputDocumented": true,
+     "note": "alle syv steg synlige; alternativ beregning uten verdi"
+    },
+    {
+     "priceNok": 300000,
+     "role": "nedbrytning",
+     "fullInputDocumented": false,
+     "note": "eget inputbilde finnes ikke; ikke anta at bare pris ble endret"
+    }
+   ],
+   "files": [
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/02_EV/01_resultat_pris_350000.png",
+     "sha256": "c5b0b890ca64fd372f0d97f72922ce1916497bb694c9e7a3e2ca422c8207101d",
+     "bytes": 59608
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/02_EV/02_input_pris_350000.png",
+     "sha256": "fa4f7906c85055e997761aeff2ee23d36a80347c40fc0a78ae63c9b2845a304e",
+     "bytes": 59385
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/02_EV/03_nedbrytning_pris_300000.png",
+     "sha256": "61fc7f86f67b4d0882dc78e96f40cc5831ac3373a83a90aeb1e17000628a5e44",
+     "bytes": 56858
+    }
+   ],
+   "engineComparison": "totalen 16 748 stemmer; motoren er ikke kalibrert; CO₂ er ikke observert for elbil",
+   "stillMissing": [
+    "klokkeslett for kjøringen (ukjent)",
+    "kalkulatorens URL/adresselinje og versjon (ikke synlig; tittelen «Regn ut hva det koster å importere bil til Norge» er bare synlig i EV-inputbildet)",
+    "bruksfradragsprosent og «Engangsavgiften består av» (ikke åpnet i noe bilde)",
+    "fullt inputbilde for nedbrytningsversjonen (pris 300 000)"
+   ]
+  },
+  {
+   "id": "GR-20261018-03",
+   "label": "Diesel (testetikett E 400 d)",
+   "referenceScope": "explicit_inputs",
+   "evidenceClass": null,
+   "classAssessment": "ikke klasse 1 ennå (se REGISTRERING.md §4)",
+   "profileId": "NO-OTA-2026-A-PB",
+   "tool": "Skatteetatens importkalkulator (oppgitt av bruker)",
+   "runDate": "2026-10-18",
+   "runDateProvenance": "user_confirmed (ikke synlig i bildene)",
+   "runTime": null,
+   "norwegianRegistrationDateUsed": "2026-10-18",
+   "norwegianRegistrationDateProvenance": "user_confirmed: kalkulatoren bruker dagens dato automatisk; feltet kan ikke velges (ikke synlig i bildene)",
+   "observedTotalAvgiftNok": 333723,
+   "priceVersions": [
+    {
+     "priceNok": 350000,
+     "role": "input+resultat+nedbrytning",
+     "fullInputDocumented": true,
+     "note": "steg 1–10 i inputbildet; steg 11 (uten verdi) i resultatbildet; samme pris i alle tre bilder"
+    }
+   ],
+   "files": [
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/01_resultat_pris_350000.png",
+     "sha256": "5741720423d549572d5449964fff8752d89eeb3159c2e1c5e7b95fc6f676b37b",
+     "bytes": 58507
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/02_input_pris_350000.png",
+     "sha256": "5801f85928a803efbc6d982f36fed896d9b7e1e023d282cdd3df7049f02367f1",
+     "bytes": 42648
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/03_nedbrytning_pris_350000.png",
+     "sha256": "9d44331d14bf5a99e6b244a9dbdf056c8768907e37d7feae4b8c35d59c51efc5",
+     "bytes": 40504
+    }
+   ],
+   "engineComparison": "totalen 333 723 stemmer; motoren er ikke kalibrert",
+   "stillMissing": [
+    "klokkeslett for kjøringen (ukjent)",
+    "kalkulatorens URL/adresselinje og versjon (ikke synlig; tittelen «Regn ut hva det koster å importere bil til Norge» er bare synlig i EV-inputbildet)",
+    "bruksfradragsprosent og «Engangsavgiften består av» (ikke åpnet i noe bilde)"
+   ]
+  }
+ ],
+ "calculatorObservationsNote": "Mottatte kalkulatorobservasjoner (18.10.2026). IKKE tellet som `cases`: ingen er registrert som klasse 1 (class1References = 0); se docs/tax/golden-runs/2026-10-18/REGISTRERING.md. Ingen parametere er godkjent."
 }
