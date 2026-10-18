@@ -1,41 +1,47 @@
 # Sjekkliste: tre manuelle kalkulatorkjøringer (PHEV, EV, diesel)
 
-Ingen kode- eller hash-arbeid for deg: du leverer filene, jeg beregner SHA-256 og registrerer proveniens etter mottak.
+Du leverer filene; jeg beregner SHA-256 og registrerer proveniens. Ingen hash- eller kodearbeid for deg.
 
-## A. Før hver kjøring
-1. Åpne `GUIDE-<kjøretøy>.md`. Skaff faktisk **første registreringsdag** (vognkort/utenlandsk registreringsbevis). Velg **norsk registreringsdato** (helst kjøredato, innenfor 2026).
-2. Ikke gjett. Mangler du en opplysning, la den stå tom og si fra.
-3. Velg **standard bruksfradrag (tabell)**; ikke alternativ beregning.
+## A. Før hver kjøring (enkelt)
+1. Åpne `GUIDE-<kjøretøy>.md`. Du kan **gjennomføre alle tre kontrollene med de oppgitte testinputene** (arbeidsdato, referansevekt, CO₂) — **tekniske kjøretøydokumenter er ikke påkrevd**. Kjøringene dokumenterer da kalkulatorens beregning for disse inputene, **ikke de konkrete bilene** (`referenceScope = explicit_inputs`).
+2. Velg **norsk registreringsdato** (innenfor 2026, ≥ første registrering) og noter den. Velg standard bruksfradrag (tabell), ikke alternativ beregning.
+3. Ikke gjett. Det som ikke er oppgitt i guiden er ditt valg — noter hva du valgte.
 
-## B. Under kjøringen — skjermbilder (PNG/PDF, uten beskjæring/redigering, ett sett per kjøretøy)
+## B. Under kjøringen — skjermbilder (PNG/PDF, uten beskjæring/redigering, ett sett per kjøring)
 Navn: `<GR-PENDING-…>_S<nn>_<kort tekst>.png`
 | Nr. | Hva | Må vise |
 |---|---|---|
-| S00 | startsiden for kalkulatoren | nettleserens **adresselinje (URL)** og **klokke/dato** (hele skjermen) + eventuell versjon/dato på siden |
-| S01…Sn | **hvert** inputsteg, utfylt, før «Neste» | alle felt med etiketter og valgte verdier (inkl. nedtrekksvalg: kjøretøytype, drivlinje/drivstoff, brukt/ny, avgiftsgruppe); bla/ta flere bilder om siden er lang |
-| S-sum | oppsummering av input (hvis kalkulatoren har en) | alle input samlet |
-| S-res1 | resultatsiden, øverst | samlet avgift og dato/klokkeslett om vist |
-| S-res2 | resultatet med **alle delposter utvidet** | engangsavgift, vrakpantavgift, bruksfradrag (prosent), evt. «avgift før fradrag», merknader/advarsler |
-| S-res3 | «slik er avgiften beregnet»/detaljside/PDF-eksport (hvis finnes) | lagre også PDF-en |
-Skriv i en melding til meg: **kjøredato og klokkeslett**, **navn på den som kjørte**, og **norsk registreringsdato du tastet**.
+| S00 | startsiden | adresselinje (URL), klokke/dato (hele skjermen), evt. versjon/dato på siden |
+| S01…Sn | hvert inputsteg, utfylt, før «Neste» | alle felt med etiketter og valgte verdier (nedtrekk inkl.) |
+| S-sum | oppsummering av input (hvis finnes) | alle input |
+| S-res1 | resultatsiden øverst | samlet avgift |
+| S-res2 | alle delposter utvidet | engangsavgift, vrakpant, bruksfradrag-prosent, evt. avgift før fradrag, merknader/advarsler |
+| S-res3 | detaljside/PDF-eksport (hvis finnes) | lagre også PDF |
+I en melding: **kjøredato og klokkeslett**, **hvem som kjørte**, **norsk registreringsdato du tastet**, og eventuelle valg som ikke står i guiden.
 
-## C. Tekniske dokumenter (for kjøretøyspesifikk referanse; se D)
-Typegodkjenning/CoC (sider som viser: minimumsvekt/«mass in running order», CO₂-felt «kombinert»/«vektet kombinert», motortype/drivstoff, ladbarhet) og vognkort/utenlandsk registreringsbevis med første registreringsdato. Ta bilde/skann av de relevante sidene; marker ikke over teksten.
+## C. Tekniske dokumenter — VALGFRITT (bare for kjøretøyspesifikk referanse)
+Typegodkjenning/CoC (minimumsvekt, CO₂-felt, motortype/ladbarhet) og vognkort/utenlandsk registreringsbevis med første registreringsdato. Uten disse registreres kjøringen som `explicit_inputs`. Med dem kan den i tillegg registreres som `vehicle_specific`.
 
-## D. To typer validering (hva hver kjøring faktisk dokumenterer)
-Eksisterende klasse 1 («uavhengig kontrollert referanse»; `check-docs.mjs`: E1-kilder + `independentReference` {tool, runDate, output}) er **uendret** og ikke svekket.
-| Type | Krever | Dokumenterer | Dokumenterer **ikke** |
+## D. To typer validering (klasse 1-definisjonen er uendret)
+| Type | Krever | Dokumenterer | Dokumenterer ikke |
 |---|---|---|---|
-| **1. Kalkulatorkjøring med eksplisitte testinput** | skjermbilder S00–S-res3 + kjøredato/URL; alle input synlige | at den offisielle kalkulatoren gir resultat X for **disse inputene** → kontroll av motorens regler (satser, bruksfradragstrinn, vrakpant, avrunding av sluttbeløp) og kandidat til klasse 1 per `independentReference` | at inputene er kjøretøyets egne tekniske data (vektdefinisjon, CO₂-felt, drivlinje) |
-| **2. Kjøretøyspesifikk referanse** | type 1 **pluss** tekniske dokumenter (C) som viser at inputene tilsvarer bilen | i tillegg: at avgiften gjelder **dette kjøretøyet** (grunnlag for vekt-/CO₂-/drivlinjekobling, ECON-007) | regelverk etter kjøredato, MVA, andre kjøretøy |
-Uten teknisk dokumentasjon registrerer jeg kjøringen som type 1 (ikke som kjøretøyets egen avgift). Registreringen får feltet `referenceScope` (`explicit_inputs` / `vehicle_specific`) — klasse-definisjonen endres ikke.
+| **explicit_inputs** | skjermbilder S00–S-res3 + melding (kjøredato, norsk reg.dato, valg) | at kalkulatoren gir X for disse inputene → kontroll av motorens regler (satser, bruksfradragstrinn, vrakpant, sluttavrunding) | at inputene er bilens egne data |
+| **vehicle_specific** | det samme **pluss** tekniske dokumenter (C) | i tillegg at avgiften gjelder dette kjøretøyet | regelverk etter kjøredato, MVA |
 
 ## E. Etter mottak (mitt arbeid)
-1. Legger filene i `docs/tax/golden-runs/<GR-åååååmmdd-nn>/`; beregner **SHA-256**; skriver proveniens (mottatt dato, opprinnelige filnavn, hva hver fil viser).
-2. Leser skjermbildene og fyller `GR-…md` (ingenting rekonstrueres; avvik mellom dine meldinger og skjermbilder flagges).
-3. Kjører motoren mot de dokumenterte inputene og rapporterer samsvar/avvik per delpost.
-4. Registrerer referansen (`references.json`, klasse 1 etter eksisterende definisjon, `referenceScope`). **Ingen parameter godkjennes av meg.**
+1. Filene legges i `docs/tax/golden-runs/<referanse-ID>/`; **jeg beregner SHA-256** og skriver proveniens (mottatt dato, filnavn, hva hver fil viser).
+2. Jeg leser skjermbildene, fyller `GR-…md` (ingenting rekonstrueres; avvik mellom melding og skjermbilder flagges) og kjører motoren mot de dokumenterte inputene.
+3. Referansen registreres (`references.json`, klasse 1 etter eksisterende definisjon, `referenceScope`). **Jeg godkjenner ingen parameter.**
 
-## F. Dine øvrige valg (ikke del av kjøringen)
-- **R-OTA-014:** (A) uttrykkelig tekst eller (B) forarbeider som primærkilde kan løfte E1P → E1. Aksept av en juridisk vurdering registreres som beslutning, ikke som kilde, og endrer ikke evidensnivået alene.
-- **Godkjenning av parametere** er din beslutning etter kjøringene.
+## F. Hvis kalkulatoren og motoren ikke stemmer
+Avviket registreres som **uavklart** til årsaken er undersøkt — det klassifiseres ikke automatisk som «endring etter testdatoen» eller noe annet. Jeg undersøker adskilt:
+1. **Kjøredato** — når kalkulatoren ble kjørt (og hvilken regelversjon den viser).
+2. **Norsk registreringsdato** — datoen som ble tastet inn (styrer bruksfradragstrinn og hvilken regelperiode som gjelder).
+3. **Motorens regelprofil** — `NO-OTA-2026-A-PB`: gyldig fra 2026-01-01, kilder verifisert per 2026-10-18, intern sperre 2026-12-31.
+Pluss inputfeil/overføringsfeil, avrundingsrekkefølge (U-012), dag 29–31 (U-009) og eventuell annen kalkulatorlogikk. Bare hvis det dokumenteres (skjermbilde/kilde) at kalkulatorens regler er endret etter 2026-10-18, kan avviket klassifiseres som regelendring — og først etter at årsaken er undersøkt.
+
+## G. Hva som kreves før en parameter kan godkjennes (alle tre)
+1. **Evidenskrav:** regelen er **E1** (ikke E1P) med E1-kilder. I dag er R-OTA-001, -003, -005, -007 og R-IMP-OTH-001 E1; **R-OTA-002, R-OTA-010 og R-OTA-014 er E1P og er ikke godkjenningsklare** — uansett klasse 1.
+2. **Validering:** klasse 1-referanse (en `explicit_inputs`-kjøring er nok for å validere beregningen).
+3. **Uttrykkelig godkjenning** av deg, regel for regel.
+Klasse 1 alene gjør ingen parameter godkjenningsklar. Jeg godkjenner ikke noe.

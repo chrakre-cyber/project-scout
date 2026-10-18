@@ -481,7 +481,7 @@ Klasse 1 = «uavhengig kontrollert referanse» (`references.json`; `check-docs.m
 |---|---|---|---|
 | **1. Kalkulatorkjøring med eksplisitte testinput** | at den offisielle kalkulatoren gir X for *disse* inputene (kontroll av motorens regler: satser, bruksfradragstrinn, vrakpant, avrunding av sluttbeløp) | at inputene er bilens egne tekniske data | kvalifiserer etter eksisterende definisjon (tool, runDate, output finnes) |
 | **2. Kjøretøyspesifikk referanse** | type 1 + at avgiften gjelder *dette kjøretøyet* (vekt-/CO₂-/drivlinjedata dokumentert) | regelverk etter kjøredato, MVA | samme klasse; i tillegg `referenceScope = vehicle_specific` |
-Uten teknisk dokumentasjon registreres kjøringen som type 1 (`referenceScope = explicit_inputs`); det er et metadatafelt på nye referanser, ikke en endring av klassen.
+Uten teknisk dokumentasjon registreres kjøringen som type 1 (`referenceScope = explicit_inputs`); det er et metadatafelt på nye referanser, ikke en endring av klassen. **Tekniske kjøretøydokumenter er ikke et obligatorisk første steg** for `explicit_inputs`: de tre kontrollene kan gjøres med oppgitte testinput uten å hevde at de dokumenterer de konkrete bilene (arbeidsdato og referansevekt er testinput, ikke verifiserte data).
 
 ### 17.4 R-OTA-014 forblir E1P; evidensklassifisering ≠ godkjenningsbeslutning
 - **Evidensklassifisering** (`evidenceLevel`) følger bare lest kildetekst. Løft til E1 krever ny primærkildetekst: (A) uttrykkelig tekst om avrunding av engangsavgiftens beregning, eller (B) forarbeider/merknader til forskrift § 10-4-4 og skattebetalingsloven § 10-4.
@@ -497,19 +497,19 @@ Uten teknisk dokumentasjon registreres kjøringen som type 1 (`referenceScope = 
 | R-OTA-014 E1P (anvendelsesvurdering) | blokkerer godkjenning av avrundingsregelen | – |
 | U-012 mellomledd (eksakte mellomledd beholdt) | nei — målt usikkerhet er avgrenset (§16.3) | kan belyses av kjøringene hvis nedbrytning vises |
 | Vognspesifikke tekniske data (type 2) | blokkerer bare kjøretøyspesifikk referanse | ECON-007 (berikelse) |
-| Endringer etter 18.10.2026 / lov 2026 nr. 41 | **nei** — utenfor valideringen per 18.10.2026 (advarsel `rates_verified_as_of` for senere datoer) | ny kildekontroll ved senere bruk |
+| Endringer etter 18.10.2026 / lov 2026 nr. 41 | **ikke avklart som årsak til avvik** — ingen dokumentert regelendring er identifisert; advarsel `rates_verified_as_of` for senere datoer | ny kildekontroll ved senere bruk |
 | Ukjent sluttdato for 2026-satsene | **nei** — intern sperre 2026-12-31 beholdt (`internal_guard`, ikke kildedokumentert) | avklares når 2027-regelverk foreligger |
 | MVA-avrunding og tollkurs (U-013, U-008) | **nei** — ikke del av engangsavgiften | ECON-004 |
 | NEDC/fallback-CO₂, andre avgiftsgrupper | nei (blokkert/utenfor profil) | senere |
-**Merk for kjøringene:** er kjøredatoen senere enn 2026-10-18, kan kalkulatoren bruke regelverk endret etter min kildekontroll. Avvik som bare oppstår da håndteres som «endring etter testdatoen», ikke som feil i valideringen per 18.10.2026. Velg norsk registreringsdato innenfor 2026.
+**Merk for kjøringene:** et avvik mellom kalkulator og motor registreres som **uavklart** til årsaken er undersøkt; det klassifiseres ikke automatisk som «endring etter testdatoen». Tre datoer/profiler holdes adskilt: (1) kjøredato, (2) norsk registreringsdato (velg innenfor 2026, ≥ første registrering), (3) motorens regelprofil (`NO-OTA-2026-A-PB`, `ratesVerifiedAsOf` 2026-10-18). Bare en dokumentert regelendring etter 2026-10-18 kan klassifisere et avvik som slik endring; ellers undersøkes også inputfeil, U-012 og U-009 (`SJEKKLISTE.md` §F).
 
 ### 17.6 Kort sjekkliste for Christian
-1. Skaff **faktisk første registreringsdag** og, hvis mulig, tekniske dokumenter per bil (`SJEKKLISTE.md` §C).
+1. Tekniske kjøretøydokumenter er **valgfrie** for `explicit_inputs` (`SJEKKLISTE.md` §C); de trengs bare for kjøretøyspesifikk referanse.
 2. Kjør kalkulatoren per bil etter `GUIDE-…md`; velg standard bruksfradrag; noter kjøredato/-tid og norsk registreringsdato.
 3. Ta skjermbildene S00–S-res3 (`SJEKKLISTE.md` §B), uten redigering.
 4. Send filene og meldingen; jeg beregner SHA-256, registrerer proveniens og sammenligner med motoren.
 5. Valgfritt (R-OTA-014): lever (A) tekst eller (B) forarbeider.
-6. Godkjenn parametere regel for regel etter at klasse 1 foreligger — det gjør ikke jeg.
+6. Godkjenning av en regel krever **alle tre**: E1-evidens for regelen, klasse 1-validering og din uttrykkelige godkjenning — det gjør ikke jeg. Klasse 1 alene er ikke nok mens anvendte regler er E1P (R-OTA-002, -010, -014).
 
 ### 17.7 Kontroller
 `node docs/tax/check-docs.mjs` OK (R-OTA-014-tekst rettet); `npx vitest run` — **31 filer, 731 tester bestått** (uendret; ingen nye tester); ingen kodeendring. Ikke kjørt: `npm run build`, e2e, DB, kalkulator.
