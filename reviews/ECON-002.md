@@ -1,6 +1,6 @@
-# ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 3: §13)
+# ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 4: §14)
 
-**Status: REVIEW.** Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Status: REVIEW.** **Runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -234,3 +234,126 @@ Disse listes aldri som kildebelagte regler. Øvrige antakelser står som før i 
 
 ### 13.9 Kontroller kjørt i runde 3
 `npx tsc --noEmit` OK; `npx eslint .` OK; `npx vitest run` — **30 filer, 701 tester bestått** (`tests/tax-engine.test.ts`: 66); `node docs/tax/check-docs.mjs` OK. Ikke kjørt: `npm run build`, e2e, DB-suiter. **Sluttstatus: REVIEW (blokkert av kildetilgang for U-010/U-011).**
+
+## 14. Runde 4 — tilleggskilder: endelig stortingsvedtak og avrunding (18.10.2026)
+Skillet mellom nivåene gjelder fortsatt: **kildebelagt** (lest, E1/E1P), **implementert** (i `src/domain/tax`), **testet** (kjørt) og **godkjent** (ingen). Golden cases er valideringsreferanser, ikke regelkilde; 18.10.2026 er fastsatt testdato.
+
+### 14.1 Pakke og hash
+Syv HTML-originaler (T43–T49) + manifest (`docs/tax/primarkilder/MANIFEST-tilleggspakke.md`); SHA-256 avstemt mot manifestet (alle OK) og registrert i `sources.json` med `repoFile` (verifiseres av `check-docs.mjs` og av `tests/tax-engine.test.ts`). Den avledede TXT-kopien (lesestøtte) er ikke lagt i repoet; alle sitater er i tillegg kontrollert i HTML-originalene (testet). T04, T30 og T31 (E2/E1X) er merket `supersededBy` T47, T43, T44; nivåene deres er ikke endret.
+| ID | Fil | Dokument | Nivå |
+|---|---|---|---|
+| T43 | `06_Stortinget_Vedtak_220_2026.html` | Stortinget, Vedtak 220 (opprinnelig, 18.12.2025) | E1 |
+| T44 | `07_Stortinget_RNB_2026_vedtak.html` | Stortinget, S-delen (Prop. 95 LS / Innst. 450 S): vedtak 1131–1132 (bare disse lest) | E1 |
+| T45 | `08_Skattebetalingshandboken_10-4.html` | Skattedirektoratet, håndbok kap. 10 § 10-4 / «Avrunding» (publisert 24.06.2026) | E1 (veiledning) |
+| T46 | `09_Skattebetalingsforskriften.html` | Skattebetalingsforskriften FOR-2007-12-21-1766 (sist endret FOR-2026-06-26-1385); bare § 10-4-1…10-4-4 og § 1-1 lest | E1 |
+| T47 | `10_Lovdata_Engangsavgift_2026.html` | **Stortingsvedtak FOR-2025-12-18-2755, konsolidert** | E1 |
+| T48 | `11_Endringsvedtak_2026-06-19-1246.html` | Endringsvedtak FOR-2026-06-19-1246 | E1 |
+| T49 | `12_Skattebetalingsloven.html` | Skattebetalingsloven LOV-2005-06-17-67; bare §§ 1-1, 10-4, 10-40 lest | E1 |
+
+### 14.2 U-011 — endelig stortingsvedtak: **lukket (E1)**, med forbehold
+**Identitet verifisert.** Lovdata FOR-2025-12-18-2755 (Stortinget; «Budsjettåret 2026»; kunngjort 22.12.2025 kl. 11.30; sist endret FOR-2026-06-19-1246 fra 01.09.2026; hjemmel Grl. § 75 a og LOV-1959-06-19-2) har §§ 1–11 ordrett lik Stortingets «Vedtak 220» (T43) bortsett fra § 3 første ledd b nr 2. Vedtak 1131–1132 (T44) kaller det «stortingsvedtak 18. desember 2025 nr. 220», og endringsvedtaket (T48) kaller det «nr. 2755». Samme dokument, to nummersystemer.
+**Endringer som dekker beregningsdato 2026-10-18:** bare FOR-2026-06-19-1246 (vedtatt 19.06.2026, ikrafttredelse 01.09.2026). **Det endrer uttrykkelig bare «§ 3 første ledd bokstav b nr 2»** (CO₂-tabellen for avgiftsgruppe b: 300 → 450 i første bånd). Jeg har ikke antatt at endringen rører bokstav a: endringsvedtakets tekst gjør det ikke, og konsolidert tekst viser uendret bokstav a. Vedtak 1131/1132 (T44) og T48 er avstemt: samme tabell, «tek til å gjelde 1. september 2026». Merknaden «Endret ved vedtak 19 juni 2026 nr. 1246» henger på § 3 som helhet i konsolidert tekst; innholdet er likevel avgrenset av endringsvedtaket.
+**Paragrafer og anvendelse på gruppe a (personbil):**
+| § | Innhold (konsolidert, T47) | Anvendelse |
+|---|---|---|
+| 1 | «Fra 1. januar 2026 …» avgift ved første gangs registrering | styrende hendelse og startdato 2026-01-01 |
+| 2 | 12,71 kr per kg av egenvekt over 500 kg, «i tillegg til … § 3» | generell vektkomponent, alle personbiler (også elbil) |
+| 3 innl. | «For motorvogner med stempeldrevet forbrenningsmotor» | vilkår for 3 a (ICE, HEV, PHEV) |
+| 3 a nr 1 | 260 kr per kg over 1 200 kg | tillegg for forbrenningsmotor |
+| 3 a nr 2 | CO₂ per g/km: 0–100: 800; 101–150: 1 600; 151–225: 3 200; over 225: 5 000 | CO₂-komponent (marginal lesning: T40) |
+| 4 | «fradrag i den avgift som beregnes etter §§ 2 og 3 basert på motorvognens alder (bruksfradrag)» | prosentfradrag på §§ 2+3-avgiften; tabell i forskrift § 3-3 |
+| 5 | vrakpant gruppe a, b, c, g, j: 2 400 | eget, fast beløp |
+| 7 | tekniske data fra godkjenningen | vekt/CO₂-grunnlag |
+| 8 andre ledd | fritak a–c også for vrakpant | ikke relevant for støttet profil |
+**Rundskrivets paragrafhenvisninger:** henvisningene § 1, 2, 3, 5, 6, 8 første ledd a–p, 8 andre ledd og 11 stemmer med vedtaket. «§ 9 første ledd bokstav d til p» (3.4) og «§ 12» (3.3.3.5) finnes ikke i vedtaket (11 paragrafer; fritak = § 8, dispensasjon = § 11) og behandles som rundskrivfeil. Rundskrivet siterer aldri § 4, men vedtaket har § 4.
+**Forbehold:** endringer vedtatt etter hentedato 2026-10-18 er ikke kontrollert (`ratesVerifiedAsOf = 2026-10-18`; senere norsk registreringsdato gir advarsel); lov 19. juni 2026 nr. 41 (endrer bl.a. skattebetalingsloven § 1-1 og §§ 10-30/10-40/10-41; «i kraft fra den tid Kongen bestemmer») er ikke lest.
+
+### 14.3 Revurdering av tidligere E1P-konklusjoner
+| Tema | Før (bare forslag + T40) | Nå (endelig vedtak lest) | Regelnivå |
+|---|---|---|---|
+| Satsstruktur gruppe a | E1P | **bekreftet i vedtaket** (§ 2, § 3 a). CO₂ «marginalt» står fortsatt bare i T40 («første/neste/resten»); vedtaksteksten har kun intervallene | R-OTA-001 **E1P → E1**; R-OTA-002 forblir E1P (NEDC/fallback-mellomledd, marginal via T40) |
+| EV | E1P | § 2 uten § 3-vilkår (ingen stempeldrevet motor) | R-OTA-007 **E1P → E1** |
+| PHEV | E1P, utledet | uendret karakter: vedtaket har det tekniske vilkåret «stempeldrevet forbrenningsmotor» (E1); ladbar hybrid er ikke nevnt eller definert i vedtak, forskrift eller rundskriv | R-OTA-005 forblir **E1P** (§14.6) |
+| Bruksfradrag | forslag § 4 | **vedtak § 4** bekrefter ordlyden; tabell og aldersregler i forskrift § 3-3 (T05) | R-OTA-010 forblir E1P (U-009 månedstrinn/dag 29–31) |
+| Rekkefølge | E1P | § 4 og § 5 i vedtaket: fradrag i avgift etter §§ 2+3; vrakpant egen post | belagt (E1) |
+| **Vrakpant utenfor prosentfradraget** | ikke klar (bare forslag) | **belagt (E1):** vedtak § 4 avgrenser fradraget til avgiften etter §§ 2 og 3; § 5 er egen, fast avgift | R-IMP-OTH-001 (E1) oppdatert |
+| Gyldighet | start belagt, slutt ikke | Lovdata: «Budsjettåret 2026»; ingen eksplisitt sluttdato i teksten | uendret: `documentedValidTo = null`; intern sperre 2026-12-31 (nå med bedre begrunnelse) |
+| Gruppe b (utenfor motoren) | vekt fra 2026-09-01 ukjent | vekt 30 kr/kg uendret (§ 3 b nr 1; kun nr 2 endret); CO₂ 450/600/1 200 fra 2026-09-01 | R-OTA-008 e1Findings og DP-WEIGHT-B-2026-09-01 lagt til |
+
+### 14.4 U-010 — avrunding: **lukket for sluttkravet (E1P)**; mellomledd åpent (U-012)
+**Hjemmelskjede (alt lest):** vedtaket gjelder avgift «i henhold til lov 19. juni 1959 nr. 2» (T47 § 1) → skattebetalingsloven § 1-1 (2) bokstav i: «særavgifter omfattet av lov 19. juni 1959 nr. 2 …» er «skatte- og avgiftskrav» (T49) → § 10-40 (1) c regulerer forfall for «engangsavgiften for registrerte virksomheter» (T49) → § 10-4: departementet kan gi forskrift «til utfylling og gjennomføring av bestemmelsene i dette kapitlet» (kapittel 10 Forfall) → **skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone.»** (T46) og § 10-4-1 d nevner «engangsavgift på motorvogner» (200 kr) i samme regelfamilie. Håndboken (T45): «… skatte- og avgiftsregnskapene ikke vil inneholde ørebeløp.»
+**Vurdering:**
+| Spørsmål | Funn | Nivå |
+|---|---|---|
+| Virkeområde: gjelder regelen engangsavgift? | engangsavgift er et avgiftskrav (§ 1-1 (2) i) og nevnes i § 10-4-1 d og § 10-40; § 10-4-4 nevner den ikke selv. Kapittel 10-hjemmelen gjelder «dette kapitlet» (forfall) — om «ved beregning» er uttrykkelig omfattet er ikke avklart | **E1P** |
+| Retning og enhet | ned til nærmeste hele krone | E1 (regeltekst) |
+| Nivå: sluttkrav eller mellomledd? | regelen gjelder «beløpet» av «skatte- og avgiftskrav» (det samlede kravet). Ingen kilde avrunder kg × sats, CO₂-bånd, sum før fradrag eller prosentfradrag | sluttkrav: E1P; **mellomledd: ingen belegg (U-012)** |
+| Vrakpant | del av engangsavgiften (rundskriv 3.4; T20); heltall ⇒ floor(avgift + 2 400) = floor(avgift) + 2 400 | ingen effekt på avrundingen |
+**Valgt rekkefølge (implementasjon):** komponenter eksakte → sum eksakt → × (100 − prosent)/100 eksakt → + vrakpant → **ned til hele kroner (én gang)**. Mellomledd avrundes ikke; det er en merket implementasjonskonklusjon (`no_intermediate_rounding`).
+**Gjenværende usikkerhet:** (a) § 10-4-4 anvendes på beregningen av engangsavgift via virkeområdet (E1P); (b) om Skatteetatens egen beregning avrunder komponenter eller prosentfradrag (kan gi noen kroner avvik) kan ikke avgjøres fra kildene; (c) lov 19. juni 2026 nr. 41 (ikke i kraft, innhold ikke lest). Avrunding til nærmeste krone og andre policyer er fjernet fra motoren. *[VALIDERING]* Sluttkravet gir de offisielle beløpene i alle tre casene (§14.7); regelen er hentet fra kildene, ikke fra casene (testet).
+
+### 14.5 Gyldighet (uendret prinsipp, nye fakta)
+`validFrom` 2026-01-01 (kildedokumentert, § 1). `documentedValidTo = null` (ingen sluttdato i vedtaksteksten); `documentedPeriodLabel = «Budsjettåret 2026»` (Lovdata-metadata, **ikke** en datert opphørsdato). `internalSafetyLimit` 2026-12-31 (`internal_guard`; eget feilkodenavn). `ratesVerifiedAsOf` = 2026-10-18 (hentedato for konsolidert tekst; gammel verdi 2026-05-01 gjaldt T40).
+
+### 14.6 PHEV (kjede, ajourført)
+Definisjon: «ladbar hybridbil» finnes ikke i vedtaket, forskriften eller rundskrivet; vilkåret i vedtaket § 3 er teknisk («stempeldrevet forbrenningsmotor»). Bestemmelse: § 3 a nr 1–2 (260 kr/kg og CO₂-bånd); forskrift § 3-1 gir CO₂-feltet «vektet kombinert». Rundskriv: 3.3.11 (vektfradrag opphevet) og 6.12. **Gap:** ingen tekst sier uttrykkelig at ladbar hybrid svarer § 3; det følger av at vilkåret er oppfylt (teknisk egenskap, må dokumenteres) og av behandlingen i § 3-1/rundskriv. Konklusjonen er nå bedre forankret (vedtaksteksten selv er lest) men forblir juridisk slutning (E1P).
+
+### 14.7 Golden cases (validering; ikke regelkilde)
+| | CASE-001 | CASE-002 | CASE-003 |
+|---|---|---|---|
+| Eksakt total (testdato 2026-10-18) | 529 069,738 | 16 748,9545 | 333 723,972 |
+| `finalClaim` (nedrundet sluttkrav, R-OTA-014) | **529 069** | **16 748** | **333 723** |
+| Offisielt validert | 529 069 | 16 748 | 333 723 |
+| `one_off_tax` + `scrappage_deposit` | 526 669 + 2 400 | 14 348 + 2 400 | 331 323 + 2 400 |
+Alle tre samsvarer med de validerte verdiene med regler fra kildene (vedtak, forskrift, rundskriv, avrundingskjeden). Dette er validering, **ikke klasse 1**: kjøredato, norsk registreringsdato brukt, input-definisjoner og skjermbilder mangler fortsatt (se §13.7; pakken har ikke supplert dem og ingenting er rekonstruert). Status er fortsatt `calculated_unverified`.
+
+### 14.8 Implementert (kun avgiftsmotoren)
+`src/domain/tax`: `finalClaim` (nedrunding av sluttkrav; `totalIntegerBounds`, `rounded`, `RoundingPolicy` og `options.rounding` fjernet); profilen har `rounding` (R-OTA-014), `documentedPeriodLabel`, `ratesVerifiedAsOf = 2026-10-18`, oppdaterte kilder og åpne punkter; `implementationConclusions` har ny kode `no_intermediate_rounding`; `alternativeTotalRegistrationTaxesNok`. Docs: `rules.json` (ny R-OTA-014; R-OTA-001/007 → E1; e1Findings for 001/002/005/007/008/010/IMP-OTH-001; U-010 og U-011 lukket, U-012 ny; U-009 notat), `sources.json` (T43–T49; supersededBy), `profiles.json` (R-OTA-014 på profilene), `TAX-001A-rules.md`. Ingen UI-, DB-, auth- eller provider-endring; ingen landed-cost-logikk.
+
+### 14.9 Statusmatrise (erstatter §1)
+| Område | Kildebelagt | Implementert | Testet | Godkjent |
+|---|---|---|---|---|
+| Satser gruppe a (§ 2, § 3 a nr 1) | ja, E1 (vedtak + T40) | ja | ja (tall = vedtakstekst) | nei |
+| CO₂-bånd marginalt | vedtak (intervaller) + T40 (marginal) — E1P | ja | ja (grenser) | nei |
+| EV: bare § 2 | ja, E1 | ja | ja | nei |
+| PHEV: § 3 + «vektet kombinert» | E1P (tolkning av teknisk vilkår) | ja | ja | nei |
+| NOx fjernet | ja, E1 | ja | ja | nei |
+| Bruksfradrag: tabell, alder, rekkefølge, vrakpant utenfor | ja (vedtak § 4, forskrift § 3-3, T42) — E1 | ja | ja | nei |
+| Månedstrinn / dag 29–31 | **nei** (U-009) | blokkerer i vinduet; konklusjon merket | ja | nei |
+| Avrunding: sluttkrav ned til hele kroner | ja, **E1P** (T46/T45/T49) | ja (`finalClaim`) | ja | nei |
+| Avrunding: mellomledd | **nei** (U-012) | ikke avrundet (konklusjon) | ja | nei |
+| Gyldighet start / slutt | start E1; slutt ikke oppgitt | `documentedValidTo = null` | ja | — |
+| Intern sperre 2026-12-31 | — (intern) | ja | ja | — |
+| Identitet/endringer vedtak | ja, E1 (U-011 lukket) | `ratesVerifiedAsOf` | ja (hash + tekst) | — |
+
+### 14.10 Godkjenningsmatrise (oppdatert; ingen parameter er godkjent)
+Formelt krav (`check-docs.mjs`, uendret): regelen må være **E1**, bare E1-kilder, `governingEvent`, `validity.from` og en **klasse 1-referanse** (eller godkjent klasse 2). Ingen klasse 1 finnes (casene mangler dokumentasjon). Kravene er ikke svekket.
+| Parameter / regel | Kildebelegg | Regelnivå nå | Klar for godkjenning? | Hva gjenstår |
+|---|---|---|---|---|
+| Generell vekt 12,71 kr/kg > 500 kg (R-OTA-001) | T47 § 2; T43; T40 | **E1** | **ja (kildesiden)** | klasse 1; din godkjenning |
+| ICE-tillegg 260 kr/kg > 1 200 kg (R-OTA-001) | T47 § 3 a nr 1; T43; T40 | **E1** | **ja (kildesiden)** | klasse 1; din godkjenning |
+| EV: bare § 2 (R-OTA-007) | T47 § 2/§ 3; T03 6.12 | **E1** | **ja (kildesiden)** | klasse 1; godkjenning |
+| CO₂-bånd (R-OTA-002) | T47 § 3 a nr 2 (intervaller); T40 (marginal) | E1P | **med forbehold** | marginal lesning kun via T40; NEDC/fallback utenfor (U-012) → løft til E1 krever din vurdering |
+| CO₂-felt/metode (§ 3-1) | T05 | (i R-OTA-002) | ja for WLTP | – |
+| PHEV (R-OTA-005) | vilkår i T47 § 3; T05 § 3-1; T03 3.3.11/6.12 | E1P | **med forbehold** | ingen uttrykkelig tekst; juridisk vurdering |
+| NOx fjernet (R-OTA-003) | T03 3.2.4 | E1 | ja | klasse 1 |
+| Bruksfradrag-tabell (R-OTA-010) | T05 § 3-3; T42; vedtak § 4 | E1P | **med forbehold** | U-009 (månedstrinn/dag 29–31) |
+| Beregningsrekkefølge | T47 § 4–5; T05 § 3-3; T03 4.3 | (i R-OTA-010) | ja | – |
+| Vrakpant 2 400 og utenfor prosentfradraget (R-IMP-OTH-001) | T47 § 4, § 5; T03 3.4 | **E1** | **ja (kildesiden)** | klasse 1; godkjenning |
+| Avrunding sluttkrav (R-OTA-014) | T46 § 10-4-4; T45; T49 § 1-1, § 10-40; T46 § 10-4-1 d | E1P | **med forbehold** | anvendelse via virkeområde (kapittel 10-hjemmel); løft til E1 krever din vurdering |
+| Avrunding mellomledd | ingen | – | **nei** | U-012 |
+| Gyldighet (slutt) | ingen eksplisitt | – | **ikke tilgjengelig** | vedtak/intern sperre |
+«Ja (kildesiden)» betyr bare at kildebeleggene er komplette for regelen; ingen parameter blir godkjent før du eksplisitt gjør det og klasse 1-referanse finnes.
+
+### 14.11 Kontroller kjørt (runde 4)
+`npx tsc --noEmit` OK; `npx eslint .` OK; `npx vitest run` — **30 filer, 711 tester bestått** (`tests/tax-engine.test.ts`: 76, bl.a. hash av alle 11 kildefiler, sitater i HTML-originalene, endringsvedtak avgrenset til § 3 b nr 2, avrundingskjeden, finalClaim); `node docs/tax/check-docs.mjs` OK (32 regler, 52 kilder). Ikke kjørt: `npm run build`, e2e, DB-suiter.
+
+### 14.12 Gjenstående
+1. **Dokumentasjon per golden case / klasse 1** (§13.7) — uendret manglende felt.
+2. **Parametergodkjenning** — din beslutning; krever E1-regel og klasse 1.
+3. **U-009** (månedstrinn og dag 29–31) — motoren blokkerer i vinduet.
+4. **U-012** (mellomledd) og anvendelsesforbehold for R-OTA-014; lov 19. juni 2026 nr. 41 og endringer etter 2026-10-18.
+5. **PHEV** uttrykkelig tekst; **CO₂ marginalt** kun via T40.
+6. Sluttdato for 2026-satsene (kun «Budsjettåret 2026»; intern sperre).
+7. Utenfor: NEDC/egenvekt/10-CO₂, andre avgiftsgrupper, alternativ beregning, vektberikelse.
+**Sluttstatus: REVIEW.** ECON-003 er ikke startet.

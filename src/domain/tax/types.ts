@@ -123,10 +123,9 @@ export interface MonthSensitivity {
   alternativeWorkingDate: string;
   alternativeDeductionPercent: number;
   alternativeTotalRegistrationTaxesExact: string;
+  alternativeTotalRegistrationTaxesNok: number;
   message: string;
 }
-
-export type RoundingPolicy = "floor_whole_nok" | "half_up_whole_nok";
 
 export interface ProfileRef {
   id: string;
@@ -134,6 +133,7 @@ export interface ProfileRef {
   taxGroup: "a";
   /** Kildedokumentert startdato. */
   validFrom: string;
+  documentedPeriodLabel: string;
   /** Kildedokumentert sluttdato; null = ikke oppgitt i kildene. */
   documentedValidTo: string | null;
   /** Intern sperre (ikke kildedokumentert opphør). */
@@ -147,7 +147,7 @@ export interface ProfileRef {
  * slik at det er tydelig hva som er kilde og hva som er motorens egen slutning.
  */
 export interface ImplementationConclusion {
-  code: "month_steps_same_anniversary_rule" | "overflow_dates_outside_window_monotonic";
+  code: "month_steps_same_anniversary_rule" | "overflow_dates_outside_window_monotonic" | "no_intermediate_rounding";
   statement: string;
   sourceStatus: "not_expressly_described";
 }
@@ -166,10 +166,11 @@ export interface TaxResult {
   oneOffTaxExact: string | null;
   scrappageDeposit: { amountNok: number; ruleRef: string; reducedByAgeDeduction: false } | null;
   totalRegistrationTaxesExact: string | null;
-  /** Heltallsgrenser under forutsetning av én sluttavrunding til hele kroner (mellomavrunding er ikke utelukket: U-010). */
-  totalIntegerBounds: { lower: number; upper: number; assumption: "single_final_whole_nok_rounding" } | null;
-  /** Bare når kalleren eksplisitt ber om en avrundingspolicy; policyen har INGEN kilde (U-010). */
-  rounded: { policy: RoundingPolicy; evidence: "none_in_sources"; oneOffTaxNok: number; totalRegistrationTaxesNok: number } | null;
+  /**
+   * Det samlede kravet avrundet ned til hele kroner (skattebetalingsforskriften § 10-4-4; R-OTA-014, E1P). Bare sluttbeløpet avrundes;
+   * komponenter og prosentfradrag er eksakte desimaler (U-012). Vrakpantavgiften er et helt tall, så floor(total) = floor(avgift) + vrakpant.
+   */
+  finalClaim: { ruleRef: "R-OTA-014"; basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone"; evidence: "E1P"; oneOffTaxNok: number; scrappageDepositNok: number; totalRegistrationTaxesNok: number } | null;
   monthSensitivity: MonthSensitivity | null;
   evidence: {
     parameterEvidenceLevel: "E1";
@@ -181,8 +182,4 @@ export interface TaxResult {
   warnings: Warning[];
   assumptions: string[];
   implementationConclusions: ImplementationConclusion[];
-}
-
-export interface CalcOptions {
-  rounding?: RoundingPolicy;
 }

@@ -424,6 +424,21 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Uløste spørsmål:**
   - Hvilke fritak er relevante for forhandlerimport?
 
+### R-OTA-014 — Avrunding av skatte- og avgiftskrav ned til nærmeste hele krone (skattebetalingsforskriften § 10-4-4) – sluttkravet, ikke mellomledd
+
+- **Komponent:** Engangsavgift – avrunding av avgiftskravet  
+- **Profiler:** PB-BEN, PB-DIE, PB-HEV, PB-PHEV, PB-BEV, VB-BEN, VB-DIE, VB-HEV, VB-PHEV, VB-BEV  
+- **Nødvendig input:** det samlede engangsavgiftskravet (eksakt desimal)  
+- **Formel/trinn (struktur):** sluttkrav = floor(eksakt avgift etter bruksfradrag + vrakpantavgift); mellomledd avrundes ikke  
+- **Beløp/enhet/avrunding:** Ned til nærmeste hele krone, bare for det samlede kravet (T46 § 10-4-4; T45). Mellomledd: ingen regel funnet (U-012).  
+- **Dato fra/til:** 2010-04-01 / åpen — § 10-4-4 endret ved forskrift 25 mars 2010 nr. 462 (i kraft 1 april 2010); forskriften sist endret FOR-2026-06-26-1385.  
+- **Kilder:** T46, T45, T49, T47  
+- **Evidensnivå:** E1P · **Status:** `E1P_regel_lest_anvendelse_paa_engangsavgift_sluttkrav_utledet_fra_virkeomraade` · **Kontrollert dato:** 2026-10-18 · **Godkjent parameter:** nei
+- **Uløste spørsmål:**
+  - § 10-4-4 nevner ikke engangsavgift uttrykkelig; anvendelsen følger av skattebetalingsloven § 1-1 (2) i, § 10-40 (1) c og forskriften § 10-4-1 d.
+  - Hjemmelen i skattebetalingsloven § 10-4 gjelder kapittel 10 (forfall); om avrunding «ved beregning» er uttrykkelig omfattet er ikke avklart.
+  - Mellomledd (kg × sats, CO2-bånd, sum, prosentfradrag): ingen kilde (U-012).
+
 ### R-IMP-OTH-001 — Vrakpantavgift – del av engangsavgiften, betales ved registrering
 
 - **Komponent:** Vrakpantavgift (innbetaling ved første gangs registrering)  

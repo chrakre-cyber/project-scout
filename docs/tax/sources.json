@@ -2,7 +2,7 @@
  "schema": "merovo.tax.sources",
  "version": "TAX-001E/1",
  "researchDate": "2026-10-15",
- "coverage": "TAX-001B 15.10.2026: seks originale kildefiler hentet av Codex og lest lokalt av Claude (kildepakke TAX-001B-handoff, hash i MANIFEST). Kilder merket E1 er lest i hele eller relevante deler; E1 betyr lest primærkilde, ikke godkjent regelparameter. Direkte nettverkstilgang til norske verter er fortsatt blokkert; øvrige kilder står uendret på E2/E0. Stortingsvedtak, forskrift (§ 3-1, § 3-3), Lovdata og tollkurs er IKKE lest. TAX-001C 2026-10-16: ingen nye primærkilder kunne leses (nettverkspolicy). Alle nye opplysninger er E2-ledetråder fra søkesammendrag. ECON-002 18.10.2026: kildepakke med fem filer (T03 uendret hash, T05 forskrift, T40 avgiftssatser 2026, T41 Prop. 1 LS-utdrag, T42 bruksfradragstabell) er lest lokalt av Claude og registrert som E1 for konkrete regler. Kildene er skannede/utskrevne PDF-er uten tekstlag (unntatt T03) og er lest visuelt. Ingen kilde omtaler avrunding av engangsavgiften.",
+ "coverage": "TAX-001B 15.10.2026: seks originale kildefiler hentet av Codex og lest lokalt av Claude (kildepakke TAX-001B-handoff, hash i MANIFEST). Kilder merket E1 er lest i hele eller relevante deler; E1 betyr lest primærkilde, ikke godkjent regelparameter. Direkte nettverkstilgang til norske verter er fortsatt blokkert; øvrige kilder står uendret på E2/E0. Stortingsvedtak, forskrift (§ 3-1, § 3-3), Lovdata og tollkurs er IKKE lest. TAX-001C 2026-10-16: ingen nye primærkilder kunne leses (nettverkspolicy). Alle nye opplysninger er E2-ledetråder fra søkesammendrag. ECON-002 18.10.2026: kildepakke med fem filer (T03 uendret hash, T05 forskrift, T40 avgiftssatser 2026, T41 Prop. 1 LS-utdrag, T42 bruksfradragstabell) er lest lokalt av Claude og registrert som E1 for konkrete regler. Kildene er skannede/utskrevne PDF-er uten tekstlag (unntatt T03) og er lest visuelt. Ingen kilde omtaler avrunding av engangsavgiften. ECON-002 runde 4 (18.10.2026): tilleggspakke med syv HTML-filer (T43–T49) lest: konsolidert stortingsvedtak FOR-2025-12-18-2755 (T47), opprinnelig vedtak 220 (T43), endringsvedtak FOR-2026-06-19-1246 (T48) og vedtak 1131/1132 (T44), skattebetalingsforskriften § 10-4-4 (T46), håndbok (T45) og skattebetalingsloven (T49).",
  "sources": [
   {
    "id": "T01",
@@ -119,7 +119,8 @@
     "R-OTA-010",
     "R-OTA-013"
    ],
-   "note": "Lovdata-oppføringen viste ifølge søkeverktøyet en endring av 19.6.2026 med virkning fra 1.9.2026 for § 3. Innholdet er ukjent. | Uavklart kildeopplysning U-001: søkesammendrag nevnte endring med virkning 1.9.2026; ikke bekreftet i lest materiale og ikke brukt som regelgrunnlag."
+   "note": "Lovdata-oppføringen viste ifølge søkeverktøyet en endring av 19.6.2026 med virkning fra 1.9.2026 for § 3. Innholdet er ukjent. | Uavklart kildeopplysning U-001: søkesammendrag nevnte endring med virkning 1.9.2026; ikke bekreftet i lest materiale og ikke brukt som regelgrunnlag. ECON-002 runde 4: faktisk konsolidert fil er lest som T47; identiteten FOR-2025-12-18-2755 er verifisert mot Lovdata-metadata.",
+   "supersededBy": "T47"
   },
   {
    "id": "T05",
@@ -800,7 +801,9 @@
     "Gruppe b 2026-01-01–2026-08-31: vekt 30 kr/kg over 1 200 kg; CO2 0–100 300 kr/g, 101–150 600, over 150 1 200",
     "(se også tidligere: Vedtak 220 er grunnvedtaket for 2026)"
    ],
-   "limitations": "Oppgitt som verifisert fra offisielt Storting/Lovdata-materiale uten kildefil/hash. Trinnvis/marginal beregning, styrende hendelsesdato, bruksfradragsrekkefølge, avrunding og satser for andre avgiftsgrupper er ikke gitt. Gruppe a etter 2026-09-01 og vektsats gruppe b fra 2026-09-01 er ikke oppgitt."
+   "limitations": "Oppgitt som verifisert fra offisielt Storting/Lovdata-materiale uten kildefil/hash. Trinnvis/marginal beregning, styrende hendelsesdato, bruksfradragsrekkefølge, avrunding og satser for andre avgiftsgrupper er ikke gitt. Gruppe a etter 2026-09-01 og vektsats gruppe b fra 2026-09-01 er ikke oppgitt.",
+   "supersededBy": "T43",
+   "note": " ECON-002 runde 4: faktisk side er lest som T43 (E1)."
   },
   {
    "id": "T31",
@@ -823,7 +826,9 @@
    "providedFacts": [
     "Avgiftsgruppe b, fra 1. september 2026: CO2-sats 450 kr per g/km for 0–100 g/km, 600 kr for 101–150, 1 200 kr over 150 g/km"
    ],
-   "limitations": "Hvilken hendelse som styrer datoen (registrering/innførsel), om intervallene regnes trinnvis (marginalt), og satsene før 1.9.2026 er ikke gitt. Gruppe a og vektkomponent ikke gitt."
+   "limitations": "Hvilken hendelse som styrer datoen (registrering/innførsel), om intervallene regnes trinnvis (marginalt), og satsene før 1.9.2026 er ikke gitt. Gruppe a og vektkomponent ikke gitt.",
+   "supersededBy": "T44",
+   "note": " ECON-002 runde 4: faktisk side er lest som T44 (E1); selve endringsvedtaket T48."
   },
   {
    "id": "T32",
@@ -1091,6 +1096,211 @@
     "PDF s. 1–2: hele tabellen (41 trinn), forklaringstekst"
    ],
    "limitations": "Satsside uten publiseringsdato; PDF-utskrift uten maskinlesbart tekstlag (lest visuelt). Tabellen er avstemt mot § 3-3 i T05 (samme 41 trinn)."
+  },
+  {
+   "id": "T43",
+   "title": "Stortinget – Vedtak 220: Vedtak om engangsavgift på motorvogner mv. for 2026 (opprinnelig vedtak, nettside)",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?did=40035798&p=104911",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_opprinnelig",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-007",
+    "R-OTA-008",
+    "R-IMP-OTH-001",
+    "R-OTA-010"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/06_Stortinget_Vedtak_220_2026.html",
+   "repoFile": "docs/tax/primarkilder/06_Stortinget_Vedtak_220_2026.html",
+   "packageSha256": "b2389f11a380b2281569f16b8013436f75678889300472a10a0cdefe0cfe50a8",
+   "publishedVersion": "Vedtak 220 (sak «Skatte- og avgiftsinntekter 2026», Prop. 1 S / Innst. 3 S 2025–2026); vedtatt 18.12.2025; § 1: fra 1. januar 2026; opprinnelig ikke-konsolidert tekst",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "§§ 1–11 (hele vedtaket)"
+   ],
+   "limitations": "Opprinnelig tekst; omfatter ikke endringsvedtaket 2026 (T48/T44). Nettside-HTML; avledet TXT-lesekopi er ikke i repoet."
+  },
+  {
+   "id": "T44",
+   "title": "Stortinget – Endringar i skatte- og avgiftslovgivinga (S-delen), vedtak 1070–: inkl. vedtak 1131 og 1132 (endring av engangsavgiftsvedtaket)",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?p=200313",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_endring",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-008",
+    "R-OTA-001",
+    "R-OTA-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/07_Stortinget_RNB_2026_vedtak.html",
+   "repoFile": "docs/tax/primarkilder/07_Stortinget_RNB_2026_vedtak.html",
+   "packageSha256": "316b8db22f6eed466c2d660711b14b1e94933b79ddd5effdae36c3ca53c79c0d",
+   "publishedVersion": "Prop. 95 LS / Innst. 450 S (2025–2026); vedtak 1131: § 3 fyrste ledd bokstav b nr 2; vedtak 1132: «tek til å gjelde 1. september 2026»; vedtaksdato (19.06.2026) står ikke i siden, men i T48",
+   "effectiveDate": "2026-09-01",
+   "readSections": [
+    "Vedtak 1131 og 1132 (linje ~5279–5296 i lesekopi)",
+    "Vedtak 1070 – engangsavgift økes (budsjettinntekt; ikke regel)"
+   ],
+   "limitations": "Stor side med mange vedtak; bare vedtak 1131–1132 om engangsavgift er lest for dette formålet. Siden oppgir ikke vedtaksdato; dato og identitet er avstemt mot T48. Omtaler vedtaket som «nr. 220» (Stortingets nummer) mens Lovdata bruker FOR-2025-12-18-2755."
+  },
+  {
+   "id": "T45",
+   "title": "Skattebetalingshåndboken kap. 10 (§ 10-4 inkl. avsnittet «Avrunding») — Skattedirektoratet",
+   "publisher": "Skattedirektoratet / Skatteetaten",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/skattebetalingshandboken/gjeldende/SKTB_ID-10-0.001/SKTB_ID-10-4.001/SKTB_ID-10-4.003",
+   "kind": "primary",
+   "documentType": "handbok",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/08_Skattebetalingshandboken_10-4.html",
+   "repoFile": "docs/tax/primarkilder/08_Skattebetalingshandboken_10-4.html",
+   "packageSha256": "734e44fb264108e8bd6735ad979c5f881fe50ed5bf554fbe82331f52be19a4e5",
+   "publishedVersion": "Håndbok fra Skattedirektoratet; «Generelt om § 10-4» og «§ 10-4-4 – Avrunding» publisert 24.06.2026 (publiseringsfelt i siden); hentet 2026-10-18",
+   "effectiveDate": null,
+   "readSections": [
+    "«Generelt om § 10-4»",
+    "«Skattebetalingsforskriften § 10-4-1» (engangsavgift, 200 kr)",
+    "«Skattebetalingsforskriften § 10-4-4 – Avrunding»",
+    "«§ 10-40» (engangsavgift forfall)"
+   ],
+   "limitations": "Veiledning (Skattedirektoratets tolkning), ikke rettskilde i seg selv. Gjelder kap. 10 (forfall); øvrige avsnitt på siden er ikke vurdert. Gir ikke belegg for avrunding av mellomledd."
+  },
+  {
+   "id": "T46",
+   "title": "Forskrift til utfylling og gjennomføring mv. av skattebetalingsloven (skattebetalingsforskriften), FOR-2007-12-21-1766 — konsolidert",
+   "publisher": "Finansdepartementet / Lovdata",
+   "url": "https://lovdata.no/dokument/SF/forskrift/2007-12-21-1766",
+   "kind": "primary",
+   "documentType": "forskrift",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/09_Skattebetalingsforskriften.html",
+   "repoFile": "docs/tax/primarkilder/09_Skattebetalingsforskriften.html",
+   "packageSha256": "70ba35fff7ccc47c90b80eaa727fb46e31809a278795043429c4b88c1a33b8ad",
+   "publishedVersion": "Lovdata konsolidert; «Sist endret FOR-2026-06-26-1385»; § 10-4-4 «Endret ved forskrift 25 mars 2010 nr. 462 (i kraft 1 april 2010, tidligere § 10-4-3)»",
+   "effectiveDate": "2010-04-01",
+   "readSections": [
+    "§ 10-4 Forskrifter (§§ 10-4-1 til 10-4-4)",
+    "§ 1-1 Virkeområde"
+   ],
+   "limitations": "Bare kap. 10 § 10-4-1…10-4-4 og § 1-1 er lest; resten av forskriften er ikke vurdert."
+  },
+  {
+   "id": "T47",
+   "title": "Stortingsvedtak om engangsavgift på motorvogner mv. for 2026, FOR-2025-12-18-2755 — konsolidert (Lovdata)",
+   "publisher": "Stortinget / Lovdata",
+   "url": "https://lovdata.no/dokument/STV/forskrift/2025-12-18-2755",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_konsolidert",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-007",
+    "R-OTA-008",
+    "R-OTA-010",
+    "R-IMP-OTH-001",
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/10_Lovdata_Engangsavgift_2026.html",
+   "repoFile": "docs/tax/primarkilder/10_Lovdata_Engangsavgift_2026.html",
+   "packageSha256": "3de4e672d90f83977bc4222422610f194bddef180b3b27b0b227380d37fc92e3",
+   "publishedVersion": "Dato FOR-2025-12-18-2755; Departement Stortinget; Ikrafttredelse «Budsjettåret 2026»; Kunngjort 22.12.2025 kl. 11.30; Sist endret FOR-2026-06-19-1246 fra 01.09.2026; hjemmel Grl. § 75 a og LOV-1959-06-19-2",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "§§ 1–11 (hele vedtaket) og metadata"
+   ],
+   "limitations": "Konsolidert nettside-HTML hentet 2026-10-18 (dekker endringer til og med FOR-2026-06-19-1246). Ingen eksplisitt sluttdato i teksten; «Budsjettåret 2026» er Lovdatas metadata."
+  },
+  {
+   "id": "T48",
+   "title": "Vedtak om endring i stortingsvedtak 18. desember 2025 nr. 2755 om engangsavgift på motorvogner mv. for 2026, FOR-2026-06-19-1246",
+   "publisher": "Stortinget / Lovdata",
+   "url": "https://lovdata.no/dokument/LTI/forskrift/2026-06-19-1246",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_endring",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-008",
+    "R-OTA-001",
+    "R-OTA-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/11_Endringsvedtak_2026-06-19-1246.html",
+   "repoFile": "docs/tax/primarkilder/11_Endringsvedtak_2026-06-19-1246.html",
+   "packageSha256": "d5373cd23d57bd433a0735288f65996e9de36a03880af9a4df22ff81bf80313f",
+   "publishedVersion": "FOR-2026-06-19-1246; vedtatt 19.06.2026; kunngjort 23.06.2026 kl. 15.50; journalnr 2026-0793; ikrafttredelse 01.09.2026; endrer FOR-2025-12-18-2755",
+   "effectiveDate": "2026-09-01",
+   "readSections": [
+    "I (endring av § 3 første ledd bokstav b nr 2) og II (ikrafttredelse)"
+   ],
+   "limitations": "Hele endringsvedtaket (kort). Endrer KUN § 3 første ledd bokstav b nr 2 (avgiftsgruppe b, CO2-tabell)."
+  },
+  {
+   "id": "T49",
+   "title": "Lov om betaling og innkreving av skatte- og avgiftskrav (skattebetalingsloven), LOV-2005-06-17-67 — konsolidert",
+   "publisher": "Lovgiver / Lovdata",
+   "url": "https://lovdata.no/dokument/NL/lov/2005-06-17-67",
+   "kind": "primary",
+   "documentType": "lov",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/12_Skattebetalingsloven.html",
+   "repoFile": "docs/tax/primarkilder/12_Skattebetalingsloven.html",
+   "packageSha256": "01cd0f700e2f8a821009da3c2aacc494a2e33c0778b39bbeab84d44dac4b38ed",
+   "publishedVersion": "Lovdata konsolidert; «Sist endret LOV-2026-06-19-45 fra 01.07.2026»; «Endres ved lov 19 juni 2026 nr. 41 (i kraft fra den tid Kongen bestemmer)» på bl.a. §§ 1-1, 10-30, 10-40, 10-41",
+   "effectiveDate": "2008-01-01",
+   "readSections": [
+    "§ 1-1 Virkeområde (2) bokstav i",
+    "§ 10-4 Forskrifter",
+    "§ 10-40 Innenlands særavgifter (1) c"
+   ],
+   "limitations": "Bare §§ 1-1, 10-4 og 10-40 er lest. Lov 19 juni 2026 nr. 41 endrer bl.a. § 1-1 og § 10-40/10-41 men er ikke trådt i kraft per hentedato; innholdet er ikke lest."
   }
  ],
  "accessAttempts": [

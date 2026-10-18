@@ -1,6 +1,6 @@
 /**
  * ECON-002: deterministisk norsk engangsavgift (gruppe a, personbil 2026). Testene prøver regler, grenser og blokkering — de gyldne
- * casene er valideringsreferanser, aldri kilder til satser. Avrundingsregelen mangler kilde (U-010) og testes som åpen.
+ * casene er valideringsreferanser, aldri kilder til satser. Avrunding: bare sluttkravet ned til hele kroner (skattebetalingsforskriften § 10-4-4, R-OTA-014, E1P); mellomledd avrundes ikke (U-012).
  */
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
@@ -70,6 +70,72 @@ describe("kilde-belagte parametere stemmer med docs/tax (ingen parallell regelmo
   it("profilen er ikke godkjent og ingen parameter er godkjent i foundationStatus", () => {
     expect(NO_OTA_2026_A_PB.approval.approved).toBe(false);
     expect(json("rules.json").foundationStatus).toMatchObject({ status: "REVIEW", approvedParameters: 0, class1References: 0 });
+  });
+});
+
+/** Lesbar tekst fra de originale HTML-filene i repoet (ikke fra avledede TXT-kopier). */
+function htmlText(file: string): string {
+  const raw = readFileSync(join(ROOT, "docs/tax/primarkilder", file), "utf8");
+  return raw
+    .replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/[\u200b]/g, "")
+    .replace(/\u2011/g, "-")
+    .replace(/\s+/g, " ");
+}
+
+describe("endelig stortingsvedtak og endringsvedtak (U-011) — tekstbelegg i de originale HTML-filene", () => {
+  const consolidated = htmlText("10_Lovdata_Engangsavgift_2026.html");
+  const original = htmlText("06_Stortinget_Vedtak_220_2026.html");
+  const amendment = htmlText("11_Endringsvedtak_2026-06-19-1246.html");
+  const rnb = htmlText("07_Stortinget_RNB_2026_vedtak.html");
+  it("identitet og metadata: FOR-2025-12-18-2755, Budsjettåret 2026, sist endret FOR-2026-06-19-1246 fra 01.09.2026", () => {
+    for (const s of ["FOR-2025-12-18-2755", "Budsjettåret 2026", "FOR-2026-06-19-1246 fra 01.09.2026", "Kunngjort 22.12.2025"]) expect(consolidated, s).toContain(s);
+    expect(original).toContain("Vedtak 220");
+  });
+  it("§ 2, § 3 a, § 4 og § 5 er like i opprinnelig vedtak 220 og konsolidert tekst (gruppe a uendret)", () => {
+    for (const s of ["12,71 kroner per kg for den delen av egenvekten som overstiger 500 kg", "260 kroner per kg for den delen av vekten som overstiger 1 200 kg", "gjøres fradrag i den avgift som beregnes etter §§ 2 og 3 basert på motorvognens alder", "For motorvogner med stempeldrevet forbrenningsmotor"]) {
+      expect(original.replace(/\s+/g, " "), `vedtak 220: ${s}`).toContain(s);
+      expect(consolidated, `konsolidert: ${s}`).toContain(s);
+    }
+    for (const doc of [original, consolidated]) expect(doc).toMatch(/Motorvogner\s*i avgiftsgruppe a, b, c, g og j\s*2\s?400/);
+  });
+  it("endringsvedtaket endrer bare § 3 første ledd bokstav b nr 2 og trer i kraft 1. september 2026; vedtak 1131–1132 stemmer", () => {
+    expect(amendment).toContain("§ 3 fyrste ledd bokstav b nr 2 skal lyde");
+    expect(amendment.match(/§ \d+[a-z]? /g)?.filter((x) => x !== "§ 3 " && x !== "§ 75 ").length ?? 0).toBeLessThanOrEqual(1);
+    expect(amendment).toContain("Endringa under I tek til å gjelde 1. september 2026");
+    expect(amendment).not.toMatch(/12,71|260 kroner|2 400/);
+    expect(rnb).toContain("stortingsvedtak 18. desember 2025 nr. 220");
+    expect(rnb).toContain("§ 3 fyrste ledd bokstav b nr 2 skal lyde");
+  });
+  it("motorens gruppe a-parametere er tallene i vedtaket", () => {
+    const P = NO_OTA_2026_A_PB.parameters;
+    expect(consolidated).toContain(`${P.generalWeight.ratePerKg.replace(".", ",")} kroner per kg for den delen av egenvekten som overstiger ${P.generalWeight.thresholdKg} kg`);
+    expect(consolidated).toContain(`${P.combustionWeight.ratePerKg} kroner per kg for den delen av vekten som overstiger 1 200 kg`);
+    expect(consolidated).toMatch(/per g\/km kr 0–100 800 101–150 1 600 151–225 3 200 over 225 5 000 b\. For varebiler klasse 2/);
+  });
+});
+
+describe("avrundingskjeden (U-010): forskrift § 10-4-4, håndbok og lovens virkeområde — tekstbelegg", () => {
+  it("skattebetalingsforskriften § 10-4-4 og håndboken sier ned til nærmeste hele krone ved beregning av skatte- og avgiftskrav", () => {
+    const s = "Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone";
+    expect(htmlText("09_Skattebetalingsforskriften.html")).toContain(s);
+    expect(htmlText("08_Skattebetalingshandboken_10-4.html")).toContain(s);
+    expect(htmlText("08_Skattebetalingshandboken_10-4.html")).toContain("skatte- og avgiftsregnskapene ikke vil inneholde ørebeløp");
+  });
+  it("engangsavgift er et avgiftskrav under skattebetalingsloven (§ 1-1 (2) i, § 10-40 (1) c) og nevnes i forskriften § 10-4-1 d", () => {
+    const law = htmlText("12_Skattebetalingsloven.html");
+    expect(law).toContain("særavgifter omfattet av lov 19. juni 1959 nr. 2 om avgifter vedrørende motorkjøretøyer og båter");
+    expect(law).toContain("engangsavgiften for registrerte virksomheter, som forfaller til betaling den 18. i måneden etter at avgiftsplikten oppstod");
+    expect(htmlText("09_Skattebetalingsforskriften.html")).toContain("engangsavgift på motorvogner, hvor beløpsgrensen er 200 kroner");
+  });
+  it("hjemmel: skattebetalingsloven § 10-4 gjelder «dette kapitlet» (kapittel 10 Forfall) — registrert som åpent spørsmål, ikke skjult", () => {
+    expect(htmlText("12_Skattebetalingsloven.html")).toContain("Departementet kan i forskrift gi regler til utfylling og gjennomføring av bestemmelsene i dette kapitlet");
+    const rule = (json("rules.json").rules as Array<{ id: string; evidenceLevel: string; openQuestions: string[] }>).find((r) => r.id === "R-OTA-014")!;
+    expect(rule.evidenceLevel).toBe("E1P");
+    expect(rule.openQuestions.join(" ")).toMatch(/kapittel 10/);
   });
 });
 
@@ -208,7 +274,7 @@ describe("registreringspresisjon (ECON-001 §4.1)", () => {
     expect(r.status).toBe("blocked");
     expect(codes(r)).toEqual(["registration_precision_insufficient"]);
     expect(r.totalRegistrationTaxesExact).toBeNull();
-    expect(r.totalIntegerBounds).toBeNull();
+    expect(r.finalClaim).toBeNull();
     expect(r.ageDeduction).toBeNull();
   });
   it("manglende/ukjent første registrering og ugyldig verdi blokkeres", () => {
@@ -265,9 +331,10 @@ describe("profilens gyldighet: dokumentert start/slutt er adskilt fra intern sik
     expect(r.blocked[0]!.message).toMatch(/dokumentert gyldig til 2026-06-30/);
     expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-06-30", kind: "expected" } }), documented).status).toBe("calculated_unverified");
   });
-  it("etter satsoversiktens dato (2026-05-01) følger en advarsel om uverifiserte senere endringer", () => {
-    const before = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-05-01", kind: "expected" } }));
-    const after = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-05-02", kind: "expected" } }));
+  it("etter hentedatoen for den konsoliderte vedtaksteksten (2026-10-18) følger en advarsel om ukontrollerte senere endringer", () => {
+    expect(NO_OTA_2026_A_PB.ratesVerifiedAsOf).toBe("2026-10-18");
+    const before = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-10-18", kind: "expected" } }));
+    const after = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-10-19", kind: "expected" } }));
     expect(before.warnings.map((w) => w.code)).not.toContain("rates_verified_as_of");
     expect(after.warnings.map((w) => w.code)).toContain("rates_verified_as_of");
   });
@@ -322,23 +389,23 @@ describe("U-009: dag 29–31 når målmåneden er kortere — kildebelagt vs blo
 
 describe("implementasjonskonklusjoner er merket og skilt fra kildebelagt oppførsel", () => {
   const codesOf = (r: ReturnType<typeof calculateNorwegianVehicleTax>) => r.implementationConclusions.map((c) => c.code);
-  it("dag 1–28: bare månedstrinn-konklusjonen; ingen overflyt-konklusjon", () => {
+  it("dag 1–28: månedstrinn- og ingen-mellomavrunding-konklusjon; ingen overflyt-konklusjon", () => {
     const r = calculateNorwegianVehicleTax(ice());
-    expect(codesOf(r)).toEqual(["month_steps_same_anniversary_rule"]);
+    expect(codesOf(r)).toEqual(["month_steps_same_anniversary_rule", "no_intermediate_rounding"]);
     expect(r.implementationConclusions.every((c) => c.sourceStatus === "not_expressly_described")).toBe(true);
   });
   it("dag 29–31 utenfor vinduet beregnes, og overflyt-konklusjonen er merket (kilden beskriver ikke dag 29–31)", () => {
     const r = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2023-01-31" }, norwegianRegistration: { date: "2026-04-30", kind: "expected" } }));
     expect(r.status).toBe("calculated_unverified");
-    expect(codesOf(r)).toEqual(["month_steps_same_anniversary_rule", "overflow_dates_outside_window_monotonic"]);
+    expect(codesOf(r)).toEqual(["month_steps_same_anniversary_rule", "overflow_dates_outside_window_monotonic", "no_intermediate_rounding"]);
   });
   it("kun måned kjent: «siste dag i måneden» (dag 29–31) utløser overflyt-konklusjonen", () => {
     const r = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "month", value: "2023-01" } }));
     expect(codesOf(r)).toContain("overflow_dates_outside_window_monotonic");
   });
-  it("blokkerte resultater og ny motorvogn har ingen konklusjoner; blokkering i vinduet består", () => {
+  it("blokkerte resultater har ingen konklusjoner; ny motorvogn bare avrundingskonklusjonen; blokkering i vinduet består", () => {
     expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "year", value: "2023" } })).implementationConclusions).toEqual([]);
-    expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "none", value: null } })).implementationConclusions).toEqual([]);
+    expect(codesOf(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "none", value: null } })))).toEqual(["no_intermediate_rounding"]);
     const inWindow = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2023-01-31" }, norwegianRegistration: { date: "2023-02-28", kind: "expected" } }), { ...NO_OTA_2026_A_PB, validFrom: "2023-01-01" });
     expect(inWindow.status).toBe("blocked");
     expect(inWindow.blocked[0]!.code).toBe("age_step_boundary_ambiguous");
@@ -352,7 +419,7 @@ describe("PHEV: definisjon → anvendelig bestemmelse → rundskriv er koblet i 
     expect(rule.chain!.definition).toMatch(/ikke definert/);
     expect(rule.chain!.applicableProvision).toMatch(/§ 3/);
     expect(rule.chain!.circular).toMatch(/3\.3\.11/);
-    expect(rule.chain!.gap).toMatch(/ingen lest tekst sier uttrykkelig/i);
+    expect(rule.chain!.gap).toMatch(/Ingen tekst nevner ladbar hybrid uttrykkelig/);
     const srcs = new Set(rule.e1Findings.map((f) => f.source));
     for (const s of ["T03", "T05", "T40", "T41"]) expect(srcs.has(s), s).toBe(true);
   });
@@ -364,23 +431,48 @@ describe("PHEV: definisjon → anvendelig bestemmelse → rundskriv er koblet i 
   });
 });
 
-describe("gyldige tilfeller er aldri «godkjent»; avrunding er åpen (U-010)", () => {
+describe("gyldige tilfeller er aldri «godkjent»; avrunding av sluttkravet (R-OTA-014)", () => {
   it("status er calculated_unverified, profilen ikke godkjent, åpne punkter følger resultatet", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
     expect(r.status).toBe("calculated_unverified");
     expect(r.evidence).toMatchObject({ parameterEvidenceLevel: "E1", profileApproved: false });
-    expect(r.evidence!.openItems.join(" ")).toMatch(/U-010/);
-    expect(r.rounded).toBeNull();
+    expect(r.evidence!.openItems.join(" ")).toMatch(/U-012/);
+    expect(r.evidence!.openItems.join(" ")).toMatch(/R-OTA-014 er E1P/);
   });
-  it("vrakpant er separat, 2 400 og reduseres ikke av bruksfradrag; oneOff + vrakpant = total", () => {
+  it("vrakpant er separat, 2 400 og reduseres ikke av bruksfradrag (vedtak § 4: fradrag i avgiften etter §§ 2 og 3); oneOff + vrakpant = total", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
     expect(r.scrappageDeposit).toEqual({ amountNok: 2400, ruleRef: "R-IMP-OTH-001", reducedByAgeDeduction: false });
     expect(toExactString(add(dec(r.oneOffTaxExact!), decInt(2400)))).toBe(r.totalRegistrationTaxesExact);
   });
-  it("heltallsgrenser (én sluttavrunding) og eksplisitt policy er adskilt og merket uten kilde", () => {
-    const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input, undefined, { rounding: "floor_whole_nok" });
-    expect(r.totalIntegerBounds).toEqual({ lower: 333723, upper: 333724, assumption: "single_final_whole_nok_rounding" });
-    expect(r.rounded).toEqual({ policy: "floor_whole_nok", evidence: "none_in_sources", oneOffTaxNok: 331323, totalRegistrationTaxesNok: 333723 });
+  it("sluttkravet avrundes ned til hele kroner (§ 10-4-4); eksakte beløp og komponenter beholdes uavrundet", () => {
+    const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
+    expect(r.finalClaim).toEqual({ ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: 331323, scrappageDepositNok: 2400, totalRegistrationTaxesNok: 333723 });
+    expect(r.totalRegistrationTaxesExact).toBe("333723.972");
+    expect(r.components.map((c) => c.amountExact)).toEqual(["18759.96", "201760", "252800"]); // mellomledd er ikke avrundet
+    expect(r.preDeductionExact).toBe("473319.96");
+    expect(r.oneOffTaxExact).toBe("331323.972");
+  });
+  it("avrunding skjer én gang til slutt: summen av nedrundede ledd ville gitt annet svar enn nedrunding av summen", () => {
+    // 18 759,96 + 201 760 + 252 800 → ledd for ledd ned: 18 759 + … = 473 319; hele summen 473 319,96 → ned 473 319; etter 30 %-fradrag: 331 323,972
+    const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
+    const stepwise = (18759 + 201760 + 252800) * 70 / 100; // ville gitt 331 323,3 (ikke kilde-belagt)
+    expect(stepwise).not.toBe(Number(r.oneOffTaxExact));
+    expect(r.finalClaim!.oneOffTaxNok).toBe(Math.trunc(Number(r.oneOffTaxExact)));
+  });
+  it("heltall uten brøk forblir uendret; vrakpant (heltall) endrer ikke avrundingen: floor(avgift + 2 400) = floor(avgift) + 2 400", () => {
+    const base = ice({ norwegianTaxWeight: { kg: 500, basis: "vehicle_register" }, co2: { gramsPerKm: 0, method: "wltp_combined" }, firstRegistration: { precision: "none", value: null } });
+    const r = calculateNorwegianVehicleTax(base);
+    expect(r.totalRegistrationTaxesExact).toBe("2400");
+    expect(r.finalClaim).toMatchObject({ oneOffTaxNok: 0, totalRegistrationTaxesNok: 2400 });
+    for (const g of GOLDEN_CASES) {
+      const x = calculateNorwegianVehicleTax(g.input);
+      expect(x.finalClaim!.totalRegistrationTaxesNok).toBe(x.finalClaim!.oneOffTaxNok + 2400);
+    }
+  });
+  it("blokkerte resultater har ingen avrundet sluttkrav (aldri 0)", () => {
+    const r = calculateNorwegianVehicleTax(ice({ norwegianTaxWeight: { kg: null, basis: "unverified" } }));
+    expect(r.finalClaim).toBeNull();
+    expect(r.totalRegistrationTaxesExact).toBeNull();
   });
   it("deterministisk: samme input to ganger gir identisk resultat og inputen muteres ikke", () => {
     const input = JSON.parse(JSON.stringify(GOLDEN_CASES[0]!.input)) as TaxInput;
@@ -397,11 +489,11 @@ describe("gyldne caser (validering mot offisielle verdier; ikke regelkilde)", ()
     expect(Object.fromEntries(GOLDEN_CASES.map((c) => [c.id, c.expectedTotalNok]))).toEqual(EXPECTED);
   });
   for (const c of GOLDEN_CASES) {
-    it(`${c.id} ${c.label}: eksakt desimal fra kilde-belagte regler; hele kroner = offisielt beløp`, () => {
+    it(`${c.id} ${c.label}: eksakt desimal fra kilde-belagte regler; sluttkrav (nedrundet, § 10-4-4) = offisielt beløp`, () => {
       const r = calculateNorwegianVehicleTax(c.input);
       expect(r.status).toBe("calculated_unverified");
       expect(r.totalRegistrationTaxesExact).toBe(EXACT[c.id as keyof typeof EXACT]);
-      expect(r.totalIntegerBounds!.lower).toBe(c.expectedTotalNok); // heltallsdelen er det offisielle beløpet
+      expect(r.finalClaim!.totalRegistrationTaxesNok).toBe(c.expectedTotalNok); // VALIDERING: regelen er kilde-belagt uavhengig av casene
     });
   }
   it("komponentene: CASE-001 PHEV, CASE-002 EV (ingen 260), CASE-003 diesel", () => {
@@ -413,17 +505,15 @@ describe("gyldne caser (validering mot offisielle verdier; ikke regelkilde)", ()
   it("bruksfradrag per case ved beregningsdato 2026-10-18: 2 %, 33 %, 30 %", () => {
     expect(GOLDEN_CASES.map((c) => calculateNorwegianVehicleTax(c.input).ageDeduction!.percent)).toEqual([2, 33, 30]);
   });
-  it("VALIDERINGSOBSERVASJON (ikke regel): avrunding ned av engangsavgiften gir de offisielle beløpene, nærmeste krone gir ingen — kilden er ikke funnet", () => {
-    const floor = GOLDEN_CASES.map((c) => calculateNorwegianVehicleTax(c.input, undefined, { rounding: "floor_whole_nok" }).rounded!.totalRegistrationTaxesNok);
-    const near = GOLDEN_CASES.map((c) => calculateNorwegianVehicleTax(c.input, undefined, { rounding: "half_up_whole_nok" }).rounded!.totalRegistrationTaxesNok);
-    expect(floor).toEqual([529069, 16748, 333723]);
-    expect(near).toEqual([529070, 16749, 333724]);
-    // Motoren velger ikke noen policy selv: uten uttrykkelig valg finnes ingen avrundet verdi.
-    expect(calculateNorwegianVehicleTax(GOLDEN_CASES[0]!.input).rounded).toBeNull();
+  it("avrundingsregelen er hentet fra kilder (T46 § 10-4-4 / T45), ikke fra casene: den er registrert som R-OTA-014 med kildene og leses uten referanse til casene", () => {
+    const rule = (json("rules.json").rules as Array<{ id: string; sources: Array<{ id: string }>; e1Findings: Array<{ source: string; claim: string }> }>).find((r) => r.id === "R-OTA-014")!;
+    expect(rule.sources.map((s) => s.id)).toEqual(expect.arrayContaining(["T46", "T45", "T49"]));
+    expect(rule.e1Findings.some((f) => f.source === "T46" && /avrundes beløpet ned til nærmeste hele krone/.test(f.claim))).toBe(true);
+    for (const f of rule.e1Findings) expect(f.claim, f.source).not.toMatch(/CASE-00|529 ?069|16 ?748|333 ?723/);
   });
   it("CASE-001 måned-presisjon: siste dag i september ville gitt 0 % og høyere avgift (følsomhet vist)", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[0]!.input);
-    expect(r.monthSensitivity).toMatchObject({ alternativeDeductionPercent: 0, alternativeTotalRegistrationTaxesExact: "539818.1" });
+    expect(r.monthSensitivity).toMatchObject({ alternativeDeductionPercent: 0, alternativeTotalRegistrationTaxesExact: "539818.1", alternativeTotalRegistrationTaxesNok: 539818 });
   });
   it("om kalkulatorkjøringen var 2026-10-01 eller 2026-11-01 (trinngrenser) endres fradragene — viser at kjøredato må dokumenteres", () => {
     const at = (c: number, d: string) => calculateNorwegianVehicleTax({ ...GOLDEN_CASES[c]!.input, norwegianRegistration: { date: d, kind: "expected" } }).ageDeduction!.percent;

@@ -1,8 +1,8 @@
 /**
  * Avgiftsprofil NO-OTA-2026-A-PB: engangsavgift 2026, avgiftsgruppe a, personbil (M1). Gjenbruker `docs/tax/rules.json`
- * (datedParameters DP-WEIGHT-GEN-A-2026, DP-WEIGHT-A-2026, DP-CO2-A-2026) — ingen egen regelmodell. En test sammenligner tallene her
- * med rules.json. Parametrene er E1 (lest i kildepakken, ECON-002) men IKKE godkjent (`approved: false`): godkjenning krever
- * eksplisitt parameterApproval og klasse 1-referanser (docs/tax/rules.json foundationStatus).
+ * (datedParameters DP-WEIGHT-GEN-A-2026, DP-WEIGHT-A-2026, DP-CO2-A-2026; avrunding R-OTA-014) — ingen egen regelmodell. En test sammenligner
+ * tallene her med rules.json. Parametrene er kilde-belagt (E1/E1P; stortingsvedtaket FOR-2025-12-18-2755 lest) men IKKE godkjent
+ * (`approved: false`): godkjenning krever eksplisitt parameterApproval og klasse 1-referanser (docs/tax/rules.json foundationStatus).
  */
 export interface Co2Band {
   /** Eksklusiv nedre grense (g/km). */
@@ -31,7 +31,9 @@ export interface TaxProfile {
   documentedValidTo: string | null;
   /** INTERN sikkerhetssperre, ikke en kildedokumentert opphørsdato: etter denne datoen regner motoren ikke uten ny kildekontroll. */
   internalSafetyLimit: { date: string; kind: "internal_guard"; basis: string };
-  /** Dato for satsoversikten (T40) satsene er verifisert mot; senere endringer er ikke kontrollert. */
+  /** Kildedokumentert periode slik Lovdata merker vedtaket («Budsjettåret 2026»); ikke en eksplisitt sluttdato. */
+  documentedPeriodLabel: string;
+  /** Hentedato for den konsoliderte vedtaksteksten satsene er verifisert mot; senere endringer er ikke kontrollert. */
   ratesVerifiedAsOf: string;
   parameters: {
     generalWeight: { thresholdKg: number; ratePerKg: string; ruleRef: string; paramRef: string };
@@ -41,6 +43,8 @@ export interface TaxProfile {
     co2ParamRef: string;
     scrappageDepositNok: number;
     scrappageRuleRef: string;
+    /** Skattebetalingsforskriften § 10-4-4: avrund ned til hele kroner — bare det samlede kravet (R-OTA-014, E1P); mellomledd avrundes ikke (U-012). */
+    rounding: { ruleRef: string; scope: "final_claim"; direction: "down"; unit: "whole_nok"; basis: string };
   };
   deductionTable: readonly DeductionStep[];
   /** Brukes når registrering skjer 20 år eller mer etter første registrering (1. januar-regelen, forskrift § 3-3). */
@@ -69,9 +73,10 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
   internalSafetyLimit: {
     date: "2026-12-31",
     kind: "internal_guard",
-    basis: "Satsene er lest som «Avgiftssatser 2026»/«budsjettåret 2026»; kildene oppgir ingen opphørsdato. Sperren hindrer at 2026-satser stilltiende brukes for 2027 uten ny kildekontroll.",
+    basis: "Vedtaket er «for 2026» og merket «Budsjettåret 2026» (Lovdata), men teksten har ingen eksplisitt sluttdato. Sperren hindrer at 2026-satser stilltiende brukes for 2027 uten ny kildekontroll.",
   },
-  ratesVerifiedAsOf: "2026-05-01",
+  documentedPeriodLabel: "Budsjettåret 2026",
+  ratesVerifiedAsOf: "2026-10-18",
   parameters: {
     generalWeight: { thresholdKg: 500, ratePerKg: "12.71", ruleRef: "R-OTA-001", paramRef: "DP-WEIGHT-GEN-A-2026" },
     combustionWeight: { thresholdKg: 1200, ratePerKg: "260", ruleRef: "R-OTA-001", paramRef: "DP-WEIGHT-A-2026" },
@@ -85,21 +90,24 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     co2ParamRef: "DP-CO2-A-2026",
     scrappageDepositNok: 2400,
     scrappageRuleRef: "R-IMP-OTH-001",
+    rounding: { ruleRef: "R-OTA-014", scope: "final_claim", direction: "down", unit: "whole_nok", basis: "skattebetalingsforskriften § 10-4-4 (T46); håndbok (T45)" },
   },
   deductionTable: DEDUCTION_STEPS_2026,
   deductionRuleRef: "R-OTA-010",
-  sources: ["T03", "T05", "T40", "T41", "T42"],
+  sources: ["T03", "T05", "T40", "T42", "T43", "T44", "T45", "T46", "T47", "T48", "T49"],
   approval: {
     approved: false,
     reason: "Ingen eksplisitt parameterApproval og ingen klasse 1-referanser (docs/tax/rules.json foundationStatus).",
   },
   openItems: [
-    "U-010: avrunding av engangsavgiften er ikke omtalt i noen lest kilde",
-    "U-011: endelig vedtatt stortingsvedtak ikke lest; satser verifisert mot Finansdepartementets oversikt (2026-05-01) og forslag",
+    "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
+    "R-OTA-014 er E1P: skattebetalingsforskriften § 10-4-4 nevner ikke engangsavgift uttrykkelig (anvendelsen følger av skattebetalingsloven § 1-1 (2) i, § 10-40 (1) c og forskriften § 10-4-1 d)",
     "U-009: månedstrinn i bruksfradrag og dag-overflyt (dag 29–31) er ikke spesifisert",
-    "Gruppe a-endringer etter 2026-05-01 er ikke kontrollert",
-    "Vrakpant er ikke redusert av bruksfradrag — støttet av forslag (T41 § 4) og rundskriv 3.4, ikke av endelig vedtakstekst",
+    "PHEV omfattes av § 3 via vilkåret «stempeldrevet forbrenningsmotor»; ladbar hybrid er ikke nevnt uttrykkelig (E1P)",
+    "Ingen eksplisitt sluttdato for 2026-satsene (intern sikkerhetssperre); endringer etter hentedato 2026-10-18 og lov 19 juni 2026 nr. 41 er ikke kontrollert",
+    "Ingen parameter er godkjent og ingen klasse 1-referanse finnes",
   ],
+
 };
 
 export const TAX_PROFILES: readonly TaxProfile[] = [NO_OTA_2026_A_PB];

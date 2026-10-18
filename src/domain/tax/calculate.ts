@@ -7,11 +7,11 @@
  * resultatet er eksakt desimal pluss heltallsgrenser; en avrundingspolicy gis bare eksplisitt av kalleren og er merket uten kilde.
  */
 import { lookupDeduction, stepLabel } from "./age-deduction";
-import { add, ceilInt, dec, decInt, floorInt, max0, min, mul, roundHalfUpInt, sub, toExactString, toSafeNumber, ZERO, type Dec } from "./decimal";
+import { add, dec, decInt, floorInt, max0, min, mul, sub, toExactString, toSafeNumber, ZERO, type Dec } from "./decimal";
 import { compareIso, lastDayOfMonth, parseIsoDate } from "./dates";
 import { TAX_PROFILES, type TaxProfile } from "./profile-no-2026-a";
 import type {
-  AgeDeductionResult, BlockCode, Blocker, CalcOptions, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, Warning,
+  AgeDeductionResult, BlockCode, Blocker, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, Warning,
 } from "./types";
 
 const VERIFIED_WEIGHT_BASES = new Set(["eu_type_approval_minimum_mass", "vehicle_register"]);
@@ -25,7 +25,7 @@ export function classifyPowertrain(p: TaxInput["propulsion"]): TaxPowertrain | n
 const percentFactor = (pct: number): Dec => ({ units: BigInt(100 - pct), scale: 2 });
 
 function profileRef(p: TaxProfile): ProfileRef {
-  return { id: p.id, version: p.version, taxGroup: p.taxGroup, validFrom: p.validFrom, documentedValidTo: p.documentedValidTo, internalSafetyLimit: { date: p.internalSafetyLimit.date, kind: p.internalSafetyLimit.kind }, ratesVerifiedAsOf: p.ratesVerifiedAsOf, approved: p.approval.approved };
+  return { id: p.id, version: p.version, taxGroup: p.taxGroup, validFrom: p.validFrom, documentedPeriodLabel: p.documentedPeriodLabel, documentedValidTo: p.documentedValidTo, internalSafetyLimit: { date: p.internalSafetyLimit.date, kind: p.internalSafetyLimit.kind }, ratesVerifiedAsOf: p.ratesVerifiedAsOf, approved: p.approval.approved };
 }
 
 /** Kilde-dokumentert gyldighet og intern sperre holdes adskilt; ulike feilkoder gjør årsaken tydelig. */
@@ -104,7 +104,7 @@ function ambiguityBlocker(a: { stepMonths: number; clampedDate: string; rolledDa
   };
 }
 
-export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfile, options: CalcOptions = {}): TaxResult {
+export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfile): TaxResult {
   const blockers: Blocker[] = [];
   const missing: string[] = [];
   const warnings: Warning[] = [];
@@ -190,7 +190,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   }
 
   if (blockers.length > 0 || !prof || !powertrain || kg === null || !norDate) {
-    return { status: "blocked", profile: prof ? profileRef(prof) : null, powertrain, components: [], preDeductionExact: null, ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, totalIntegerBounds: null, rounded: null, monthSensitivity: null, evidence: prof ? { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] } : null, missingInputs: missing, blocked: blockers, warnings, assumptions, implementationConclusions: [] };
+    return { status: "blocked", profile: prof ? profileRef(prof) : null, powertrain, components: [], preDeductionExact: null, ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: prof ? { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] } : null, missingInputs: missing, blocked: blockers, warnings, assumptions, implementationConclusions: [] };
   }
 
   // --- beregning
@@ -205,7 +205,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     const main = lookupDeduction(prof.deductionTable, working!, norDate);
     const alt = altWorking && compareIso(norDate, altWorking) >= 0 ? lookupDeduction(prof.deductionTable, altWorking, norDate) : null;
     if (main.ambiguous || alt?.ambiguous) {
-      return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, totalIntegerBounds: null, rounded: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [ambiguityBlocker(main.ambiguity ?? alt?.ambiguity ?? null, norDate, !main.ambiguity)], warnings, assumptions, implementationConclusions: [] };
+      return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [ambiguityBlocker(main.ambiguity ?? alt?.ambiguity ?? null, norDate, !main.ambiguity)], warnings, assumptions, implementationConclusions: [] };
     }
     ded = { percent: main.percent, ageCompletedMonths: main.completedMonths, stepLabel: main.stepLabel, workingFirstRegistration: working, workingDateDerived: derived, norwegianRegistrationDate: norDate, norwegianRegistrationKind: nor.kind, twentyYearRule: main.twentyYearRule };
     if (main.twentyYearRule) warnings.push({ code: "twenty_year_rule_unverified", message: "20-årsregelen gir 100 % fradrag; hvilken avgift som ellers gjelder for 20 år gamle motorvogner er ikke utledet (R-OTA-011)." });
@@ -214,6 +214,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
         alternativeWorkingDate: altWorking!,
         alternativeDeductionPercent: alt.percent,
         alternativeTotalRegistrationTaxesExact: toExactString(total(alt.percent)),
+        alternativeTotalRegistrationTaxesNok: toSafeNumber(floorInt(total(alt.percent))),
         message: `Bare måned er kjent; arbeidsdato ${working} (første dag) gir ${main.percent} % fradrag, siste dag i måneden (${altWorking}) gir ${alt.percent} %. Første dag gir høyest alder og lavest avgift.`,
       };
       warnings.push({ code: "month_precision_sensitivity", message: monthSensitivity.message });
@@ -235,19 +236,18 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
       });
     }
   }
-  assumptions.push("Bruksfradrag trekkes fra avgiften etter §§ 2 og 3; vrakpantavgiften reduseres ikke (T41 § 4, T03 3.4; endelig vedtakstekst ikke lest).");
-  assumptions.push("Månedstrinn i bruksfradraget nås på dagen i måneden (inklusivt), som T42 sier for hele år (U-009).");
 
   const oneOff = mul(preDeduction, percentFactor(ded.percent));
   const scrap = prof.parameters.scrappageDepositNok;
   const totalExact = add(oneOff, decInt(scrap));
-  const lower = toSafeNumber(floorInt(totalExact));
-  const upper = toSafeNumber(ceilInt(totalExact));
-  let rounded: TaxResult["rounded"] = null;
-  if (options.rounding) {
-    const oneOffNok = toSafeNumber(options.rounding === "floor_whole_nok" ? floorInt(oneOff) : roundHalfUpInt(oneOff));
-    rounded = { policy: options.rounding, evidence: "none_in_sources", oneOffTaxNok: oneOffNok, totalRegistrationTaxesNok: oneOffNok + scrap };
-  }
+  // Skattebetalingsforskriften § 10-4-4 (R-OTA-014): bare det samlede kravet avrundes ned til hele kroner; mellomledd er eksakte desimaler (U-012).
+  const oneOffNok = toSafeNumber(floorInt(oneOff));
+  const totalNok = toSafeNumber(floorInt(totalExact));
+  implementationConclusions.push({
+    code: "no_intermediate_rounding",
+    statement: "Avrunding (ned til hele kroner, skattebetalingsforskriften § 10-4-4) gjelder det samlede kravet. Kildene omtaler ikke avrunding av kg × sats, CO₂-bånd, sum før fradrag eller prosentfradrag; motoren avrunder derfor ikke mellomledd (U-012).",
+    sourceStatus: "not_expressly_described",
+  });
   return {
     status: "calculated_unverified",
     profile: profileRef(prof),
@@ -258,8 +258,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     oneOffTaxExact: toExactString(oneOff),
     scrappageDeposit: { amountNok: scrap, ruleRef: prof.parameters.scrappageRuleRef, reducedByAgeDeduction: false },
     totalRegistrationTaxesExact: toExactString(totalExact),
-    totalIntegerBounds: { lower, upper, assumption: "single_final_whole_nok_rounding" },
-    rounded,
+    finalClaim: { ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: oneOffNok, scrappageDepositNok: scrap, totalRegistrationTaxesNok: totalNok },
     monthSensitivity,
     evidence: { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] },
     missingInputs: missing,
