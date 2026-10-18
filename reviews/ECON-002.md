@@ -1,6 +1,6 @@
 # ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 5: §15)
 
-**Status: REVIEW.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for EV og diesel (runde 9, §19); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Status: REVIEW.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for PHEV, EV og diesel (runde 9–10, §19–§20); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -561,5 +561,10 @@ Kjøredato og automatisk dagsdato 18.10.2026 er uttrykkelig brukerbekreftet og r
 
 ### 19.5 Kontroller
 `check-docs.mjs` OK (110 tilfeller, klasse 1 = 2); `npx vitest run` — 32 filer, 743 tester bestått (sentinelltestene for «0 klasse 1» er oppdatert til faktisk status); `npm run typecheck` rent. Ikke kjørt: build, e2e, DB, kalkulator.
+
+## 20. Runde 10 — PHEV registrert som klasse 1 (18.10.2026)
+Christian bekreftet uttrykkelig at «Alternativ beregning (valgfritt)» sto tomt i PHEV-kjøringen med innkjøpspris 600 000 kr den 18.10.2026. Det er registrert som **brukerbekreftet opplysning** (samme proveniens som kjøredato; ikke synlig i bildene) i `references.json` (`C1-GR-20261018-01`, `independentReference.userConfirmedInputs`). Dermed er den ene manglende opplysningen etter §19.2 dekket: steg 1–10 observert, steg 11 brukerbekreftet, resultat 529 069,00 observert. **PHEV (600 000) oppfyller eksisterende klasse 1-krav.** Nedbrytningsbildet ved 2 600 000 er fortsatt en separat observasjon uten inputkobling. CO₂-metoden «vektet kombinert» er fortsatt en motorantakelse, ikke observert input.
+
+Effekt: `class1References` = 3 (foundationStatus og profil). Resultatet er fortsatt `estimate_not_approved`. Ingen parameter godkjent; R-OTA-002/-010/-014 E1P; U-012 og R-OTA-014 uendret; ECON-003/004 ikke startet. Kontroller: se commit (check-docs, vitest, typecheck).
 
 **Sluttstatus: REVIEW.**

@@ -1,6 +1,6 @@
 # Registrering: kalkulatorobservasjoner 18.10.2026 (GR-20261018-01 PHEV, -02 EV, -03 diesel)
 
-**Status: REVIEW. Ingen parametere er godkjent. Klasse 1 er registrert for EV (`C1-GR-20261018-02`) og diesel (`C1-GR-20261018-03`) etter eksisterende definisjon (§4); PHEV (`-01`) venter på én opplysning.** `referenceScope = explicit_inputs`: bildene dokumenterer hva kalkulatoren viste for disse inputene, ikke de konkrete bilene (kjøretøynavn er testetiketter; VIN, variant og teknisk dokumentasjon finnes ikke). Dette er nye referanser og er ikke dokumentasjon av CASE-001/002/003. Maskinlesbar registrering: `docs/tax/references.json` → `calculatorObservations`. Test: `tests/tax-calculator-observations.test.ts`.
+**Status: REVIEW. Ingen parametere er godkjent. Klasse 1 er registrert for PHEV (`C1-GR-20261018-01`), EV (`-02`) og diesel (`-03`) etter eksisterende definisjon (§4).** `referenceScope = explicit_inputs`: bildene dokumenterer hva kalkulatoren viste for disse inputene, ikke de konkrete bilene (kjøretøynavn er testetiketter; VIN, variant og teknisk dokumentasjon finnes ikke). Dette er nye referanser og er ikke dokumentasjon av CASE-001/002/003. Maskinlesbar registrering: `docs/tax/references.json` → `calculatorObservations`. Test: `tests/tax-calculator-observations.test.ts`.
 
 ## 1. Proveniens (hva som er observert, brukerbekreftet og ukjent)
 | Opplysning | Status | Merknad |
@@ -8,6 +8,7 @@
 | Ni originale PNG, uendret | **verifisert av Claude** | SHA-256 og bytes stemmer med `MANIFEST.json` (kontrollert 18.10.2026; automatisert i testen) |
 | Transkripsjonen `OBSERVASJONER.md` | **avstemt mot bildene** | alle tall og valg lest på originalbildene; ingen avvik funnet |
 | Operatør | oppgitt (Christian) | ingen separat identitetskontroll |
+| Steg 11 «Alternativ beregning» tomt i PHEV-kjøringen (pris 600 000) | **brukerbekreftet** 18.10.2026 (ikke synlig i bildene) | |
 | Kjøredato 18.10.2026 | **brukerbekreftet**, ikke synlig i bildene | |
 | Norsk registreringsdato brukt = 18.10.2026 | **brukerbekreftet** (kalkulatoren bruker dagens dato automatisk; feltet kan ikke velges), ikke synlig i bildene | samme proveniens som kjøredato |
 | Klokkeslett | **ukjent** | |
@@ -64,7 +65,7 @@ Kjøredato 18.10.2026 og at kalkulatoren automatisk bruker dagens dato som norsk
 |---|---|---|---|
 | **GR-20261018-02 EV, pris 350 000** | `02_input_pris_350000`, `01_resultat_pris_350000` | **Oppfyller eksisterende klasse 1-krav.** Registrert som `C1-GR-20261018-02` | alle sju inputsteg vises (steg 7 alternativ beregning uten verdi); resultat 16 748,00 vises; skjermbilder hashet, uten persondata; kilde = Skatteetatens kalkulator (oppgitt, tittel synlig); dato brukerbekreftet; uavhengig av motoren (motoren ble kjørt etterpå). CO₂ vises ikke for elbil og er ikke registrert som observert |
 | **GR-20261018-03 diesel, pris 350 000** | alle tre (samme pris) | **Oppfyller eksisterende klasse 1-krav.** Registrert som `C1-GR-20261018-03` | steg 1–10 i inputbildet, steg 11 (uten verdi) i resultatbildet; resultat og nedbrytning 333 723,00 (331 323,97 + 2 400,00); samme øvrige begrunnelse som EV |
-| **GR-20261018-01 PHEV, pris 600 000** | `02_input_pris_600000`, `01_resultat_pris_600000` | **Oppfyller ikke ennå.** Ikke registrert som klasse 1 | **én mangel:** steg 11 «Alternativ beregning (valgfritt)» er verken vist i bildene eller bekreftet; definisjonen krever eksakte input, og feltet kan endre resultatet. Alt annet er som for EV/diesel. Det som trengs er én uttrykkelig brukerbekreftet opplysning om steg 11 (f.eks. «ikke utfylt») eller et bilde av steget. Resultatsamsvar med standardfradraget kan ikke brukes til å fylle feltet |
+| **GR-20261018-01 PHEV, pris 600 000** | `02_input_pris_600000`, `01_resultat_pris_600000` | **Oppfyller eksisterende klasse 1-krav** etter brukerbekreftelse av steg 11 (18.10.2026: «Alternativ beregning» sto tomt). Registrert som `C1-GR-20261018-01` | steg 1–10 vises i inputbildet, steg 11 er brukerbekreftet tomt (samme proveniens som kjøredato; ikke synlig i bildene); resultat 529 069,00 vises; skjermbilder hashet, uten persondata; kilde og dato som for EV/diesel. CO₂-metoden «vektet kombinert» er fortsatt motorantakelse, ikke observert input |
 
 Nedbrytningsbildene med andre priser (PHEV 2 600 000, EV 300 000) er **separate observasjoner** (`calculatorObservations`) og inngår ikke i klasse 1-tilfellene; at de mangler inputkobling diskvalifiserer ikke input-/resultatsettene ved 600 000 og 350 000.
 
@@ -95,4 +96,4 @@ Klasse 1 er ikke godkjenning. R-OTA-002, R-OTA-010 og R-OTA-014 er fortsatt E1P 
 PHEV 25 % av innkjøpspris (150 000 av 600 000; 650 000 av 2 600 000), diesel 87 500 av 350 000, EV 12 500 av 350 000 og 0 av 300 000. Grunnlaget (om avgift inngår, EV-terskel) er ikke utledet her. Avrunding av mva. (U-013) og alt annet mva.-arbeid ligger i ECON-004, som ikke er startet.
 
 ## 7. Hva som mangler for gjeldende gate
-Bare dette kreves av den styrende definisjonen: **PHEV:** tilstanden til steg 11 «Alternativ beregning» for kjøringen ved pris 600 000 (brukerbekreftelse eller bilde). Alt annet som tidligere ble listet (klokkeslett, URL/versjon, bruksfradragsprosent, fullt input for nedbrytningsbildene) hører til malen eller til separate observasjoner og kreves ikke for klasse 1. For godkjenning av parametere kreves fortsatt E1-regler (R-OTA-002/-010/-014 er E1P) og din uttrykkelige godkjenning.
+Ingenting mer kreves av den styrende definisjonen for de tre referansene. For godkjenning av parametere kreves fortsatt E1-regler (R-OTA-002/-010/-014 er E1P) og din uttrykkelige godkjenning; ingen er gitt.

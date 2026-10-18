@@ -3637,6 +3637,75 @@
     "referenceScope": "explicit_inputs"
    },
    "notes": "explicit_inputs: dokumenterer kalkulatorens resultat for disse inputene, ikke bilen. Bare input/resultat-bildene ved oppgitt pris inngår; nedbrytningsbilder med andre priser er separate observasjoner (calculatorObservations). Se docs/tax/golden-runs/2026-10-18/REGISTRERING.md."
+  },
+  {
+   "id": "C1-GR-20261018-01",
+   "evidenceClass": 1,
+   "classLabel": "uavhengig kontrollert referanse",
+   "title": "Ladbar hybrid personbil, brukt, registrert i utlandet 01.09.2026, 2 610 kg, 140 g/km WLTP, pris 600 000 → avgift 529 069",
+   "profileId": "PB-PHEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-010",
+    "R-IMP-OTH-001",
+    "R-OTA-014"
+   ],
+   "inputs": {
+    "personbiltype": "Ladbar hybridbil",
+    "brukt": "Ja",
+    "registrertIUtlandet": "01.09.2026",
+    "co2": "Ja, 140 g/km, WLTP",
+    "innkjøpspris": "600 000 NOK",
+    "drivstoff": "Bensin",
+    "egenvekt": "2 610 kg",
+    "alternativBeregning": "ikke utfylt (brukerbekreftet; ikke synlig i bildene)",
+    "norskRegistreringsdato": "2026-10-18 (kalkulatorens dagsdato; brukerbekreftet)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "529069",
+    "unit": "NOK",
+    "rounding": "slik kalkulatoren viste totalen i avgifter (hele kroner)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [
+    "T47",
+    "T05",
+    "T07",
+    "T03"
+   ],
+   "independentReference": {
+    "tool": "Skatteetatens importkalkulator (S07; oppgitt av bruker, tittel synlig i EV-inputbildet)",
+    "runDate": "2026-10-18",
+    "runDateProvenance": "user_confirmed",
+    "norwegianRegistrationDateUsed": "2026-10-18 (kalkulatorens automatiske dagsdato; user_confirmed)",
+    "output": "Avgift 529 069,00 (innkjøpspris 600 000,00, mva. 150 000,00, sum 1 279 069,00); bilder 01_resultat_pris_600000 og 02_input_pris_600000",
+    "files": [
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/01_resultat_pris_600000.png",
+      "sha256": "c0ce1d9779ef863652bf19593d29472afac510ca182b9d63281fbcc92462fd44",
+      "bytes": 53339
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/02_input_pris_600000.png",
+      "sha256": "f3a48cce0d2262112de0755e5146a3c8ebb06f3aa2cadee740b10ee4f3d8e0d5",
+      "bytes": 42609
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/03_nedbrytning_pris_2600000.png",
+      "sha256": "bd1fcf4033bf372f042975e9541464075a69a0c05bf9c76abdefdb3c24347b89",
+      "bytes": 45259
+     }
+    ],
+    "referenceScope": "explicit_inputs",
+    "userConfirmedInputs": [
+     "Steg 11 «Alternativ beregning (valgfritt)» sto tomt i kjøringen ved pris 600 000 (brukerbekreftet 18.10.2026; ikke synlig i bildene)"
+    ],
+    "assumptionNotObserved": "CO₂-målemetode «vektet kombinert» er en motorantakelse; observert input er 140 g/km + «WLTP»"
+   },
+   "notes": "explicit_inputs. Bare input/resultat-bildene ved pris 600 000 inngår; nedbrytningsbildet ved 2 600 000 er en separat observasjon. CO₂-metoden «vektet kombinert» er motorantakelse, ikke observert input. Se docs/tax/golden-runs/2026-10-18/REGISTRERING.md."
   }
  ],
  "calculatorObservations": [
@@ -3644,7 +3713,7 @@
    "id": "GR-20261018-01",
    "label": "PHEV (testetikett Urus)",
    "referenceScope": "explicit_inputs",
-   "evidenceClass": null,
+   "evidenceClass": 1,
    "profileId": "NO-OTA-2026-A-PB",
    "tool": "Skatteetatens importkalkulator (oppgitt av bruker)",
    "runDate": "2026-10-18",
@@ -3685,10 +3754,8 @@
     }
    ],
    "engineComparison": "totalen 529 069 stemmer; motoren er ikke kalibrert",
-   "stillMissing": [
-    "bekreftelse/bilde av steg 11 «Alternativ beregning (valgfritt)» for pris 600 000"
-   ],
-   "classConclusion": "ikke oppfylt ennå: steg 11 «Alternativ beregning» er verken vist i bildene eller bekreftet; ellers oppfylt",
+   "stillMissing": [],
+   "classConclusion": "oppfyller eksisterende klasse 1-krav (referanse-sak C1-GR-20261018-01) etter brukerbekreftelse av steg 11",
    "notRequiredByGoverningDefinition": [
     "klokkeslett",
     "URL/kalkulatorversjon",
@@ -3696,7 +3763,11 @@
     "teknisk kjøretøydokumentasjon",
     "fullt input for nedbrytningsbildet ved pris 2 600 000 (separat observasjon)"
    ],
-   "co2MethodAssumption": "Kalkulatorens input er CO₂ 140 g/km + målemetode «WLTP» (observert). «Vektet kombinert» er en MOTORANTAKELSE (testintensjon), ikke observert input; motoren blokkerer ellers PHEV. Numerisk samsvar gjør den ikke til observert input."
+   "co2MethodAssumption": "Kalkulatorens input er CO₂ 140 g/km + målemetode «WLTP» (observert). «Vektet kombinert» er en MOTORANTAKELSE (testintensjon), ikke observert input; motoren blokkerer ellers PHEV. Numerisk samsvar gjør den ikke til observert input.",
+   "referenceCaseId": "C1-GR-20261018-01",
+   "userConfirmed": [
+    "steg 11 «Alternativ beregning (valgfritt)» var tomt (18.10.2026)"
+   ]
   },
   {
    "id": "GR-20261018-02",
@@ -3803,5 +3874,5 @@
    ]
   }
  ],
- "calculatorObservationsNote": "Mottatte kalkulatorobservasjoner (18.10.2026) med klassekonklusjon per referanse; klasse 1 er registrert som egne tilfeller (`C1-GR-20261018-02`, `-03`) etter eksisterende definisjon, se docs/tax/golden-runs/2026-10-18/REGISTRERING.md §4. PHEV (-01) er ikke registrert som klasse 1 ennå. Nedbrytningsbilder med andre priser er separate observasjoner. Ingen parametere er godkjent."
+ "calculatorObservationsNote": "Mottatte kalkulatorobservasjoner (18.10.2026) med klassekonklusjon per referanse; klasse 1 er registrert som egne tilfeller (`C1-GR-20261018-01`, `-02`, `-03`) etter eksisterende definisjon, se docs/tax/golden-runs/2026-10-18/REGISTRERING.md §4. Nedbrytningsbilder med andre priser er separate observasjoner. Ingen parametere er godkjent."
 }

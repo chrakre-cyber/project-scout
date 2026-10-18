@@ -69,7 +69,7 @@ describe("kilde-belagte parametere stemmer med docs/tax (ingen parallell regelmo
   });
   it("profilen er ikke godkjent og ingen parameter er godkjent i foundationStatus", () => {
     expect(NO_OTA_2026_A_PB.approval.approved).toBe(false);
-    expect(json("rules.json").foundationStatus).toMatchObject({ status: "REVIEW", approvedParameters: 0, class1References: 2 });
+    expect(json("rules.json").foundationStatus).toMatchObject({ status: "REVIEW", approvedParameters: 0, class1References: 3 });
   });
 });
 
@@ -125,7 +125,7 @@ describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent
       const r = calculateNorwegianVehicleTax(c.input);
       expect(r.status, c.id).toBe("calculated_unverified");
       expect(r.finalClaim!.validation, c.id).toEqual(r.validation);
-      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: false, class1References: 2, weakestRuleEvidence: "E1P" });
+      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: false, class1References: 3, weakestRuleEvidence: "E1P" });
     }
   });
   it("anvendte regler og svakeste nivå følger registeret (BEV: R-OTA-007 i stedet for 002/005; ny motorvogn: ingen R-OTA-010)", () => {
@@ -151,7 +151,7 @@ describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent
     const r = ok({}, allE1);
     expect(r.status).toBe("calculated");
     expect(r.validation!.status).toBe("approved");
-    expect(NO_OTA_2026_A_PB.approval).toMatchObject({ approved: false, class1References: 2 }); // registeret er ikke endret: klasse 1 finnes, men ingen godkjenning
+    expect(NO_OTA_2026_A_PB.approval).toMatchObject({ approved: false, class1References: 3 }); // registeret er ikke endret: klasse 1 finnes, men ingen godkjenning
   });
   it("blokkerte resultater har verken finalClaim eller validation", () => {
     const r = ok({ norwegianTaxWeight: { kg: null, basis: "unverified" } });
@@ -661,10 +661,10 @@ describe("gyldne caser: dokumentasjon mangler (ikke klasse 1); testdato er ikke 
       expect(Object.keys(d), c.id).not.toEqual(expect.arrayContaining(["calculatorRunDate"]));
     }
   });
-  it("klasse 1 er registrert bare for EV og diesel (explicit_inputs); PHEV venter, og ingen er godkjenning", () => {
+  it("klasse 1 er registrert for PHEV, EV og diesel (explicit_inputs, brukerbekreftet dato); ingen er godkjenning", () => {
     const cases = json("references.json").cases as Array<{ id: string; evidenceClass: number; independentReference?: { runDate: string; runDateProvenance: string; referenceScope: string } }>;
     const c1 = cases.filter((c) => c.evidenceClass === 1);
-    expect(c1.map((c) => c.id).sort()).toEqual(["C1-GR-20261018-02", "C1-GR-20261018-03"]);
+    expect(c1.map((c) => c.id).sort()).toEqual(["C1-GR-20261018-01", "C1-GR-20261018-02", "C1-GR-20261018-03"]);
     for (const c of c1) expect(c.independentReference).toMatchObject({ runDate: "2026-10-18", runDateProvenance: "user_confirmed", referenceScope: "explicit_inputs" });
     expect(json("rules.json").foundationStatus).toMatchObject({ approvedParameters: 0 });
   });
