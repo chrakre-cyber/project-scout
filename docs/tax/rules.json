@@ -2922,12 +2922,13 @@
     ],
     "applicationAssessment (E1P-grunnen, ikke belagt av uttrykkelig tekst)": "At § 10-4-4 gjelder når selve engangsavgiften BEREGNES: § 10-4-4 nevner ikke engangsavgift; forskriftshjemmelen i skattebetalingsloven § 10-4 gjelder «bestemmelsene i dette kapitlet» (kapittel 10 Forfall); ingen tekst i engangsavgiftsregelverket (vedtak, forskrift om engangsavgift, rundskriv) nevner avrunding. Anvendelsen er en slutning fra virkeområdet, ikke en uttrykkelig bestemmelse.",
     "missingEvidence": [
-     "(A) En uttrykkelig tekst som anvender avrunding ned til hele kroner på engangsavgiftens beregning (f.eks. i Skattedirektoratets engangsavgiftsregelverk, eller en utfyllende forskrift/Skatteetaten-veiledning for engangsavgift), ELLER",
-     "(B) forarbeider/merknader til skattebetalingsforskriften § 10-4-4 (endringsforskrift 25. mars 2010 nr. 462 med tilhørende høringsnotat/merknader) og til skattebetalingsloven § 10-4 (stilles tilgjengelig via håndbokens «Vis forskrifter og forarbeider»), som viser at avrundingsregelen er ment å gjelde beregningen av alle krav under kapittel 10, inkl. engangsavgift",
-     "(C) alternativt: en dokumentert vurdering fra Christian/Codex som uttrykkelig aksepterer virkeområdekjeden som tilstrekkelig for E1 (juridisk vurdering; ikke gjort av Claude)"
+     "(A) En uttrykkelig tekst som anvender avrunding ned til hele kroner på engangsavgiftens beregning (f.eks. i Skattedirektoratets engangsavgiftsregelverk eller en utfyllende forskrift/Skatteetaten-veiledning for engangsavgift) — NY PRIMÆRKILDETEKST, ELLER",
+     "(B) forarbeider/merknader til skattebetalingsforskriften § 10-4-4 (endringsforskrift 25. mars 2010 nr. 462 med tilhørende høringsnotat/merknader) og til skattebetalingsloven § 10-4 (via håndbokens «Vis forskrifter og forarbeider») som viser at avrundingsregelen er ment å gjelde beregningen av alle krav under kapittel 10, inkl. engangsavgift — NY PRIMÆRKILDETEKST."
     ],
     "notRequiredForE1OfThisRule": "Mellomledd (U-012) og MVA-avrunding (U-013) er egne åpne punkter og er utenfor R-OTA-014s påstand (avrunding av sluttkravet).",
-    "classificationNote": "Klassifiseringen er ikke endret for å passere godkjenningskravet. Klasse 1-referanse er et eget krav for godkjenning og løfter ikke evidensnivået."
+    "classificationNote": "Klassifiseringen er ikke endret for å passere godkjenningskravet. Klasse 1-referanse er et eget krav for godkjenning og løfter ikke evidensnivået.",
+    "acceptedAssessment": "En senere aksept av en begrunnet juridisk vurdering (virkeområdekjeden) er IKKE en ny primærkildetekst og registreres aldri som e1Finding eller kilde. Den registreres som en beslutning (DECISIONS.md / parameterApproval-begrunnelse) med hvem, dato og tekst. Den endrer ikke evidensnivået av seg selv.",
+    "evidenceVsApproval": "Evidensklassifisering (rules.json evidenceLevel) følger bare lest kildetekst (E1/E1P…). Godkjenningsbeslutning (parameterApproval) er Christians. Godkjenningsporten krever E1 og klasse 1; å godkjenne R-OTA-014 mens den er E1P ville kreve en eksplisitt, egen beslutning om evidensmodellen/portene — det er utenfor ECON-002, og kravet om E1 er ikke svekket."
    }
   }
  ],

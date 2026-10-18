@@ -439,7 +439,7 @@ Prosjektets evidensmodell (`rules.json evidenceLevels`): **E1** = primærkilde l
 |---|---|---|
 | **Dokumentert ordlyd** (E1, lest) | forskrift § 10-4-4 «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone» (T46); håndbok T45; skattebetalingsloven § 1-1 (2) i (særavgifter etter lov 1959 nr. 2 = skatte- og avgiftskrav) og § 10-40 (1) c (engangsavgift) (T49); forskrift § 10-4-1 d (engangsavgift nevnt i § 10-4) (T46) | belagt |
 | **Anvendelsesvurdering** (grunnen til E1P) | at § 10-4-4 gjelder når selve engangsavgiften *beregnes*: § 10-4-4 nevner ikke engangsavgift; hjemmelen (skattebetalingsloven § 10-4) gjelder «dette kapitlet» (kap. 10 Forfall); ingen tekst i engangsavgiftsregelverket (vedtak, forskrift, rundskriv) nevner avrunding | slutning fra virkeområdet, ikke uttrykkelig |
-| **Manglende belegg** (én av) | (A) uttrykkelig tekst som anvender avrunding ned til hele kroner på engangsavgiftens beregning; (B) forarbeider/merknader til forskrift § 10-4-4 (endringsforskrift 25.3.2010 nr. 462 med høringsnotat/merknader) og til skattebetalingsloven § 10-4 (via håndbokens «Vis forskrifter og forarbeider») som viser at regelen gjelder beregningen av alle kapittel 10-krav inkl. engangsavgift; (C) en dokumentert vurdering fra Christian/Codex som uttrykkelig aksepterer virkeområdekjeden som tilstrekkelig for E1 (juridisk vurdering, ikke gjort av meg) | mangler |
+| **Manglende belegg** (én av) | (A) uttrykkelig tekst som anvender avrunding ned til hele kroner på engangsavgiftens beregning; (B) forarbeider/merknader til forskrift § 10-4-4 (endringsforskrift 25.3.2010 nr. 462 med høringsnotat/merknader) og til skattebetalingsloven § 10-4 (via håndbokens «Vis forskrifter og forarbeider») som viser at regelen gjelder beregningen av alle kapittel 10-krav inkl. engangsavgift; (A)/(B) er nye primærkildetekster. *(Tidligere punkt (C) «akseptert vurdering» er rettet i runde 7: en akseptert vurdering er en beslutning, ikke belegg, og endrer ikke evidensnivået — se §17.4.)* | mangler |
 Utenfor R-OTA-014s påstand (og ikke krav for E1 av denne regelen): mellomledd (U-012) og MVA-avrunding (U-013). Klasse 1-referanse er et separat godkjenningskrav og løfter ikke evidensnivået.
 
 ### 16.3 Sensitivitetsanalysens forutsetninger (presisert; ikke en generell garanti)
@@ -458,10 +458,59 @@ Merverdiavgift er «skatte- og avgiftskrav» (§ 1-1 (2) g), men ingen lest kild
 | Kan vurderes godkjent (kildesiden komplett; krever likevel din godkjenning + klasse 1) | Mangler før godkjenning | Handling fra Christian |
 |---|---|---|
 | Generell vekt 12,71 kr/kg > 500 kg; ICE-tillegg 260 kr/kg > 1 200 kg; EV-behandling (bare § 2); PHEV (teknisk vilkår, E1); NOx fjernet; vrakpant 2 400 utenfor fradraget; styrende hendelse | **klasse 1-referanser** (ingen finnes); regelnivå E1 ✔; eksplisitt `parameterApproval` | utfør de tre nye kjøringene (README i `docs/tax/golden-runs/`) → klasse 1; godkjenn deretter regel for regel |
-| (med forbehold) CO₂-bånd (marginal lesning via T40); bruksfradrag (U-009); sluttavrunding R-OTA-014 (E1P) | marginal-bekreftelse; månedstrinn/dag 29–31; E1-løft av R-OTA-014 (§16.2) | beslutt om T40 er tilstrekkelig for marginal; tilby forarbeider eller aksepter virkeområdekjeden (C); ev. oppgi regel for dag 29–31 |
+| (med forbehold) CO₂-bånd (marginal lesning via T40); bruksfradrag (U-009); sluttavrunding R-OTA-014 (E1P) | marginal-bekreftelse; månedstrinn/dag 29–31; E1-løft av R-OTA-014 (§16.2) | beslutt om T40 er tilstrekkelig for marginal; tilby (A) uttrykkelig tekst eller (B) forarbeider for R-OTA-014 (en akseptert vurdering løfter ikke evidensnivået, §17.4); ev. oppgi regel for dag 29–31 |
 | – | mellomledd (U-012), MVA-avrunding (U-013), endringer etter 2026-10-18, sluttdato | ingen handling nå; U-013 ligger i ECON-004 |
 Ikke godkjent: alle parametere (0 av 0 godkjent; 0 klasse 1).
 
 ### 16.6 Kontroller kjørt (runde 6)
 `npx tsc --noEmit` OK; `npx eslint .` OK; `npx vitest run` — **31 filer, 731 tester bestått** (`tax-engine`: 86, `tax-golden-runs`: 10); `node docs/tax/check-docs.mjs` OK. Ikke kjørt: `npm run build`, e2e, DB-suiter; ingen kalkulatorkjøring.
+**Sluttstatus: REVIEW.**
+
+## 17. Runde 7 — gjør de tre manuelle kalkulatorkjøringene enkle (18.10.2026)
+Dokumentasjon bare: ingen kodeendring, ingen nye tester (ingen konkret feil funnet i koden). Én rettelse i registerteksten (§17.4). Ingen parameter godkjent; ECON-003/-004 ikke startet. Kalkulatoren er fortsatt ikke tilgjengelig for meg.
+
+### 17.1 Utfyllingsguider (én per kjøretøy)
+`docs/tax/golden-runs/GUIDE-PHEV.md`, `GUIDE-EV.md`, `GUIDE-DIESEL.md`: felt F1–F9 (typen input motoren trenger) med tre tydelige statuser — **DOKUMENTERT i materialet** (oppgitt i case-teksten, ikke teknisk verifisert), **ARBEIDSVERDI** (arbeidsdatoen og referansevekten: foreløpige testinput, uttrykkelig *ikke* verifiserte kjøretøydata) og **MANGLER**. Kalkulatorens egen feltrekkefølge er ikke verifisert av meg; guiden sier at skjermens rekkefølge følges og at felt-ID-ene brukes til å merke skjermbildene.
+
+### 17.2 Skjermbilder
+Nøyaktig liste i `docs/tax/golden-runs/SJEKKLISTE.md` §B: S00 (start + URL + klokke), S01…Sn (hvert inputsteg utfylt), S-sum, S-res1, S-res2 (alle delposter utvidet), S-res3 (detalj/PDF); i tillegg i melding: kjøredato/klokkeslett, hvem som kjørte, norsk registreringsdato tastet; tekniske dokumenter (typegodkjenning/CoC, vognkort). **Christian leverer filene; jeg beregner SHA-256 og registrerer proveniens etter mottak** (SJEKKLISTE §E).
+
+### 17.3 To typer validering mot eksisterende klasse 1 (uendret)
+Klasse 1 = «uavhengig kontrollert referanse» (`references.json`; `check-docs.mjs`: E1-kilder + `independentReference` {tool, runDate, output}). Ikke endret eller svekket.
+| Type | Dokumenterer | Dokumenterer ikke | Klasse 1? |
+|---|---|---|---|
+| **1. Kalkulatorkjøring med eksplisitte testinput** | at den offisielle kalkulatoren gir X for *disse* inputene (kontroll av motorens regler: satser, bruksfradragstrinn, vrakpant, avrunding av sluttbeløp) | at inputene er bilens egne tekniske data | kvalifiserer etter eksisterende definisjon (tool, runDate, output finnes) |
+| **2. Kjøretøyspesifikk referanse** | type 1 + at avgiften gjelder *dette kjøretøyet* (vekt-/CO₂-/drivlinjedata dokumentert) | regelverk etter kjøredato, MVA | samme klasse; i tillegg `referenceScope = vehicle_specific` |
+Uten teknisk dokumentasjon registreres kjøringen som type 1 (`referenceScope = explicit_inputs`); det er et metadatafelt på nye referanser, ikke en endring av klassen.
+
+### 17.4 R-OTA-014 forblir E1P; evidensklassifisering ≠ godkjenningsbeslutning
+- **Evidensklassifisering** (`evidenceLevel`) følger bare lest kildetekst. Løft til E1 krever ny primærkildetekst: (A) uttrykkelig tekst om avrunding av engangsavgiftens beregning, eller (B) forarbeider/merknader til forskrift § 10-4-4 og skattebetalingsloven § 10-4.
+- **Godkjenningsbeslutning** (`parameterApproval`) er Christians og krever E1 + klasse 1.
+- **Rettelse:** forrige tekst listet «(C) akseptert vurdering» som en vei til E1. Det var feil: en akseptert juridisk vurdering registreres som **beslutning** (hvem, dato, tekst; `DECISIONS.md`/godkjenningsbegrunnelse), aldri som e1Finding eller kilde, og endrer ikke evidensnivået. Å godkjenne R-OTA-014 mens den er E1P ville kreve en egen, eksplisitt beslutning om evidensmodellen/portene — utenfor ECON-002; kravet om E1 er ikke svekket. (`rules.json`: `acceptedAssessment`, `evidenceVsApproval`.)
+
+### 17.5 Gjenstående forhold: blokkerer dagens avgrensede motor eller senere arbeid?
+| Forhold | Blokkerer motoren/valideringen per 18.10.2026? | Gjelder senere |
+|---|---|---|
+| Ingen klasse 1-referanser (kjøringene) | blokkerer **godkjenning**, ikke beregning | – |
+| R-OTA-002 marginal kun via T40 (E1P) | blokkerer godkjenning av CO₂-regelen | – |
+| R-OTA-010 E1P pga. U-009 (månedstrinn/dag 29–31) | blokkerer godkjenning; motoren **blokkerer** selv i vinduet (uendret) | – |
+| R-OTA-014 E1P (anvendelsesvurdering) | blokkerer godkjenning av avrundingsregelen | – |
+| U-012 mellomledd (eksakte mellomledd beholdt) | nei — målt usikkerhet er avgrenset (§16.3) | kan belyses av kjøringene hvis nedbrytning vises |
+| Vognspesifikke tekniske data (type 2) | blokkerer bare kjøretøyspesifikk referanse | ECON-007 (berikelse) |
+| Endringer etter 18.10.2026 / lov 2026 nr. 41 | **nei** — utenfor valideringen per 18.10.2026 (advarsel `rates_verified_as_of` for senere datoer) | ny kildekontroll ved senere bruk |
+| Ukjent sluttdato for 2026-satsene | **nei** — intern sperre 2026-12-31 beholdt (`internal_guard`, ikke kildedokumentert) | avklares når 2027-regelverk foreligger |
+| MVA-avrunding og tollkurs (U-013, U-008) | **nei** — ikke del av engangsavgiften | ECON-004 |
+| NEDC/fallback-CO₂, andre avgiftsgrupper | nei (blokkert/utenfor profil) | senere |
+**Merk for kjøringene:** er kjøredatoen senere enn 2026-10-18, kan kalkulatoren bruke regelverk endret etter min kildekontroll. Avvik som bare oppstår da håndteres som «endring etter testdatoen», ikke som feil i valideringen per 18.10.2026. Velg norsk registreringsdato innenfor 2026.
+
+### 17.6 Kort sjekkliste for Christian
+1. Skaff **faktisk første registreringsdag** og, hvis mulig, tekniske dokumenter per bil (`SJEKKLISTE.md` §C).
+2. Kjør kalkulatoren per bil etter `GUIDE-…md`; velg standard bruksfradrag; noter kjøredato/-tid og norsk registreringsdato.
+3. Ta skjermbildene S00–S-res3 (`SJEKKLISTE.md` §B), uten redigering.
+4. Send filene og meldingen; jeg beregner SHA-256, registrerer proveniens og sammenligner med motoren.
+5. Valgfritt (R-OTA-014): lever (A) tekst eller (B) forarbeider.
+6. Godkjenn parametere regel for regel etter at klasse 1 foreligger — det gjør ikke jeg.
+
+### 17.7 Kontroller
+`node docs/tax/check-docs.mjs` OK (R-OTA-014-tekst rettet); `npx vitest run` — **31 filer, 731 tester bestått** (uendret; ingen nye tester); ingen kodeendring. Ikke kjørt: `npm run build`, e2e, DB, kalkulator.
 **Sluttstatus: REVIEW.**
