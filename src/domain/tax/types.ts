@@ -152,12 +152,26 @@ export interface ImplementationConclusion {
   sourceStatus: "not_expressly_described";
 }
 
+/**
+ * Valideringsstatus som ALLTID følger et beregnet beløp (`finalClaim` og `validation`). `estimate_not_approved` betyr: regnet etter
+ * kilde-belagte regler, men IKKE godkjent og ikke validert mot klasse 1-referanse — må ikke presenteres som godkjent/validert avgift.
+ * `approved` kan bare oppstå når profilen er godkjent OG har klasse 1-referanse OG alle anvendte regler er E1 (ikke tilfelle i dag).
+ */
+export interface ValidationStatus {
+  status: "estimate_not_approved" | "approved";
+  profileApproved: boolean;
+  class1References: number;
+  weakestRuleEvidence: "E1" | "E1P";
+  appliedRules: Array<{ ruleRef: string; evidence: "E1" | "E1P" }>;
+}
+
 export interface TaxResult {
   /**
-   * `calculated_unverified`: regnet eksakt etter kilde-belagte regler (E1), men profilen er ikke godkjent og avrundingsregelen mangler
-   * kilde. `calculated` (godkjent, validert) kan ikke oppstå før parameterApproval og klasse 1-referanser finnes.
+   * `calculated_unverified`: regnet eksakt etter kilde-belagte regler, men IKKE godkjent (se `validation`). `calculated` forutsetter at
+   * profilen er godkjent, har klasse 1-referanse og at alle anvendte regler er E1 — det er ikke tilfelle i dag, og en vellykket beregning
+   * alene gir aldri `calculated`.
    */
-  status: "blocked" | "calculated_unverified";
+  status: "blocked" | "calculated" | "calculated_unverified";
   profile: ProfileRef | null;
   powertrain: TaxPowertrain | null;
   components: TaxComponent[];
@@ -170,16 +184,18 @@ export interface TaxResult {
    * Det samlede kravet avrundet ned til hele kroner (skattebetalingsforskriften § 10-4-4; R-OTA-014, E1P). Bare sluttbeløpet avrundes;
    * komponenter og prosentfradrag er eksakte desimaler (U-012). Vrakpantavgiften er et helt tall, så floor(total) = floor(avgift) + vrakpant.
    */
-  finalClaim: { ruleRef: "R-OTA-014"; basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone"; evidence: "E1P"; oneOffTaxNok: number; scrappageDepositNok: number; totalRegistrationTaxesNok: number } | null;
+  finalClaim: { ruleRef: "R-OTA-014"; basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone"; evidence: "E1P"; oneOffTaxNok: number; scrappageDepositNok: number; totalRegistrationTaxesNok: number; validation: ValidationStatus } | null;
+  /** Samme valideringsstatus på toppnivå (null når blokkert). */
+  validation: ValidationStatus | null;
   monthSensitivity: MonthSensitivity | null;
   evidence: {
-    parameterEvidenceLevel: "E1";
+    /** Svakeste regelnivå blant reglene som faktisk er anvendt (ikke «E1» uten videre). */
+    parameterEvidenceLevel: "E1" | "E1P";
     profileApproved: boolean;
     openItems: string[];
   } | null;
   missingInputs: string[];
   blocked: Blocker[];
   warnings: Warning[];
-  assumptions: string[];
   implementationConclusions: ImplementationConclusion[];
 }

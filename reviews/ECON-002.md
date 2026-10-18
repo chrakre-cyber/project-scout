@@ -1,6 +1,6 @@
-# ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 4: §14)
+# ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 5: §15)
 
-**Status: REVIEW.** **Runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Status: REVIEW.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -46,7 +46,7 @@ T40, T41, T05 og T42 mangler tekstlag og er lest visuelt (T05: alle 17 sider gje
 **Funn:**
 - Ingen bestemmelse om avrunding av engangsavgiften, komponenter, mellomsummer, CO₂-grunnlag eller prosentfradrag. «Del av måned regnes som hel måned» (T05 § 4-6) gjelder forholdsmessig avgift ved tidsbegrenset fritak, ikke bruksfradrag. «Små avvik kan skyldes avrundinger av satsene» (T40 s. 1) gjelder at *satsene* er avrundet (12,44 × 1,022 = 12,71), ikke avgiftsbeløpet.
 - **Rekkefølge er belagt (E1P):** avgiften regnes ut («utregnede avgiften», T03 4.3; «i avgiften», T05 § 3-3; «i utregnet avgift», T05 § 5-2) → prosentfradrag → vrakpantavgift er en egen post (T41 § 5, T03 3.4). Forslaget § 4 sier at fradraget gjelder «den avgift som beregnes etter §§ 2 og 3».
-**Beslutning:** avrunding forblir **uavklart (U-010)**. Det er ikke innført avrunding ned. Motoren returnerer eksakt desimal og `totalIntegerBounds` ([⌊x⌋, ⌈x⌉], merket «én sluttavrunding»); `rounded` er `null` med mindre kalleren oppgir en policy, og den er merket `none_in_sources`.
+**Beslutning (runde 1, historisk; overstyrt av §14.4 og §15):** avrunding var uavklart og ingen avrunding ble innført. Feltene `totalIntegerBounds`/`rounded` som omtales her finnes ikke lenger; i dag gjelder `finalClaim` (R-OTA-014).
 **Hva som trengs:** tekst om avrunding i stortingsvedtaket, forskriften, rundskrivet eller Skatteetatens beregningsregler. Skatteetatens kalkulatorbeskrivelse kan bare brukes som regelkilde hvis du uttrykkelig godkjenner det.
 *[VALIDERING, ikke regel]:* de tre casene gir 529 069,738 / 16 748,9545 / 333 723,972; heltallsdelen er det offisielle beløpet i alle tre. Det er ikke adoptert.
 
@@ -193,7 +193,7 @@ Hvis én av filene 1–2 leveres, kan alle punktene i §13.3 gjøres uten antake
 | **Satser** | T40 s. 1: «Alle særavgiftene er i utgangspunktet oppjustert med 2,2 prosent … Små avvik kan skyldes avrundinger av satsene.» De oppgitte satsene (12,71 osv.) er sluttverdier og brukes som de står. Aritmetikk (12,44 × 1,022 = 12,7137 → 12,71) er konsistent, men er ikke kilde for noen metode. | **Dokumentert at satser er avrundet; ingen videre handling** |
 | **Mellomregninger** (kg × sats; CO₂-bånd; sum før fradrag; prosentfradrag; CO₂-grunnlag) | ingen i T03, T05 (alle sider), T40, T41, T42 | **Uavklart** |
 | **Sluttbeløp** (engangsavgift; sum med vrakpant) | ingen | **Uavklart** |
-Gyldne cases er ikke brukt til å utlede noen regel. Motoren fortsetter med eksakt desimal og heltallsgrenser; `rounded` krever uttrykkelig policy og er merket uten kilde.
+Gyldne cases er ikke brukt til å utlede noen regel. (Runde 3, historisk: `rounded`/heltallsgrenser er erstattet av `finalClaim` i runde 4 — se §14.4/§15.)
 
 ### 13.5 Månedsoverflyt (U-009): blokkering beholdt
 Uendret blokkering når norsk registreringsdato ligger i vinduet [siste dag i målmåneden, første dag i neste måned) (§5). Utenfor vinduet er oppførselen en **implementasjonskonklusjon** (kilden beskriver ikke dag 29–31), og er nå merket i resultatet.
@@ -203,7 +203,7 @@ Uendret blokkering når norsk registreringsdato ligger i vinduet [siste dag i m�
 |---|---|---|
 | `month_steps_same_anniversary_rule` | månedstrinn nås på dagen i måneden (inklusivt) | T42: «fyller år» for hele år; T03 4.2: eksempel med år; månedstrinn ikke beskrevet |
 | `overflow_dates_outside_window_monotonic` | ved dag 29–31 brukes trinnet når begge kandidatdatoer gir samme trinn; blokkert i vinduet | dag 29–31 ikke beskrevet |
-Disse listes aldri som kildebelagte regler. Øvrige antakelser står som før i `assumptions` (vrakpant ikke redusert osv.) og i §1/§9.
+Disse listes aldri som kildebelagte regler. Feltet `assumptions` er fjernet (runde 5); vrakpant utenfor fradraget er kildebelagt (§14.3).
 
 ### 13.7 Golden cases: samlet eksisterende dokumentasjon (ordrett fra ECON-001-oppdraget, Christian, 2026-10-18 15:25 UTC)
 | | CASE-001 Lamborghini Urus PHEV | CASE-002 BMW iX3 EV | CASE-003 Mercedes E 400 d |
@@ -357,3 +357,67 @@ Formelt krav (`check-docs.mjs`, uendret): regelen må være **E1**, bare E1-kild
 6. Sluttdato for 2026-satsene (kun «Budsjettåret 2026»; intern sperre).
 7. Utenfor: NEDC/egenvekt/10-CO₂, andre avgiftsgrupper, alternativ beregning, vektberikelse.
 **Sluttstatus: REVIEW.** ECON-003 er ikke startet.
+
+## 15. Runde 5 — kontroll av leveransen i commit `3db380d` (18.10.2026)
+Skillet gjelder fortsatt: **kildebelagt** (lest, E1/E1P), **implementert** (`src/domain/tax`), **testet** (kjørt), **godkjent** (ingen). Ingen parameter er godkjent; kravene til E1 og klasse 1 er ikke svekket; ingen UI-, DB-, auth- eller provider-endring; ECON-004 er ikke startet.
+
+### 15.1 Funn og rettinger
+| # | Funn i `3db380d` | Alvorlighet | Retting |
+|---|---|---|---|
+| F1 | `finalClaim` hadde bare `evidence: "E1P"`; valideringsstatus lå ikke på selve beløpet. En konsument som leser bare `finalClaim.totalRegistrationTaxesNok` fikk ingen markering om at beløpet er et ikke-godkjent estimat | høy | `finalClaim.validation` (og identisk `validation` på toppnivå): `status`, `profileApproved`, `class1References`, `weakestRuleEvidence`, `appliedRules`. `status` er `estimate_not_approved` med mindre profil godkjent **og** klasse 1 > 0 **og** alle anvendte regler E1; først da blir resultatstatus `calculated` (ikke mulig i registeret i dag) |
+| F2 | `evidence.parameterEvidenceLevel` var hardkodet «E1», selv om R-OTA-002, R-OTA-010 og R-OTA-014 er E1P — overstated | middels | svakeste nivå blant **anvendte** regler (BEV: R-OTA-007 i stedet for 002/005; ny motorvogn uten R-OTA-010); blokkerte resultater bruker profilens svakeste nivå. Profilen har `ruleEvidence`; en test holder den lik `rules.json` |
+| F3 | Advarselen `rates_verified_as_of` omtalte fortsatt «Finansdepartementets oversikt» etter at grunnlaget er konsolidert vedtakstekst | lav | tekst rettet |
+| F4 | `assumptions` var et dødt felt (alltid tomt etter runde 4) som antydet kildebelagte antakelser | lav | felt fjernet; implementasjonskonklusjoner står i `implementationConclusions` |
+| F5 | Utdaterte referanser i `reviews/ECON-002.md` (`totalIntegerBounds`, `rounded`, `assumptions`, «ikke bruk `rounded`») | lav | markert historiske/rettet (§3, §7); ingen kode, test eller annen dokumentasjon utenfor modulen refererer til de fjernede feltene (grep) |
+| F6 | Ingen eksterne konsumenter av `calculateNorwegianVehicleTax` (bare `tests/`) — API-endringen til `finalClaim` har ingen skadevirkning utenfor ECON-002 | info | – |
+**Kontrollert uten funn (kode lest og testet):** eksakt BigInt-desimal uten float (arkitekturtest forbyr Math.round/toFixed/parseFloat i `calculate`/`decimal`); prosentfaktor `(100 − p)/100` eksakt (scale 2); komponentrekkefølge generell vekt → ICE-tillegg → CO₂ (marginale bånd 0/100/101/150/151/225/226 testet) → sum → prosentfradrag → + vrakpant (ikke redusert) → **én** nedrunding av sluttkravet; `floor(avgift + 2 400) = floor(avgift) + 2 400` (testet); komponenter og `oneOffTaxExact` forblir uavrundet; alderstrinn dato-til-dato inklusive (grenser 30/36 mnd, 1 mnd, 15. jan, 20-årsregelen, dag 29–31); blokkering ved manglende/ugyldig vekt, CO₂, drivlinje (annonsepåstand), registreringspresisjon (bare år), datoer, profil (før start, intern sperre, dokumentert slutt), NEDC/fallback; blokkerte resultater har `finalClaim = null` og `validation = null` (aldri 0).
+
+### 15.2 U-012: hva kan konkret påvirke sluttbeløpet? (manglende bestemmelse ≠ regelkonflikt)
+**Status:** *manglende uttrykkelig bestemmelse*, **ikke påvist regelkonflikt.** Ingen lest kilde (vedtak, forskrift, rundskriv, håndbok) avrunder komponenter, og ingen motsier at mellomledd holdes eksakte. Motoren beholder derfor eksakte mellomregninger og avrunder bare sluttkravet (R-OTA-014).
+**Mellomregningspunkter som kan påvirke sluttbeløpet** (verifisert i test over vekt 400–3 500 kg og CO₂ 0–300 g/km):
+| Ledd | Brøk? | Mulig mellomavrunding | Maks. utslag på sluttbeløpet |
+|---|---|---|---|
+| Generell vekt (kg × 12,71) | **ja, opptil to desimaler** | per komponent (ned/nærmeste/opp) | inntil 1 kr (før fradrag; dempet av fradragsfaktoren) |
+| Tilleggsvekt (kg × 260) | nei (heltall) | – | 0 |
+| CO₂-bånd (heltall g/km × heltallssatser) | nei | – | 0 |
+| Sum før fradrag | bare via generell vekt | sum avrundes | (samme brøk som over) |
+| Prosentfradrag (avgift × (100 − p)/100, inntil fire desimaler) | ja | nettobeløp eller fradragsbeløp (avgift × p/100) avrundes før subtraksjon | inntil 1 kr |
+| Vrakpant | nei | – | 0 |
+| NEDC × 1,24 / egenvekt ÷ 10 (CO₂) | ja (desimal-CO₂) | CO₂-grunnlaget | opptil flere hundre kr per g/km-brøk × sats ⇒ **støttes ikke** (blokkert) |
+Teoretisk verste tilfelle for støttede input: **inntil 2 kr** (ett punkt i vekt, ett i fradrag). Sensitivitetsanalysen i testen (generell vekt ned/nærmeste/opp, sum ned, fradragsbeløp nærmeste/ned) gir for de tre valideringscasene høyst **+1 kr** avvik fra motorens sluttkrav; det er informasjon om usikkerhetens størrelse, **ikke** et valg av regel, og motoren velger ingen variant.
+**Separat observasjon (ikke kilde, ikke konflikt):** i kalkulatorresultatene for import-MVA er 16 665,75 og 102 872,75 vist som 16 666 og 102 873 (ikke nedrundet). Skattebetalingsforskriften § 10-4-4 gjelder i teksten alle «skatte- og avgiftskrav», også merverdiavgift (§ 1-1 (2) g). Det er et valideringssignal om at § 10-4-4 ikke uten videre kan generaliseres til MVA-linjen i landed cost (ECON-004: egen kilde kreves for MVA-avrunding). Det endrer ikke engangsavgiften.
+
+### 15.3 PHEV revurdert: E1 på regelnivå
+**Begrunnelse (uten krav om ordet «PHEV» i teksten):**
+1. *Teknisk vilkår:* vedtaket § 3 innledning gjelder «motorvogner med stempeldrevet forbrenningsmotor» (E1). Vilkåret er en egenskap ved kjøretøyet, ikke et navn; en PHEV med dokumentert stempeldrevet motor oppfyller det.
+2. *Samme vilkår for begge komponenter:* § 3 a nr 1 (260 kr/kg) og nr 2 (CO₂) står under samme innledning og er ikke delt etter drivlinje.
+3. *Forskriften bekrefter:* § 3-1 (T05) angir CO₂-feltet «vektet kombinert» for ladbare hybridbiler — det forutsetter at CO₂-komponenten etter § 3 gjelder dem.
+4. *Ingen unntak:* hele vedtaket (§§ 1–11) og forskriften §§ 3-1…3-4 er lest; ingen PHEV-særregel, vektfradrag eller fritak finnes; rundskriv 3.3.11 sier at vektfradraget er opphevet, 6.12 gjentar vilkåret.
+**Vurdering:** tilstrekkelig belegg for **R-OTA-005 E1P → E1** (registrert i `rules.json`, `profile.ruleEvidence`, test). Det som gjenstår er et **faktisk inputkrav per kjøretøy** (dokumentert stempeldrevet motor, ekstern lading, «vektet kombinert»-verdi, minimumsvekt fra typegodkjenning/CoC) — ikke regelusikkerhet. NEDC-PHEV støttes ikke (U-012). Svakeste anvendte nivå er likevel **E1P** (R-OTA-002 marginal via T40 + R-OTA-010 U-009 + R-OTA-014 anvendelse), så ingen resultat er «E1».
+
+### 15.4 Registreringsmal for nye golden-kjøringer
+`docs/tax/golden-run-template.md`: én kort tabell med felt-ID-er som er identiske med `DOCUMENTATION_CHECKLIST` i fixturen (kjøredato, kalkulator-URL/versjon, alle input, datopresisjon, teknisk dokumentasjon, resultat/nedbrytning, skjermbilder med hash) pluss referanse-ID `GR-<dato>-<nn>`, erklæring om at kjøringen er **ny** (ikke rekonstruksjon av CASE-001/002/003) og krav om at kjøredato ≠ testdato med mindre det faktisk er samme dag. En test sjekker at malen dekker alle sjekklistepunktene.
+
+### 15.5 Statusmatrise (oppdatering av §14.9)
+| Område | Kildebelagt | Implementert | Testet | Godkjent |
+|---|---|---|---|---|
+| Valideringsstatus på beløpet (`validation`) | – (designkrav) | ja | ja (gating-tester) | – |
+| PHEV | **E1** (teknisk vilkår + § 3-1 + fravær av unntak) | ja | ja | nei |
+| Sluttkrav nedrundet (`finalClaim`) | E1P (R-OTA-014) | ja | ja | nei |
+| Mellomledd eksakte | ingen bestemmelse (U-012; ikke konflikt) | ja | ja (sensitivitet ≤ 1 kr i casene; ≤ 2 kr teoretisk) | nei |
+| Øvrige rader | uendret fra §14.9 | | | |
+
+### 15.6 Godkjenningsmatrise — endring
+R-OTA-005 (PHEV): «med forbehold» → **klar (kildesiden)**; inputkrav per kjøretøy gjelder. Alt annet uendret (§14.10). Formelt krav: regelen **E1**, bare E1-kilder, `governingEvent`, `validity.from` og klasse 1-referanse; ingen klasse 1 finnes. R-OTA-001/005/007, R-IMP-OTH-001 og R-OTA-003 er E1; R-OTA-002, R-OTA-010 og R-OTA-014 er E1P.
+
+### 15.7 Kontroller kjørt (runde 5)
+`npx tsc --noEmit` OK; `npx eslint .` OK; `npx vitest run` — **30 filer, 721 tester bestått** (`tests/tax-engine.test.ts`: 86); `node docs/tax/check-docs.mjs` OK (32 regler, 52 kilder). Ikke kjørt: `npm run build`, e2e, DB-suiter.
+
+### 15.8 Gjenstående blokkeringer
+1. Nye golden-kjøringer (mal §15.4) og klasse 1-referanser — **ingen finnes**.
+2. Din godkjenning av parametere (krever E1-regel + klasse 1).
+3. U-009 (månedstrinn/dag 29–31; motoren blokkerer i vinduet); R-OTA-010 forblir E1P.
+4. R-OTA-014 anvendelse via kapittel 10-hjemmel (E1P); U-012 (mellomledd) uten bestemmelse; MVA-avrunding trenger egen kilde i ECON-004.
+5. R-OTA-002 marginal lesning kun via T40; NEDC/fallback-CO₂ støttes ikke.
+6. Endringer etter 2026-10-18 og lov 19. juni 2026 nr. 41 er ikke kontrollert; ingen eksplisitt sluttdato (intern sperre).
+**Sluttstatus: REVIEW.**

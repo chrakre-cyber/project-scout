@@ -118,6 +118,95 @@ describe("endelig stortingsvedtak og endringsvedtak (U-011) — tekstbelegg i de
   });
 });
 
+describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent» fordi beregningen lykkes", () => {
+  const ok = (over: Partial<TaxInput> = {}, profile?: TaxProfile) => calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-10-18", kind: "expected" }, ...over }), profile);
+  it("hvert vellykket resultat har finalClaim.validation = estimate_not_approved, identisk med toppnivå-validation", () => {
+    for (const c of GOLDEN_CASES) {
+      const r = calculateNorwegianVehicleTax(c.input);
+      expect(r.status, c.id).toBe("calculated_unverified");
+      expect(r.finalClaim!.validation, c.id).toEqual(r.validation);
+      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: false, class1References: 0, weakestRuleEvidence: "E1P" });
+    }
+  });
+  it("anvendte regler og svakeste nivå følger registeret (BEV: R-OTA-007 i stedet for 002/005; ny motorvogn: ingen R-OTA-010)", () => {
+    const refs = (r: ReturnType<typeof ok>) => r.validation!.appliedRules.map((x) => x.ruleRef).sort();
+    expect(refs(calculateNorwegianVehicleTax(GOLDEN_CASES[1]!.input))).toEqual(["R-IMP-OTH-001", "R-OTA-001", "R-OTA-007", "R-OTA-010", "R-OTA-014"]);
+    expect(refs(calculateNorwegianVehicleTax(GOLDEN_CASES[0]!.input))).toEqual(["R-IMP-OTH-001", "R-OTA-001", "R-OTA-002", "R-OTA-005", "R-OTA-010", "R-OTA-014"]);
+    expect(refs(ok({ firstRegistration: { precision: "none", value: null } }))).not.toContain("R-OTA-010");
+  });
+  it("profilens ruleEvidence er lik rules.json evidenceLevel (ingen stille avvik)", () => {
+    const rules = json("rules.json").rules as Array<{ id: string; evidenceLevel: string }>;
+    for (const [ref, level] of Object.entries(NO_OTA_2026_A_PB.ruleEvidence)) expect(rules.find((r) => r.id === ref)!.evidenceLevel, ref).toBe(level);
+  });
+  it("godkjent profil alene gjør ikke resultatet godkjent: krever også klasse 1-referanse og at alle anvendte regler er E1", () => {
+    const flagOnly: TaxProfile = { ...NO_OTA_2026_A_PB, approval: { ...NO_OTA_2026_A_PB.approval, approved: true } };
+    const r1 = ok({}, flagOnly);
+    expect(r1.status).toBe("calculated_unverified");
+    expect(r1.validation).toMatchObject({ status: "estimate_not_approved", profileApproved: true });
+    const withClass1: TaxProfile = { ...flagOnly, approval: { ...flagOnly.approval, class1References: 1 } };
+    expect(ok({}, withClass1).validation).toMatchObject({ status: "estimate_not_approved", weakestRuleEvidence: "E1P" });
+  });
+  it("først når profil godkjent + klasse 1 + alle anvendte regler E1 gir resultatet «calculated» (syntetisk profil; ikke registeret)", () => {
+    const allE1: TaxProfile = { ...NO_OTA_2026_A_PB, approval: { approved: true, class1References: 1, reason: "test" }, ruleEvidence: Object.fromEntries(Object.keys(NO_OTA_2026_A_PB.ruleEvidence).map((k) => [k, "E1" as const])) };
+    const r = ok({}, allE1);
+    expect(r.status).toBe("calculated");
+    expect(r.validation!.status).toBe("approved");
+    expect(NO_OTA_2026_A_PB.approval).toMatchObject({ approved: false, class1References: 0 }); // registeret er ikke endret
+  });
+  it("blokkerte resultater har verken finalClaim eller validation", () => {
+    const r = ok({ norwegianTaxWeight: { kg: null, basis: "unverified" } });
+    expect([r.finalClaim, r.validation]).toEqual([null, null]);
+  });
+});
+
+describe("U-012: bare generell vekt har brøk; sensitivitet for mellomavrunding (informasjon, ikke regelutledning)", () => {
+  it("tilleggsvekt, CO₂ og vrakpant er heltall for alle gyldige vekter og CO₂-verdier; generell vekt har høyst to desimaler", () => {
+    for (let kg = 400; kg <= 3500; kg += 37) {
+      for (const g of [0, 99, 100, 101, 149, 150, 151, 224, 225, 226, 300]) {
+        const r = calculateNorwegianVehicleTax(ice({ norwegianTaxWeight: { kg, basis: "vehicle_register" }, co2: { gramsPerKm: g, method: "wltp_combined" }, firstRegistration: { precision: "none", value: null } }));
+        for (const c of r.components) {
+          if (c.id === "general_weight") expect(c.amountExact.split(".")[1]?.length ?? 0, `${kg}`).toBeLessThanOrEqual(2);
+          else expect(c.amountExact, `${c.id} ${kg}/${g}`).not.toContain(".");
+        }
+      }
+    }
+  });
+  it("alternative mellomavrundinger (generell vekt, sum, fradragsbeløp) avviker fra motorens sluttkrav med høyst 1 kr i valideringscasene; motoren velger ingen av dem", () => {
+    const cases = GOLDEN_CASES.map((c) => {
+      const r = calculateNorwegianVehicleTax(c.input);
+      const [gen, ...rest] = r.components.map((x) => dec(x.amountExact));
+      const fixed = rest.reduce((a, b) => add(a, b), decInt(0));
+      const p = r.ageDeduction!.percent;
+      return { gen: gen!, fixed, p, engine: r.finalClaim!.totalRegistrationTaxesNok };
+    });
+    const factor = (p: number) => ({ units: BigInt(100 - p), scale: 2 });
+    const net = (pre: ReturnType<typeof dec>, p: number) => floorInt(mul(pre, factor(p)));
+    const rnd = (d: ReturnType<typeof dec>) => roundHalfUpInt(d);
+    for (const c of cases) {
+      const variants = [
+        net(add(decInt(floorInt(c.gen)), c.fixed), c.p), // generell vekt ned
+        net(add(decInt(rnd(c.gen)), c.fixed), c.p), // generell vekt nærmeste
+        net(add(decInt(ceilInt(c.gen)), c.fixed), c.p), // generell vekt opp
+        net(decInt(floorInt(add(c.gen, c.fixed))), c.p), // sum ned
+        floorInt(add(add(c.gen, c.fixed), { units: -rnd(mul(add(c.gen, c.fixed), { units: BigInt(c.p), scale: 2 })), scale: 0 })), // fradragsbeløp nærmeste
+        floorInt(add(add(c.gen, c.fixed), { units: -floorInt(mul(add(c.gen, c.fixed), { units: BigInt(c.p), scale: 2 })), scale: 0 })), // fradragsbeløp ned
+      ].map((v) => Number(v) + 2400);
+      for (const v of variants) expect(Math.abs(v - c.engine)).toBeLessThanOrEqual(1);
+    }
+  });
+});
+
+describe("registreringsmal for nye golden-kjøringer", () => {
+  const template = readFileSync(join(ROOT, "docs/tax/golden-run-template.md"), "utf8");
+  it("inneholder alle sjekklistepunktene fra fixturen og krever ny referanse-ID (ikke rekonstruksjon av CASE-001/002/003)", () => {
+    for (const k of DOCUMENTATION_CHECKLIST) expect(template, k).toContain("`" + k + "`");
+    expect(template).toMatch(/GR-/);
+    expect(template).toMatch(/aldri.*CASE-001\/002\/003/s);
+    expect(template).toMatch(/ikke testdato/);
+    expect(template).toMatch(/kjøredato ≠ testdato/);
+  });
+});
+
 describe("avrundingskjeden (U-010): forskrift § 10-4-4, håndbok og lovens virkeområde — tekstbelegg", () => {
   it("skattebetalingsforskriften § 10-4-4 og håndboken sier ned til nærmeste hele krone ved beregning av skatte- og avgiftskrav", () => {
     const s = "Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone";
@@ -414,14 +503,27 @@ describe("implementasjonskonklusjoner er merket og skilt fra kildebelagt oppfør
 
 describe("PHEV: definisjon → anvendelig bestemmelse → rundskriv er koblet i evidensregisteret", () => {
   const rule = (json("rules.json").rules as Array<{ id: string; e1Findings: Array<{ source: string; locator: string }>; chain?: Record<string, string> }>).find((r) => r.id === "R-OTA-005")!;
-  it("regelen dokumenterer definisjon, bestemmelse, rundskriv og det som mangler", () => {
+  it("regelen er E1 og kjeden går fra teknisk vilkår via bestemmelse og forskrift til rundskriv; kravet som gjenstår er faktisk (per kjøretøy), ikke regelusikkerhet", () => {
+    const r = rule as unknown as { evidenceLevel: string };
+    expect(r.evidenceLevel).toBe("E1");
     expect(Object.keys(rule.chain!)).toEqual(["definition", "applicableProvision", "circular", "gap"]);
-    expect(rule.chain!.definition).toMatch(/ikke definert/);
-    expect(rule.chain!.applicableProvision).toMatch(/§ 3/);
+    expect(rule.chain!.definition).toMatch(/stempeldrevet forbrenningsmotor/);
+    expect(rule.chain!.definition).toMatch(/trenger ikke stå/);
+    expect(rule.chain!.applicableProvision).toMatch(/nr 1.*nr 2.*samme vilkår/s);
     expect(rule.chain!.circular).toMatch(/3\.3\.11/);
     expect(rule.chain!.gap).toMatch(/Ingen tekst nevner ladbar hybrid uttrykkelig/);
+    expect(rule.chain!.gap).toMatch(/FAKTISK krav per kjøretøy/);
     const srcs = new Set(rule.e1Findings.map((f) => f.source));
-    for (const s of ["T03", "T05", "T40", "T41"]) expect(srcs.has(s), s).toBe(true);
+    for (const s of ["T03", "T05", "T40", "T41", "T47"]) expect(srcs.has(s), s).toBe(true);
+    expect(NO_OTA_2026_A_PB.ruleEvidence["R-OTA-005"]).toBe("E1");
+  });
+  it("anvendelsen følger av tekniske egenskaper, ikke av ordet PHEV eller markedsføringsnavn", () => {
+    const technical = { propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "type_approval" as const }, co2: { gramsPerKm: 60, method: "wltp_weighted_combined" as const } };
+    const named = (label: string) => ({ ...ice(technical), marketingName: label, fuelLabel: label }) as unknown as TaxInput;
+    expect(calculateNorwegianVehicleTax(named("Plug-in Hybrid"))).toEqual(calculateNorwegianVehicleTax(named("e-tron")));
+    expect(calculateNorwegianVehicleTax(named("Plug-in Hybrid")).powertrain).toBe("phev");
+    // uten dokumentert stempeldrevet motor/ladbarhet: ingen klassifisering, uansett navn
+    expect(calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: null, externallyChargeable: true, evidence: "type_approval" } })).blocked.map((b) => b.code)).toContain("propulsion_unknown");
   });
   it("motoren behandler PHEV likt som forbrenningsmotor for vekt og CO₂, men krever «vektet kombinert»", () => {
     const base = calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: 140, method: "wltp_combined" } }));
@@ -435,7 +537,7 @@ describe("gyldige tilfeller er aldri «godkjent»; avrunding av sluttkravet (R-O
   it("status er calculated_unverified, profilen ikke godkjent, åpne punkter følger resultatet", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
     expect(r.status).toBe("calculated_unverified");
-    expect(r.evidence).toMatchObject({ parameterEvidenceLevel: "E1", profileApproved: false });
+    expect(r.evidence).toMatchObject({ parameterEvidenceLevel: "E1P", profileApproved: false });
     expect(r.evidence!.openItems.join(" ")).toMatch(/U-012/);
     expect(r.evidence!.openItems.join(" ")).toMatch(/R-OTA-014 er E1P/);
   });
@@ -446,7 +548,7 @@ describe("gyldige tilfeller er aldri «godkjent»; avrunding av sluttkravet (R-O
   });
   it("sluttkravet avrundes ned til hele kroner (§ 10-4-4); eksakte beløp og komponenter beholdes uavrundet", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
-    expect(r.finalClaim).toEqual({ ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: 331323, scrappageDepositNok: 2400, totalRegistrationTaxesNok: 333723 });
+    expect(r.finalClaim).toMatchObject({ ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: 331323, scrappageDepositNok: 2400, totalRegistrationTaxesNok: 333723 });
     expect(r.totalRegistrationTaxesExact).toBe("333723.972");
     expect(r.components.map((c) => c.amountExact)).toEqual(["18759.96", "201760", "252800"]); // mellomledd er ikke avrundet
     expect(r.preDeductionExact).toBe("473319.96");

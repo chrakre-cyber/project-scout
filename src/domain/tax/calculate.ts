@@ -11,7 +11,7 @@ import { add, dec, decInt, floorInt, max0, min, mul, sub, toExactString, toSafeN
 import { compareIso, lastDayOfMonth, parseIsoDate } from "./dates";
 import { TAX_PROFILES, type TaxProfile } from "./profile-no-2026-a";
 import type {
-  AgeDeductionResult, BlockCode, Blocker, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, Warning,
+  AgeDeductionResult, BlockCode, Blocker, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, ValidationStatus, Warning,
 } from "./types";
 
 const VERIFIED_WEIGHT_BASES = new Set(["eu_type_approval_minimum_mass", "vehicle_register"]);
@@ -23,6 +23,11 @@ export function classifyPowertrain(p: TaxInput["propulsion"]): TaxPowertrain | n
 }
 
 const percentFactor = (pct: number): Dec => ({ units: BigInt(100 - pct), scale: 2 });
+
+/** Svakeste regelnivå i profilen (brukes når ikke alle regler er anvendt, f.eks. blokkerte resultater). */
+function weakest(p: TaxProfile): "E1" | "E1P" {
+  return Object.values(p.ruleEvidence).some((e) => e === "E1P") ? "E1P" : "E1";
+}
 
 function profileRef(p: TaxProfile): ProfileRef {
   return { id: p.id, version: p.version, taxGroup: p.taxGroup, validFrom: p.validFrom, documentedPeriodLabel: p.documentedPeriodLabel, documentedValidTo: p.documentedValidTo, internalSafetyLimit: { date: p.internalSafetyLimit.date, kind: p.internalSafetyLimit.kind }, ratesVerifiedAsOf: p.ratesVerifiedAsOf, approved: p.approval.approved };
@@ -108,7 +113,6 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   const blockers: Blocker[] = [];
   const missing: string[] = [];
   const warnings: Warning[] = [];
-  const assumptions: string[] = [];
   const block = (code: BlockCode, message: string, field?: string) => {
     blockers.push({ code, message });
     if (field) missing.push(field);
@@ -164,7 +168,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   const prof = selectProfile(norDate, profile, blockers);
   if (prof && prof.vehicleClass !== input.vehicleClass && input.vehicleClass === "passenger_car_m1") block("vehicle_class_unsupported", "Profilen dekker ikke kjøretøyklassen.");
   if (prof && norDate && compareIso(norDate, prof.ratesVerifiedAsOf) > 0) {
-    warnings.push({ code: "rates_verified_as_of", message: `Satsene er verifisert mot Finansdepartementets oversikt datert ${prof.ratesVerifiedAsOf}; senere endringer er ikke kontrollert.` });
+    warnings.push({ code: "rates_verified_as_of", message: `Satsene er verifisert mot den konsoliderte vedtaksteksten hentet ${prof.ratesVerifiedAsOf}; senere endringer er ikke kontrollert.` });
   }
 
   // --- CO2 (§ 3-1)
@@ -190,7 +194,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   }
 
   if (blockers.length > 0 || !prof || !powertrain || kg === null || !norDate) {
-    return { status: "blocked", profile: prof ? profileRef(prof) : null, powertrain, components: [], preDeductionExact: null, ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: prof ? { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] } : null, missingInputs: missing, blocked: blockers, warnings, assumptions, implementationConclusions: [] };
+    return { status: "blocked", profile: prof ? profileRef(prof) : null, powertrain, components: [], preDeductionExact: null, ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: prof ? { parameterEvidenceLevel: weakest(prof), profileApproved: prof.approval.approved, openItems: [...prof.openItems] } : null, missingInputs: missing, blocked: blockers, warnings, implementationConclusions: [], validation: null };
   }
 
   // --- beregning
@@ -205,7 +209,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     const main = lookupDeduction(prof.deductionTable, working!, norDate);
     const alt = altWorking && compareIso(norDate, altWorking) >= 0 ? lookupDeduction(prof.deductionTable, altWorking, norDate) : null;
     if (main.ambiguous || alt?.ambiguous) {
-      return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [ambiguityBlocker(main.ambiguity ?? alt?.ambiguity ?? null, norDate, !main.ambiguity)], warnings, assumptions, implementationConclusions: [] };
+      return { status: "blocked", profile: profileRef(prof), powertrain, components, preDeductionExact: toExactString(preDeduction), ageDeduction: null, oneOffTaxExact: null, scrappageDeposit: null, totalRegistrationTaxesExact: null, finalClaim: null, monthSensitivity: null, evidence: { parameterEvidenceLevel: weakest(prof), profileApproved: prof.approval.approved, openItems: [...prof.openItems] }, missingInputs: missing, blocked: [ambiguityBlocker(main.ambiguity ?? alt?.ambiguity ?? null, norDate, !main.ambiguity)], warnings, implementationConclusions: [], validation: null };
     }
     ded = { percent: main.percent, ageCompletedMonths: main.completedMonths, stepLabel: main.stepLabel, workingFirstRegistration: working, workingDateDerived: derived, norwegianRegistrationDate: norDate, norwegianRegistrationKind: nor.kind, twentyYearRule: main.twentyYearRule };
     if (main.twentyYearRule) warnings.push({ code: "twenty_year_rule_unverified", message: "20-årsregelen gir 100 % fradrag; hvilken avgift som ellers gjelder for 20 år gamle motorvogner er ikke utledet (R-OTA-011)." });
@@ -248,8 +252,14 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     statement: "Avrunding (ned til hele kroner, skattebetalingsforskriften § 10-4-4) gjelder det samlede kravet. Kildene omtaler ikke avrunding av kg × sats, CO₂-bånd, sum før fradrag eller prosentfradrag; motoren avrunder derfor ikke mellomledd (U-012).",
     sourceStatus: "not_expressly_described",
   });
+  // Regler som faktisk er anvendt i dette resultatet (svakeste nivå styrer; en vellykket beregning er aldri «godkjent» i seg selv).
+  const applied = [prof.parameters.generalWeight.ruleRef, ...(powertrain === "bev" ? ["R-OTA-007"] : [prof.parameters.combustionWeight.ruleRef, prof.parameters.co2RuleRef]), ...(powertrain === "phev" ? ["R-OTA-005"] : []), ...(isNew ? [] : [prof.deductionRuleRef]), prof.parameters.scrappageRuleRef, prof.parameters.rounding.ruleRef];
+  const appliedRules = [...new Set(applied)].map((ruleRef) => ({ ruleRef, evidence: prof.ruleEvidence[ruleRef] ?? ("E1P" as const) }));
+  const weakestRuleEvidence: "E1" | "E1P" = appliedRules.some((r) => r.evidence === "E1P") ? "E1P" : "E1";
+  const approved = prof.approval.approved && prof.approval.class1References > 0 && weakestRuleEvidence === "E1";
+  const validation: ValidationStatus = { status: approved ? "approved" : "estimate_not_approved", profileApproved: prof.approval.approved, class1References: prof.approval.class1References, weakestRuleEvidence, appliedRules };
   return {
-    status: "calculated_unverified",
+    status: approved ? "calculated" : "calculated_unverified",
     profile: profileRef(prof),
     powertrain,
     components,
@@ -258,13 +268,13 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     oneOffTaxExact: toExactString(oneOff),
     scrappageDeposit: { amountNok: scrap, ruleRef: prof.parameters.scrappageRuleRef, reducedByAgeDeduction: false },
     totalRegistrationTaxesExact: toExactString(totalExact),
-    finalClaim: { ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: oneOffNok, scrappageDepositNok: scrap, totalRegistrationTaxesNok: totalNok },
+    finalClaim: { ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: oneOffNok, scrappageDepositNok: scrap, totalRegistrationTaxesNok: totalNok, validation },
     monthSensitivity,
-    evidence: { parameterEvidenceLevel: "E1", profileApproved: prof.approval.approved, openItems: [...prof.openItems] },
+    evidence: { parameterEvidenceLevel: validation.weakestRuleEvidence, profileApproved: prof.approval.approved, openItems: [...prof.openItems] },
     missingInputs: missing,
     blocked: [],
     warnings,
-    assumptions,
     implementationConclusions,
+    validation,
   };
 }

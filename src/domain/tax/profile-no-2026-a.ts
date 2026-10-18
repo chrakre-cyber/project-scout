@@ -50,7 +50,10 @@ export interface TaxProfile {
   /** Brukes når registrering skjer 20 år eller mer etter første registrering (1. januar-regelen, forskrift § 3-3). */
   deductionRuleRef: string;
   sources: readonly string[];
-  approval: { approved: boolean; reason: string };
+  /** `class1References`: antall klasse 1-referanser (docs/tax/references.json) som dekker profilen. 0 i dag. */
+  approval: { approved: boolean; class1References: number; reason: string };
+  /** Regelnivå (docs/tax/rules.json evidenceLevel) per regel profilen anvender; en test holder dem lik registeret. */
+  ruleEvidence: Readonly<Record<string, "E1" | "E1P">>;
   openItems: readonly string[];
 }
 
@@ -95,15 +98,25 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
   deductionTable: DEDUCTION_STEPS_2026,
   deductionRuleRef: "R-OTA-010",
   sources: ["T03", "T05", "T40", "T42", "T43", "T44", "T45", "T46", "T47", "T48", "T49"],
+  ruleEvidence: {
+    "R-OTA-001": "E1",
+    "R-OTA-002": "E1P",
+    "R-OTA-005": "E1",
+    "R-OTA-007": "E1",
+    "R-OTA-010": "E1P",
+    "R-IMP-OTH-001": "E1",
+    "R-OTA-014": "E1P",
+  },
   approval: {
     approved: false,
+    class1References: 0,
     reason: "Ingen eksplisitt parameterApproval og ingen klasse 1-referanser (docs/tax/rules.json foundationStatus).",
   },
   openItems: [
     "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
     "R-OTA-014 er E1P: skattebetalingsforskriften § 10-4-4 nevner ikke engangsavgift uttrykkelig (anvendelsen følger av skattebetalingsloven § 1-1 (2) i, § 10-40 (1) c og forskriften § 10-4-1 d)",
     "U-009: månedstrinn i bruksfradrag og dag-overflyt (dag 29–31) er ikke spesifisert",
-    "PHEV omfattes av § 3 via vilkåret «stempeldrevet forbrenningsmotor»; ladbar hybrid er ikke nevnt uttrykkelig (E1P)",
+    "PHEV: anvendelsen hviler på det tekniske vilkåret i § 3 og på forskrift § 3-1 (E1-tekst); forutsetter dokumentert stempeldrevet motor og ekstern lading per kjøretøy",
     "Ingen eksplisitt sluttdato for 2026-satsene (intern sikkerhetssperre); endringer etter hentedato 2026-10-18 og lov 19 juni 2026 nr. 41 er ikke kontrollert",
     "Ingen parameter er godkjent og ingen klasse 1-referanse finnes",
   ],

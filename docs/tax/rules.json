@@ -1049,8 +1049,8 @@
      "section": "§ 3"
     }
    ],
-   "evidenceLevel": "E1P",
-   "status": "E1P_vedtak_lest_ingen_vektfradrag_ladbar_hybrid_utledet_fra_vilkaaret",
+   "evidenceLevel": "E1",
+   "status": "E1_vilkaar_i_vedtak_og_forskrift_3_1_ingen_phev_saerregel_parameter_ikke_godkjent",
    "leads": [
     {
      "claim": "Eldre forskriftstekst: CO2 for ladbar hybrid tas fra «vektet kombinert»; for gruppe a og j multipliseres med 1,24.",
@@ -1074,9 +1074,10 @@
     }
    ],
    "openQuestions": [
-    "Ladbar hybrid er ikke nevnt eller definert; konklusjonen følger av vilkåret «stempeldrevet forbrenningsmotor» (vedtak § 3), forskrift § 3-1 og rundskriv 3.3.11/6.12. Se chain.",
-    "Elektrisk rekkevidde har ingen avgiftseffekt i leste kilder.",
-    "Avrunding av vektet kombinert CO2 (heltall g/km forutsettes): U-012."
+    "Per kjøretøy må stempeldrevet forbrenningsmotor, ekstern ladbarhet, CO2-felt «vektet kombinert» (heltall g/km forutsettes) og minimumsvekt dokumenteres fra typegodkjenning/register (inputkrav, ikke regelusikkerhet).",
+    "NEDC-godkjent ladbar hybrid (× 1,24) støttes ikke (U-012).",
+    "Avrunding: sluttkravet R-OTA-014; mellomledd U-012.",
+    "Elektrisk rekkevidde har ingen avgiftseffekt i leste kilder."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-15",
@@ -1129,6 +1130,12 @@
      "source": "T47",
      "locator": "§ 3 innledning",
      "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Fullstendig lest vedtak (§§ 1–11, T47) inneholder ingen bestemmelse som utelater, endrer eller gir fradrag for ladbar hybrid i §§ 2–4; § 3 a nr 1 og nr 2 har samme innledende vilkår og er ikke delt etter drivlinje. Forskrift § 3-1 (T05, alle sider lest) angir CO2-feltet for ladbare hybridbiler og forutsetter dermed at ladbar hybrid har en CO2-komponent etter § 3; ingen annen bestemmelse i forskriften gir særregler for dem.",
+     "source": "T47",
+     "locator": "§§ 2–4 (fravær av PHEV-særregel) og § 3 innledning; T05 § 3-1",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -1145,10 +1152,10 @@
     }
    ],
    "chain": {
-    "definition": "Vedtaket § 3 (T47) bruker det tekniske vilkåret «stempeldrevet forbrenningsmotor» (E1). Ladbar hybridbil er ikke definert i vedtaket, forskriften (T05, alle sider) eller rundskrivet; motoren klassifiserer teknisk: stempeldrevet motor = ja og ekstern lading = ja, med dokumentert bevis.",
-    "applicableProvision": "Vedtaket § 3 første ledd a nr 1–2 (tilleggsvekt 260 kr/kg og CO2-bånd) for avgiftsgruppe a; forskrift § 3-1 (T05) bestemmer CO2-feltet «vektet kombinert» for ladbare hybridbiler. Ingen bestemmelse i §§ 2–4 gir vektfradrag eller annen særregel for ladbar hybrid.",
-    "circular": "Rundskriv 3.3.11 (vektfradrag for ladbare hybridbiler opphevet 1.1.2024) og 6.12 (§ 3 ilegges motorvogner med stempeldrevet forbrenningsmotor).",
-    "gap": "Ingen tekst nevner ladbar hybrid uttrykkelig under § 3. At en PHEV omfattes følger av at vilkåret «stempeldrevet forbrenningsmotor» er oppfylt (faktisk, teknisk egenskap) og av at forskriften § 3-1 og rundskrivet behandler PHEV innenfor forbrenningsmotorkomponentene. Konklusjonen er juridisk slutning fra E1-tekst, ikke uttrykkelig bestemmelse (E1P)."
+    "definition": "Det tekniske vilkåret i vedtaket § 3 innledning: «motorvogner med stempeldrevet forbrenningsmotor» (E1). Ordet «ladbar hybrid» trenger ikke stå i § 3: en PHEV oppfyller vilkåret hvis typegodkjenning/kjøretøyregister dokumenterer en stempeldrevet forbrenningsmotor. Eksternt ladbar (PHEV) skiller bare CO2-feltet (forskrift § 3-1).",
+    "applicableProvision": "Vedtaket § 3 første ledd a nr 1 (tilleggsvekt 260 kr/kg over 1 200 kg) og nr 2 (CO2-bånd), begge under samme vilkår; forskrift § 3-1 gir CO2-feltet «vektet kombinert» for ladbare hybridbiler (forutsetter at § 3-CO2-komponenten gjelder dem). Ingen bestemmelse i §§ 2–4 gir PHEV vektfradrag eller unntak.",
+    "circular": "Rundskriv 3.3.11 (vektfradrag for ladbare hybridbiler opphevet 1.1.2024 – altså full vekt etter § 3) og 6.12 (§ 3 ilegges «motorvogner med stempeldrevet forbrenningsmotor»).",
+    "gap": "Ingen tekst nevner ladbar hybrid uttrykkelig under § 3, og det kreves ikke: anvendelsen følger av vilkåret og av at § 3-1 behandler PHEV innenfor § 3-komponentene. Gjenstår som FAKTISK krav per kjøretøy (ikke regelusikkerhet): dokumentert stempeldrevet motor, ekstern lading, «vektet kombinert»-verdi og minimumsvekt fra typegodkjenning/CoC. Vurdering: evidensen er tilstrekkelig for E1 på regelnivå."
    }
   },
   {
@@ -3037,7 +3044,7 @@
    "id": "U-012",
    "claim": "Avrunding av mellomledd (kg × sats med to desimaler, CO2-bånd, sum før fradrag, prosentfradrag, evt. NEDC-omregnet CO2 og egenvekt/10).",
    "status": "åpen – ingen kilde omtaler avrunding av mellomledd",
-   "note": "Skattebetalingsforskriften § 10-4-4 gjelder «skatte- og avgiftskrav» (sluttbeløpet). Ingen lest tekst (vedtak, forskrift, rundskriv, håndbok) avrunder komponenter. Motoren avrunder derfor ikke mellomledd og floor-avrunder bare sluttkravet (implementasjonskonklusjon). Gjenværende usikkerhet: om Skatteetatens beregning avrunder mellomledd (kan gi avvik på noen kroner). NEDC-omregning og egenvekt/10 forblir ikke støttet.",
+   "note": "Mangler uttrykkelig bestemmelse — ikke påvist regelkonflikt. Skattebetalingsforskriften § 10-4-4 gjelder «skatte- og avgiftskrav» (sluttkravet); ingen lest tekst (vedtak, forskrift, rundskriv, håndbok) avrunder komponenter, og ingen kilde motsier at mellomledd holdes eksakte. Konkrete mellomregningspunkter som KAN påvirke sluttbeløpet: (1) generell vekt = kg × 12,71 er det eneste leddet med brøk (to desimaler); tilleggsvekt (kg × 260), CO2-bånd (heltall g/km × heltallssatser) og vrakpant er heltall; (2) summen før fradrag (desimal hvis (1) ikke avrundes); (3) prosentfradraget: avgift × (100 − p)/100 gir inntil fire desimaler, og kan i prinsippet regnes som netto-beløp eller som fradragsbeløp (avgift × p/100) som avrundes før det trekkes fra. Maksimalt utslag: ledd (1) og (3) kan hver forskyve sluttbeløpet med inntil 1 krone (til sammen inntil 2 kroner i verste fall); ingen andre mellomledd har brøk. Sensitivitetsanalyse (kun informasjon, ikke regelutledning) viser at de testede varianter avviker med høyst +1 kr fra motorens beløp i de tre valideringscasene. Motoren beholder eksakte mellomledd og avrunder bare sluttkravet. Egen, adskilt observasjon: kalkulatorresultatet for import-MVA i casene (16 666 og 102 873) er ikke nedrundet (16 665,75 og 102 872,75) — § 10-4-4 må derfor ikke generaliseres til MVA-linjen i ECON-004 uten kilde (merverdiavgift er også «skatte- og avgiftskrav», § 1-1 (2) g); dette er et valideringssignal om anvendelsen av § 10-4-4 i verktøyet, ikke en påvist regelkonflikt i kildene og ikke en kilde for engangsavgift. NEDC-omregnet CO2 og egenvekt/10 forblir ikke støttet.",
    "affects": [
     "R-OTA-001",
     "R-OTA-002",
@@ -3052,7 +3059,7 @@
   "date": "2026-10-18",
   "approvedParameters": 0,
   "class1References": 0,
-  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001 og R-OTA-007 løftet til E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md.",
+  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001, R-OTA-005 og R-OTA-007 på E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md. Runde 5: R-OTA-005 (PHEV) E1 etter revurdering av det tekniske vilkåret.",
   "doneRequires": [
    "minst én godkjent parameter per implementert komponent (rules.parameterApproval.approved=true med godkjenner)",
    "minst ett klasse 1-tilfelle per profil i omfang",
