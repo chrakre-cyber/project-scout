@@ -320,6 +320,31 @@ describe("U-009: dag 29–31 når målmåneden er kortere — kildebelagt vs blo
   });
 });
 
+describe("implementasjonskonklusjoner er merket og skilt fra kildebelagt oppførsel", () => {
+  const codesOf = (r: ReturnType<typeof calculateNorwegianVehicleTax>) => r.implementationConclusions.map((c) => c.code);
+  it("dag 1–28: bare månedstrinn-konklusjonen; ingen overflyt-konklusjon", () => {
+    const r = calculateNorwegianVehicleTax(ice());
+    expect(codesOf(r)).toEqual(["month_steps_same_anniversary_rule"]);
+    expect(r.implementationConclusions.every((c) => c.sourceStatus === "not_expressly_described")).toBe(true);
+  });
+  it("dag 29–31 utenfor vinduet beregnes, og overflyt-konklusjonen er merket (kilden beskriver ikke dag 29–31)", () => {
+    const r = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2023-01-31" }, norwegianRegistration: { date: "2026-04-30", kind: "expected" } }));
+    expect(r.status).toBe("calculated_unverified");
+    expect(codesOf(r)).toEqual(["month_steps_same_anniversary_rule", "overflow_dates_outside_window_monotonic"]);
+  });
+  it("kun måned kjent: «siste dag i måneden» (dag 29–31) utløser overflyt-konklusjonen", () => {
+    const r = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "month", value: "2023-01" } }));
+    expect(codesOf(r)).toContain("overflow_dates_outside_window_monotonic");
+  });
+  it("blokkerte resultater og ny motorvogn har ingen konklusjoner; blokkering i vinduet består", () => {
+    expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "year", value: "2023" } })).implementationConclusions).toEqual([]);
+    expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "none", value: null } })).implementationConclusions).toEqual([]);
+    const inWindow = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2023-01-31" }, norwegianRegistration: { date: "2023-02-28", kind: "expected" } }), { ...NO_OTA_2026_A_PB, validFrom: "2023-01-01" });
+    expect(inWindow.status).toBe("blocked");
+    expect(inWindow.blocked[0]!.code).toBe("age_step_boundary_ambiguous");
+  });
+});
+
 describe("PHEV: definisjon → anvendelig bestemmelse → rundskriv er koblet i evidensregisteret", () => {
   const rule = (json("rules.json").rules as Array<{ id: string; e1Findings: Array<{ source: string; locator: string }>; chain?: Record<string, string> }>).find((r) => r.id === "R-OTA-005")!;
   it("regelen dokumenterer definisjon, bestemmelse, rundskriv og det som mangler", () => {
@@ -416,6 +441,18 @@ describe("gyldne caser: dokumentasjon mangler (ikke klasse 1); testdato er ikke 
       expect(c.input.norwegianRegistration).toMatchObject({ date: TEST_DATE, kind: "expected", defaulted: true });
     }
     expect(TEST_DATE).toBe("2026-10-18");
+  });
+  it("eksisterende dokumentasjon er ordrett fra oppdraget; fixturen inneholder ingen rekonstruert kjøredato eller input", () => {
+    for (const c of GOLDEN_CASES) {
+      const d = c.documented;
+      expect(d.calculatorOutputNok.avgift, c.id).toBe(c.expectedTotalNok);
+      expect(c.input.norwegianTaxWeight.kg, c.id).toBe(d.referenceTaxWeightKg);
+      expect(c.input.firstRegistration, c.id).toEqual({ precision: "month", value: d.firstRegistrationWorkingDate.slice(0, 7) });
+      if (c.input.co2.gramsPerKm !== null) expect(c.input.co2.gramsPerKm, c.id).toBe(d.co2GramsPerKm);
+      expect(d.calculatorOutputNok.purchasePrice + d.calculatorOutputNok.avgift + d.calculatorOutputNok.vat, c.id).toBe(d.calculatorOutputNok.total);
+      expect([c.documentation.calculatorRunDate, c.documentation.norwegianRegistrationDateUsed], c.id).toEqual(["missing", "missing"]);
+      expect(Object.keys(d), c.id).not.toEqual(expect.arrayContaining(["calculatorRunDate"]));
+    }
   });
   it("ingen klasse 1-referanse er registrert i docs/tax (casene er ikke dokumentert nok)", () => {
     const cases = json("references.json").cases as Array<{ evidenceClass: number }>;

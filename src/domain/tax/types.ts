@@ -142,6 +142,16 @@ export interface ProfileRef {
   approved: boolean;
 }
 
+/**
+ * Valgt oppførsel som kilden IKKE uttrykkelig beskriver (implementasjonskonklusjon, ikke kildebelagt regel). Skilt fra `assumptions`
+ * slik at det er tydelig hva som er kilde og hva som er motorens egen slutning.
+ */
+export interface ImplementationConclusion {
+  code: "month_steps_same_anniversary_rule" | "overflow_dates_outside_window_monotonic";
+  statement: string;
+  sourceStatus: "not_expressly_described";
+}
+
 export interface TaxResult {
   /**
    * `calculated_unverified`: regnet eksakt etter kilde-belagte regler (E1), men profilen er ikke godkjent og avrundingsregelen mangler
@@ -170,6 +180,7 @@ export interface TaxResult {
   blocked: Blocker[];
   warnings: Warning[];
   assumptions: string[];
+  implementationConclusions: ImplementationConclusion[];
 }
 
 export interface CalcOptions {

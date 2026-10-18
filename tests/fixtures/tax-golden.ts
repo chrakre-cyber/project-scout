@@ -22,6 +22,21 @@ export const DOCUMENTATION_CHECKLIST = [
 export type ChecklistKey = (typeof DOCUMENTATION_CHECKLIST)[number];
 export type ChecklistStatus = "missing" | "partial" | "provided";
 
+/** Det som faktisk står i oppdraget ECON-001 §7 (Christian, 2026-10-18 15:25 UTC). Ingenting her er rekonstruert fra forventet resultat. */
+export interface DocumentedFacts {
+  provenance: "ECON-001 oppdrag (Christian), CASE-tekst";
+  advertisedNetPriceEur: number;
+  /** «first registration working date» slik den står i oppdraget (arbeidsdato; faktisk dag ikke oppgitt). */
+  firstRegistrationWorkingDate: string;
+  mileageKm: number;
+  engineCc: number | null;
+  powerKw: number;
+  co2GramsPerKm: number;
+  /** Oppgitt som «reference Norwegian tax weight» / «Norwegian reference/tax weight»; vektdefinisjon ikke oppgitt. */
+  referenceTaxWeightKg: number;
+  calculatorOutputNok: { avgift: number; purchasePrice: number; vat: number; total: number };
+}
+
 export interface GoldenCase {
   id: string;
   label: string;
@@ -31,6 +46,8 @@ export interface GoldenCase {
   expectedTotalNok: number;
   /** Status per dokumentasjonspunkt (ECON-001 §7 er eneste kilde; ingen skjermbilder levert). */
   documentation: Record<ChecklistKey, ChecklistStatus>;
+  /** Eksisterende dokumentasjon, ordrett fra oppdraget. */
+  documented: DocumentedFacts;
 }
 
 export const TEST_DATE = "2026-10-18";
@@ -68,6 +85,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
       norwegianRegistration: NOR,
     },
     documentation: { ...DOC },
+    documented: { provenance: "ECON-001 oppdrag (Christian), CASE-tekst", advertisedNetPriceEur: 252017, firstRegistrationWorkingDate: "2026-09-01", mileageKm: 2978, engineCc: 3996, powerKw: 588, co2GramsPerKm: 140, referenceTaxWeightKg: 2610, calculatorOutputNok: { avgift: 529069, purchasePrice: 2689248, vat: 672312, total: 3890629 } },
   },
   {
     id: "CASE-002",
@@ -82,6 +100,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
       norwegianRegistration: NOR,
     },
     documentation: { ...DOC },
+    documented: { provenance: "ECON-001 oppdrag (Christian), CASE-tekst", advertisedNetPriceEur: 34361, firstRegistrationWorkingDate: "2023-08-01", mileageKm: 43300, engineCc: null, powerKw: 210, co2GramsPerKm: 0, referenceTaxWeightKg: 2185, calculatorOutputNok: { avgift: 16748, purchasePrice: 366663, vat: 16666, total: 400077 } },
   },
   {
     id: "CASE-003",
@@ -96,5 +115,6 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
       norwegianRegistration: NOR,
     },
     documentation: { ...DOC },
+    documented: { provenance: "ECON-001 oppdrag (Christian), CASE-tekst", advertisedNetPriceEur: 38562, firstRegistrationWorkingDate: "2023-11-01", mileageKm: 34353, engineCc: 2925, powerKw: 243, co2GramsPerKm: 179, referenceTaxWeightKg: 1976, calculatorOutputNok: { avgift: 333723, purchasePrice: 411491, vat: 102873, total: 848087 } },
   },
 ];
