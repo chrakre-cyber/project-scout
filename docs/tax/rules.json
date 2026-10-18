@@ -2938,7 +2938,7 @@
   {
    "id": "R-OTA-014",
    "component": "Engangsavgift – avrunding av avgiftskravet",
-   "title": "Avrunding av skatte- og avgiftskrav ned til nærmeste hele krone (skattebetalingsforskriften § 10-4-4) – sluttkravet, ikke mellomledd",
+   "title": "Avrunding av skatte- og avgiftskrav ned til nærmeste hele krone (skattebetalingsforskriften § 10-4-4) – sluttkravet for engangsavgift, ikke mellomledd",
    "profiles": [
     "PB-BEN",
     "PB-DIE",
@@ -2960,7 +2960,7 @@
    "validity": {
     "from": "2010-04-01",
     "to": null,
-    "note": "§ 10-4-4 «Endret ved forskrift 25 mars 2010 nr. 462 (i kraft 1 april 2010, tidligere § 10-4-3)»; forskriften sist endret FOR-2026-06-26-1385."
+    "note": "Dagens nummer § 10-4-4 i kraft 1. april 2010 (FOR-2010-03-25-462; T52). Første setnings ordlyd er lik utkastet fra 2006; den vedtatte 2007-ordlyden er ikke lest direkte. Ingen dokumentert sluttdato."
    },
    "sources": [
     {
@@ -2978,17 +2978,29 @@
     {
      "id": "T47",
      "section": "hjemmel: LOV-1959-06-19-2"
+    },
+    {
+     "id": "T50",
+     "section": "Til § 10-4-3 Avrunding"
+    },
+    {
+     "id": "T51",
+     "section": "Til § 10-4; Til § 10-40"
+    },
+    {
+     "id": "T52",
+     "section": "«Nåværende § 10-4-3 blir ny § 10-4-4»"
     }
    ],
-   "evidenceLevel": "E1P",
-   "status": "E1P_regel_lest_anvendelse_paa_engangsavgift_sluttkrav_utledet_fra_virkeomraade",
+   "evidenceLevel": "E1",
+   "status": "E1_sluttkrav_avgrenset_parameter_ikke_godkjent",
    "leads": [],
    "openQuestions": [
-    "Skattebetalingsforskriften § 10-4-4 nevner ikke engangsavgift uttrykkelig; anvendelsen følger av at engangsavgift er et «avgiftskrav» (skattebetalingsloven § 1-1 (2) bokstav i: særavgifter etter lov 19. juni 1959 nr. 2), at skattebetalingsloven § 10-40 (1) c regulerer forfall for engangsavgift, og at forskriften § 10-4-1 d (samme § 10-4) nevner engangsavgift på motorvogner (200 kr).",
-    "Hjemmel: skattebetalingsloven § 10-4 gir forskriftshjemmel «til utfylling og gjennomføring av bestemmelsene i dette kapitlet» (kap. 10 Forfall); håndboken (T45) beskriver regelen som generell for skatte- og avgiftskrav («regnskapene ikke vil inneholde ørebeløp»). Om avrunding «ved beregning» av engangsavgift er omfattet av kapittel 10-hjemmelen er ikke uttrykkelig avklart.",
-    "Mellomledd: ingen kilde omtaler avrunding av kg × sats, CO2-bånd, sum før fradrag eller prosentfradrag (U-012). Motoren avrunder ikke mellomledd (implementasjonskonklusjon).",
-    "Lov 19 juni 2026 nr. 41 (ikke i kraft per hentedato) endrer bl.a. skattebetalingsloven § 1-1 og § 10-40; innhold og virkning er ikke lest.",
-    "Om Skatteetatens egen beregning avrunder komponenter eller prosentfradrag (kan gi ±1–2 kr) kan ikke avgjøres fra kildene; golden cases er valideringsreferanser, ikke regelkilde."
+    "Mellomledd (kg × sats, CO2-bånd, sum, prosentfradrag): ingen kilde (U-012); motoren avrunder dem ikke. Pakken gir ikke belegg for dem.",
+    "Historisk ledd ikke lest direkte: den VEDTATTE 2007-versjonen av § 10-4-3 (21.12.2007) er ikke i materialet. Utkastets første setning er ordrett lik gjeldende § 10-4-4, og 2010-endringen er en ren omnummerering, men utkastets andre setning (forsinkelsesrenter) står ikke i gjeldende Lovdata-tekst, og når/hvorfor den utgikk er ikke lest. Det berører ikke påstanden om sluttkravet, men er et ikke-lest ledd.",
+    "Hjemmelsrekkevidden er en rettsanvendelse: forskriftshjemmelen i lovens § 10-4 gjelder «bestemmelsene i dette kapitlet»; Ot.prp. omtaler ikke avrunding, men høringsmerknaden uttrykker generell anvendelse og § 10-4-4 står i kapittel 10-forskriften. Ingen kilde sier at avrundingen er ugyldig for engangsavgift.",
+    "Lov 19 juni 2026 nr. 41 (endrer skattebetalingsloven § 1-1 og § 10-40; ikke i kraft per hentedato) er ikke lest.",
+    "Mva.-avrunding (U-013) er utenfor (ECON-004). Om Skatteetatens egen beregning avrunder komponenter eller prosentfradrag kan ikke avgjøres fra kildene; golden cases/klasse 1-referanser er ikke brukt som regelbelegg."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-18",
@@ -3029,6 +3041,36 @@
      "source": "T49",
      "locator": "§ 10-4",
      "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Finansdepartementets høring 10.07.2006 (frist 16.10.2006; status «Ferdigbehandlet»; resultat «Forskrift av 21.12.2007 nr. 1766»): forskriftsutkastets «§ 10-4-3. Avrunding» lyder «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone. Tilsvarende gjelder ved beregning av forsinkelsesrenter.» Første setning er ordrett lik gjeldende § 10-4-4.",
+     "source": "T50",
+     "locator": "forskriftsutkast § 10-4-3 (HTML, lest)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Merknaden «Til § 10-4-3 Avrunding» i høringsnotatet: «Bestemmelsen er ment å gjelde generelt for alle skatte- og avgiftskrav. Det er også praksis for at hver termin ved endring i utskrevet forskudd på skatt … skal være i hele kroner. Likeledes avrundes arbeidsgiveravgift pr sone ned til nærmeste hele krone.» Dette er departementets uttrykte hensikt (historisk utkast) om generell anvendelse; engangsavgift nevnes ikke i merknaden.",
+     "source": "T50",
+     "locator": "«Til § 10-4-3 Avrunding» (HTML, lest)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "FOR-2010-03-25-462 (fastsatt 25.03.2010, i kraft 1. april 2010): «Ny § 10-4-3 skal lyde: …» (beløpsgrense for restbeløp) og «Nåværende § 10-4-3 blir ny § 10-4-4.» Endringsforskriften endrer ikke avrundingsteksten, bare nummeret; gjeldende Lovdata-fotnote: «Endret ved forskrift 25 mars 2010 nr. 462 (i kraft 1 april 2010, tidligere § 10-4-3)».",
+     "source": "T52",
+     "locator": "omnummereringen; ikrafttredelse (HTML, lest); T46 § 10-4-4 fotnote",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Gjeldende § 10-4-4 «Avrunding»: «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone.» Teksten er ikke avgrenset til bestemte krav. Skattebetalingsloven § 1-1 (2) bokstav i definerer «særavgifter omfattet av lov 19. juni 1959 nr. 2» (engangsavgiften) som skatte- og avgiftskrav.",
+     "source": "T46",
+     "locator": "§ 10-4-4; T49 § 1-1 (2) i (HTML, lest)",
+     "readDate": "2026-10-18"
+    },
+    {
+     "claim": "Ot.prp. nr. 83 (2004–2005) «Til § 10-4 Forskrifter»: generell hjemmel for departementet til å gi regler til utfylling og gjennomføring av kapittelet, herunder beløpsgrenser for skatte- og avgiftskrav; begrunnet i at alle særavgiftsvedtakene har tilsvarende regler. «Til § 10-40»: engangsavgift er et krav med forfall etter kapittel 10. Proposisjonen omtaler ikke avrunding.",
+     "source": "T51",
+     "locator": "kap. 27, «Til § 10-4», «Til § 10-40» (HTML, lest)",
+     "readDate": "2026-10-18"
     }
    ],
    "parameterApproval": {
@@ -3037,7 +3079,7 @@
    },
    "e1xFindings": [],
    "e1UpgradeRequirements": {
-    "currentLevel": "E1P",
+    "currentLevel": "E1",
     "modelDefinition": "E1 = primærkilde lest direkte og påstandene i e1Findings er dekket av lest tekst; E1P = avgrensede påstander er E1, resten er uavklart (openQuestions) — docs/tax/rules.json evidenceLevels.",
     "documentedWording (E1, lest)": [
      "Skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone.» (T46)",
@@ -3057,61 +3099,34 @@
     "evidenceVsApproval": "Evidensklassifisering (rules.json evidenceLevel) følger bare lest kildetekst (E1/E1P…). Godkjenningsbeslutning (parameterApproval) er Christians. Godkjenningsporten krever E1 og klasse 1; å godkjenne R-OTA-014 mens den er E1P ville kreve en eksplisitt, egen beslutning om evidensmodellen/portene — det er utenfor ECON-002, og kravet om E1 er ikke svekket.",
     "sourceInvestigation": {
      "date": "2026-10-18",
-     "status": "åpen: kildebestilling; E1P beholdes",
-     "question": "Gjelder skattebetalingsforskriften § 10-4-4 («Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone») ved beregningen av det engangsavgiftskravet som betales ved første gangs registrering, slik at sluttkravet (avgift etter bruksfradrag + vrakpantavgift) fastsettes i hele kroner ned? Eller gjelder den bare krav slik de håndteres etter kapittel 10 (forfall/innkreving/utbetaling)?",
-     "alreadyRead": "T46 § 10-4-4 (fotnote: «Endret ved forskrift 25 mars 2010 nr. 462 (i kraft 1 april 2010, tidligere § 10-4-3)»), T45, T49 § 1-1 (2) i, § 10-4, § 10-40 (1) c. Tekstsøk (ordet «avrund») i T03, vedtaket (T47/T06), Lovdata-vedtaksfilen og endringsvedtaket: ingen treff. Forskriften om engangsavgift (T05) er lest visuelt, ikke tekstsøkt.",
-     "access": "Nettverk til norske verter er blokkert i dette miljøet; ingenting under er hentet eller åpnet.",
-     "verifiedTitleAndUrl": [
-      {
-       "title": "Forskrift til utfylling og gjennomføring mv. av skattebetalingsloven (skattebetalingsforskriften), FOR-2007-12-21-1766",
-       "url": "https://lovdata.no/dokument/SF/forskrift/2007-12-21-1766",
-       "basis": "T46 (lest, hash i sources.json)",
-       "expectedToClarify": "Hele § 10-4-4 og endringshistorikken per paragraf; Lovdata-fanen for endringsforskrifter/merknader kan peke på det som forklarer 2010-endringen."
-      },
-      {
-       "title": "Lov om betaling og innkreving av skatte- og avgiftskrav (skattebetalingsloven), LOV-2005-06-17-67",
-       "url": "https://lovdata.no/dokument/NL/lov/2005-06-17-67",
-       "basis": "T49 (lest, hash i sources.json)",
-       "expectedToClarify": "Rekkevidden av forskriftshjemmelen i § 10-4 («utfylling og gjennomføring av bestemmelsene i dette kapitlet») og om lovens forarbeider (Lovdata-fanen) omtaler avrunding av krav."
-      },
-      {
-       "title": "Skattebetalingshåndboken, kap. 10 § 10-4 inkl. avsnittet «Avrunding» (Skattedirektoratet)",
-       "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/skattebetalingshandboken/gjeldende/SKTB_ID-10-0.001/SKTB_ID-10-4.001/SKTB_ID-10-4.003",
-       "basis": "T45 (lest, hash i sources.json)",
-       "expectedToClarify": "Hvilke forskrifter og forarbeider Skatteetaten selv viser til for § 10-4 («Vis forskrifter og forarbeider»); lenkene er ikke fulgt."
-      }
+     "status": "besvart av forarbeidspakken (T50–T52); gjenstående ledd listet i openQuestions",
+     "answer": "Se upgradeRecord og e1Findings (T50, T52, T46, T49, T51)."
+    },
+    "upgradedOn": "2026-10-18",
+    "upgradeRecord": {
+     "basis": "Alternativ (B): forarbeid/merknad (T50) til bestemmelsen, lest direkte, sammen med lest gjeldende tekst (T46), lovens virkeområde (T49 § 1-1 (2) i) og omnummereringen (T52). Ikke brukt: kalkulatorresultater, golden cases, aksept av en vurdering.",
+     "covers": "at § 10-4-4 gjelder generelt for skatte- og avgiftskrav (ikke avgrenset til bestemte krav), og at engangsavgift er et slikt krav; dermed avrundes det samlede engangsavgiftskravet (sluttkravet) ned til hele kroner.",
+     "doesNotCover": [
+      "mellomledd (U-012)",
+      "MVA (U-013)",
+      "forsinkelsesrenter",
+      "den vedtatte 2007-versjonens ordlyd (ikke lest direkte)"
      ],
-     "searchLeadsOnly": [
-      {
-       "lead": "Forarbeider til skattebetalingsloven § 10-4 (via Lovdata-fanen til loven)",
-       "status": "Kun søkespor: dokumenttype (proposisjon, innstilling) og nummer er IKKE verifisert.",
-       "expectedToClarify": "Om avrundingsforskriften er ment å gjelde beregningen av alle krav under loven, inkl. særavgifter."
-      },
-      {
-       "lead": "Merknader/høringsnotat til forskrift 25. mars 2010 nr. 462 (ID verifisert via fotnoter i T46; tittel og URL ikke verifisert)",
-       "status": "Kun søkespor: det er ikke påvist at det finnes et forarbeid utover forskriftsteksten selv, og det skal ikke antas å være en proposisjon.",
-       "expectedToClarify": "Hvorfor § 10-4-3 ble § 10-4-4 og om avrundingen omfatter engangsavgift."
-      },
-      {
-       "lead": "Høringsnotat/merknader til den opprinnelige skattebetalingsforskriften (FOR-2007-12-21-1766), der bestemmelsen stod som § 10-4-3",
-       "status": "Kun søkespor: ikke verifisert at slikt dokument finnes.",
-       "expectedToClarify": "Opprinnelig begrunnelse og virkeområde for avrundingsregelen."
-      },
-      {
-       "lead": "Skatteetatens veiledning om engangsavgift/utregning (utover rundskriv T03)",
-       "status": "Kun søkespor: ikke identifisert.",
-       "expectedToClarify": "Om Skatteetaten uttrykkelig oppgir at engangsavgiften avrundes ned til hele kroner."
-      },
-      {
-       "lead": "Lov 19. juni 2026 nr. 41 (endrer skattebetalingsloven § 1-1 og § 10-40; nevnt i T49-siden)",
-       "status": "Kun søkespor: tittel og URL ikke verifisert; ikke i kraft per hentedato.",
-       "expectedToClarify": "Om kjeden engangsavgift → avgiftskrav → kapittel 10 endres."
-      }
-     ],
-     "note": "Ingenting av dette er lest; ingen e1Finding er lagt til; R-OTA-014 forblir E1P."
+     "stillNotApproved": "Evidensklassifisering er ikke parametergodkjenning; uttrykkelig parameterApproval mangler."
     }
    },
-   "governingEvent": "Beregning av skatte- og avgiftskravet (skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav»); for engangsavgift skjer beregningen ved første gangs registrering (vedtak § 1)"
+   "governingEvent": "Beregning av skatte- og avgiftskravet (skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav»); for engangsavgift skjer beregningen ved første gangs registrering (vedtak § 1)",
+   "scope": {
+    "in": "sluttkravet: det samlede engangsavgiftskravet (avgift etter bruksfradrag + vrakpantavgift) avrundes ned til nærmeste hele krone",
+    "out": [
+     "avrunding av mellomledd (kg × sats, CO2-bånd, sum, prosentfradrag): U-012, ikke omtalt i noen kilde",
+     "mva.-avrunding: U-013 (ECON-004)",
+     "forsinkelsesrenter (utkastets andre setning; ikke i gjeldende tekst)",
+     "NEDC/fallback-CO2 (R-OTA-015), dag 29–31 (R-OTA-016), 20 år eller eldre (R-OTA-010)"
+    ],
+    "upgradedOn": "2026-10-18",
+    "upgradedFrom": "E1P"
+   }
   },
   {
    "id": "R-OTA-015",
@@ -3402,8 +3417,8 @@
   {
    "id": "U-010",
    "claim": "Avrunding av engangsavgiften (komponenter, sum, bruksfradrag, CO2-grunnlag).",
-   "status": "lukket for sluttkravet (E1P): ned til hele krone, skattebetalingsforskriften § 10-4-4; mellomledd → U-012",
-   "note": "Kilder: T46 § 10-4-4 («Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone»), T45 (håndbok: «regnskapene ikke vil inneholde ørebeløp»), T49 § 1-1 (2) i, § 10-4, § 10-40 (1) c, T46 § 10-4-1 d. Anvendelse på engangsavgift følger av at den er et avgiftskrav under lov 1959 nr. 2 og nevnes i § 10-4-1 d; § 10-4-4 nevner den ikke selv (E1P). Rekkefølge: eksakt avgift etter bruksfradrag + vrakpant → avrund ned (R-OTA-014). Golden cases er ikke brukt til å utlede regelen.",
+   "status": "lukket for sluttkravet (E1): ned til hele krone, skattebetalingsforskriften § 10-4-4, med forarbeid (T50) og omnummerering (T52); mellomledd → U-012",
+   "note": "Kilder: T46 § 10-4-4 («Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone»), T45 (håndbok: «regnskapene ikke vil inneholde ørebeløp»), T49 § 1-1 (2) i, § 10-4, § 10-40 (1) c, T46 § 10-4-1 d. Anvendelse på engangsavgift følger av at den er et avgiftskrav under lov 1959 nr. 2 og nevnes i § 10-4-1 d; § 10-4-4 nevner den ikke selv (nå E1 etter T50/T52, runde 14). Rekkefølge: eksakt avgift etter bruksfradrag + vrakpant → avrund ned (R-OTA-014). Golden cases er ikke brukt til å utlede regelen.",
    "affects": [
     "R-OTA-001",
     "R-OTA-002",
@@ -3457,7 +3472,7 @@
   "date": "2026-10-18",
   "approvedParameters": 0,
   "class1References": 3,
-  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001, R-OTA-005 og R-OTA-007 på E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md. Runde 5: R-OTA-005 (PHEV) E1 etter revurdering av det tekniske vilkåret. Runde 9 (18.10.2026): to klasse 1-referanser registrert (EV og diesel, `explicit_inputs`); PHEV venter på dokumentasjon av steg 11. Klasse 1 er ikke godkjenning, og R-OTA-002/-010/-014 er fortsatt E1P. Runde 10 (18.10.2026): PHEV registrert som klasse 1 etter brukerbekreftelse av steg 11 (tre klasse 1-referanser). Klasse 1 er ikke godkjenning; R-OTA-002/-010/-014 er E1P. Runde 12 (18.10.2026): R-OTA-002 avgrenset (gruppe a, WLTP, hele g/km) og R-OTA-010 avgrenset (trinndato finnes) er E1 etter kildetekst; uavklart del skilt ut i R-OTA-015 (NEDC/egenvekt-10/desimal-CO₂) og R-OTA-016 (dag 29–31), begge E1P og blokkert; R-OTA-014 er fortsatt E1P (videre kildeundersøkelse, nettverk blokkert). 0 godkjente parametere.",
+  "reason": "ECON-002 runde 4 (18.10.2026): endelig stortingsvedtak (T47/T43), endringsvedtak (T48/T44) og avrundingskjeden (T45/T46/T49) lest; R-OTA-001, R-OTA-005 og R-OTA-007 på E1 (gruppe a); R-OTA-014 (avrunding av sluttkrav) E1P. Fortsatt 0 godkjente parametere (ingen eksplisitt godkjenning), 0 klasse 1-referanser (kalkulatorkjøringene ikke dokumentert) og åpne U-003, U-008, U-009, U-012. Se reviews/ECON-002.md. Runde 5: R-OTA-005 (PHEV) E1 etter revurdering av det tekniske vilkåret. Runde 9 (18.10.2026): to klasse 1-referanser registrert (EV og diesel, `explicit_inputs`); PHEV venter på dokumentasjon av steg 11. Klasse 1 er ikke godkjenning, og R-OTA-002/-010/-014 er fortsatt E1P. Runde 10 (18.10.2026): PHEV registrert som klasse 1 etter brukerbekreftelse av steg 11 (tre klasse 1-referanser). Klasse 1 er ikke godkjenning; R-OTA-002/-010/-014 er E1P. Runde 12 (18.10.2026): R-OTA-002 avgrenset (gruppe a, WLTP, hele g/km) og R-OTA-010 avgrenset (trinndato finnes) er E1 etter kildetekst; uavklart del skilt ut i R-OTA-015 (NEDC/egenvekt-10/desimal-CO₂) og R-OTA-016 (dag 29–31), begge E1P og blokkert; R-OTA-014 er fortsatt E1P (videre kildeundersøkelse, nettverk blokkert). 0 godkjente parametere. Runde 14 (18.10.2026): R-OTA-014 løftet E1P → E1 for sluttkravet etter lest forarbeid (T50 høringsmerknad «generelt for alle skatte- og avgiftskrav»), omnummerering (T52), gjeldende tekst (T46) og lovens virkeområde (T49); alle regler motoren anvender er nå E1. Evidensoppgradering er ikke parametergodkjenning: 0 godkjente parametere; tre klasse 1-referanser.",
   "doneRequires": [
    "minst én godkjent parameter per implementert komponent (rules.parameterApproval.approved=true med godkjenner)",
    "minst ett klasse 1-tilfelle per profil i omfang",

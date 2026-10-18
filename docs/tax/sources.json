@@ -1301,6 +1301,88 @@
     "§ 10-40 Innenlands særavgifter (1) c"
    ],
    "limitations": "Bare §§ 1-1, 10-4 og 10-40 er lest. Lov 19 juni 2026 nr. 41 endrer bl.a. § 1-1 og § 10-40/10-41 men er ikke trådt i kraft per hentedato; innholdet er ikke lest."
+  },
+  {
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 R-OTA-014-forarbeidspakke; HTML-original lastet ned fra offentlig URL; SHA-256 kontrollert av Claude mot MANIFEST.json)",
+   "id": "T50",
+   "title": "Høring — Forskrifter til ny skattebetalingslov (høringsnotat med forskriftsutkast og merknader), Finansdepartementet",
+   "publisher": "Finansdepartementet / regjeringen.no",
+   "url": "https://www.regjeringen.no/no/dokumenter/horing-forskrifter-til-ny-skattebetaling/id98941/",
+   "documentType": "høring / forarbeid (historisk forslag og merknader; ikke gjeldende forskrift)",
+   "packageFile": "primarkilder/01_Horing_forskrifter_ny_skattebetalingslov_2006.html",
+   "repoFile": "docs/tax/primarkilder/01_Horing_forskrifter_ny_skattebetalingslov_2006.html",
+   "packageSha256": "e18f8a782dbaf5383fa6fe4ea7545a1e815b507258530b3f154f0d269edace30",
+   "publishedVersion": "Høring, dato 10.07.2006, høringsfrist 16.10.2006, status «Ferdigbehandlet», resultat «Forskrift av 21.12.2007 nr. 1766»",
+   "effectiveDate": null,
+   "readSections": [
+    "Forskriftsutkast § 10-4-3 Avrunding",
+    "Merknader «Til § 10-4-3 Avrunding»",
+    "Opprinnelsestabell (§ 10-4-3 ← F. 23.12.1974 nr. 9 § 8)"
+   ],
+   "limitations": "Historisk utkast og merknader, ikke dagens forskrift og ikke den vedtatte 2007-versjonen. Utkastet har en setning om forsinkelsesrenter som ikke står i gjeldende § 10-4-4; hvorfor/når den utgikk er ikke lest. Ikke engangsavgiftsspesifikk. Hentedato er ikke ikrafttredelsesdato."
+  },
+  {
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 R-OTA-014-forarbeidspakke; HTML-original lastet ned fra offentlig URL; SHA-256 kontrollert av Claude mot MANIFEST.json)",
+   "id": "T51",
+   "title": "Ot.prp. nr. 83 (2004–2005) Om lov om betaling og innkreving av skatte- og avgiftskrav (skattebetalingsloven), kapittel 27: merknader til de enkelte bestemmelsene",
+   "publisher": "Finansdepartementet / regjeringen.no",
+   "url": "https://www.regjeringen.no/no/dokumenter/otprp-nr-83-2004-2005-/id399880/?ch=27",
+   "documentType": "lovproposisjon / forarbeid (kapittel 27)",
+   "packageFile": "primarkilder/02_Ot_prp_83_2004-2005_kap27.html",
+   "repoFile": "docs/tax/primarkilder/02_Ot_prp_83_2004-2005_kap27.html",
+   "packageSha256": "f00bb6f8edf5c5d58cf301cb1abf7cb8c522d510cd77631dcf28d9f768472efa",
+   "publishedVersion": "Ot.prp. nr. 83 (2004–2005), kapittel 27 (side hentet 2026-10-18)",
+   "effectiveDate": null,
+   "readSections": [
+    "Til § 10-4 Forskrifter",
+    "Til § 10-40 Innenlands særavgifter"
+   ],
+   "limitations": "Bare merknadene til § 10-4 og § 10-40 er lest. Proposisjonen omtaler ikke avrunding (søk uten treff i kapittel 27). Gir hjemmelens bakgrunn (generell hjemmel for beløpsgrenser mv. for skatte- og avgiftskrav, inkl. særavgiftsvedtakene) og at engangsavgift er et krav med forfall etter kapittel 10."
+  },
+  {
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 R-OTA-014-forarbeidspakke; HTML-original lastet ned fra offentlig URL; SHA-256 kontrollert av Claude mot MANIFEST.json)",
+   "id": "T52",
+   "title": "Forskrift om endring i forskrift til utfylling og gjennomføring av skattebetalingsloven (skattebetalingsforskriften), FOR-2010-03-25-462",
+   "publisher": "Finansdepartementet / Lovdata",
+   "url": "https://lovdata.no/forskrift/2010-03-25-462",
+   "documentType": "endringsforskrift",
+   "packageFile": "primarkilder/03_Endringsforskrift_2010-03-25-462.html",
+   "repoFile": "docs/tax/primarkilder/03_Endringsforskrift_2010-03-25-462.html",
+   "packageSha256": "d4ca241a95c07b2e17490a07a4a77029774c487b8d8b49f9645754545410e2a4",
+   "publishedVersion": "Fastsatt 25.03.2010, kunngjort 30.03.2010, Norsk Lovtidend I 2010 hefte 5 s. 798; «Endringene trer i kraft straks med virkning fra 1. april 2010»",
+   "effectiveDate": "2010-04-01",
+   "readSections": [
+    "§ 10-4-1…§ 10-4-3 (ny), «Nåværende § 10-4-3 blir ny § 10-4-4.»",
+    "ikrafttredelse"
+   ],
+   "limitations": "Endrer teksten i §§ 10-4-1 og 10-4-2 og innfører ny § 10-4-3; for avrundingsbestemmelsen står bare omnummereringen. Gjengir ikke avrundingsteksten, og viser ikke den opprinnelige vedtatte 2007-versjonen."
   }
  ],
  "accessAttempts": [

@@ -1,6 +1,6 @@
 # ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 5: §15)
 
-**Status: REVIEW.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for PHEV, EV og diesel (runde 9–10, §19–§20); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Status: REVIEW.** **Runde 14 (§24): R-OTA-014 er E1 for sluttkravet (forarbeid T50, omnummerering T52); alle anvendte regler er E1; ingen parameter godkjent.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for PHEV, EV og diesel (runde 9–10, §19–§20); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -632,6 +632,39 @@ R-OTA-003/-004 er E1 (governingEvent fylt) men ikke anvendt av motoren og uten k
 **Gjenværende blokkeringer:** (a) R-OTA-014 E1P: lest tekst om engangsavgiftens avrunding eller forarbeider mangler (nettverk); (b) R-OTA-015: kilde for avrunding av desimal-CO₂ (U-012); (c) R-OTA-016: kilde for dag 29–31 (U-009); (d) 20 år eller eldre: kilde for minimumssetningen; (e) uttrykkelig parametergodkjenning, regel for regel (ingen gitt). Klasse 1 = 3 er gjenbrukt; evidensmodellen er uendret.
 
 **Kontroller:** `check-docs.mjs` OK; `npx vitest run`; typecheck (tall i commit). Nye tester: 3 for 20-årsblokkeringen.
+
+## 24. Runde 14 — forarbeider til R-OTA-014 (18.10.2026)
+
+Status **REVIEW**. Ingen parametere godkjent; ECON-003/004 ikke startet. §24 overstyrer utsagn om at R-OTA-014 er E1P i §17, §21–§23.
+
+### 24.1 Kildekontroll
+Pakken er kontrollert: alle ti filer har riktig SHA-256 og størrelse mot MANIFEST.json; de to tidligere originalene (forskriften, loven) er byte-identiske med repoets og ikke duplisert. HTML-originalene er lest direkte. Nye kilder: **T50** (Finansdepartementets høring «Forskrifter til ny skattebetalingslov», dato 10.07.2006, frist 16.10.2006, status ferdigbehandlet, resultat forskrift 21.12.2007 nr. 1766), **T51** (Ot.prp. nr. 83 (2004–2005) kap. 27) og **T52** (FOR-2010-03-25-462). Registrert i `sources.json` som E1 med hash; `MANIFEST-forarbeider.md`.
+
+### 24.2 Kjeden — lest direkte versus ikke lest
+| Ledd | Status |
+|---|---|
+| Høringsutkastets «§ 10-4-3. Avrunding»: «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone.» (+ en setning om forsinkelsesrenter) | **lest direkte** (T50) |
+| Merknad «Til § 10-4-3 Avrunding»: «Bestemmelsen er ment å gjelde generelt for alle skatte- og avgiftskrav» (med eksempler fra forskudd og arbeidsgiveravgift) | **lest direkte** (T50). Historisk utkast, ikke dagens forskrift; nevner ikke engangsavgift |
+| «Nåværende § 10-4-3 blir ny § 10-4-4», i kraft 1. april 2010; endrer ikke avrundingsteksten | **lest direkte** (T52); samsvarer med fotnoten «tidligere § 10-4-3» i gjeldende tekst (T46) |
+| Gjeldende § 10-4-4: første setning ordrett lik utkastets; ingen avgrensning til bestemte krav | **lest direkte** (T46) |
+| Lovens virkeområde: særavgifter etter lov 19. juni 1959 nr. 2 (engangsavgiften) er skatte- og avgiftskrav (§ 1-1 (2) i); engangsavgift forfaller etter § 10-40 | **lest direkte** (T49; T51 «Til § 10-40») |
+| Hjemmelens bakgrunn: Ot.prp. «Til § 10-4» (generell hjemmel for skatte- og avgiftskrav, begrunnet i særavgiftsvedtakene; omtaler ikke avrunding) | **lest direkte** (T51) |
+| **Den vedtatte 2007-versjonen av § 10-4-3 (21.12.2007)** | **IKKE lest.** Pakken inneholder høringsutkastet fra 2006, ikke den vedtatte teksten. Identitet mellom utkast og vedtatt/gjeldende er sannsynliggjort (samme tittel og samme første setning i utkast og gjeldende tekst; 2010-endringen er ren omnummerering), men ikke lest direkte |
+| Hvorfor/når utkastets setning om forsinkelsesrenter utgikk | **IKKE lest.** Står ikke i gjeldende Lovdata-tekst; berører ikke påstanden om sluttkravet |
+
+### 24.3 Vurdering: er forbeholdet dekket?
+Forbeholdet var at § 10-4-4 ikke uttrykkelig sier at den gjelder når engangsavgiften beregnes. Nå foreligger (i) en lest, ikke-avgrenset gjeldende tekst («ved beregning av skatte- og avgiftskrav»), (ii) lovens uttrykkelige plassering av engangsavgiften blant skatte- og avgiftskrav, og (iii) departementets egen uttrykte hensikt for bestemmelsen: generell anvendelse på alle skatte- og avgiftskrav. Det er alternativ (B) i kravlisten. **Ja, forbeholdet for sluttkravet er dekket etter modellens E1-definisjon (påstanden er dekket av lest primærtekst).** Bruken av høringsmerknaden som forarbeid er avgrenset: den er et historisk utkast, og den vedtatte 2007-ordlyden er ikke lest. Resultatlikhet med kalkulatoren og klasse 1-referansene er ikke brukt, og ingen akseptert vurdering er brukt som belegg.
+
+**Oppgradert:** R-OTA-014 **E1P → E1**, avgrenset til **sluttkravet** (avgift etter bruksfradrag + vrakpant avrundes ned til hele kroner). Ikke omfattet: mellomledd (U-012), mva. (U-013), forsinkelsesrenter. Åpne spørsmål (2007-ordlyden; hjemmelsrekkevidde som rettsanvendelse; lov 2026 nr. 41 ikke lest) står i regelen. Eksisterende blokkeringer (desimal-CO₂/NEDC, dag 29–31, 20 år eller eldre) er uendret og er ikke utledet fra pakken.
+
+### 24.4 Endringer
+`rules.json` (R-OTA-014 E1, scope, funn, kilder T50–T52, U-010), `sources.json` (T50–T52), `primarkilder/` (+ HTML/TXT, MANIFEST-forarbeider.md), regelmarkdown, profilens `ruleEvidence` for R-OTA-014, typen på `finalClaim.evidence` (nå følger profilen), oppdaterte tester (evidensforventninger; ny test for R-OTA-014-kildene). Beregningsresultater er uendret.
+
+### 24.5 Hvilke regler er nå klare for din godkjenning?
+Alle regler motoren anvender er nå **E1 med E1-kilder, `validity.from`, `governingEvent` og klasse 1-dekning (3 referanser)**: R-OTA-001, R-OTA-002 (avgrenset), R-OTA-005, R-OTA-007, R-OTA-010 (avgrenset), R-IMP-OTH-001 og R-OTA-014 (sluttkravet). Det betyr at **kildesiden og validatoren ikke lenger hindrer** at du godkjenner dem; det som gjenstår er **din uttrykkelige `parameterApproval` per regel**, som jeg ikke har gitt. Omfangsgrensene må følge med godkjenningen: R-OTA-002 (WLTP, hele g/km, gruppe a), R-OTA-010 (trinndato finnes, under 20 år), R-OTA-014 (bare sluttkravet). Uten godkjenning er motorresultatet fortsatt `estimate_not_approved`. Ikke klare: R-OTA-015, R-OTA-016 (E1P, blokkert) og 20-årsminimum (ikke utledet).
+
+### 24.6 Kontroller
+`check-docs.mjs` OK; `npx vitest run` — 32 filer, 750 tester bestått; typecheck og lint rene. Ikke kjørt: build, e2e, DB.
 
 **Sluttstatus: REVIEW.**
 

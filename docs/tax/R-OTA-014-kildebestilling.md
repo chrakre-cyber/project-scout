@@ -1,6 +1,6 @@
 # Kildebestilling R-OTA-014 (avrunding) — 18.10.2026
 
-**Status: åpen. R-OTA-014 forblir E1P.** Ingenting under er hentet eller åpnet (nettverk til norske verter er blokkert). Maskinlesbart: `rules.json` → R-OTA-014 → `e1UpgradeRequirements.sourceInvestigation`.
+**Status: besvart delvis 2026-10-18 (forarbeidspakke T50–T52); R-OTA-014 er E1 for sluttkravet etter egen kildekontroll, se `reviews/ECON-002.md` §24.** Gjenstående ikke-leste ledd: den vedtatte 2007-versjonen av § 10-4-3, og hvorfor utkastets setning om forsinkelsesrenter ikke står i gjeldende tekst. Teksten under er den opprinnelige bestillingen. Ingenting under er hentet eller åpnet (nettverk til norske verter er blokkert). Maskinlesbart: `rules.json` → R-OTA-014 → `e1UpgradeRequirements.sourceInvestigation`.
 
 **Spørsmålet som mangler svar:** Gjelder skattebetalingsforskriften § 10-4-4 («Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone») ved beregningen av det engangsavgiftskravet som betales ved første gangs registrering, slik at sluttkravet (avgift etter bruksfradrag + vrakpantavgift) fastsettes i hele kroner ned? Eller gjelder den bare krav slik de håndteres etter kapittel 10 (forfall/innkreving/utbetaling)?
 

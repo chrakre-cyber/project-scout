@@ -181,10 +181,10 @@ export interface TaxResult {
   scrappageDeposit: { amountNok: number; ruleRef: string; reducedByAgeDeduction: false } | null;
   totalRegistrationTaxesExact: string | null;
   /**
-   * Det samlede kravet avrundet ned til hele kroner (skattebetalingsforskriften § 10-4-4; R-OTA-014, E1P). Bare sluttbeløpet avrundes;
+   * Det samlede kravet avrundet ned til hele kroner (skattebetalingsforskriften § 10-4-4; R-OTA-014, E1). Bare sluttbeløpet avrundes;
    * komponenter og prosentfradrag er eksakte desimaler (U-012). Vrakpantavgiften er et helt tall, så floor(total) = floor(avgift) + vrakpant.
    */
-  finalClaim: { ruleRef: "R-OTA-014"; basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone"; evidence: "E1P"; oneOffTaxNok: number; scrappageDepositNok: number; totalRegistrationTaxesNok: number; validation: ValidationStatus } | null;
+  finalClaim: { ruleRef: "R-OTA-014"; basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone"; evidence: "E1" | "E1P"; oneOffTaxNok: number; scrappageDepositNok: number; totalRegistrationTaxesNok: number; validation: ValidationStatus } | null;
   /** Samme valideringsstatus på toppnivå (null når blokkert). */
   validation: ValidationStatus | null;
   monthSensitivity: MonthSensitivity | null;

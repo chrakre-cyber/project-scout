@@ -125,7 +125,7 @@ describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent
       const r = calculateNorwegianVehicleTax(c.input);
       expect(r.status, c.id).toBe("calculated_unverified");
       expect(r.finalClaim!.validation, c.id).toEqual(r.validation);
-      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: false, class1References: 3, weakestRuleEvidence: "E1P" });
+      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: false, class1References: 3, weakestRuleEvidence: "E1" });
     }
   });
   it("anvendte regler og svakeste nivå følger registeret (BEV: R-OTA-007 i stedet for 002/005; ny motorvogn: ingen R-OTA-010)", () => {
@@ -140,11 +140,13 @@ describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent
   });
   it("godkjent profil alene gjør ikke resultatet godkjent: krever også klasse 1-referanse og at alle anvendte regler er E1", () => {
     const flagOnly: TaxProfile = { ...NO_OTA_2026_A_PB, approval: { ...NO_OTA_2026_A_PB.approval, approved: true } };
-    const r1 = ok({}, flagOnly);
-    expect(r1.status).toBe("calculated_unverified");
-    expect(r1.validation).toMatchObject({ status: "estimate_not_approved", profileApproved: true });
-    const withClass1: TaxProfile = { ...flagOnly, approval: { ...flagOnly.approval, class1References: 1 } };
-    expect(ok({}, withClass1).validation).toMatchObject({ status: "estimate_not_approved", weakestRuleEvidence: "E1P" });
+    const noClass1: TaxProfile = { ...flagOnly, approval: { ...flagOnly.approval, class1References: 0 } };
+    expect(ok({}, noClass1).status).toBe("calculated_unverified");
+    expect(ok({}, noClass1).validation).toMatchObject({ status: "estimate_not_approved", profileApproved: true, class1References: 0 });
+    const oneRuleE1P: TaxProfile = { ...flagOnly, ruleEvidence: { ...flagOnly.ruleEvidence, "R-OTA-014": "E1P" } };
+    expect(ok({}, oneRuleE1P).status).toBe("calculated_unverified");
+    expect(ok({}, oneRuleE1P).validation).toMatchObject({ status: "estimate_not_approved", weakestRuleEvidence: "E1P" });
+    expect(ok({}, flagOnly).status).toBe("calculated"); // først med uttrykkelig profilgodkjenning (ikke gitt i registeret)
   });
   it("først når profil godkjent + klasse 1 + alle anvendte regler E1 gir resultatet «calculated» (syntetisk profil; ikke registeret)", () => {
     const allE1: TaxProfile = { ...NO_OTA_2026_A_PB, approval: { approved: true, class1References: 1, reason: "test" }, ruleEvidence: Object.fromEntries(Object.keys(NO_OTA_2026_A_PB.ruleEvidence).map((k) => [k, "E1" as const])) };
@@ -238,8 +240,8 @@ describe("avrundingskjeden (U-010): forskrift § 10-4-4, håndbok og lovens virk
   it("hjemmel: skattebetalingsloven § 10-4 gjelder «dette kapitlet» (kapittel 10 Forfall) — registrert som åpent spørsmål, ikke skjult", () => {
     expect(htmlText("12_Skattebetalingsloven.html")).toContain("Departementet kan i forskrift gi regler til utfylling og gjennomføring av bestemmelsene i dette kapitlet");
     const rule = (json("rules.json").rules as Array<{ id: string; evidenceLevel: string; openQuestions: string[] }>).find((r) => r.id === "R-OTA-014")!;
-    expect(rule.evidenceLevel).toBe("E1P");
-    expect(rule.openQuestions.join(" ")).toMatch(/kapittel 10/);
+    expect(rule.evidenceLevel).toBe("E1"); // oppgradert 2026-10-18 på forarbeid (T50) og omnummerering (T52); hjemmelsspørsmålet står fortsatt åpent
+    expect(rule.openQuestions.join(" ")).toMatch(/kapitlet|kapittel 10/);
   });
 });
 
@@ -552,9 +554,9 @@ describe("gyldige tilfeller er aldri «godkjent»; avrunding av sluttkravet (R-O
   it("status er calculated_unverified, profilen ikke godkjent, åpne punkter følger resultatet", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
     expect(r.status).toBe("calculated_unverified");
-    expect(r.evidence).toMatchObject({ parameterEvidenceLevel: "E1P", profileApproved: false });
+    expect(r.evidence).toMatchObject({ parameterEvidenceLevel: "E1", profileApproved: false });
     expect(r.evidence!.openItems.join(" ")).toMatch(/U-012/);
-    expect(r.evidence!.openItems.join(" ")).toMatch(/R-OTA-014 er E1P/);
+    expect(r.evidence!.openItems.join(" ")).toMatch(/R-OTA-014 er E1 for sluttkravet/);
   });
   it("vrakpant er separat, 2 400 og reduseres ikke av bruksfradrag (vedtak § 4: fradrag i avgiften etter §§ 2 og 3); oneOff + vrakpant = total", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
@@ -563,7 +565,7 @@ describe("gyldige tilfeller er aldri «godkjent»; avrunding av sluttkravet (R-O
   });
   it("sluttkravet avrundes ned til hele kroner (§ 10-4-4); eksakte beløp og komponenter beholdes uavrundet", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
-    expect(r.finalClaim).toMatchObject({ ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: 331323, scrappageDepositNok: 2400, totalRegistrationTaxesNok: 333723 });
+    expect(r.finalClaim).toMatchObject({ ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1", oneOffTaxNok: 331323, scrappageDepositNok: 2400, totalRegistrationTaxesNok: 333723 });
     expect(r.totalRegistrationTaxesExact).toBe("333723.972");
     expect(r.components.map((c) => c.amountExact)).toEqual(["18759.96", "201760", "252800"]); // mellomledd er ikke avrundet
     expect(r.preDeductionExact).toBe("473319.96");
@@ -699,9 +701,18 @@ describe("regelregisteret: avgrensede regler og godkjenningsforutsetninger for a
     expect(Object.keys(NO_OTA_2026_A_PB.ruleEvidence)).not.toEqual(expect.arrayContaining(["R-OTA-015"]));
     expect(Object.keys(NO_OTA_2026_A_PB.ruleEvidence)).not.toEqual(expect.arrayContaining(["R-OTA-016"]));
   });
-  it("R-OTA-014 er fortsatt E1P og er det eneste anvendte regelnivået som holder resultatet på estimate_not_approved", () => {
+  it("alle anvendte regler er E1 (R-OTA-014 for sluttkravet), men resultatet er fortsatt estimate_not_approved fordi profilen ikke er godkjent", () => {
     const weak = Object.entries(NO_OTA_2026_A_PB.ruleEvidence).filter(([, l]) => l === "E1P").map(([k]) => k);
-    expect(weak).toEqual(["R-OTA-014"]);
+    expect(weak).toEqual([]);
+    expect(NO_OTA_2026_A_PB.approval.approved).toBe(false);
+    expect(calculateNorwegianVehicleTax(GOLDEN_CASES[0]!.input).validation).toMatchObject({ status: "estimate_not_approved", weakestRuleEvidence: "E1" });
+  });
+  it("R-OTA-014 er E1 med T50–T52 som E1-kilder og avgrenset til sluttkravet; mellomledd og 2007-ordlyd står som åpne spørsmål", () => {
+    const r = (json("rules.json").rules as Array<{ id: string; evidenceLevel: string; sources: Array<{ id: string }>; scope?: { out: string[] }; openQuestions: string[] }>).find((x) => x.id === "R-OTA-014")!;
+    expect(r.evidenceLevel).toBe("E1");
+    expect(r.sources.map((x) => x.id)).toEqual(expect.arrayContaining(["T46", "T49", "T50", "T52"]));
+    expect(r.scope!.out.join(" ")).toMatch(/mellomledd/);
+    expect(r.openQuestions.join(" ")).toMatch(/vedtatte 2007-versjonen/i);
   });
 });
 

@@ -272,7 +272,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     oneOffTaxExact: toExactString(oneOff),
     scrappageDeposit: { amountNok: scrap, ruleRef: prof.parameters.scrappageRuleRef, reducedByAgeDeduction: false },
     totalRegistrationTaxesExact: toExactString(totalExact),
-    finalClaim: { ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: "E1P", oneOffTaxNok: oneOffNok, scrappageDepositNok: scrap, totalRegistrationTaxesNok: totalNok, validation },
+    finalClaim: { ruleRef: "R-OTA-014", basis: "skattebetalingsforskriften § 10-4-4: ned til nærmeste hele krone", evidence: prof.ruleEvidence["R-OTA-014"] ?? "E1P", oneOffTaxNok: oneOffNok, scrappageDepositNok: scrap, totalRegistrationTaxesNok: totalNok, validation },
     monthSensitivity,
     evidence: { parameterEvidenceLevel: validation.weakestRuleEvidence, profileApproved: prof.approval.approved, openItems: [...prof.openItems] },
     missingInputs: missing,

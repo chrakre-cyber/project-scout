@@ -43,7 +43,7 @@ export interface TaxProfile {
     co2ParamRef: string;
     scrappageDepositNok: number;
     scrappageRuleRef: string;
-    /** Skattebetalingsforskriften § 10-4-4: avrund ned til hele kroner — bare det samlede kravet (R-OTA-014, E1P); mellomledd avrundes ikke (U-012). */
+    /** Skattebetalingsforskriften § 10-4-4: avrund ned til hele kroner — bare det samlede kravet (R-OTA-014, E1); mellomledd avrundes ikke (U-012). */
     rounding: { ruleRef: string; scope: "final_claim"; direction: "down"; unit: "whole_nok"; basis: string };
   };
   deductionTable: readonly DeductionStep[];
@@ -105,16 +105,16 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     "R-OTA-007": "E1",
     "R-OTA-010": "E1", // avgrenset: trinndato finnes; dag 29–31 = R-OTA-016 (U-009), blokkert i vinduet
     "R-IMP-OTH-001": "E1",
-    "R-OTA-014": "E1P",
+    "R-OTA-014": "E1", // sluttkravet (§ 10-4-4; forarbeid T50, omnummerering T52); mellomledd U-012 utenfor
   },
   approval: {
     approved: false,
     class1References: 3,
-    reason: "Ingen eksplisitt parameterApproval. Tre klasse 1-referanser (PHEV, EV og diesel, 18.10.2026) er registrert; klasse 1 er ikke godkjenning, og R-OTA-014 er E1P (docs/tax/rules.json foundationStatus).",
+    reason: "Ingen eksplisitt parameterApproval. Tre klasse 1-referanser (PHEV, EV og diesel, 18.10.2026) er registrert; klasse 1 er ikke godkjenning, og alle anvendte regler er nå E1; profilen er likevel ikke godkjent (docs/tax/rules.json foundationStatus).",
   },
   openItems: [
     "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
-    "R-OTA-014 er E1P: skattebetalingsforskriften § 10-4-4 nevner ikke engangsavgift uttrykkelig (anvendelsen følger av skattebetalingsloven § 1-1 (2) i, § 10-40 (1) c og forskriften § 10-4-1 d)",
+    "R-OTA-014 er E1 for sluttkravet (forarbeid T50: «generelt for alle skatte- og avgiftskrav»; omnummerering T52); den vedtatte 2007-ordlyden er ikke lest direkte, og mellomledd er ikke omtalt (U-012)",
     "U-009 / R-OTA-016: trinndato som ikke finnes i målmåneden (dag 29–31) er ikke spesifisert; blokkert i vinduet",
     "20 år eller eldre: § 3-3-setningen om minimumsavgift er ikke utledet (R-OTA-011); motoren blokkerer (twenty_year_minimum_unresolved) og gir ikke sluttkrav",
     "R-OTA-015: NEDC, egenvekt/10 og desimal-CO₂ er blokkert (avrunding av desimaler mangler kilde)",
