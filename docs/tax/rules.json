@@ -94,12 +94,12 @@
     "kjøretøyprofil (elbil-fritak)"
    ],
    "formulaStructure": "mva = sats × grunnlag; sats og grunnlagets sammensetning skal leses fra primærkilde",
-   "amountUnitAndRounding": "25 % av tollverdi (E1X, eksternt verifisert). Avrunding og øre: IKKE KONTROLLERT. Ikrafttredelse: ikke oppgitt.",
+   "amountUnitAndRounding": "25 % (Stortingets vedtak om merverdiavgift for 2026 § 2, T76/T77, E1) av beregningsgrunnlaget etter mval. § 4-11 (tollverdi + toll og andre avgifter som beregnes ved innførsel, T63). Avrunding og øre: IKKE KONTROLLERT (U-013).",
    "orderInCalculation": null,
    "validity": {
-    "from": null,
+    "from": "2026-01-01",
     "to": null,
-    "note": "Sats-/grunnlagsdato ikke lest."
+    "note": "Satsen gjelder fra 1.1.2026 (T76 § 1). Originalvedtak: senere endringsvedtak er ikke kontrollert."
    },
    "sources": [
     {
@@ -114,24 +114,59 @@
     },
     {
      "id": "T21"
+    },
+    {
+     "id": "T63"
+    },
+    {
+     "id": "T76"
+    },
+    {
+     "id": "T77"
+    },
+    {
+     "id": "T56"
+    },
+    {
+     "id": "T60"
+    },
+    {
+     "id": "T72"
+    },
+    {
+     "id": "T73"
+    },
+    {
+     "id": "T78"
+    },
+    {
+     "id": "T79"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_og_E1X_sats_og_grunnlag",
+   "status": "delvis_E1_sats_og_grunnlagsprinsipp",
    "leads": [
     {
      "claim": "Sammendrag: mva. 25 % av tollverdien for importerte kjøretøy.",
      "source": "T08",
      "note": "Universell 25 % skal ikke innføres uten kildekontroll (IMPORT_ENGINE_SPEC); elbil har egen regel (R-IMP-VAT-003)."
+    },
+    {
+     "claim": "Satsen 25 % er nå dekket av lest primærtekst (T76/T77 § 2); ledetråden fra T08 er overflødig for satsen.",
+     "source": "T08",
+     "note": "Registrert 2026-10-19. Grunnlag og avrunding er fortsatt delvis åpne."
     }
    ],
    "openQuestions": [
-    "Toll (tollsats) for bil: ikke gitt – grunnlaget «tollverdi + toll» fra tidligere ledetråd er derfor ikke avgjort.",
-    "Forhandlerbehandling (næringsdrivende deklarasjon/oppgjør) ikke gitt.",
-    "Tollkurs-dato (U-008), avrunding."
+    "Tollsats for personbil er ikke dokumentert (toll inngår i grunnlaget etter § 4-11).",
+    "Om engangsavgift inngår i innførselsgrunnlaget: unntaket i mval. § 4-2 (1) a er uttrykkelig for omsetning, ikke for § 4-11 (T63/T60).",
+    "Om statistisk verdi (tolldeklarasjonens post 46) alltid er lik tollverdi: T72 sier «i de fleste tilfeller».",
+    "Hva Tolletaten innkrever ved grensen fra mva-registrerte (utover at mva. rapporteres i skattemeldingen).",
+    "Senere endringsvedtak til satsvedtaket er ikke kontrollert (originalversjon lest).",
+    "Avrunding (U-013, tre nivåer) og tollkursens dato (U-008)."
    ],
    "usableAsRuleParameter": false,
-   "controlledDate": "2026-10-15",
+   "controlledDate": "2026-10-19",
    "researchDate": "2026-10-16",
    "e1Findings": [
     {
@@ -139,6 +174,42 @@
      "source": "T21",
      "locator": "innledning, «Avgifter du må betale til Tolletaten»",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Stortingets vedtak om merverdiavgift for 2026 § 2: «Merverdiavgift beregnes med 25 pst. av avgiftspliktig omsetning, uttak og innførsel når ikke redusert sats skal anvendes»; § 1: «Fra 1. januar 2026 beregnes merverdiavgift etter satsene i dette vedtaket og i samsvar med [mval.]».",
+     "source": "T76",
+     "locator": "Vedtak 217 §§ 1–2",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Samme ordlyd i Norsk Lovtidend FOR-2025-12-18-2752 (opprinnelig kunngjort versjon, vedtatt 18.12.2025).",
+     "source": "T77",
+     "locator": "§§ 1–2",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Mval. § 4-11 (1): «Ved innførsel av varer skal beregningsgrunnlaget fastsettes etter vareførselsloven §§ 6-2 flg. om tollverdi. Tollavgift og andre avgifter som skal beregnes ved innførsel av varer, skal inngå i beregningsgrunnlaget.»",
+     "source": "T63",
+     "locator": "§ 4-11 første ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Mval. § 3-29 (2): tollavgiftsloven § 2-2 om tidfesting gjelder tilsvarende ved beregning av mva. ved innførsel.",
+     "source": "T63",
+     "locator": "§ 3-29 annet ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Skatteetatens veiledning: mva-registrerte virksomheter beregner innførselsmva. selv og fører den i mva-meldingen; grunnlaget er «statistisk verdi + toll og avgifter»; eksempel 4 700 × 25 % = 1 175.",
+     "source": "T56",
+     "locator": "Beregne og rapportere mva. ved import",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Tolletatens deklarasjonsveiledning rubrikk 47: registrerte virksomheter skal ikke bruke rubrikken for mva.; ikke registrerte (privatpersoner, utenlandske selskap) betaler mva. til Tolletaten ved innførselen.",
+     "source": "T72",
+     "locator": "rubrikk 47",
+     "readDate": "2026-10-19"
     }
    ],
    "parameterApproval": {
@@ -154,6 +225,9 @@
      "verifiedDate": "2026-10-16",
      "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
     }
+   ],
+   "monitoring": [
+    "Lov 19.6.2026 nr. 41 (særavgiftsloven, T70) nevner ikke mval. §§ 3-29, 4-11 eller satsvedtaket; ingen blokkering."
    ]
   },
   {
@@ -179,7 +253,7 @@
     "kurs"
    ],
    "formulaStructure": "tollverdi = kjøpspris + frakt til grensen + forsikring til grensen (sammendrag); frakt etter grensen inngår ikke",
-   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "amountUnitAndRounding": "Tollverdi = transaksjonsverdi + transport- og forsikringskostnad til innførselsstedet + lasting/håndtering (vareførselsloven § 6-10, T67; objektive og kvantifiserbare tillegg). Omregning: T69 § 6-12-1. Avrunding: IKKE KONTROLLERT (U-013).",
    "orderInCalculation": null,
    "validity": {
     "from": null,
@@ -195,10 +269,25 @@
     },
     {
      "id": "T21"
+    },
+    {
+     "id": "T63"
+    },
+    {
+     "id": "T64"
+    },
+    {
+     "id": "T67"
+    },
+    {
+     "id": "T69"
+    },
+    {
+     "id": "T72"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_og_E1X_grunnlag",
+   "status": "delvis_E1_grunnlag_transport_forsikring",
    "leads": [
     {
      "claim": "Tollverdi bygges av kjøpspris, frakt og forsikring til norsk grense (Skatteetaten og Tolletaten, sammendrag).",
@@ -210,11 +299,15 @@
     }
    ],
    "openQuestions": [
-    "Sjablongfrakt, transaksjonsgebyr og tollkurs (U-008) ikke gitt.",
-    "Gjelder «engangsavgift inngår ikke» også eksplisitt for mva.-grunnlaget? Slutning fra tollverdi-regelen; ikke separat bekreftet for import-mva. i forhandlerdeklarasjon."
+    "Tollsats for personbil (inngår i mva.-grunnlaget) er ikke dokumentert.",
+    "Om engangsavgift ikke inngår i innførselsgrunnlaget: uttrykkelig bare for omsetning (mval. § 4-2 (1) a), ikke for § 4-11.",
+    "Statistisk verdi vs tollverdi (T72: «i de fleste tilfeller»).",
+    "Transaksjonsgebyr/valutahandelskost og andre tillegg for forhandlerimport er ikke dokumentert.",
+    "Sjablongene gjelder bare biler på egne hjul og tre land; ikke avklart for biler fraktet på lastebil/tråler utover reelle/«vanlige» fraktkostnader (§ 6-10-4 (3)).",
+    "Avrunding av tollverdi/valutaomregning (U-013 B) og tollkursens dato (U-008)."
    ],
    "usableAsRuleParameter": false,
-   "controlledDate": "2026-10-15",
+   "controlledDate": "2026-10-19",
    "researchDate": "2026-10-16",
    "e1Findings": [
     {
@@ -222,6 +315,36 @@
      "source": "T21",
      "locator": "«Avgifter du må betale til Tolletaten»",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Vareførselsloven § 6-10 (1): til prisen legges «e. transport- og forsikringskostnaden for varen til innførselsstedet» og «f. kostnader for lasting og håndtering som er forbundet med transporten av varen»; (2): tillegg «skal bare gjøres når dette kan baseres på grunnlag av objektive og kvantifiserbare opplysninger».",
+     "source": "T67",
+     "locator": "§ 6-10 første og annet ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Vareførselsforskriften § 6-10-4: (1) innførselssted = første sted varen kunne ha vært losset; (2) felles fakturert transport fordeles etter avstand før/etter innførselsstedet med mindre annen fordeling sannsynliggjøres; (3) kjøperens egen transport beregnes ut fra vanlige fraktkostnader for tilsvarende transportmåte.",
+     "source": "T69",
+     "locator": "§ 6-10-4",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Tolletatens sjablonger for varer på egne hjul/egen kjøl: Sverige NOK 500, Danmark NOK 1 500, Tyskland NOK 2 500; andre land ingen felles sjablong; importøren kan dokumentere reelle kostnader.",
+     "source": "T64",
+     "locator": "Fastsettelse av fraktkostnader",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Deklarasjonsveiledningen: rubrikk 12 fraktomkostninger til norsk grense i NOK når de ikke er i fakturaprisen; rubrikk 45 tillegg (frakt til norsk grense, forsikringspremie, provisjon, royalty) og fradrag (rabatter); rubrikk 46 statistisk verdi «i de fleste tilfeller» innkjøpsverdi inkl. frakt, forsikring og andre sendingskostnader til norsk havn/grensestasjon.",
+     "source": "T72",
+     "locator": "rubrikk 12, 45, 46",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Mval. § 4-11 (1): grunnlaget ved innførsel fastsettes etter tollverdireglene i vareførselsloven §§ 6-2 flg. (+ toll og andre avgifter).",
+     "source": "T63",
+     "locator": "§ 4-11 første ledd",
+     "readDate": "2026-10-19"
     }
    ],
    "parameterApproval": {
@@ -278,15 +401,18 @@
    ],
    "inputs": [
     "valuta",
-    "tidspunkt/dato for kursvalg"
+    "akseptdato for deklarasjonen",
+    "kursperiode (f.o.m./t.o.m.)",
+    "omregningsenhet (1/100)",
+    "suspensjonsstatus"
    ],
    "formulaStructure": "tollverdi i NOK = tollverdi i valuta × Tolletatens kurs; betalingskurs er egen kostnad",
-   "amountUnitAndRounding": "IKKE KONTROLLERT – må leses fra primærkilde (belop, enhet, avrunding, rekkefølge)",
+   "amountUnitAndRounding": "Tollverdi i NOK = beløp × Tolletatens omregningskurs (NOK per omregningsenhet 1 eller 100, T55/T23) som gjelder på tidspunktet for aksept av deklarasjonen. Avrunding: IKKE KONTROLLERT (U-013).",
    "orderInCalculation": null,
    "validity": {
-    "from": null,
+    "from": "2026-09-03",
     "to": null,
-    "note": "Ukjent."
+    "note": "Ny ordning (annenhver tirsdag, 14 dager) fra 3.9.2026 (T65, T69). Tidligere ordning (ukentlig) er bare lest i veiledning (T53); primærtekst for den er ikke lest."
    },
    "sources": [
     {
@@ -297,10 +423,34 @@
     },
     {
      "id": "T24"
+    },
+    {
+     "id": "T55"
+    },
+    {
+     "id": "T63"
+    },
+    {
+     "id": "T65"
+    },
+    {
+     "id": "T67"
+    },
+    {
+     "id": "T68"
+    },
+    {
+     "id": "T69"
+    },
+    {
+     "id": "T72"
+    },
+    {
+     "id": "T53"
     }
    ],
-   "evidenceLevel": "E2",
-   "status": "kildekonflikt",
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_regelkjede_kurs_og_tidfesting",
    "leads": [
     {
      "claim": "Tolletaten fastsetter kurs for én uke om gangen (sammendrag).",
@@ -320,20 +470,72 @@
      "claim": "Kurssyklus motstridende: «annenhver tirsdag, gyldig i to uker» (T23) mot eldre «ukentlig onsdag/mandag». Endringsforskrift 21.8.2026 til vareførselsforskriften § 6-12-1 åpner for deklarasjon 16–30 dager før innførsel.",
      "source": "T23",
      "note": "KILDEKONFLIKT (syklus). Ikke avgjort. [E2-ledetråd fra søkesammendrag 2026-10-16; ikke lest primærtekst; kan ikke brukes som parameter]"
+    },
+    {
+     "claim": "Kildekonflikten om kurssyklus (ukentlig vs annenhver tirsdag) er forklart som regimeskifte 3.9.2026 (T53, T65).",
+     "source": "T53",
+     "note": "Registrert 2026-10-19."
     }
    ],
    "openQuestions": [
-    "Hvilken dato styrer kursen?",
-    "Hvor hentes ukekursen (kilde-URL, format)?"
+    "Akseptøyeblikket for en konkret deklarasjon i praksis (tidlig levert deklarasjon, Digitoll): lov/forskrift gir regelen, praksiskilde mangler.",
+    "Terminologisk spenning: deklarasjonsveiledningen (T72 rubrikk 23) sier «fri rådighet», lov/forskrift sier «aksept»; lov/forskrift legges til grunn.",
+    "Hvor og hvordan suspensjon publiseres; om en suspendert kurs erstattes av Norges Banks daglige kurs i alle tilfeller.",
+    "Kurser og regler før 3.9.2026 (gammelt ukentlig regime) er bare lest i veiledning (T53).",
+    "Avrunding av tollverdi/valutaomregning (U-013 B).",
+    "Valutaer utenfor Tolletatens liste (Norges Banks daglige kurs) og historiske kurser."
    ],
    "usableAsRuleParameter": false,
-   "controlledDate": null,
+   "controlledDate": "2026-10-19",
    "researchDate": "2026-10-15",
    "parameterApproval": {
     "approved": false,
     "reason": "Ikke primærkontrollert (E2/E0)"
    },
-   "e1Findings": [],
+   "e1Findings": [
+    {
+     "claim": "Vareførselsforskriften § 6-12-1 (1): tollmyndighetene fastsetter annenhver tirsdag omregningskurser for de mest benyttede valutaer på grunnlag av Norges Banks indikative markedskurser fra nærmest foregående virkedag; kursene gjelder 14 dager fra og med tredje påfølgende torsdag; publiseres på toll.no; øvrige valutaer: Norges Banks daglige markedskurser.",
+     "source": "T65",
+     "locator": "§ 6-12-1 første ledd (endret ved FOR-2026-08-21-1661, i kraft 3.9.2026)",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "§ 6-12-1 (2): fastsatt kurs som avviker mer enn fem prosent fra Norges Banks daglige kurs to påfølgende dager suspenderes med virkning fra påfølgende dag; suspensjon publiseres på toll.no. (3): ved omregning brukes tidspunktet for tidfesting av tollavgiftssats i tollavgiftsloven § 2-2.",
+     "source": "T69",
+     "locator": "§ 6-12-1 annet og tredje ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Tollavgiftsloven § 2-2 (1): beregnes etter reglene og satsene som gjelder på det tidspunktet tollmyndighetene aksepterer deklarasjonen etter vareførselsloven § 3-4.",
+     "source": "T68",
+     "locator": "§ 2-2 første ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Vareførselsloven § 3-4 (1): deklarasjonen aksepteres når vilkårene i §§ 3-2 og 3-3 er oppfylt og varen er fremlagt for tollmyndighetene; § 3-3 (3): deklarasjon levert før fremleggelse anses som ikke levert hvis varen ikke legges frem innen 30 dager.",
+     "source": "T67",
+     "locator": "§ 3-4 første ledd; § 3-3 tredje ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Vareførselshåndboken § 6-12: kursen på tidspunktet for fastsettelse av tollavgiftssats (aksept av deklarasjonen) brukes; hva kjøperen har betalt i NOK er ikke relevant.",
+     "source": "T24",
+     "locator": "§ 6-12",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Publiserte kurser: tabell/JSON med valutakode, f.o.m./t.o.m., omregningsenhet (1 eller 100) og NOK; to perioder per valuta (15.10–28.10 og 29.10–11.11.2026); EUR 10,817 og 10,695.",
+     "source": "T55",
+     "locator": "valutakurs.json (snapshot 2026-10-19)",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Mval. § 3-29 (2): tidfestingen i tollavgiftsloven § 2-2 gjelder tilsvarende for innførselsmva.",
+     "source": "T63",
+     "locator": "§ 3-29 annet ledd",
+     "readDate": "2026-10-19"
+    }
+   ],
    "e1xFindings": []
   },
   {
@@ -350,20 +552,41 @@
     "dato"
    ],
    "formulaStructure": "mva. beregnes bare på den delen av vederlaget/grunnlaget som overstiger grensen (sammendrag); grense avhenger av dato",
-   "amountUnitAndRounding": "Grense 300 000 kr (mva.-fritt); 25 % over grensen (E1X). «Kvalifiserende», anvendelse ved innførsel og avrunding: IKKE KONTROLLERT.",
+   "amountUnitAndRounding": "Grense 300 000 kr fra 1.1.2026 (T71 del I/III; T63 § 6-8 (1)); 25 % (T76 § 2) på det som overstiger grensen; fritaket gjelder også ved innførsel (T63 § 7-1 (1), T62). Hva grensen måles mot ved innførsel: se R-IMP-VAT-004 (uavklart). Avrunding: IKKE KONTROLLERT (U-013).",
    "orderInCalculation": null,
    "validity": {
     "from": "2026-01-01",
     "to": null,
-    "note": "300 000 kr-grensen gjelder fra 1.1.2026 (håndbok merket 2025-utgave). Videre nedtrapping/lov 19.6.2026: ikke avgjort."
+    "note": "300 000 kr gjelder fra 1.1.2026 (T71 del III). Overgangsregelen i T71 del III gjelder bare leasing (§ 6-8 annet ledd). Varsel om avvikling fra 1.1.2027 (T75) er ikke vedtatt rett."
    },
    "sources": [
     {
      "id": "T14"
+    },
+    {
+     "id": "T35"
+    },
+    {
+     "id": "T57"
+    },
+    {
+     "id": "T62"
+    },
+    {
+     "id": "T63"
+    },
+    {
+     "id": "T71"
+    },
+    {
+     "id": "T75"
+    },
+    {
+     "id": "T76"
     }
    ],
-   "evidenceLevel": "E1X",
-   "status": "delvis_E1X_300000_fra_2026-01-01",
+   "evidenceLevel": "E1P",
+   "status": "delvis_E1_fritak_grense_innforsel_prinsipp",
    "leads": [
     {
      "claim": "Videre nedtrapping (150 000 kr per år i 2027 og 2028 forutsatt ESA-godkjenning; regjeringen foreslo full mva. fra 2027) er FREMTIDIG/uenighet.",
@@ -371,18 +594,70 @@
     }
    ],
    "openQuestions": [
-    "Eksplisitt anvendelse ved INNFØRSEL for forhandler er ikke gitt i pakken (regelen er oppgitt for kvalifiserende elbiler).",
-    "Hva som regnes som «kvalifiserende» elbil og hvilket beløp grensen måles mot ved import.",
-    "Lov av 19.6.2026: ikrafttredelse ukjent; ev. senere nedtrapping."
+    "Hva 300 000-grensen måles mot ved innførsel: skilt ut som R-IMP-VAT-004 (uavklart).",
+    "Forskriftsteksten FMVA § 1-3-1 (personkjøretøy) er ikke lest; håndbokens sammendrag brukes.",
+    "Varsel om avvikling av fritaket fra 1.1.2027 (T75) er ikke vedtatt; ingen kilde for regler for 2027/2028.",
+    "Senere endringer etter 22.12.2025 er ikke kontrollert (lest: opprinnelig kunngjort endringslov).",
+    "«Fortollingstidspunkt» (T75) vs «aksept av deklarasjonen» (tollavgiftsloven § 2-2): se R-IMP-FX-001.",
+    "Avrunding (U-013)."
    ],
    "usableAsRuleParameter": false,
-   "controlledDate": "2026-10-16",
+   "controlledDate": "2026-10-19",
    "researchDate": "2026-10-15",
    "parameterApproval": {
     "approved": false,
     "reason": "E1X (eksternt verifisert, ikke lest av Claude); krever E1-kildefil, klasse 1 og eksplisitt godkjenning"
    },
-   "e1Findings": [],
+   "e1Findings": [
+    {
+     "claim": "Endringsloven del I: mval. § 6-8 (1) lyder «Omsetning av personkjøretøy som bare bruker elektrisitet til framdrift, og hvor elektrisiteten leveres fra batteripakke som kan lades fra ekstern strømkilde, er fritatt for merverdiavgift for vederlag til og med 300 000 kroner.»; del III: endringene under I trer i kraft 1. januar 2026.",
+     "source": "T71",
+     "locator": "del I og III",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Endringsloven del III, overgangsregel: bare for kjøretøy som omfattes av § 6-8 annet ledd (leasing) og er levert til leietakeren før 1.1.2026 gjelder 500 000 kr; ingen overgangsregel for § 6-8 første ledd eller innførsel.",
+     "source": "T71",
+     "locator": "del III",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Mval. § 7-1 (1): «Det skal ikke beregnes merverdiavgift ved innførsel av varer som nevnt i … § 6-8 første ledd».",
+     "source": "T63",
+     "locator": "§ 7-1 første ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Håndbok kap. 7: «Beløpsgrensen for fritak gjelder også ved innførsel. Avgiftsfritaket ved innførsel gjelder både nye og brukte kjøretøy.» «Hybridbilene vil således falle utenfor fritaket.»",
+     "source": "T62",
+     "locator": "§ 7-1 Elbiler",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Håndbok kap. 6 (publisert 1.1.2026): fritaket for hydrogenbiler ble avviklet fra 1.1.2024; personkjøretøy (FMVA § 1-3-1) følger kjøretøyregisterets klassifisering og omfatter bl.a. personbiler, varebil klasse 1, campingbiler, mindre busser, snøscootere, motorsykler og mopeder.",
+     "source": "T35",
+     "locator": "§ 6-8 Elektriske kjøretøy / Personkjøretøy",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Tolletaten: elektriske kjøretøy med «verdi» inntil 300 000 kr er fritatt; over: 25 % av beløpet som overstiger; nye og brukte kjøretøy som ikke tidligere har vært registrert i Norge; hybrider er avgiftspliktige.",
+     "source": "T57",
+     "locator": "Elektriske kjøretøy",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Prop. 1 LS pkt. 11.2.2 (forarbeid): «Gjennom merverdiavgiftsloven § 7-1 er fritaket i § 6-8 første ledd gitt tilsvarende virkning for innførsel av elbiler»; pkt. 11.2.5: «Ved innførsel er fortollingstidspunktet skjæringspunktet».",
+     "source": "T75",
+     "locator": "11.2.2 og 11.2.5",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Stortingets vedtak om merverdiavgift § 2: 25 pst. av avgiftspliktig innførsel.",
+     "source": "T76",
+     "locator": "§ 2",
+     "readDate": "2026-10-19"
+    }
+   ],
    "e1xFindings": [
     {
      "claim": "Fra 2026-01-01 er kvalifiserende elektriske personkjøretøy mva.-frie opptil 300 000 kr; 25 % mva. på beløp over 300 000 kr. Vektkomponenten i engangsavgiften er ikke del av dette mva.-grunnlaget.",
@@ -391,7 +666,76 @@
      "verifiedDate": "2026-10-16",
      "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)"
     }
+   ],
+   "monitoring": [
+    "Lov 19.6.2026 nr. 41 (særavgiftsloven, T70) nevner ikke mval. § 6-8 eller § 7-1; tidligere kobling mellom lovnummeret og elbilfritaket er ikke dokumentert og er fjernet fra åpne spørsmål."
    ]
+  },
+  {
+   "id": "R-IMP-VAT-004",
+   "component": "Import-mva.",
+   "title": "Elbilfritak: hva 300 000-grensen måles mot ved innførsel (målegrunnlag)",
+   "profiles": [
+    "PB-BEV",
+    "VB-BEV"
+   ],
+   "inputs": [
+    "drivlinje = batterielektrisk",
+    "beløp fritaket regnes av",
+    "dato"
+   ],
+   "formulaStructure": "Kandidater (ingen valgt): (a) vederlag/kjøpesum for kjøretøyet, (b) tollverdi (vareførselsloven § 6-10), (c) hele mva.-grunnlaget (mval. § 4-11); og hva den fritatte delen trekkes fra",
+   "amountUnitAndRounding": "IKKE KONTROLLERT – ingen lest kilde avgjør målegrunnlaget ved innførsel",
+   "orderInCalculation": null,
+   "validity": {
+    "from": "2026-01-01",
+    "to": null,
+    "note": "300 000 kr gjelder fra 1.1.2026 (T71 del III). Overgangsregelen i T71 del III gjelder bare leasing (§ 6-8 annet ledd). Varsel om avvikling fra 1.1.2027 (T75) er ikke vedtatt rett."
+   },
+   "sources": [
+    {
+     "id": "T57"
+    },
+    {
+     "id": "T62"
+    },
+    {
+     "id": "T63"
+    },
+    {
+     "id": "T71"
+    },
+    {
+     "id": "T75"
+    },
+    {
+     "id": "T35"
+    }
+   ],
+   "evidenceLevel": "E0",
+   "status": "uavklart_ingen_kilde_for_malegrunnlag",
+   "leads": [
+    {
+     "claim": "Lovtekst (mval. § 6-8 (1)): «vederlag»; Tolletaten (T57): «verdi»; håndbok kap. 6 (omsetning): «vederlaget som betales for selve kjøretøyet, fratrukket 300 000 kroner»; innførselsgrunnlag (§ 4-11): tollverdi + toll/avgifter. Ingen av dem avgjør målegrunnlaget ved innførsel.",
+     "source": "T63",
+     "note": "T62, T35, T57, T71 og T75 pkt. 11.2 er lest og avgjør det ikke (T75: ingen omtale av tollverdi eller frakt)."
+    }
+   ],
+   "openQuestions": [
+    "Hvilket beløp ved innførsel sammenlignes med 300 000: kjøpesum, tollverdi (inkl. transport/forsikring til grensen) eller hele grunnlaget?",
+    "Trekkes den fritatte delen fra samme beløp som grensen måles mot?",
+    "Finnes det forskrift (mval. § 7-1 (4)), uttalelse eller forarbeid om innførsel?"
+   ],
+   "usableAsRuleParameter": false,
+   "controlledDate": null,
+   "researchDate": "2026-10-15",
+   "parameterApproval": {
+    "approved": false,
+    "reason": "Uavklart: ingen kilde"
+   },
+   "e1Findings": [],
+   "e1xFindings": [],
+   "monitoring": []
   },
   {
    "id": "R-OTA-001",
@@ -2445,10 +2789,22 @@
     },
     {
      "id": "T28"
+    },
+    {
+     "id": "T56"
+    },
+    {
+     "id": "T59"
+    },
+    {
+     "id": "T63"
+    },
+    {
+     "id": "T36"
     }
    ],
    "evidenceLevel": "E1P",
-   "status": "delvis_E1_og_E1X_videresalg_unntak",
+   "status": "delvis_E1_videresalg_fradrag_import_samme_regler",
    "leads": [
     {
      "claim": "Håndbok (sammendrag): tilbakeføring etter § 9-6 gjelder utleie/persontransport, ikke videresalg; eksport utløser ikke tilbakeføring; åtteårsregel.",
@@ -2457,12 +2813,13 @@
     }
    ],
    "openQuestions": [
-    "Gjelder KUN anskaffelse for videresalg; ikke generalisert til utleie, privat bruk eller andre profiler.",
-    "Innførselsmva. spesielt, varebil, bindingstid/tilbakeføring og importørprofil er ikke gitt.",
-    "Utgaver: 2023 (E1X) og 2025 (E1)."
+    "Dokumentasjon av at bilen er «salgsvare» og hvem som kan oppgi status i produktet (produktbeslutning; ikke en kildesak).",
+    "Omdisponering/uttak og tilbakeføring (T28 registrert, ikke lest); forholdsmessig fradrag; demonstrasjon/utlån.",
+    "Varebil og andre profiler er ikke vurdert; ikke generalisert til utleie, privat bruk eller andre profiler.",
+    "2023- og dagens videresalgsavsnitt er ordrett like (U-003 versjonsspørsmål besvart); håndbokens «Se flere endringer» er ikke fulgt."
    ],
    "usableAsRuleParameter": false,
-   "controlledDate": "2026-10-15",
+   "controlledDate": "2026-10-19",
    "researchDate": "2026-10-16",
    "e1Findings": [
     {
@@ -2476,6 +2833,30 @@
      "source": "T22",
      "locator": "«Vedlikehold, reparasjoner, klargjøring»",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "Mval. § 8-1: «Et registrert avgiftssubjekt har rett til fradrag for inngående merverdiavgift på anskaffelser av varer og tjenester som er til bruk i den registrerte virksomheten.»",
+     "source": "T63",
+     "locator": "§ 8-1",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Mval. § 8-4 (1): fradragsretten omfatter ikke personkjøretøy, men «det er likevel fradragsrett … på personkjøretøy til bruk som a. salgsvare».",
+     "source": "T63",
+     "locator": "§ 8-4 første ledd bokstav a",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Håndbok (løpende kap. 8): «Etter § 8-4 første ledd bokstav a kan inngående avgift fradragsføres ved anskaffelse av personkjøretøy for videresalg»; avsnittet har samme ord som 2023-utgaven (T36).",
+     "source": "T59",
+     "locator": "8-4.3",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Skatteetatens importveiledning: «Det gjelder samme regler for fradrag for kjøp fra utlandet som for kjøp av varer og tjenester i Norge»; registrerte beregner innførselsmva. selv også for varer til videresalg og varer uten fradragsrett (kode 81/82); dokumentasjon: tolldeklarasjon med underbilag og grunnlag/avgift per sats per deklarasjon.",
+     "source": "T56",
+     "locator": "Fradragsrett; Dette må du dokumentere",
+     "readDate": "2026-10-19"
     }
    ],
    "parameterApproval": {
@@ -3168,7 +3549,10 @@
     ],
     "upgradedOn": "2026-10-18",
     "upgradedFrom": "E1P"
-   }
+   },
+   "monitoring": [
+    "Lov 19.6.2026 nr. 41 (særavgiftsloven, T70; ikke i kraft, Kongen bestemmer): endrer skattebetalingsloven § 1-1 (2) bokstav h og oppheves bokstav i (motorkjøretøyloven), og oppheves motorkjøretøy- og båtavgiftsloven ved ikrafttredelse. Kjeden i R-OTA-014 peker på § 1-1 (2) i og må følges opp ved ikrafttredelse. § 10-4 og § 10-4-4 er ikke nevnt. ECON-002-godkjenning og runtime er uendret."
+   ]
   },
   {
    "id": "R-OTA-015",
@@ -3434,8 +3818,8 @@
   {
    "id": "U-007",
    "claim": "Elbil-mva.: 300 000 mot 500 000 kr i sammendrag; ikrafttredelse av lov 19.6.2026 ukjent.",
-   "status": "løst (E1X): 300 000 kr fra 2026-01-01; anvendelse ved innførsel og lov 19.6.2026 uavklart",
-   "note": "Håndbok § 6-8 (T35): mva.-fritt opptil 300 000 kr, 25 % over, vektkomponenten ikke i grunnlaget. 500 000 kr-tallet i sammendraget hører ikke til denne regelen. Eksplisitt innførselsanvendelse ikke gitt.",
+   "status": "løst (E1): 300 000 kr fra 2026-01-01 (T71 del I/III; T63 § 6-8); gjelder også ved innførsel (T63 § 7-1, T62); målegrunnlag ved innførsel uavklart (R-IMP-VAT-004)",
+   "note": "Rettelse 2026-10-19: lov 19.6.2026 nr. 41 er særavgiftsloven (T70, ikke i kraft) og nevner ikke mval. § 6-8 eller § 7-1; den tidligere koblingen til elbilfritaket var ikke dokumentert. Overgangsregelen i T71 del III gjelder bare leasing. Håndbok § 6-8 (T35): vektkomponenten ikke i grunnlaget. 500 000-tallet i sammendraget hører ikke til denne regelen.",
    "affects": [
     "R-IMP-VAT-003"
    ],
@@ -3454,7 +3838,7 @@
    "movedOn": "2026-10-19",
    "movedBy": "Christian (leveranseomfang presisert)",
    "moveNote": "Flyttet uttrykkelig fra ECON-002 til ECON-004 (MVA-/tollkursgrunnlag). Ikke lukket, ikke undersøkt og ikke startet; state forblir open. Sporbar henvisning: reviews/ECON-002.md §28 og MVP_BACKLOG.md (ECON-004).",
-   "sourceReview": "ECON-004 kildevurdering 2026-10-19: regelteksten for syklus, gyldighet, avvik og tidspunkt er lest (T65, T69, T68, T67, T53, T23, T24, T55). Hvilken akseptdato en konkret import får, suspensjon i konkrete tilfeller og kurser før 3.9.2026 er ikke dekket. state forblir open; ingen godkjenning. Runde 3: deklarasjonsveiledningen (T72) bruker «fri rådighet» for kursvalg (rubrikk 23); lov/forskrift (tollavgiftsloven § 2-2, forskriften § 6-12-1 (3)) bruker aksept av deklarasjonen. Terminologisk spenning registrert; lov/forskrift legges til grunn. Fortsatt åpen."
+   "sourceReview": "ECON-004 kildevurdering 2026-10-19: regelteksten for syklus, gyldighet, avvik og tidspunkt er lest (T65, T69, T68, T67, T53, T23, T24, T55). Hvilken akseptdato en konkret import får, suspensjon i konkrete tilfeller og kurser før 3.9.2026 er ikke dekket. state forblir open; ingen godkjenning. Runde 3: deklarasjonsveiledningen (T72) bruker «fri rådighet» for kursvalg (rubrikk 23); lov/forskrift (tollavgiftsloven § 2-2, forskriften § 6-12-1 (3)) bruker aksept av deklarasjonen. Terminologisk spenning registrert; lov/forskrift legges til grunn. Fortsatt åpen. Runde 4: R-IMP-FX-001 er løftet til E1P (regelkjede lest); gjenstående: akseptøyeblikk i praksis, suspensjon, historiske regimer, «fri rådighet»-terminologi. Fortsatt åpen."
   },
   {
    "id": "U-009",
@@ -3517,7 +3901,42 @@
     "R-IMP-FX-001"
    ],
    "state": "open",
-   "sourceReview": "ECON-004 kildevurdering 2026-10-19: ingen regel om avrunding av tollverdi, valutaomregning, innførselsmva. eller mva-melding funnet i ECON-004-pakken (tekstsøk, ikke bevis for fravær). state forblir open; fixture-half-up er ikke godkjent. Runde 3 (19.10.2026, T46/T49/T72/T73): selve avgiftskravet har tekstlig støtte for nedrunding (§ 10-4-4 + § 10-4-1 (1) b + § 1-1 (2) g); hver importberegning og mva-meldingens linjer er ikke dekket; mva-FAQens ±1 kr-toleranse (T73) er en valideringstoleranse, ikke en avrundingsregel. Fortsatt åpen; ingen avrunding godkjent."
+   "sourceReview": "ECON-004 kildevurdering 2026-10-19: ingen regel om avrunding av tollverdi, valutaomregning, innførselsmva. eller mva-melding funnet i ECON-004-pakken (tekstsøk, ikke bevis for fravær). state forblir open; fixture-half-up er ikke godkjent. Runde 3 (19.10.2026, T46/T49/T72/T73): selve avgiftskravet har tekstlig støtte for nedrunding (§ 10-4-4 + § 10-4-1 (1) b + § 1-1 (2) g); hver importberegning og mva-meldingens linjer er ikke dekket; mva-FAQens ±1 kr-toleranse (T73) er en valideringstoleranse, ikke en avrundingsregel. Fortsatt åpen; ingen avrunding godkjent. Runde 4 (19.10.2026): del C har formatbelegg (T79/T78); beregningsmetode (B), rapporteringsmetode og samlet betalingskrav (A: enhet) er fortsatt ikke avgjort. Hele U-013 forblir åpen; ingen avrunding godkjent.",
+   "parts": [
+    {
+     "id": "A",
+     "title": "Samlet avgiftskrav (beregning av skatte- og avgiftskrav)",
+     "status": "tekstlig støtte (rettsanvendelse), ikke godkjent",
+     "sources": [
+      "T46",
+      "T49",
+      "T50",
+      "T45"
+     ],
+     "note": "§ 10-4-4 ned til hele krone; § 10-4-1 (1) b og § 1-1 (2) g knytter innførselsmva.-krav til regelfamilien. Uavklart hvilken enhet som avrundes (deklarasjon for ikke registrert; periodens krav for registrert)."
+    },
+    {
+     "id": "B",
+     "title": "Hver importberegning (deklarasjon/varepost; tollverdi og omregning)",
+     "status": "ingen regel funnet",
+     "sources": [
+      "T72",
+      "T56"
+     ],
+     "note": "Rubrikk 47 beregnes per varepost; ingen avrundingsmetode oppgitt."
+    },
+    {
+     "id": "C",
+     "title": "Rapportering i mva-meldingen",
+     "status": "format dokumentert, metode ikke",
+     "sources": [
+      "T79",
+      "T78",
+      "T73"
+     ],
+     "note": "XSD v1.0: `grunnlag`, `merverdiavgift` og `fastsattMerverdiavgift` er `Beloep` → `Desimaltall` → `xsd:decimal` uten fractionDigits/totalDigits: skjemaet godtar desimaltall. Det gir ingen avrundingsmetode, ingen tidspunkt for avrunding og sier ingenting om strengere servervalidering. T73: valideringstoleranse ±1 kr × antall linjer (min. ±10) er ikke en regel. v1.0 er hentet fra en bevegelig master-gren (generert 2022-11-28); nyere modell ikke undersøkt."
+    }
+   ]
   }
  ],
  "foundationStatus": {

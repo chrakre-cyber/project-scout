@@ -1,0 +1,54 @@
+{
+  "files": [
+    {
+      "path": "acquisition.json",
+      "bytes": 2028,
+      "sha256": "6813cf54300c270c3a8af329ff06524978fc5b0e316a04e092f45c309592a76d"
+    },
+    {
+      "path": "CLAUDE_INSTRUCTIONS.md",
+      "bytes": 2207,
+      "sha256": "acd455a6f00e3e39302e16476d4db0afee46a1039ecf3ec4a65dff30eccb6e4f"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Stortingsvedtak_217_MVA_2026.html",
+      "bytes": 75645,
+      "sha256": "d102de9c77b204539865e9f710f9c61dea5092594725aec01070425a333abd3d"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Stortingsvedtak_217_MVA_2026.txt",
+      "bytes": 7231,
+      "sha256": "1940c5afdbee7f8c668132d7a3c2291bb72c92d720ac6ec6774770ab8ff718b9"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_MVA_vedtak_Lovtidend.html",
+      "bytes": 34935,
+      "sha256": "86bbee3035766162d42e3db01c76e2ff7eede5f772c405885c39dcdde7fad330"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_MVA_vedtak_Lovtidend.txt",
+      "bytes": 3937,
+      "sha256": "8547163c972808dfc01f84494f6a7cb0b88c296c62a128a61e254572253297fa"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Mva_informasjonsmodell.html",
+      "bytes": 69123,
+      "sha256": "67e44a2a64de53dfae30db526cc97e891eebf4f50496ecc5d6b1733c18e2b9ff"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Mva_informasjonsmodell.txt",
+      "bytes": 15007,
+      "sha256": "a687d6fed0d628f4c037062e8763369734f62f4ff294090381e84831aa853d14"
+    },
+    {
+      "path": "docs/tax/primarkilder/04_Mva_melding_v1_0.xsd",
+      "bytes": 26972,
+      "sha256": "f314fae8c0af547cccb3650f691cbc5229f6ed52971f5c5d2647c49e82031fcf"
+    },
+    {
+      "path": "docs/tax/primarkilder/MANIFEST.md",
+      "bytes": 2808,
+      "sha256": "4bc6fdc09e6a5ac5bd9fd751f4ae5c329fbaae31ab90925490bb8150f5aa48d5"
+    }
+  ]
+}

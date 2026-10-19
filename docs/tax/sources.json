@@ -2203,6 +2203,136 @@
     "11.2 inneholder ingen omtale av tollverdi, frakt eller hva 300 000 måles mot ved innførsel (søk: «tollverdi» 0 treff, «frakt» 0 treff i 11.2)"
    ],
    "limitations": "Forarbeid/forslag: ikke bindende rett. Besvarer ikke målegrunnlaget ved innførsel. Teksten er proposisjonens forslag; vedtatt lovtekst er T71."
+  },
+  {
+   "id": "T76",
+   "title": "Stortinget: Vedtak 217 — Vedtak om merverdiavgift for 2026 (sak «Skatte- og avgiftsinntekter 2026», Prop. 1 S (2025–2026), Innst. 3 S (2025–2026))",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?did=40035795&p=104911",
+   "kind": "primary",
+   "documentType": "stortingsvedtak (vedtatt primærtekst)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/01_Stortingsvedtak_217_MVA_2026.html",
+   "repoFile": "docs/tax/primarkilder/econ004c/01_Stortingsvedtak_217_MVA_2026.html",
+   "packageSha256": "d102de9c77b204539865e9f710f9c61dea5092594725aec01070425a333abd3d",
+   "retrievedAt": "2026-10-19T14:12:51.048028+00:00",
+   "publishedVersion": "Vedtak 217 slik det står på stortinget.no 2026-10-19; vedtatt 18.12.2025 (jf. T77)",
+   "readSections": [
+    "§§ 1–5"
+   ],
+   "supportedClaims": [
+    "§ 1: «Fra 1. januar 2026 beregnes merverdiavgift etter satsene i dette vedtaket og i samsvar med lov 19. juni 2009 nr. 58 om merverdiavgift.»",
+    "§ 2 Alminnelig sats: «Merverdiavgift beregnes med 25 pst. av avgiftspliktig omsetning, uttak og innførsel når ikke redusert sats skal anvendes etter bestemmelsene nedenfor.»",
+    "§§ 3–5: redusert sats 15 pst. (næringsmidler inkl. innførsel, vann/avløp), 12 pst. (nærmere angitte tjenester) og 11,11 pst. (viltlevende marine ressurser) — ikke relevant for personbil",
+    "Samme ordlyd som Lovtidends FOR-2025-12-18-2752 (T77) i §§ 1–5 (kontrollert ved normalisert tekstsammenligning)"
+   ],
+   "limitations": "Originalvedtak: dokumenterer ikke alene fravær av senere endringsvedtak. Ingen kontroll av eventuelle endringer (f.eks. i revidert budsjett). Gjelder satser, ikke beregningsgrunnlaget (mval. § 4-11).",
+   "effectiveDate": "2026-01-01"
+  },
+  {
+   "id": "T77",
+   "title": "Stortingsvedtak om merverdiavgift for 2026, FOR-2025-12-18-2752 (Lovdata, Norsk Lovtidend, opprinnelig kunngjort versjon)",
+   "publisher": "Stortinget / Lovdata",
+   "url": "https://lovdata.no/dokument/LTI/forskrift/2025-12-18-2752",
+   "kind": "primary",
+   "documentType": "stortingsvedtak (kunngjort versjon)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/02_MVA_vedtak_Lovtidend.html",
+   "repoFile": "docs/tax/primarkilder/econ004c/02_MVA_vedtak_Lovtidend.html",
+   "packageSha256": "86bbee3035766162d42e3db01c76e2ff7eede5f772c405885c39dcdde7fad330",
+   "retrievedAt": "2026-10-19T14:12:50.769045+00:00",
+   "publishedVersion": "Opprinnelig kunngjort versjon: vedtatt 18.12.2025, kunngjort 22.12.2025 kl. 11.30, ikrafttredelse «Budsjettåret 2026», hjemmel Grunnloven § 75 a, jf. mval.",
+   "readSections": [
+    "§§ 1–5",
+    "Metadata"
+   ],
+   "supportedClaims": [
+    "§ 1: «Fra 1. januar 2026 beregnes merverdiavgift etter satsene i dette vedtaket og i samsvar med lov 19. juni 2009 nr. 58 om merverdiavgift.»",
+    "§ 2 Alminnelig sats: «Merverdiavgift beregnes med 25 pst. av avgiftspliktig omsetning, uttak og innførsel når ikke redusert sats skal anvendes etter bestemmelsene nedenfor.»",
+    "§§ 3–5: redusert sats 15 pst. (næringsmidler inkl. innførsel, vann/avløp), 12 pst. (nærmere angitte tjenester) og 11,11 pst. (viltlevende marine ressurser) — ikke relevant for personbil",
+    "Samme dokument som T76 (Stortingets Vedtak 217): identisk ordlyd i §§ 1–5"
+   ],
+   "limitations": "Opprinnelig kunngjort versjon; siden viser «Gå til ajourført versjon» (ikke fulgt). Fravær av «Sist endret»-linje i metadata er ikke bevis for at ingen endringsvedtak finnes.",
+   "effectiveDate": "2026-01-01"
+  },
+  {
+   "id": "T78",
+   "title": "Skatteetaten: Information models, XSD and encoding — VAT return (mva-meldingen, informasjonsmodell)",
+   "publisher": "Skatteetaten",
+   "url": "https://skatteetaten.github.io/mva-meldingen/mvameldingen_eng/informasjonsmodell/",
+   "kind": "technical-documentation",
+   "documentType": "teknisk dokumentasjon (informasjonsmodell)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/03_Mva_informasjonsmodell.html",
+   "repoFile": "docs/tax/primarkilder/econ004c/03_Mva_informasjonsmodell.html",
+   "packageSha256": "67e44a2a64de53dfae30db526cc97e891eebf4f50496ecc5d6b1733c18e2b9ff",
+   "retrievedAt": "2026-10-19T14:12:50.959242+00:00",
+   "publishedVersion": "Hentet 2026-10-19; endringslogg på siden slutter 2022.12.08; omtaler «Version 1.0 of the XSD for the VAT return»",
+   "readSections": [
+    "Feltbeskrivelser for Skattegrunnlag og beregnet skatt og MvaSpesifikasjonslinje",
+    "Versjonsomtale/endringslogg"
+   ],
+   "supportedClaims": [
+    "Felt: `fastsattMerverdiavgift` = «Sum to pay / sum to be refunded» (periodenivå); per spesifikasjonslinje: `mvaKode`, `grunnlag` («The amount of which VAT is calculated. The field must not be filled in for input VAT»), `sats`, `merverdiavgift` («to show calculated VAT per line»)",
+    "Meldingen er kodebasert med spesifikasjonslinjer; flere linjer per mvaKode/spesifikasjon/internkode kan forekomme",
+    "Dokumentasjonen lenker til XSD v1.0 (no.skatteetaten.fastsetting.avgift.mva.skattemeldingformerverdiavgift.v1.0)"
+   ],
+   "limitations": "Teknisk dokumentasjon, ikke rettsregel. Nevner ingen avrundingsmetode. Siden dokumenterer ikke at v1.0 er siste versjon (endringsloggen slutter 2022.12.08, men det beviser ikke fravær av nyere modell)."
+  },
+  {
+   "id": "T79",
+   "title": "Skatteetaten: XSD skattemeldingformerverdiavgift v1.0 (raw.githubusercontent.com, master-gren)",
+   "publisher": "Skatteetaten",
+   "url": "https://raw.githubusercontent.com/Skatteetaten/mva-meldingen/master/docs/informasjonsmodell_filer/xsd/no.skatteetaten.fastsetting.avgift.mva.skattemeldingformerverdiavgift.v1.0.xsd",
+   "kind": "xsd-v1.0",
+   "documentType": "XSD (skjema)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/04_Mva_melding_v1_0.xsd",
+   "repoFile": "docs/tax/primarkilder/econ004c/04_Mva_melding_v1_0.xsd",
+   "packageSha256": "f314fae8c0af547cccb3650f691cbc5229f6ed52971f5c5d2647c49e82031fcf",
+   "retrievedAt": "2026-10-19T14:12:50.909272+00:00",
+   "publishedVersion": "XSD versjon 1.0, `generertDato` 2022-11-28T17:25:30+0100; modellnavn «SkattemeldingForMerverdiavgift(inkl. VOEC)»; hentet fra master-gren 2026-10-19",
+   "readSections": [
+    "Typene Beloep, Desimaltall; elementene grunnlag, merverdiavgift, fastsattMerverdiavgift, sats"
+   ],
+   "supportedClaims": [
+    "`Beloep` er `xsd:restriction base=\"Desimaltall\"` og `Desimaltall` er `xsd:restriction base=\"xsd:decimal\"` — ingen `fractionDigits`/`totalDigits`-begrensning i disse typene",
+    "`grunnlag` (minOccurs=0), `merverdiavgift` og `fastsattMerverdiavgift` har type `Beloep` (skjemaet godtar desimaltall); `sats` har type `Sats` (xsd:string)",
+    "Elementbeskrivelser: `grunnlag` «grunnlag for merverdiavgift tilsvarende valgt mva-kode, typisk omsetning»; `merverdiavgift` «Bokført beløp for merverdiavgift»; `fastsattMerverdiavgift` «sum fastsatt merverdiavgift for perioden»"
+   ],
+   "limitations": "Skjemaformat, ikke rettsregel: avklarer at desimaltall aksepteres i skjemaet, ikke om rapportert beløp skal være avrundet, med hvilken metode eller når. Eventuelle strengere servervalideringer og nyere skjemaversjoner er ikke undersøkt; master-gren er bevegelig (hentet med hash)."
   }
  ],
  "accessAttempts": [

@@ -1,5 +1,7 @@
 # ECON-004 — kildeavklaring runde 2: U-013, elbilfritakets målegrunnlag, omfang, lov 19.6.2026 nr. 41 (19.10.2026)
 
+> **Oppdatert 19.10.2026 (historikk bevart under):** Pkt. 4 (lov 19.6.2026 nr. 41) er avløst: loven er identifisert som særavgiftsloven (T70), «ikke dokumentert»-delene er nå besvart, og lovnummeret skal ikke brukes som blokkering for §§ 4-11, 6-8, 7-1, 8-1, 8-4 eller § 10-4-4. Overgangsregelen i lov nr. 121 gjelder bare leasing. Se `reviews/ECON-004-kildevurdering-3.md`/`-4.md`.
+
 **Status: kildeavklaring, ingen godkjenning, ingen kodeendring.** ECON-004 forblir REVIEW. De fire økonomiflaggene er `false`. Dagens produktvalg og scenarioer er uendret (inkl. `UNCONFIRMED_HALF_UP`, `evThresholdBasis = unresolved`, `vehicle_price_only`-scenarioet, 8 000 som konfigurasjon). ECON-005 er ikke startet. Kilder: kun dokumenter som allerede er i repoet (`docs/tax/primarkilder/` T03, T45, T46, T49, T50 og `econ004/` T53–T69). Nettverk er fortsatt blokkert (HTTP 000 mot lovdata.no, toll.no, skatteetaten.no, regjeringen.no, testet 19.10.2026); ingen nye dokumenter er hentet.
 
 ## 0. Korrigering av tidligere rapportering

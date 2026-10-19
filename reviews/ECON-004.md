@@ -70,5 +70,8 @@ Se `reviews/ECON-004-kildeavklaring-2.md`: U-013 (selve innførselsmva.-kravet h
 ### Tilleggskilder runde 2
 Se `reviews/ECON-004-kildevurdering-3.md`: lov 19.6.2026 nr. 41 = særavgiftsloven (ikke relevant for § 6-8/§ 4-11/§ 8-1/§ 8-4), lov 22.12.2025 nr. 121-overgangen gjelder bare leasing, Prop. 1 LS pkt. 11.2 besvarer ikke målegrunnlaget ved innførsel, U-013 skilt i tre nivåer (valideringstoleranse er ikke en regel), nytt gap: primærbelegg for selve 25 %-satsen. Kilder T70–T75 registrert.
 
+### Satsvedtak og meldingsformat
+Se `reviews/ECON-004-kildevurdering-4.md`: 25 % har primærbelegg (Stortingets vedtak 217 § 2 / FOR-2025-12-18-2752, T76/T77), XSD v1.0 godtar desimaltall (T79) uten avrundingsmetode; registerrettelser gjennomført (R-IMP-VAT-001/-002/-003/-004, R-DED-001, R-IMP-FX-001, U-007/U-013); alle flagg false.
+
 ## 4. Gjenværende blokkeringer
 U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001 er åpne og ikke godkjent. Ingen produktstandard for transport er godkjent utover ECON-001 (8 000, `assumed-default`, må konfigureres av kalleren). ECON-005 er ikke startet.

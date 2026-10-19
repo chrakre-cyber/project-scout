@@ -1,5 +1,7 @@
 # ECON-004 — oppdatert kildevurdering (tilleggskilder runde 2, 19.10.2026)
 
+> **Oppdatert 19.10.2026 (historikk bevart under):** Gap nr. 2 i pkt. 6 (primærbelegg for 25 %-satsen) er besvart av Stortingets vedtak 217 § 2 / FOR-2025-12-18-2752 (T76/T77); formatbelegg for mva-meldingen (U-013 C) er lagt til (T78/T79). Registerendringene i pkt. 7 er gjennomført i `reviews/ECON-004-kildevurdering-4.md`.
+
 **Status: kildevurdering. Ingen kodeendring, ingen parametergodkjenning, ingen produktvalg.** ECON-004 forblir REVIEW. De fire økonomiflaggene er `false`. ECON-002 og ECON-003 er uendret. ECON-005 er ikke startet. Regelnivåer i `rules.json` er uendret (bare `sourceReview`-notater på U-008/U-013); U-013 er fortsatt åpen.
 
 ## 0. Pakke og registrering

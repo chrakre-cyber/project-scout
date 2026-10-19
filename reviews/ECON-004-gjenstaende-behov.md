@@ -1,5 +1,7 @@
 # ECON-004 — prioritert oversikt over gjenstående kilde- og godkjenningsbehov (19.10.2026)
 
+> **Oppdatert 19.10.2026 (historikk bevart under):** Prio 2 «satsbelegg» er nå besvart (Stortingets vedtak 217 § 2 / FOR-2025-12-18-2752, T76/T77); lov 19.6.2026 nr. 41 er identifisert som særavgiftsloven og er ikke relevant for elbilfritak/tollverdi/fradrag (T70; prio 3 faller bort som blokkering); overgangsregelen i lov 22.12.2025 nr. 121 gjelder bare leasing (T71); meldingsformat for U-013 del C er dokumentert (T79). Se `reviews/ECON-004-kildevurdering-3.md` og `reviews/ECON-004-kildevurdering-4.md`.
+
 **Status: oversikt, ikke godkjenning.** Utgangspunkt: `bd67c8d3c10ca69015b8e50757f8b583180ce6d4` (SRC1-FIX1 uavhengig review: begge P2 lukket, ingen nye blokkerende funn; `reviews/ECON-004-SRC1-FIX1-review-bd67c8d.md`). ECON-004 forblir REVIEW. De fire økonomiflaggene (`vatRulesApproved`, `roundingApproved`, `customsFxRuleApproved`, `deductionRuleApproved`) er `false` og forblir det til du uttrykkelig beslutter noe annet. Ingen kodeendring er gjort. ECON-005 er ikke startet. Kilde-ID-er (Txx) viser til `docs/tax/sources.json`; «registrert URL» = finnes i registeret, men er aldri lest; «søkespor» = tittel/URL ikke verifisert.
 
 ## 1. Slik leses oversikten
