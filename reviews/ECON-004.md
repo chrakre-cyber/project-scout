@@ -44,5 +44,13 @@ Konfigurasjon som må avgjøres før `validated` kan nås (alle er i dag `false`
 - Ikke kjørt: build, e2e, DB (ikke berørt av en ren domenemodul). Ingen uavhengig review er gjort.
 - Merk: én testforventning (`tax_profile_not_approved` for den godkjente 2026-profilen) var feil og ble rettet i testen; koden var riktig. Ingen ECON-003-forventning er endret. Hånd-/Python-Decimal-kontrollerte literaler: 468 723, 441 723, 379 248, 0,25/0,5/0,75 over 300 000.
 
+## 3b. Rettingsrunde etter uavhengig review av f12d44a (fire P2, status fortsatt REVIEW)
+Review: `ECON-004-Codex-review-f12d44a` (konklusjon: behold REVIEW). Alle fire funn ble reprodusert som regresjoner (9 røde mot f12d44a, grønne etter retting; ingen forventning tilpasset koden).
+1. **Falsk nedre grense ved ukjent drivlinje**: ukjent drivlinje beholder nå fritaksusikkerheten (`no_exemption` + `with_exemption`, `evExemption` følger input, ikke `not_applicable_vehicle`); nedre grense bygger på laveste mulige mva. (350 000 NOK: 362 500 ≤ 379 248). Uttrykkelig `not_applicable` gir fortsatt full mva. som oppgitt. Egenskapstest: nedre grense ≤ minste verdi blant utfyllinger av ukjent drivlinje/fritak, forsikring, transport, øvrige avgifter og fradrag.
+2. **Sen avrundingslikhet i totalen**: likhet i øvrige kostnader (f.eks. 2,5 kr) avgjør nå totalenes entydighet (`rounding_tie_unresolved` i `missing`; totalene blir `lower_bound` med laveste kandidat, kandidatene vises).
+3. **`assumed_default`-beløp**: alle `AmountInput` (transport, forsikring, øvrige poster) med basis `assumed_default` gir estimatårsaken `assumed_default_amount`, uavhengig av om verdien kommer fra config eller direkte input.
+4. **Fixture-proveniens**: `source.kind = "fixture"` krever `allowFixtureFxQuotes` også uten `fixtureOnly`; manglende/ugyldig `source` avvises; `fixtureOnly` kontrolleres som før.
+Ingen endring i avgiftsmotoren, godkjenninger eller åpne kildepunkter. Kontroller: se avslutningsrapport (fullt repo: 37 filer, 856 tester, typecheck, eslint og check-docs rene).
+
 ## 4. Gjenværende blokkeringer
 U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001 er åpne og ikke godkjent. Ingen produktstandard for transport er godkjent utover ECON-001 (8 000, `assumed-default`, må konfigureres av kalleren). ECON-005 er ikke startet.

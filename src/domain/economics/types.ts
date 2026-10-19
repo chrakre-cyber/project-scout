@@ -112,7 +112,7 @@ export type Total =
 export type EstimateReason =
   | "tax_estimate" | "tax_profile_not_approved" | "vat_rules_unapproved" | "rounding_unconfirmed" | "customs_fx_rule_unconfirmed"
   | "customs_fx_fallback_acquisition_rate" | "transport_default_assumed" | "amount_scenario_assumption" | "charges_excluded_by_scenario"
-  | "purchase_price_listing_claim" | "deduction_status_dealer_stated" | "deduction_rule_unapproved" | "ev_exemption_assumed" | "fx_dates_missing";
+  | "purchase_price_listing_claim" | "deduction_status_dealer_stated" | "deduction_rule_unapproved" | "ev_exemption_assumed" | "fx_dates_missing" | "assumed_default_amount";
 
 export interface TaxLine {
   /** `approved` = avgiftsmotoren ga `calculated`; `estimate` = `calculated_unverified`; `blocked` = ingen avgift. */

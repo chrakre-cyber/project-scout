@@ -18,6 +18,7 @@ import {
 const VAT_RATE: Rat = { n: 25n, d: 100n };
 /** R-IMP-VAT-003 (E1X): fritaksbeløp for elbil fra 2026-01-01. Anvendelse ved innførsel og målt beløp er uavklart. */
 const EV_EXEMPTION_THRESHOLD: Rat = fromInt(300_000n);
+const FX_SOURCE_KINDS: readonly FxQuote["source"]["kind"][] = ["official_customs", "bank", "dealer_entered", "fixture"];
 const AMOUNT_BASES: readonly AmountBasis[] = ["dealer_entered", "quoted", "assumed_default", "scenario_assumption"];
 
 const isIsoDate = (s: unknown): s is string => {
@@ -51,6 +52,7 @@ function amount(c: Ctx, field: string, s: unknown, allowZero: boolean): Rat | nu
 function amountInput(c: Ctx, field: string, a: AmountInput | undefined): Rat | null {
   if (!a || typeof a !== "object" || !AMOUNT_BASES.includes(a.basis)) { block(c, "invalid_amount", `${field}: beløp og grunnlag (basis) kreves`, field); return null; }
   if (a.basis === "scenario_assumption") c.estimate.add("amount_scenario_assumption");
+  if (a.basis === "assumed_default") c.estimate.add("assumed_default_amount");
   return amount(c, field, a.amount, true);
 }
 
@@ -75,7 +77,8 @@ function checkQuote(c: Ctx, role: "acquisition" | "customs", q: FxQuote, currenc
   if (q.pair !== `${currency}/NOK`) return bad(`kursparet ${String(q.pair)} samsvarer ikke med ${currency}/NOK`);
   const rate = parseDecimal(q.rate);
   if (!rate || cmp(rate, MIN_RATE) < 0 || cmp(rate, MAX_RATE) > 0) return bad("kurs ugyldig eller utenfor teknisk grense");
-  if (q.fixtureOnly && !allowFixture) return bad("fixture-/testkurs er ikke en produksjonskurs");
+  if (!q.source || !FX_SOURCE_KINDS.includes(q.source.kind)) return bad("kursens kilde (source.kind) mangler eller er ugyldig");
+  if ((q.fixtureOnly || q.source.kind === "fixture") && !allowFixture) return bad("fixture-/testkurs er ikke en produksjonskurs");
   for (const k of ["effectiveAt", "quotedAt", "validUntil"] as const) {
     const v = q[k];
     if (v !== null && v !== undefined && !isIsoDate(v)) return bad(`${k} er ikke en gyldig ISO-dato`);
@@ -228,8 +231,14 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   if (!["applies", "not_applicable", "unknown"].includes(evRaw)) { block(c, "invalid_amount", "evExemption: ugyldig verdi", "evExemption"); }
   let evMode: EconomicsResult["importVat"]["evExemption"] = "not_applicable_vehicle";
   const exemptionOptions: Array<"no_exemption" | "with_exemption" | "single"> = [];
-  if (!isBev) {
-    if (powertrain === null) c.incomplete.push("powertrain_unknown_ev_exemption_unresolved");
+  if (powertrain === null) {
+    // Ukjent drivlinje: elbil er fortsatt mulig, så fritaksusikkerheten bevares (nedre grense bygger på laveste mulige mva.).
+    evMode = evRaw;
+    c.incomplete.push("powertrain_unknown_ev_exemption_unresolved");
+    if (evRaw === "not_applicable") exemptionOptions.push("no_exemption");
+    else exemptionOptions.push("no_exemption", "with_exemption");
+    if (evRaw === "applies") c.estimate.add("ev_exemption_assumed");
+  } else if (!isBev) {
     exemptionOptions.push("single");
   } else {
     evMode = evRaw;
@@ -295,7 +304,9 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   else if (!vatExact && insurance !== null) missing.push("import_vat_rounding_tie");
   if (taxL.totalRegistrationTaxesNok === null) missing.push("total_registration_taxes");
   const baseKnown = (acqNok ?? ZERO) + (transportNok ?? ZERO) + (insuranceNok ?? ZERO) + (taxL.totalRegistrationTaxesNok ?? ZERO) + round(c, "øvrige kostnader", others);
-  const exact = missing.length === 0 && vatExact;
+  // Avrundingslikhet i øvrige kostnader oppdages først her: totalene skal da ikke være entydige.
+  if (c.tieHit && vatExact) missing.push("rounding_tie_unresolved");
+  const exact = missing.length === 0 && vatExact && !c.tieHit;
   const label = (id: string) => (id === "with_exemption" ? "med elbilfritak (antatt)" : id === "no_exemption" ? "uten elbilfritak" : "");
   let cash: Total;
   let landed: Total;
