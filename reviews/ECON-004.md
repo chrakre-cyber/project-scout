@@ -85,3 +85,5 @@ Se `reviews/ECON-004-implementering-runde34.md` (runde 34): kodeendringer basert
 Se `reviews/ECON-004-r34-FIX1-retting.md`: rettingsrunde etter uavhengig review av afdc9f0 (to P2). Ikke parametergodkjenning.
 
 Se `reviews/ECON-004-r34-FIX2-retting.md` (rettingsrunde etter review av 33d2fb9) med sluttmatrise (ferdig / blokkerer godkjenning / kan utsettes).
+
+FIX2-review (`reviews/ECON-004-r34-FIX2-review-7378368.md`) registrert: P2 lukket. Beslutningsgrunnlag for avslutning: `reviews/ECON-004-beslutningsgrunnlag.md`.
