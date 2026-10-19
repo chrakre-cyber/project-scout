@@ -11,10 +11,12 @@ import { add, dec, decInt, floorInt, max0, min, mul, sub, toExactString, toSafeN
 import { compareIso, lastDayOfMonth, parseIsoDate } from "./dates";
 import { TAX_PROFILES, type TaxProfile } from "./profile-no-2026-a";
 import type {
-  AgeDeductionResult, BlockCode, Blocker, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, ValidationStatus, Warning,
+  AgeDeductionResult, BlockCode, Blocker, EstimateReason, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, ValidationStatus, Warning,
 } from "./types";
 
 const VERIFIED_WEIGHT_BASES = new Set(["eu_type_approval_minimum_mass", "vehicle_register"]);
+/** Vektgrunnlag som bare er referanse/ukjent (ECON-001 §11: «reference-only» blokkerer fullt krav): gir estimat, aldri godkjent beløp. `dealer_entered` er en forhandleroppgave og følger samme linje som forhandleroppgitt drivlinje (advarsel). */
+const REFERENCE_ONLY_WEIGHT_BASES = new Set(["reference_listing", "unverified"]);
 
 export function classifyPowertrain(p: TaxInput["propulsion"]): TaxPowertrain | null {
   if (p.pistonCombustionEngine === null || p.externallyChargeable === null) return null;
@@ -260,8 +262,13 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   const applied = [prof.parameters.generalWeight.ruleRef, ...(powertrain === "bev" ? ["R-OTA-007"] : [prof.parameters.combustionWeight.ruleRef, prof.parameters.co2RuleRef]), ...(powertrain === "phev" ? ["R-OTA-005"] : []), ...(isNew ? [] : [prof.deductionRuleRef]), prof.parameters.scrappageRuleRef, prof.parameters.rounding.ruleRef];
   const appliedRules = [...new Set(applied)].map((ruleRef) => ({ ruleRef, evidence: prof.ruleEvidence[ruleRef] ?? ("E1P" as const) }));
   const weakestRuleEvidence: "E1" | "E1P" = appliedRules.some((r) => r.evidence === "E1P") ? "E1P" : "E1";
-  const approved = prof.approval.approved && prof.approval.class1References > 0 && weakestRuleEvidence === "E1";
-  const validation: ValidationStatus = { status: approved ? "approved" : "estimate_not_approved", profileApproved: prof.approval.approved, class1References: prof.approval.class1References, weakestRuleEvidence, appliedRules };
+  // Skill godkjent regelprofil fra kvaliteten/entydigheten i inputene: et estimat blir aldri «approved» fordi profilen er det.
+  const estimateReasons: EstimateReason[] = [];
+  if (REFERENCE_ONLY_WEIGHT_BASES.has(input.norwegianTaxWeight.basis)) estimateReasons.push("weight_reference_only");
+  if (monthSensitivity) estimateReasons.push("first_registration_date_sensitive");
+  const inputResolution: "resolved" | "estimate" = estimateReasons.length === 0 ? "resolved" : "estimate";
+  const approved = prof.approval.approved && prof.approval.class1References > 0 && weakestRuleEvidence === "E1" && inputResolution === "resolved";
+  const validation: ValidationStatus = { status: approved ? "approved" : "estimate_not_approved", profileApproved: prof.approval.approved, inputResolution, estimateReasons, class1References: prof.approval.class1References, weakestRuleEvidence, appliedRules };
   return {
     status: approved ? "calculated" : "calculated_unverified",
     profile: profileRef(prof),

@@ -157,9 +157,17 @@ export interface ImplementationConclusion {
  * kilde-belagte regler, men IKKE godkjent og ikke validert mot klasse 1-referanse — må ikke presenteres som godkjent/validert avgift.
  * `approved` kan bare oppstå når profilen er godkjent OG har klasse 1-referanse OG alle anvendte regler er E1 (ikke tilfelle i dag).
  */
+/** Årsaker til at et beløp er et estimat selv om regelprofilen er godkjent (kvalitet/entydighet i inputene, ikke regelgrunnlaget). */
+export type EstimateReason = "weight_reference_only" | "first_registration_date_sensitive";
+
 export interface ValidationStatus {
+  /** `approved` krever BÅDE godkjent regelprofil (+ klasse 1, E1) OG entydig, verifisert input (`inputResolution = "resolved"`). */
   status: "estimate_not_approved" | "approved";
+  /** Regelprofilen (satser/regler) er godkjent. Signalet er skilt fra `inputResolution`: en godkjent profil gjør ikke et estimat til et godkjent beløp. */
   profileApproved: boolean;
+  /** `resolved`: ingen kjent inputusikkerhet som endrer kravet. `estimate`: se `estimateReasons`; punktbeløpet er ikke et godkjent sluttkrav. */
+  inputResolution: "resolved" | "estimate";
+  estimateReasons: EstimateReason[];
   class1References: number;
   weakestRuleEvidence: "E1" | "E1P";
   appliedRules: Array<{ ruleRef: string; evidence: "E1" | "E1P" }>;

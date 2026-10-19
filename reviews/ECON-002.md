@@ -666,5 +666,8 @@ Alle regler motoren anvender er nå **E1 med E1-kilder, `validity.from`, `govern
 ### 24.6 Kontroller
 `check-docs.mjs` OK; `npx vitest run` — 32 filer, 750 tester bestått; typecheck og lint rene. Ikke kjørt: build, e2e, DB.
 
+## 25. Runde 15 — retting av to P2-funn fra uavhengig review (19.10.2026)
+Codex-review av `a42a30b` ga to P2-funn: uverifisert referansevekt og et datofølsomt punktbeløp kunne få `approved`/`calculated` når profilen godkjennes. Rettet ved å skille godkjent regelprofil (`profileApproved`) fra inputenes entydighet (`inputResolution`, `estimateReasons`); estimat og sensitivitet er bevart, men ikke approved. Detaljer, tester og kontroller: `reviews/ECON-002-rettingsrapport-P2.md`. Ingen satser endret; ingen parametere godkjent; produksjonsprofilen er fortsatt ikke godkjent; `dealer_entered` vekt-policy er flagget for neste review.
+
 **Sluttstatus: REVIEW.**
 
