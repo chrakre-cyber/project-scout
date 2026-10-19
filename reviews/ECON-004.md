@@ -61,5 +61,8 @@ Se `reviews/ECON-004-kildejustering.md` (endringsrapport) og `docs/econ/landed-c
 ### SRC1-retting
 Se `reviews/ECON-004-SRC1-retting.md` (to P2: akseptdato uavhengig av kursgren; mva-kanaler forenlige med akseptert fradragsstatus).
 
+### SRC1-FIX1-review og gjenstående behov
+Uavhengig review av `bd67c8d`: `reviews/ECON-004-SRC1-FIX1-review-bd67c8d.md` (begge P2 lukket, ingen nye blokkerende funn). Prioritert oversikt over gjenstående kilde- og godkjenningsbehov: `reviews/ECON-004-gjenstaende-behov.md`.
+
 ## 4. Gjenværende blokkeringer
 U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001 er åpne og ikke godkjent. Ingen produktstandard for transport er godkjent utover ECON-001 (8 000, `assumed-default`, må konfigureres av kalleren). ECON-005 er ikke startet.
