@@ -1,5 +1,7 @@
 # ECON-004 — satsvedtak, meldingsformat og registerrettelser (19.10.2026)
 
+> **KORRIGERT 19.10.2026 (runde 32, se `reviews/ECON-004-kildevurdering-6.md`):** påstanden om at ingen kilde avgjør målegrunnlaget for 300 000-grensen (R-IMP-VAT-004 E0) var feil for ordinær import — Tolletatens bilimportside (T81) har regelen i serialiserte sidedata; R-IMP-VAT-004 er nå E1P (delvis). Tollsats (ordinær 0, T83) og engangsavgift utenfor innførselsgrunnlaget (rettsanvendelse) er også besvart. Rapportens øvrige innhold og U-013 står.
+
 **Status: kildevurdering og registerrettelser. Ingen kodeendring, ingen fixture-endring, ingen parametergodkjenning, ingen økonomiflagg (alle `false`).** ECON-004 forblir REVIEW; ECON-002 og ECON-003 er uendret; ECON-005 er ikke startet. U-013 forblir åpen. Evidensnivå i registeret følger lest tekst og er skilt fra parametergodkjenning (ingen regel har `parameterApproval`).
 
 ## 1. Pakke og identitet

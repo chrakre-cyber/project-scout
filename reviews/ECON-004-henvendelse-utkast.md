@@ -1,5 +1,7 @@
 # UTKAST — felles henvendelse (ERSTATTET, IKKE SENDT)
 
+> **TRUKKET TILBAKE 19.10.2026 — IKKE SEND** (se kildevurdering 6).
+
 > **Erstattet** av to separate utkast: `ECON-004-henvendelse-skatteetaten-utkast.md` og `ECON-004-henvendelse-tolletaten-utkast.md`.
 
 **Status:** utkast til Christians vurdering. Ikke sendt, ikke journalført. Avsender, firma og kontaktinformasjon er plassholdere og må fylles inn av Christian. Ingen person- eller kundedata er med.

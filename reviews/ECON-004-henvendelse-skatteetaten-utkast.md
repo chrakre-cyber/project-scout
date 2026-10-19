@@ -1,5 +1,7 @@
 # UTKAST — henvendelse til Skatteetaten (IKKE SENDT)
 
+> **TRUKKET TILBAKE 19.10.2026 — IKKE SEND.** Flere spørsmål er besvart av kilder som er lest etter at utkastet ble skrevet (se `reviews/ECON-004-kildevurdering-6.md`). Gjenstående, snevre restspørsmål er listet i § 11 der.
+
 **Status:** utkast til Christians vurdering. Ikke sendt. Avsender, firma og kontaktinformasjon er plassholdere. Ingen person- eller kundedata.
 
 **Til:** Skatteetaten

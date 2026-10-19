@@ -28,3 +28,5 @@ Status: REVIEW. Ingen regel er godkjent; alle økonomiflagg (`vatRulesApproved`,
 
 ## Avrunding (U-013)
 Uendret åpen. `UNCONFIRMED_HALF_UP` er en fixturekonvensjon. Likhet (x,5) gir nedre grense og kandidater.
+
+> **Merknad 2026-10-19 (runde 32, ingen kodeendring):** beskrivelsen av `evThresholdBasis = unresolved` over er koden slik den er. Kildene gir nå støtte for at ordinær innførsel måler 300 000-grensen mot tollverdien (R-IMP-VAT-004 E1P), ordinær tollsats for personbil er 0 (T83), og engangsavgift inngår ikke i innførselsgrunnlaget (rettsanvendelse). Foreslåtte kodeendringer: `reviews/ECON-004-kildevurdering-6.md` § 10.

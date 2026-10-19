@@ -77,3 +77,5 @@ Se `reviews/ECON-004-kildevurdering-4.md`: 25 % har primærbelegg (Stortingets v
 U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001 er åpne og ikke godkjent. Ingen produktstandard for transport er godkjent utover ECON-001 (8 000, `assumed-default`, må konfigureres av kalleren). ECON-005 er ikke startet.
 
 Se `reviews/ECON-004-kildevurdering-5.md` (19.10.2026): ajourført vedtak (T80) viser per hentedato uendret 25 % (ordlyd lik T76/T77; ingen garanti for fremtid/2027); bilimportsidene (T81/T82) gjelder privatpersoner og dekker ikke tollsats, elbilgrense eller avrunding. Henvendelsesutkast (ikke sendt): `reviews/ECON-004-henvendelse-utkast.md`. Alle flagg false.
+
+Se `reviews/ECON-004-kildevurdering-6.md` (runde 32): korrigering — Tolletatens bilimportside inneholder elbilregelen (bilpris + frakt + forsikring over 300 000, avgift bare av overskytende) i serialiserte sidedata; R-IMP-VAT-004 E0 → E1P (delvis); ordinær tollsats 0 (Tolltariffen 2026 s. 501–502); engangsavgift utenfor innførselsgrunnlaget (rettsanvendelse). Kodeendringer er foreslått, ikke gjort. Avrunding åpen; flagg false; henvendelsene sendes ikke.

@@ -1,0 +1,119 @@
+{
+  "files": [
+    {
+      "path": "acquisition.json",
+      "bytes": 3784,
+      "sha256": "e58f36ea498a752ce283c6f25e03e038df0e788346fcf39bdcd7b5b1379147fb"
+    },
+    {
+      "path": "BILIMPORT_INNHOLD_FRA_SIDEDATA.txt",
+      "bytes": 1865,
+      "sha256": "babc0c6e387e1d49be0afdfce6b3400d96182d06808ac72efc0c0d0a3a78b879"
+    },
+    {
+      "path": "CLAUDE_INSTRUCTIONS.md",
+      "bytes": 2474,
+      "sha256": "508dc19e6eeae197a23f58e256d7c7469d6eabdb211906554725adaf240503f3"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Tolltariffen_2026.pdf",
+      "bytes": 3531984,
+      "sha256": "10419b7fe4cfa937036ae00813fdc59fe51f4e95f02d50284db8fa7f85ce6cd5"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Tolltariffen_2026_side_501.png",
+      "bytes": 211104,
+      "sha256": "cb513b2f0fe508561b814348884f60a7d58174bce99249cd4030a77d4e02ed41"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Tolltariffen_2026_side_502.png",
+      "bytes": 205994,
+      "sha256": "6e5990aeb4d0ed2d80b0ee6cd4abd215d01e6fdb5d5dd9dd17858922e6d3833c"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Tolltariffen_2026_sider_501-502.txt",
+      "bytes": 3760,
+      "sha256": "0098e8fd2e4bf0cb2350d4895c5ae1d79a254e68a42ccdcc119c991cddb8d824"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Faglige_avklaringer_innforselsmva.html",
+      "bytes": 108912,
+      "sha256": "b11f2dbda8a583947c637624eae57cd8c7b42349d791bb8975fee7c229b2704c"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Faglige_avklaringer_innforselsmva.txt",
+      "bytes": 41474,
+      "sha256": "f9d2c4ab8fbca29964e4b3d6cdde8691baa97fe105f61e0a1c8d0e40abad8ec7"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Bilimport_fullside.html",
+      "bytes": 822863,
+      "sha256": "fda63deab96b50f7088ce3da189c8950c73a1964862174161ee4dcd0cc41f5f2"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Bilimport_fullside.txt",
+      "bytes": 5506,
+      "sha256": "b0f922e05a5c7d632b5aea53739fc368d1124fe80e77b98d20cd130803e69e4c"
+    },
+    {
+      "path": "docs/tax/primarkilder/04_Om_tolltariffen.html",
+      "bytes": 788331,
+      "sha256": "c586582754dc50daac69e60e98510ea2deb9885339c6bb4937e030e0d0eb3987"
+    },
+    {
+      "path": "docs/tax/primarkilder/04_Om_tolltariffen.txt",
+      "bytes": 1259,
+      "sha256": "76883e5cffe3b3b03b0dceadcf33004c7cb823dfd0be57e56e21b21c61429693"
+    },
+    {
+      "path": "docs/tax/primarkilder/05_Vareforselshandbok_6-10.html",
+      "bytes": 570045,
+      "sha256": "373f710cf9d84a0a4803c3d9096f4fc2ca7cbd177f9b0f082ebc4415e37028a1"
+    },
+    {
+      "path": "docs/tax/primarkilder/05_Vareforselshandbok_6-10.txt",
+      "bytes": 23112,
+      "sha256": "d0c7eb7feba35beb5306beef357fcfa069a6d8cb728924036ce3d062a4386d6f"
+    },
+    {
+      "path": "docs/tax/primarkilder/06_Vareforselshandbok_6-11.html",
+      "bytes": 533940,
+      "sha256": "52b083f3c05c191f1fd7c25d5c51fcc3a3d8852c653309144721cf31c73a83cc"
+    },
+    {
+      "path": "docs/tax/primarkilder/06_Vareforselshandbok_6-11.txt",
+      "bytes": 11622,
+      "sha256": "6b07b2449e31fc937f97299d087735d7fd09466a56cf8129166fdd7896aa812c"
+    },
+    {
+      "path": "docs/tax/primarkilder/07_Engangsavgift_omlegging_2003.html",
+      "bytes": 419307,
+      "sha256": "775676affe7131538a0e48b7d00be816170881cb79077a431e5243aa5e99b9e8"
+    },
+    {
+      "path": "docs/tax/primarkilder/07_Engangsavgift_omlegging_2003.txt",
+      "bytes": 212699,
+      "sha256": "defb678c976b42e40146a0771a8f29da594730952eff0052ab4bd504435a0ea1"
+    },
+    {
+      "path": "docs/tax/primarkilder/08_Bilimport_tidligere_levert_T81.html",
+      "bytes": 822395,
+      "sha256": "a75ee10dc8f9cf8816d8b86616b0bf3effc1fee9359b8cff2a905bea300d0d4e"
+    },
+    {
+      "path": "docs/tax/primarkilder/08_Bilimport_tidligere_levert_T81.txt",
+      "bytes": 5351,
+      "sha256": "e5c6bcee6f31db3f963d912f653d54edb74852b9403abbb9b3fb7db6c2b08645"
+    },
+    {
+      "path": "docs/tax/primarkilder/MANIFEST.md",
+      "bytes": 5096,
+      "sha256": "8cd55ef3241b7487defb33091673cde590148498038712624aa9b39d0b03f6d1"
+    },
+    {
+      "path": "FUNN_OG_KORRIGERING.md",
+      "bytes": 7681,
+      "sha256": "705d36982038f734dbfb1c8ded167b681beeb45781b5a5ea3e7f8456f262689a"
+    }
+  ]
+}

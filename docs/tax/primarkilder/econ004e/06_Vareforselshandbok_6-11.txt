@@ -1,0 +1,111 @@
+AVLEDET LESEKOPI AV BRØDTEKST. Kan mangle utvidbart innhold som er lagret i scripts. Se egen JSON-lesekopi og HTML-original.
+
+§ 6-11 Poster som ikke skal inngå i tollverdien fastsatt etter § 6-3 - Tolletaten
+Hopp til hovedinnhold
+PRIVATBEDRIFT
+NO
+English
+Norsk
+Deutsch
+MENY
+Hjem
+Verktøy
+Regelverk
+Håndbøker
+Vareførselshåndboken
+§ 6-11 Poster som ikke skal inngå i tollverdien fastsatt etter § 6-3
+§ 6-11 Poster som ikke skal inngå i tollverdien fastsatt etter § 6-3
+§ 6-11. Poster som ikke skal inngå i tollverdien fastsatt etter § 6-3
+(1) Tollverdien fastsatt etter § 6-3, jf. § 6-10, skal ikke omfatte følgende poster, såfremt de er adskilt eller kan adskilles fra prisen som faktisk er betalt eller skal betales for den innførte varen:
+a. vederlag for konstruksjon, oppføring, montering, vedlikehold eller teknisk bistand som er utført i Norge på de innførte varene
+b. vederlag for transport eller forsikring av varene i Norge
+c. tollavgift og andre avgifter i Norge
+d. renter som kjøperen betaler etter skriftlig finansieringsordning for kjøpet av den innførte varen, uansett om finansieringen ytes av selgeren eller andre, dersom kjøperen på anmodning kan påvise at slike varer faktisk selges til den prisen som kjøperen faktisk har betalt eller skal betale, og at den angitte rentesatsen ikke overstiger det rentenivået som er vanlig for slike finansieringsordninger i det landet og på det tidspunktet finansieringen ytes
+e. innkjøpsprovisjon
+f. vederlag for retten til å reprodusere de innførte varer i Norge
+g. avgifter pålagt varen i eksportlandet, såfremt det godtgjøres at varen er blitt eller vil bli fritatt fra disse til kjøperens fordel.
+(2) Departementet kan gi forskrift om kostnader som ikke skal inngå i tollverdien etter denne paragrafen.
+Innholdsfortegnelse
+Vederlag for konstruksjon, oppføring mv.
+Vederlag for transport eller forsikring i Norge
+Tollavgift og andre avgifter i Norge
+Renter
+Innkjøpsprovisjon
+Vederlag for retten til å reprodusere innførte varer
+Avgifter i eksportlandet
+Vareførselsloven § 6-11 omhandler hovedsakelig elementer som kan trekkes ut av prisen når tollverdien skal fastsettes etter metoden i § 6-3. Vilkåret er at elementene kan adskilles fra prisen. I dette ligger at importøren må kunne avklare det økonomiske omfanget av elementene på en måte som tollmyndighetene kan akseptere.
+Elementa som på visse vilkår kan trekkes ut er:
+Vederlag for arbeid som er utført i Norge på de innførte varene
+Transport- og forsikringskostnader i Norge
+Tollavgift og andre avgifter i Norge
+Renter
+Innkjøpsprovisjon
+Vederlag for retten til å reprodusere de innførte varene
+Avgifter i eksportlandet
+Bestemmelsen viderefører tolloven 2007 § 7-18.
+Vederlag for konstruksjon, oppføring mv.
+Hvis vederlag for konstruksjon, oppføring, montering, vedlikehold eller teknisk bistand vedrørende de innførte varene er inkludert i varenes pris, kan vederlaget holdes utenfor tollverdien som beregnes etter § 6-3, jf. § 6-11 første ledd bokstav a.
+Dette omfatter for eksempel monteringskostnader for industrielle anlegg, maskiner og utstyr. Opplistingen av begreper er ikke uttømmende, slik at også lignende arbeid kan omfattes.
+Det er kostnader til arbeid som utføres på eller tilknyttet de innførte varer i Norge (og som er inkludert i prisen for varen) som kan trekkes ut av tollverdien. Det er ikke selve innførselstidspunktet som er avgjørende, men at arbeidet er utført i Norge. Arbeidet kan gjerne være utført før varene innføres, for eksempel at det støpes et fundament for en maskin.
+Vederlag for transport eller forsikring i Norge
+Vederlag for transport og forsikring i Norge, dvs. etter innførselsstedet, kan holdes utenfor tollverdien fastsatt etter § 6-3 selv om vederlaget inngår i prisen for varen, jf. § 6-11 første ledd bokstav b.
+Bestemmelsen kan ses i sammenheng med transportkostnadene til innførselsstedet som skal legges til etter § 6-10.
+Tollavgift og andre avgifter i Norge
+Tollavgift og andre avgifter i Norge som er inkludert i prisen for varene, kan trekkes ut ved beregning av tollverdi etter § 6-3, jf. § 6-11 første ledd bokstav c.
+For tollavgift er dette i første rekke aktuelt når leveringsvilkår for varene er DDP (Delivered Duty Paid), også kalt tollfranko. Eventuell tollavgift er da inkludert i prisen for varene, og må trekkes ut for å komme frem til beregningsgrunnlaget. Andre avgifter er mest aktuelt hvis prisen inkluderer norsk merverdiavgift. Dette kan være tilfelle i såkalte filialsaker, hvor prisen etter § 6-3 kan være den prisen den norske filialen fakturerer til sluttkunden i Norge.
+Renter
+På visse vilkår kan renter holdes utenfor beregning av tollverdi etter § 6-3, jf. § 6-11 første ledd bokstav d.
+Dette dreier seg om tilfeller hvor partene i kjøpekontrakten har avtalt en finansieringsordning i kontrakten for varene. Kjøper har eksempelvis fått utsettelse med å betale kjøpesummen mot å betale renter til selgeren. Rentene er da ikke betaling for varene, men for kreditt. Vilkårene for at rentene kan trekkes ut er at kjøperen på oppfordring fra tollmyndighetene må kunne påvise at finansieringskostnaden i realiteten ikke innebærer betaling for varen, og at rentesatsen ikke overstiger det rentenivået som er vanlig for slike transaksjoner.
+Problemstillingen har vært behandlet i rettspraksis, se LB-2002-1167 (Kolberg Motors).
+Innkjøpsprovisjon
+Innkjøpsprovisjon som er pålagt kjøperen og inkludert i prisen kan trekkes ut ved fastsettelsen av tollverdien etter § 6-3, jf. § 6-11 første ledd bokstav e. Dette kan være aktuelt i de sjeldne tilfellene hvor selgeren av varene også har tatt med innkjøpsprovisjon i prisen.
+Hva som regnes som innkjøpsprovisjon er nærmere omtalt i § 6-10.
+Vederlag for retten til å reprodusere innførte varer
+Hvis vederlag for retten til å reprodusere innførte varer i Norge er inkludert i prisen for varene, kan vederlaget trekkes ut ved beregning av tollverdi etter § 6-3, jf. § 6-11 første ledd bokstav f.
+Bakgrunnen for regelen er at vederlaget ikke er for de innførte varene, men for retten til å produsere andre varer.
+Avgifter i eksportlandet
+Avgifter pålagt varen i eksportlandet skal ikke omfattes av tollverdi fastsatt etter § 6-3, hvis kjøperen er eller vil bli fritatt for disse, jf. § 6-11 første ledd bokstav g.
+Dette har størst betydning for merverdiavgift (VAT), men også andre avgifter omfattes. Begrunnelsen for bestemmelsen er at avgiften ikke er en del av prisen for varen, gitt at kjøperen ikke endelig skal belastes avgiften. Det er kjøperen som må sannsynliggjøre at varen er eller vil bli fritatt for avgiften.
+Hvis kjøper ikke skal betale avgiften eller har krav på refusjon av denne i tilfeller hvor betaling for avgiften allerede er overført, vil avgiften ikke utgjøre en del av prisen for varen. Hvis det i avtalen er oppstilt vilkår for at prisen ikke skal inkludere utenlandsk merverdiavgift, må vilkårene være oppfylt på tidspunktet for overgang til fri disponering for å få betydning for tollverdien.
+Vurderingen som må gjøres blir etter dette en slags "totrinnsrakett": Først må det undersøkes om kjøperen har en rett (etter kjøpekontrakten) til å slippe å innbetale eller få refundert avgiften (trinn 1a), samt hvilke vilkår som er stilt for at kjøper skal få sin rett (trinn 1b). Har kjøper en slik rett, blir spørsmålet om vilkårene er oppfylt på tidspunktet for overgang til fri disponering (trinn 2). Dette må vurderes konkret i hvert enkelt tilfelle, og det må fremtre som sannsynlig at kjøperen både har en rett som nevnt, og at nødvendige vilkår er oppfylt på tidspunktet for overgang til fri disponering.
+Noen eksempler kan belyse dette:
+Eksempel 1
+A har kjøpt en bil i utlandet, og ved prosedyren overgang til fri disponering presenterer han en faktura med bilens pris pluss merverdiavgift. Han har fått kreditt hos selgeren, og skal betale innen to uker. Temaet ved fastsettelsen av tollverdien blir hva han skal betale for bilen. Skal han betale også merverdiavgiften? Dette blir en konkret vurdering av avtalen mellom kjøper og selger. Hvis han slipper å betale merverdiavgiften når bilen har gått over til fri disponering i Norge (og kjøperen har fått dokumentasjon for det), vil kjøpekontrakten gi ham en rett (på visse vilkår) til å slippe å betale den utenlandske merverdiavgiften. Avgjørende for fastsettelsen av tollverdien blir da om han på tidspunktet for overgang til fri disponering oppfyller vilkårene. Er vilkåret at bilen har gått over i fri disponering i Norge må det anses å være oppfylt når prosedyren overgang til fri disponering påbegynnes – man bør unngå å vente til bilen er har gått over i fri disponering og så omberegne.
+Eksempel 2
+A har kjøpt en bil i utlandet, og ved prosedyren overgang til fri disponering presenterer han en faktura med bilens pris pluss merverdiavgift. Han har allerede betalt hele beløpet, men sier at han vil få refundert merverdiavgiften. Temaet ved fastsettelsen av tollverdien blir også her hva han (til slutt) skal betale for bilen. Skal han betale også merverdiavgiften? Dette blir en konkret vurdering av avtalen mellom kjøper og selger. Hvis han (til syvende og sist) slipper å betale merverdiavgiften når bilen har gått over i fri disponering i Norge (og kjøperen har fått dokumentasjon for det), vil kjøpekontrakten gi ham en rett (på visse vilkår) til å få refundert den utenlandske merverdiavgiften. Avgjørende for fastsettelsen av tollverdien blir også her om han på tidspunktet for overgang til fri disponering oppfyller vilkårene. I så fall kan avgiften holdes utenfor tollverdien.
+Det vil selvsagt forekomme at tollmyndighetene på tidspunktet for overgang til fri disponering ikke finner det sannsynliggjort at kjøperen har en rett til å slippe og betale den utenlandske merverdiavgiften, eller at det er uklart om han faktisk fyller vilkårene. Et eksempel på en slik situasjon er der kjøperen allerede har returnert attesterte utenlandske eksportdokumenter til selgeren, eller at det ikke fremgår klart av kjøpekontrakten at han har rett til å kjøpe varen uten merverdiavgift. Ved fastsettelsen av tollverdien må da merverdiavgiften inkluderes.
+Får kjøperen i slike tilfeller i ettertid refundert den utenlandske merverdiavgiften fra selgeren, indikerer dette sterkt at han hadde en rett til å kjøpe varen uten merverdiavgift. Kjøperen har da faktisk betalt prisen uten merverdiavgift, og i utgangspunktet vil dette danne grunnlaget for refusjon.
+Vareførselsloven § 6-11
+(åpner i ny fane)
+Forarbeider
+Prop. 237 L (2020-2021) punkt 9.6
+Tidligere bestemmelser og forarbeider
+Tolloven 2007 § 7-18
+Ot.prp. nr. 58 (2006-2007)
+Tolltariffens innledende bestemmelser § 8
+St.prp. nr. 1 (1994-1995)
+Tolltariffens innledende bestemmelser § 5
+St.prp. nr. 1 (1980-1981)
+St.prp. nr. 25 (1979-1980)
+Forskrift 3. desember 1980 nr. 4917 §§ 2 og 9
+Innholdsfortegnelse
+Innledning til Vareførselshåndboken Henvisninger i vareførselshåndboken
+Skriv ut
+Kontakt oss
+Kontakt oss
+Tollsteder
+Nettredaksjonen
+Tips oss anonymt
+Jobb i Tolletaten
+Ledige stillinger(åpner i ny fane)
+Hva gjør vi?
+Om Tolletaten
+Om oss
+Aktuelt fra Tolletaten
+Tolletatens nyhetsbrev
+Nyheter for næringslivet
+Om nettstedet
+Personvern og informasjonskapsler
+Administrer informasjonskapsler
+Driftsstatus (alle systemer)(åpner i ny fane)
+Tilgjengelighet(åpner i ny fane)

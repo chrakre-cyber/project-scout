@@ -1,0 +1,75 @@
+[
+  {
+    "file": "01_Tolltariffen_2026.pdf",
+    "url": "https://www.toll.no/files/e9d43fc8a9d49f811d58e1aa47a752ff12b5560c.pdf",
+    "finalUrl": "https://www.toll.no/files/e9d43fc8a9d49f811d58e1aa47a752ff12b5560c.pdf",
+    "contentType": "application/pdf",
+    "bytes": 3531984,
+    "sha256": "10419b7fe4cfa937036ae00813fdc59fe51f4e95f02d50284db8fa7f85ce6cd5",
+    "retrievedAt": "2026-10-19T15:00:16.634557+00:00"
+  },
+  {
+    "file": "02_Faglige_avklaringer_innforselsmva.html",
+    "url": "https://www.skatteetaten.no/nn/rettskjelder/type/uttalelser/prinsipputtalelser/faglige-avklaringer-mv.-knyttet-til-innforselsmerverdiavgiften/",
+    "finalUrl": "https://www.skatteetaten.no/nn/rettskjelder/type/uttalelser/prinsipputtalelser/faglige-avklaringer-mv.-knyttet-til-innforselsmerverdiavgiften/",
+    "contentType": "text/html; charset=utf-8",
+    "bytes": 108912,
+    "sha256": "b11f2dbda8a583947c637624eae57cd8c7b42349d791bb8975fee7c229b2704c",
+    "retrievedAt": "2026-10-19T15:00:16.378745+00:00"
+  },
+  {
+    "file": "03_Bilimport_fullside.html",
+    "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport?requestedLang=de",
+    "finalUrl": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport?requestedLang=de",
+    "contentType": "text/html",
+    "bytes": 822863,
+    "sha256": "fda63deab96b50f7088ce3da189c8950c73a1964862174161ee4dcd0cc41f5f2",
+    "retrievedAt": "2026-10-19T15:00:17.561794+00:00"
+  },
+  {
+    "file": "04_Om_tolltariffen.html",
+    "url": "https://www.toll.no/no/bedrift/tolltariffen-og-klassifisering/om-tolltariffen",
+    "finalUrl": "https://www.toll.no/no/bedrift/tolltariffen-og-klassifisering/om-tolltariffen",
+    "contentType": "text/html",
+    "bytes": 788331,
+    "sha256": "c586582754dc50daac69e60e98510ea2deb9885339c6bb4937e030e0d0eb3987",
+    "retrievedAt": "2026-10-19T15:00:17.545486+00:00"
+  },
+  {
+    "file": "05_Vareforselshandbok_6-10.html",
+    "url": "https://www.toll.no/no/verktoy/regelverk/handboker/vareforselshandboken/6-10",
+    "finalUrl": "https://www.toll.no/no/verktoy/regelverk/handboker/vareforselshandboken/6-10",
+    "contentType": "text/html",
+    "bytes": 570045,
+    "sha256": "373f710cf9d84a0a4803c3d9096f4fc2ca7cbd177f9b0f082ebc4415e37028a1",
+    "retrievedAt": "2026-10-19T15:02:19.080637+00:00"
+  },
+  {
+    "file": "06_Vareforselshandbok_6-11.html",
+    "url": "https://www.toll.no/no/verktoy/regelverk/handboker/vareforselshandboken/6-11",
+    "finalUrl": "https://www.toll.no/no/verktoy/regelverk/handboker/vareforselshandboken/6-11",
+    "contentType": "text/html",
+    "bytes": 533940,
+    "sha256": "52b083f3c05c191f1fd7c25d5c51fcc3a3d8852c653309144721cf31c73a83cc",
+    "retrievedAt": "2026-10-19T15:02:18.935936+00:00"
+  },
+  {
+    "file": "07_Engangsavgift_omlegging_2003.html",
+    "url": "https://www.regjeringen.no/no/dokumenter/stprp-nr-1-2003-2004-/id138572/?ch=2",
+    "finalUrl": "https://www.regjeringen.no/no/dokumenter/stprp-nr-1-2003-2004-/id138572/?ch=2",
+    "contentType": "text/html; charset=utf-8",
+    "bytes": 419307,
+    "sha256": "775676affe7131538a0e48b7d00be816170881cb79077a431e5243aa5e99b9e8",
+    "retrievedAt": "2026-10-19T15:02:18.894554+00:00"
+  },
+  {
+    "file": "08_Bilimport_tidligere_levert_T81.html",
+    "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport",
+    "finalUrl": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport",
+    "contentType": "text/html",
+    "bytes": 822395,
+    "sha256": "a75ee10dc8f9cf8816d8b86616b0bf3effc1fee9359b8cff2a905bea300d0d4e",
+    "retrievedAt": "2026-10-19T14:22:24.944698+00:00",
+    "role": "Tidligere levert uendret kilde, gjenbrukt for å dokumentere innhold som var oversett i TXT-lesekopien."
+  }
+]

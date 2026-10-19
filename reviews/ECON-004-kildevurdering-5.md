@@ -1,5 +1,7 @@
 # ECON-004 — ajourført satsvedtak og bilimportsider (19.10.2026)
 
+> **KORRIGERT 19.10.2026 (runde 32, se `reviews/ECON-004-kildevurdering-6.md`):** § 3 og § 4 sier at bilimportsiden ikke omtaler elbilgrensen/300 000 — **feil**: innholdet lå i serialiserte sidedata og ble utelatt av TXT-lesekopien. Se kildevurdering 6. Alt om privatpersonflyt, T80 (ajourført vedtak) og betalingssiden står.
+
 **Status: kildevurdering. Ingen kodeendring, fixture-endring, parametergodkjenning eller økonomiflagg (alle `false`).** ECON-004 forblir REVIEW; ECON-002/ECON-003 er uendret; ECON-005 er ikke startet. Henvendelsesutkastet er **ikke sendt**: `reviews/ECON-004-henvendelse-utkast.md`.
 
 ## 1. Pakke

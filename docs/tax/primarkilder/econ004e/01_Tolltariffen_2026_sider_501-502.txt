@@ -1,0 +1,106 @@
+AVLEDET TEKSTUTDRAG. Kolonner må kontrolleres visuelt i PDF/PNG.
+
+PDF-side 501
+XVII
+Import-og
+eksport-
+regulering
+Nr Vareslag
+Tollavgiftsats i pst. a. v. eller i kr pr. kg
+Ordinær Frihandelsavtaler Mengde Henvisninger
+Biler og andre motorkjøretøyer hovedsakelig
+konstruert for transport av personer (unntatt de som
+hører under posisjon 87.02), herunder
+stasjonsvogner og racerbiler.
+.1001 kg,stkkjøretøyer spesielt konstruert for å kjøre på snø- - 0
+.1002 kg,stkkjøretøyer for golfbaner og liknende kjøretøyer- - 0
+- kjøretøyer spesielt konstruert for å kjøre på snø; kjøretøyer
+for golfbaner og liknende kjøretøyer:
+.2102 kg,stknye- - - 0
+.2109 kg,stkbrukte- - - 0
+- - med sylindervolum høyst 1 000 cm³:
+.2202 kg,stknye- - - 0
+.2209 kg,stkbrukte- - - 0
+- - med sylindervolum over 1 000 cm³, men høyst 1 500 cm³:
+.2302 kg,stknye- - - 0
+.2309 kg,stkbrukte- - - 0
+- - med sylindervolum over 1 500 cm³, men høyst 3 000 cm³:
+.2402 kg,stknye- - - 0
+.2409 kg,stkbrukte- - - 0
+- - med sylindervolum over 3 000 cm³:
+- andre kjøretøyer, utelukkende med stempeldrevet
+forbrenningsmotor med gnisttenning:
+.3102 kg,stknye- - - 0
+.3109 kg,stkbrukte- - - 0
+- - med sylindervolum høyst 1 500 cm³:
+.3202 kg,stknye- - - 0
+.3209 kg,stkbrukte- - - 0
+- - med sylindervolum over 1 500 cm³, men høyst 2 500 cm³:
+.3302 kg,stknye- - - 0
+.3309 kg,stkbrukte- - - 0
+- - med sylindervolum over 2 500 cm³:
+- andre kjøretøyer, utelukkende med stempeldrevet
+forbrenningsmotor med kompresjonstenning (diesel eller
+semidiesel):
+.4001 kg,stknye- - 0
+.4009 kg,stkbrukte- - 0
+- andre kjøretøyer, med både stempeldrevet
+forbrenningsmotor med gnisttenning og elektrisk motor
+som fremdriftsmotorer, unntatt slike som kan lades ved
+tilslutning til en ekstern elektrisk energikilde:
+87.03
+87-2
+Tolltariffen 2026
+
+PDF-side 502
+XVII
+Import-og
+eksport-
+regulering
+Nr Vareslag
+Tollavgiftsats i pst. a. v. eller i kr pr. kg
+Ordinær Frihandelsavtaler Mengde Henvisninger
+.5001 kg,stknye- - 0
+.5009 kg,stkbrukte- - 0
+- andre kjøretøyer, med både stempeldrevet
+forbrenningsmotor med kompresjonstenning (diesel eller
+semidiesel) og elektrisk motor som fremdriftsmotorer,
+unntatt slike som kan lades ved tilslutning til en ekstern
+elektrisk energikilde:
+.6001 kg,stknye- - 0
+.6009 kg,stkbrukte- - 0
+- andre kjøretøyer, med både stempeldrevet
+forbrenningsmotor med gnisttenning og elektrisk motor
+som fremdriftsmotorer, og som lades ved tilslutning til en
+ekstern elektrisk energikilde:
+.7001 kg,stknye- - 0
+.7009 kg,stkbrukte- - 0
+- andre kjøretøyer, med både stempeldrevet
+forbrenningsmotor med kompresjonstenning (diesel eller
+semidiesel) og elektrisk motor som fremdriftsmotorer, og
+som lades ved tilslutning til en ekstern elektrisk
+energikilde:
+.8001 kg,stknye- - 0
+.8009 kg,stkbrukte- - 0
+- andre kjøretøyer, utelukkende med elektrisk
+fremdriftsmotor:
+0 kg,stkellers-.9000
+Motorkjøretøyer for transport av gods.
+0 kg,stkdumpere konstruert for bruk utenfor veinettet-.1000
+.2101 kg,stkunderstell med motor og førerhus- - - 0
+.2102 kg,stkandre, nye- - - 0
+.2109 kg,stkandre, brukte- - - 0
+- - med totalvekt høyst 5 tonn:
+.2201 kg,stkunderstell med motor og førerhus- - - 0
+.2202 kg,stkandre, nye- - - 0
+.2209 kg,stkandre, brukte- - - 0
+- - med totalvekt over 5 tonn, men høyst 20 tonn:
+.2301 kg,stkunderstell med motor og førerhus- - - 0
+.2302 kg,stkandre, nye- - - 0
+.2309 kg,stkandre, brukte- - - 0
+- - med totalvekt over 20 tonn:
+- andre, utelukkende med stempeldrevet forbrenningsmotor
+med kompresjonstenning (diesel eller semidiesel):
+87.04
+87-3
+Tolltariffen 2026
