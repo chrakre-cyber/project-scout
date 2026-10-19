@@ -50,8 +50,8 @@ export interface TaxProfile {
   /** Brukes når registrering skjer 20 år eller mer etter første registrering (1. januar-regelen, forskrift § 3-3). */
   deductionRuleRef: string;
   sources: readonly string[];
-  /** `class1References`: antall klasse 1-referanser (docs/tax/references.json) som dekker profilen. 3 i dag (PHEV, EV, diesel). */
-  approval: { approved: boolean; class1References: number; reason: string };
+  /** `class1References`: antall klasse 1-referanser (docs/tax/references.json) som dekker profilen. 3 i dag (PHEV, EV, diesel); profilen er godkjent 2026-10-19 innen dokumentert omfang. */
+  approval: { approved: boolean; class1References: number; reason: string; approvedBy?: string; approvedDate?: string; approvedAtCommit?: string };
   /** Regelnivå (docs/tax/rules.json evidenceLevel) per regel profilen anvender; en test holder dem lik registeret. */
   ruleEvidence: Readonly<Record<string, "E1" | "E1P">>;
   openItems: readonly string[];
@@ -108,9 +108,12 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     "R-OTA-014": "E1", // sluttkravet (§ 10-4-4; forarbeid T50, omnummerering T52); mellomledd U-012 utenfor
   },
   approval: {
-    approved: false,
+    approved: true,
     class1References: 3,
-    reason: "Ingen eksplisitt parameterApproval. Tre klasse 1-referanser (PHEV, EV og diesel, 18.10.2026) er registrert; klasse 1 er ikke godkjenning, og alle anvendte regler er nå E1; profilen er likevel ikke godkjent (docs/tax/rules.json foundationStatus).",
+    approvedBy: "Christian",
+    approvedDate: "2026-10-19",
+    approvedAtCommit: "cc738ef73fdd0304b2a9fb4546870884b5b0f1a9",
+    reason: "Uttrykkelig godkjent av Christian 2026-10-19 for de syv reglene R-OTA-001, -002 (WLTP, hele g/km), -005, -007, -010 (trinndato finnes, under 20 år), R-IMP-OTH-001 og R-OTA-014 (sluttkravet), innen dokumentert og reviewet omfang (docs/tax/rules.json parameterApproval). Gjelder ikke: NEDC/desimal-CO₂ (R-OTA-015), dag 29–31 (R-OTA-016), 20-årsminimum, mellomavrunding (U-012), MVA (U-013). Godkjent profil gir bare approved-beløp når inputene er entydige og dokumenterte (inputResolution = resolved); udokumentert/referansevekt og datofølsomme beløp er estimat.",
   },
   openItems: [
     "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
@@ -121,7 +124,7 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     "R-OTA-015: NEDC, egenvekt/10 og desimal-CO₂ er blokkert (avrunding av desimaler mangler kilde)",
     "PHEV: anvendelsen hviler på det tekniske vilkåret i § 3 og på forskrift § 3-1 (E1-tekst); forutsetter dokumentert stempeldrevet motor og ekstern lading per kjøretøy",
     "Ingen eksplisitt sluttdato for 2026-satsene (intern sikkerhetssperre); endringer etter hentedato 2026-10-18 og lov 19 juni 2026 nr. 41 er ikke kontrollert",
-    "Ingen parameter er godkjent og ingen klasse 1-referanse finnes",
+    "Godkjent av Christian 2026-10-19 innen omfanget over; PB-BEN og PB-HEV har ingen egen klasse 1-referanse (samme beregningsvei som diesel)",
   ],
 
 };

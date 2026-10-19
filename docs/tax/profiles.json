@@ -98,7 +98,7 @@
     "registrationWish": "personbil (M1)",
     "documentedVehicleClass": "M1",
     "norwegianTaxGroup": "a",
-    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+    "approvedCalculationProfile": "NO-OTA-2026-A-PB: regler godkjent av Christian 2026-10-19 innen dokumentert omfang (ingen NEDC/desimal-CO₂, ingen dag 29–31-vindu, under 20 år; estimat ved udokumentert vekt eller datofølsomt beløp); klasse 1: C1-GR-20261018-03"
    },
    "rules": [
     "R-OTA-001",
@@ -258,7 +258,7 @@
     "registrationWish": "personbil (M1)",
     "documentedVehicleClass": "M1",
     "norwegianTaxGroup": "a",
-    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+    "approvedCalculationProfile": "NO-OTA-2026-A-PB: regler godkjent av Christian 2026-10-19 innen dokumentert omfang (ingen NEDC/desimal-CO₂, ingen dag 29–31-vindu, under 20 år; estimat ved udokumentert vekt eller datofølsomt beløp); klasse 1: C1-GR-20261018-01"
    },
    "rules": [
     "R-OTA-001",
@@ -340,7 +340,7 @@
     "registrationWish": "personbil (M1)",
     "documentedVehicleClass": "M1",
     "norwegianTaxGroup": "a",
-    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+    "approvedCalculationProfile": "NO-OTA-2026-A-PB: regler godkjent av Christian 2026-10-19 innen dokumentert omfang (ingen NEDC/desimal-CO₂, ingen dag 29–31-vindu, under 20 år; estimat ved udokumentert vekt eller datofølsomt beløp); klasse 1: C1-GR-20261018-02"
    },
    "rules": [
     "R-OTA-001",

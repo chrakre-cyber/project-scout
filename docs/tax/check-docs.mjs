@@ -99,7 +99,8 @@ for (const r of rules.rules) {
     let prev = -1;
     for (const b of dp.bands ?? []) { if (b.fromGramKm <= prev && prev !== -1) err(`regel ${r.id}: bånd ikke stigende i ${dp.id}`); prev = b.fromGramKm; if (!(b.rate > 0)) err(`regel ${r.id}: bånd uten sats i ${dp.id}`); }
     if (r.validity?.from && dp.from < r.validity.from && r.validity.from !== dp.from) err(`regel ${r.id}: validity.from ${r.validity.from} etter datedParameter`);
-    if (r.usableAsRuleParameter) err(`regel ${r.id}: datert parameter kan ikke godkjennes uten E1 og klasse 1`);
+    // Godkjenning av regel med datert parameter krever E1-evidens på parameteren OG et klasse 1-tilfelle som dekker regelen (uendret krav; tidligere en blanket-sperre uavhengig av oppfyllelse).
+    if (r.usableAsRuleParameter && (dp.evidence !== "E1" || !refs.cases.some((c) => c.evidenceClass === 1 && c.ruleIds.includes(r.id)))) err(`regel ${r.id}: datert parameter ${dp.id} kan ikke godkjennes uten E1 og klasse 1`);
   }
   // godkjent parameter krever eksplisitte vilkår
   if (r.usableAsRuleParameter || r.parameterApproval?.approved) {

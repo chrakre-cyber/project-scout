@@ -51,9 +51,9 @@ describe("motoren mot observert kalkulatorresultat (18.10.2026)", () => {
         }
       }
     });
-    it(`${run.id}: resultatet er fortsatt et ikke-godkjent estimat (klasse 1 finnes og alle anvendte regler er E1, men profilen er ikke godkjent)`, () => {
+    it(`${run.id}: resultatet er fortsatt et ikke-godkjent estimat (profilen er godkjent, men inputene bruker forhandleroppgitt vekt uten dokumentert grunnlag)`, () => {
       const r = calculateNorwegianVehicleTax(run.input);
-      expect(r.validation).toMatchObject({ status: "estimate_not_approved", profileApproved: false, class1References: 3 });
+      expect(r.validation).toMatchObject({ status: "estimate_not_approved", profileApproved: true, class1References: 3 });
       expect(r.finalClaim?.validation.status).toBe("estimate_not_approved");
     });
   }

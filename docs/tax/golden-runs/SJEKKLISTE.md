@@ -43,7 +43,7 @@ Avviket registreres som **uavklart** til årsaken er undersøkt — det klassifi
 Pluss inputfeil/overføringsfeil, avrundingsrekkefølge (U-012), dag 29–31 (U-009) og eventuell annen kalkulatorlogikk. Bare hvis det dokumenteres (skjermbilde/kilde) at kalkulatorens regler er endret etter 2026-10-18, kan avviket klassifiseres som regelendring — og først etter at årsaken er undersøkt.
 
 ## G. Hva som kreves før en parameter kan godkjennes (alle tre)
-1. **Evidenskrav:** regelen er **E1** (ikke E1P) med E1-kilder. Etter runde 14 er alle regler motoren anvender E1: R-OTA-001, -002 (avgrenset), -005, -007, -010 (avgrenset), R-IMP-OTH-001 og R-OTA-014 (sluttkravet); R-OTA-003 og -004 er E1 men ikke anvendt. R-OTA-015 (NEDC/egenvekt-10) og R-OTA-016 (dag 29–31) er E1P og blokkert. E1 er ikke godkjenning.
+1. **Evidenskrav:** regelen er **E1** (ikke E1P) med E1-kilder. Etter runde 14 er alle regler motoren anvender E1: R-OTA-001, -002 (avgrenset), -005, -007, -010 (avgrenset), R-IMP-OTH-001 og R-OTA-014 (sluttkravet); R-OTA-003 og -004 er E1 men ikke anvendt. R-OTA-015 (NEDC/egenvekt-10) og R-OTA-016 (dag 29–31) er E1P og blokkert. E1 er ikke godkjenning. Status 2026-10-19: de syv anvendte reglene er uttrykkelig godkjent av Christian innen avgrenset omfang (`rules.json` `parameterApproval`).
 2. **Validering:** klasse 1-referanse (en `explicit_inputs`-kjøring er nok for å validere beregningen).
 3. **Uttrykkelig godkjenning** av deg, regel for regel.
 Klasse 1 alene gjør ingen parameter godkjenningsklar. Jeg godkjenner ikke noe.

@@ -1,6 +1,6 @@
 # ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 5: §15)
 
-**Status: REVIEW.** **Runde 14 (§24): R-OTA-014 er E1 for sluttkravet (forarbeid T50, omnummerering T52); alle anvendte regler er E1; ingen parameter godkjent.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for PHEV, EV og diesel (runde 9–10, §19–§20); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Status: REVIEW (2026-10-19, runde 17: sju regler godkjent av Christian innen avgrenset omfang; ikke DONE — se §27).** **Runde 14 (§24): R-OTA-014 er E1 for sluttkravet (forarbeid T50, omnummerering T52); alle anvendte regler er E1; ingen parameter godkjent.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for PHEV, EV og diesel (runde 9–10, §19–§20); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -671,6 +671,42 @@ Codex-review av `a42a30b` ga to P2-funn: uverifisert referansevekt og et datofø
 
 ## 26. Runde 16 — policy for forhandleroppgitt vekt (19.10.2026)
 Policybeslutning (ikke parametergodkjenning): forhandleroppgitt vekt uten dokumentert grunnlag (`dealer_entered`) gir **estimat** med årsak `weight_dealer_entered_undocumented`, aldri `approved`/`calculated` (også med godkjent profil); vektkomponentene merkes som estimat, beregningen og beløpene er uendret. Vekt med dokumentert grunnlag (typegodkjenning/kjøretøyregister) bruker de tilsvarende basisene, også når den er lagt inn manuelt: grunnlaget avgjør. Det åpne policyspørsmålet i §25 er dermed besvart. Detaljer: `reviews/ECON-002-endringsrapport-dealer-entered.md`. Satser, sensitivitet og blokkeringer uendret; ingen parametere godkjent.
+
+## 27. Runde 17 — uttrykkelig parametergodkjenning og endelig status (19.10.2026)
+
+### 27.1 Godkjenning (Christian, 2026-10-19, ved `cc738ef73fdd0304b2a9fb4546870884b5b0f1a9`)
+Godkjent innen dokumentert og reviewet omfang (registrert som `parameterApproval` {approved, approvedBy = Christian, approvedDate = 2026-10-19, scope, basis, exclusions} og `usableAsRuleParameter = true` i `rules.json`; profilen `NO-OTA-2026-A-PB` har `approved = true` med `approvedBy/approvedDate/approvedAtCommit`):
+| Regel | Godkjent omfang |
+|---|---|
+| R-OTA-001 | vektkomponentene for personbil i gruppe a (§ 2; § 3 a 1) |
+| R-OTA-002 | marginale CO₂-bånd, støttet WLTP-behandling med hele g/km |
+| R-OTA-005 | PHEV-behandling med nødvendige tekniske input per kjøretøy |
+| R-OTA-007 | elbilbehandling (bare § 2) |
+| R-OTA-010 | ordinært bruksfradrag; trinndato finnes (ikke dag 29–31-vinduet); under 20 år |
+| R-IMP-OTH-001 | vrakpantavgift 2 400 kr, utenfor bruksfradraget |
+| R-OTA-014 | nedavrunding av sluttkravet til hele kroner |
+**Omfatter ikke:** NEDC/desimal-CO₂ (R-OTA-015), uavklarte datooverløp (R-OTA-016/U-009), 20-årsminimum (kjøretøy 20 år eller eldre er blokkert), mellomavrunding (U-012), MVA (U-013). Omfangsgrensene og blokkeringene er uendret.
+
+### 27.2 Hva godkjent profil betyr i motoren
+Resultatet er `approved`/`calculated` bare når profil godkjent + klasse 1 + E1 **og** inputene er entydige og dokumenterte (`inputResolution = resolved`). Udokumentert forhandlervekt og referansevekt gir estimat; datofølsomme punktbeløp (bare måned som endrer kravet) får ikke approved-status. Golden-/kalkulatorinputene bruker forhandleroppgitt vekt og er derfor estimater i motoren, selv om totalene stemmer (529 069 / 16 748 / 333 723).
+
+### 27.3 Valideringsskript endret (for review)
+`check-docs.mjs` hadde en blanket-sperre («datert parameter kan ikke godkjennes uten E1 og klasse 1») som avviste enhver godkjent regel med datert parameter, uavhengig av om vilkårene var oppfylt. Den er endret til å teste vilkårene den navnga: parameterens `evidence` må være E1 **og** et klasse 1-tilfelle må dekke regelen. Substansen er uendret (E1 + klasse 1 + øvrige portkrav). Negative prøver i en temp-kopi feilet som ønsket (exit 1): E1X-parameter på godkjent regel; godkjent regel uten klasse 1; godkjent regel på E1P; manglende `approvedBy`. **Denne endringen bør ses spesielt i review.**
+
+### 27.4 Vurdering mot akseptkravene — **ikke DONE; status forblir REVIEW**
+Oppfylt: E1-kilder med hash (T40–T52 m.fl.); godkjente parametere for de syv anvendte reglene; EV-/PHEV-regler; marginal CO₂ og sluttavrunding innen omfanget; U-002 og U-005 lukket; de tre gyldne casene som klasse 1-referanser; kontroller grønne (§27.6).
+**Gjenstår konkret:**
+1. **U-003 og U-008** står i ECON-002s backlogg-omfang («U-002/003/005/008») og er fortsatt åpne (E2, ikke lest): U-003 = MVA-håndbok-versjon 2025 vs 2026 (R-DED-001); U-008 = tollkursens syklus (R-IMP-FX-001). De gjelder MVA/FX, utenfor godkjent engangsavgiftsomfang. Krever enten lesing av kildene eller en uttrykkelig scope-flytting (f.eks. til ECON-004) av Christian.
+2. **De uttrykkelig utelatte delene** (NEDC/desimal-CO₂, dag 29–31, 20-årsminimum, mellomavrunding U-012, MVA-avrunding U-013) er dokumentert og blokkert/utenfor, men ikke løst; backlogg-målet «marginal/avrunding» er oppfylt bare for sluttkravet. Må bekreftes som akseptert restomfang eller planlegges.
+3. **TAX-fundamentets DONE-port (`check-docs.mjs`):** krever klasse 1 for hver av de 10 profilene; bare PB-DIE, PB-BEV og PB-PHEV har det (PB-BEN, PB-HEV og alle VB-* mangler), og uløste U-* som berører godkjente regler må være lukket. Fundamentet er derfor fortsatt REVIEW (`foundationStatus`: 7 godkjente, 3 klasse 1).
+4. **Review-belegg for godkjenningscommiten:** denne commiten (profilgodkjenning, endret valideringsskript, oppdaterte tester) er ikke uavhengig reviewet; CLAUDE.md krever review-belegg før DONE.
+5. Historisk ledd for R-OTA-014 (den vedtatte 2007-ordlyden) er ikke lest direkte; ikke blokkerende for E1/godkjenning, men åpent.
+
+### 27.5 Ikke gjort
+ECON-003/004 er ikke startet. Ingen satser eller beregningsresultater er endret.
+
+### 27.6 Kontroller
+`node docs/tax/check-docs.mjs` OK; `npx vitest run` — 33 filer, 765 tester bestått; typecheck og lint rene (se commit). Ikke kjørt: build, e2e, DB.
 
 **Sluttstatus: REVIEW.**
 

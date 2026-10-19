@@ -67,9 +67,10 @@ describe("kilde-belagte parametere stemmer med docs/tax (ingen parallell regelmo
       expect(createHash("sha256").update(readFileSync(join(ROOT, s.repoFile!))).digest("hex"), id).toBe(s.packageSha256);
     }
   });
-  it("profilen er ikke godkjent og ingen parameter er godkjent i foundationStatus", () => {
-    expect(NO_OTA_2026_A_PB.approval.approved).toBe(false);
-    expect(json("rules.json").foundationStatus).toMatchObject({ status: "REVIEW", approvedParameters: 0, class1References: 3 });
+  it("profilen er godkjent (2026-10-19) i samsvar med foundationStatus: sju godkjente parametere, fundamentet fortsatt REVIEW", () => {
+    // Uttrykkelig godkjent av Christian 2026-10-19 (syv regler, avgrenset omfang); fundamentet er fortsatt REVIEW.
+    expect(NO_OTA_2026_A_PB.approval).toMatchObject({ approved: true, approvedBy: "Christian", approvedDate: "2026-10-19", class1References: 3 });
+    expect(json("rules.json").foundationStatus).toMatchObject({ status: "REVIEW", approvedParameters: 7, class1References: 3 });
   });
 });
 
@@ -120,12 +121,12 @@ describe("endelig stortingsvedtak og endringsvedtak (U-011) — tekstbelegg i de
 
 describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent» fordi beregningen lykkes", () => {
   const ok = (over: Partial<TaxInput> = {}, profile?: TaxProfile) => calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-10-18", kind: "expected" }, ...over }), profile);
-  it("hvert vellykket resultat har finalClaim.validation = estimate_not_approved, identisk med toppnivå-validation", () => {
+  it("hvert vellykket golden-resultat (forhandleroppgitt vekt) har finalClaim.validation = estimate_not_approved, identisk med toppnivå-validation, selv med godkjent profil", () => {
     for (const c of GOLDEN_CASES) {
       const r = calculateNorwegianVehicleTax(c.input);
       expect(r.status, c.id).toBe("calculated_unverified");
       expect(r.finalClaim!.validation, c.id).toEqual(r.validation);
-      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: false, class1References: 3, weakestRuleEvidence: "E1" });
+      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: true, inputResolution: "estimate", estimateReasons: expect.arrayContaining(["weight_dealer_entered_undocumented"]), class1References: 3, weakestRuleEvidence: "E1" });
     }
   });
   it("anvendte regler og svakeste nivå følger registeret (BEV: R-OTA-007 i stedet for 002/005; ny motorvogn: ingen R-OTA-010)", () => {
@@ -153,7 +154,7 @@ describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent
     const r = ok({}, allE1);
     expect(r.status).toBe("calculated");
     expect(r.validation!.status).toBe("approved");
-    expect(NO_OTA_2026_A_PB.approval).toMatchObject({ approved: false, class1References: 3 }); // registeret er ikke endret: klasse 1 finnes, men ingen godkjenning
+    expect(NO_OTA_2026_A_PB.approval).toMatchObject({ approved: true, class1References: 3 }); // registeret: godkjent av Christian 2026-10-19
   });
   it("blokkerte resultater har verken finalClaim eller validation", () => {
     const r = ok({ norwegianTaxWeight: { kg: null, basis: "unverified" } });
@@ -314,7 +315,7 @@ describe("CO₂: marginale bånd (T40) og målegrunnlag (§ 3-1)", () => {
   });
   it("PHEV må bruke «vektet kombinert»; vanlig ICE kan ikke bruke det; mangler/ugyldig blokkeres", () => {
     const phev = (method: TaxInput["co2"]["method"], g: number | null = 140): TaxInput => ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "type_approval" }, co2: { gramsPerKm: g, method } });
-    expect(calculateNorwegianVehicleTax(phev("wltp_weighted_combined")).status).toBe("calculated_unverified");
+    expect(calculateNorwegianVehicleTax(phev("wltp_weighted_combined")).status).toBe("calculated");
     expect(codes(calculateNorwegianVehicleTax(phev("wltp_combined")))).toContain("phev_requires_weighted_combined_co2");
     expect(codes(calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: 150, method: "wltp_weighted_combined" } })))).toContain("co2_field_mismatch");
     expect(codes(calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: null, method: "wltp_combined" } })))).toContain("co2_missing");
@@ -329,8 +330,8 @@ describe("CO₂: marginale bånd (T40) og målegrunnlag (§ 3-1)", () => {
     expect(codes(calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: 150, method: "nedc" } })))).toContain("co2_nedc_unsupported");
     expect(codes(calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: null, method: "not_wltp_or_nedc_approved" } })))).toContain("co2_fallback_unsupported");
     expect(codes(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2018-08-31" }, co2: { gramsPerKm: 150, method: "unspecified" } })))).toContain("co2_nedc_unsupported");
-    expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2018-09-01" }, co2: { gramsPerKm: 150, method: "unspecified" } })).status).toBe("calculated_unverified");
-    expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "none", value: null }, co2: { gramsPerKm: 150, method: "unspecified" } })).status).toBe("calculated_unverified");
+    expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2018-09-01" }, co2: { gramsPerKm: 150, method: "unspecified" } })).status).toBe("calculated");
+    expect(calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "none", value: null }, co2: { gramsPerKm: 150, method: "unspecified" } })).status).toBe("calculated");
   });
 });
 
@@ -419,11 +420,11 @@ describe("profilens gyldighet: dokumentert start/slutt er adskilt fra intern sik
     const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2025-12-31", kind: "expected" } }));
     expect(r.status).toBe("blocked");
     expect(codes(r)).toEqual(["no_profile_for_date"]);
-    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-01-01", kind: "expected" } })).status).toBe("calculated_unverified");
+    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-01-01", kind: "expected" } })).status).toBe("calculated");
   });
   it("etter intern sperre: egen kode og tekst som sier «ikke kildedokumentert opphørsdato»", () => {
     const ok = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-12-31", kind: "expected" } }));
-    expect(ok.status).toBe("calculated_unverified");
+    expect(ok.status).toBe("calculated");
     const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2027-01-01", kind: "expected" } }));
     expect(r.status).toBe("blocked");
     expect(codes(r)).toEqual(["profile_internal_limit_exceeded"]);
@@ -435,7 +436,7 @@ describe("profilens gyldighet: dokumentert start/slutt er adskilt fra intern sik
     const r = calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-07-01", kind: "expected" } }), documented);
     expect(codes(r)).toEqual(["profile_not_valid_for_date"]);
     expect(r.blocked[0]!.message).toMatch(/dokumentert gyldig til 2026-06-30/);
-    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-06-30", kind: "expected" } }), documented).status).toBe("calculated_unverified");
+    expect(calculateNorwegianVehicleTax(ice({ norwegianRegistration: { date: "2026-06-30", kind: "expected" } }), documented).status).toBe("calculated");
   });
   it("etter hentedatoen for den konsoliderte vedtaksteksten (2026-10-18) følger en advarsel om ukontrollerte senere endringer", () => {
     expect(NO_OTA_2026_A_PB.ratesVerifiedAsOf).toBe("2026-10-18");
@@ -490,6 +491,7 @@ describe("U-009: dag 29–31 når målmåneden er kortere — kildebelagt vs blo
     const ok = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "month", value: "2025-01" }, norwegianRegistration: { date: "2025-02-27", kind: "expected" } }), profile);
     expect(ok.status).toBe("calculated_unverified");
     expect(ok.monthSensitivity).toMatchObject({ alternativeWorkingDate: "2025-01-31", alternativeDeductionPercent: 0 });
+    expect(ok.validation).toMatchObject({ status: "estimate_not_approved", inputResolution: "estimate", estimateReasons: ["first_registration_date_sensitive"] }); // datofølsomt punktbeløp er aldri approved
   });
 });
 
@@ -502,7 +504,7 @@ describe("implementasjonskonklusjoner er merket og skilt fra kildebelagt oppfør
   });
   it("dag 29–31 utenfor vinduet beregnes, og overflyt-konklusjonen er merket (kilden beskriver ikke dag 29–31)", () => {
     const r = calculateNorwegianVehicleTax(ice({ firstRegistration: { precision: "day", value: "2023-01-31" }, norwegianRegistration: { date: "2026-04-30", kind: "expected" } }));
-    expect(r.status).toBe("calculated_unverified");
+    expect(r.status).toBe("calculated");
     expect(codesOf(r)).toEqual(["month_steps_same_anniversary_rule", "overflow_dates_outside_window_monotonic", "no_intermediate_rounding"]);
   });
   it("kun måned kjent: «siste dag i måneden» (dag 29–31) utløser overflyt-konklusjonen", () => {
@@ -550,11 +552,11 @@ describe("PHEV: definisjon → anvendelig bestemmelse → rundskriv er koblet i 
   });
 });
 
-describe("gyldige tilfeller er aldri «godkjent»; avrunding av sluttkravet (R-OTA-014)", () => {
-  it("status er calculated_unverified, profilen ikke godkjent, åpne punkter følger resultatet", () => {
+describe("gyldige tilfeller: godkjent profil gir ikke approved-beløp uten entydig, dokumentert input; avrunding av sluttkravet (R-OTA-014)", () => {
+  it("golden-input (forhandleroppgitt vekt): status calculated_unverified selv med godkjent profil; åpne punkter følger resultatet", () => {
     const r = calculateNorwegianVehicleTax(GOLDEN_CASES[2]!.input);
     expect(r.status).toBe("calculated_unverified");
-    expect(r.evidence).toMatchObject({ parameterEvidenceLevel: "E1", profileApproved: false });
+    expect(r.evidence).toMatchObject({ parameterEvidenceLevel: "E1", profileApproved: true });
     expect(r.evidence!.openItems.join(" ")).toMatch(/U-012/);
     expect(r.evidence!.openItems.join(" ")).toMatch(/R-OTA-014 er E1 for sluttkravet/);
   });
@@ -663,12 +665,12 @@ describe("gyldne caser: dokumentasjon mangler (ikke klasse 1); testdato er ikke 
       expect(Object.keys(d), c.id).not.toEqual(expect.arrayContaining(["calculatorRunDate"]));
     }
   });
-  it("klasse 1 er registrert for PHEV, EV og diesel (explicit_inputs, brukerbekreftet dato); ingen er godkjenning", () => {
+  it("klasse 1 er registrert for PHEV, EV og diesel (explicit_inputs, brukerbekreftet dato)", () => {
     const cases = json("references.json").cases as Array<{ id: string; evidenceClass: number; independentReference?: { runDate: string; runDateProvenance: string; referenceScope: string } }>;
     const c1 = cases.filter((c) => c.evidenceClass === 1);
     expect(c1.map((c) => c.id).sort()).toEqual(["C1-GR-20261018-01", "C1-GR-20261018-02", "C1-GR-20261018-03"]);
     for (const c of c1) expect(c.independentReference).toMatchObject({ runDate: "2026-10-18", runDateProvenance: "user_confirmed", referenceScope: "explicit_inputs" });
-    expect(json("rules.json").foundationStatus).toMatchObject({ approvedParameters: 0 });
+    expect(json("rules.json").foundationStatus).toMatchObject({ approvedParameters: 7 });
   });
 });
 
@@ -701,11 +703,12 @@ describe("regelregisteret: avgrensede regler og godkjenningsforutsetninger for a
     expect(Object.keys(NO_OTA_2026_A_PB.ruleEvidence)).not.toEqual(expect.arrayContaining(["R-OTA-015"]));
     expect(Object.keys(NO_OTA_2026_A_PB.ruleEvidence)).not.toEqual(expect.arrayContaining(["R-OTA-016"]));
   });
-  it("alle anvendte regler er E1 (R-OTA-014 for sluttkravet), men resultatet er fortsatt estimate_not_approved fordi profilen ikke er godkjent", () => {
+  it("alle anvendte regler er E1 (R-OTA-014 for sluttkravet); en ikke-godkjent profilkopi gir fortsatt estimate_not_approved", () => {
     const weak = Object.entries(NO_OTA_2026_A_PB.ruleEvidence).filter(([, l]) => l === "E1P").map(([k]) => k);
     expect(weak).toEqual([]);
-    expect(NO_OTA_2026_A_PB.approval.approved).toBe(false);
-    expect(calculateNorwegianVehicleTax(GOLDEN_CASES[0]!.input).validation).toMatchObject({ status: "estimate_not_approved", weakestRuleEvidence: "E1" });
+    const unapproved: TaxProfile = { ...NO_OTA_2026_A_PB, approval: { ...NO_OTA_2026_A_PB.approval, approved: false } };
+    const documented = { ...GOLDEN_CASES[2]!.input, norwegianTaxWeight: { kg: 1976, basis: "vehicle_register" as const } };
+    expect(calculateNorwegianVehicleTax(documented, unapproved).validation).toMatchObject({ status: "estimate_not_approved", profileApproved: false, inputResolution: "resolved", weakestRuleEvidence: "E1" });
   });
   it("R-OTA-014 er E1 med T50–T52 som E1-kilder og avgrenset til sluttkravet; mellomledd og 2007-ordlyd står som åpne spørsmål", () => {
     const r = (json("rules.json").rules as Array<{ id: string; evidenceLevel: string; sources: Array<{ id: string }>; scope?: { out: string[] }; openQuestions: string[] }>).find((x) => x.id === "R-OTA-014")!;
@@ -734,8 +737,38 @@ describe("20 år eller eldre: ingen tilsynelatende komplett sluttkrav uten beleg
     const r = at({ precision: "day", value: "2006-12-31" });
     expect(r.status).toBe("blocked"); // 20-årsregelen: 100 % fra 1. januar 2026 for første registrering 2006-12-31
     const r19 = at({ precision: "day", value: "2007-01-02" });
-    expect(r19.status).toBe("calculated_unverified");
+    expect(r19.status).toBe("calculated");
     expect(r19.ageDeduction?.percent).toBe(98);
   });
 });
 
+describe("godkjenningsregisteret (2026-10-19): sju regler, avgrenset omfang, profil og register samsvarer", () => {
+  type Rule = { id: string; usableAsRuleParameter?: boolean; evidenceLevel: string; parameterApproval?: { approved?: boolean; approvedBy?: string; approvedDate?: string; scope?: string; exclusions?: string } };
+  const rules = json("rules.json").rules as Rule[];
+  const APPROVED = ["R-IMP-OTH-001", "R-OTA-001", "R-OTA-002", "R-OTA-005", "R-OTA-007", "R-OTA-010", "R-OTA-014"];
+  it("nøyaktig de sju reglene er godkjent av Christian 2026-10-19, med omfang og eksklusjoner registrert", () => {
+    const approved = rules.filter((r) => r.usableAsRuleParameter).map((r) => r.id).sort();
+    expect(approved).toEqual(APPROVED);
+    for (const r of rules.filter((x) => APPROVED.includes(x.id))) {
+      expect(r.evidenceLevel, r.id).toBe("E1");
+      expect(r.parameterApproval, r.id).toMatchObject({ approved: true, approvedBy: "Christian", approvedDate: "2026-10-19" });
+      expect(r.parameterApproval!.scope, r.id).toBeTruthy();
+      expect(r.parameterApproval!.exclusions, r.id).toMatch(/NEDC.*dag 29–31.*20-årsminimum.*mellomavrunding.*MVA/s);
+    }
+  });
+  it("utenfor godkjent omfang: R-OTA-015/-016 (E1P, blokkert) og øvrige regler er ikke godkjent", () => {
+    for (const id of ["R-OTA-015", "R-OTA-016", "R-OTA-003", "R-OTA-004", "R-OTA-011"]) expect(rules.find((r) => r.id === id)?.usableAsRuleParameter ?? false, id).toBe(false);
+  });
+  it("profilens anvendte regler er nøyaktig de godkjente; godkjent profil krever godkjente regler", () => {
+    expect(Object.keys(NO_OTA_2026_A_PB.ruleEvidence).sort()).toEqual(APPROVED);
+    expect(NO_OTA_2026_A_PB.approval.approved).toBe(true);
+  });
+  it("omfangsgrensene gjelder fortsatt: NEDC/fallback blokkert, 20 år blokkert, udokumentert/referansevekt og datofølsomt beløp er estimat", () => {
+    const base = { vehicleClass: "passenger_car_m1", propulsion: { pistonCombustionEngine: true, externallyChargeable: false, evidence: "type_approval" as const }, norwegianTaxWeight: { kg: 1976, basis: "vehicle_register" as const }, co2: { gramsPerKm: 179, method: "wltp_combined" as const }, firstRegistration: { precision: "day" as const, value: "2023-11-01" }, norwegianRegistration: { date: "2026-10-18", kind: "actual" as const } };
+    expect(calculateNorwegianVehicleTax(base).status).toBe("calculated");
+    expect(calculateNorwegianVehicleTax({ ...base, co2: { gramsPerKm: 150, method: "nedc" } }).status).toBe("blocked");
+    expect(calculateNorwegianVehicleTax({ ...base, firstRegistration: { precision: "day", value: "2006-06-15" } }).status).toBe("blocked");
+    for (const basis of ["dealer_entered", "reference_listing", "unverified"] as const) expect(calculateNorwegianVehicleTax({ ...base, norwegianTaxWeight: { kg: 1976, basis } }).status, basis).toBe("calculated_unverified");
+    expect(calculateNorwegianVehicleTax({ ...base, firstRegistration: { precision: "month", value: "2026-09" } }).status).toBe("calculated_unverified");
+  });
+});

@@ -106,12 +106,12 @@ describe("rettingen: godkjent regelprofil skilles fra kvalitet og entydighet i i
     expect(r.validation).toMatchObject({ status: "approved", inputResolution: "resolved", estimateReasons: [] });
   });
 
-  it("begge årsaker samtidig gir begge i rekkefølge; uten godkjent profil er status uendret estimate_not_approved med profileApproved false", () => {
+  it("begge årsaker samtidig gir begge i rekkefølge; uten godkjent profil (kopi) er status estimate_not_approved med profileApproved false", () => {
     const both = ok({ norwegianTaxWeight: { kg: 1976, basis: "reference_listing" }, firstRegistration: { precision: "month", value: "2026-09" } });
     expect(both.validation?.estimateReasons).toEqual(["weight_reference_only", "first_registration_date_sensitive"]);
     const dealer = ok({ norwegianTaxWeight: { kg: 1976, basis: "dealer_entered" }, firstRegistration: { precision: "month", value: "2026-09" } });
     expect(dealer.validation?.estimateReasons).toEqual(["weight_dealer_entered_undocumented", "first_registration_date_sensitive"]);
-    const unapproved = calculateNorwegianVehicleTax(input);
+    const unapproved = calculateNorwegianVehicleTax(input, { ...NO_OTA_2026_A_PB, approval: { ...NO_OTA_2026_A_PB.approval, approved: false } });
     expect(unapproved.validation).toMatchObject({ status: "estimate_not_approved", profileApproved: false, inputResolution: "resolved" });
   });
 });

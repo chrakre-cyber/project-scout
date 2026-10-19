@@ -156,7 +156,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Dato fra/til:** 2026-01-01 / ukjent — Gruppe a 2026. Gruppe b-vekt er oppgitt bare til og med 2026-08-31 (R-OTA-008).  
 - **Kilder:** T03, T40, T41, T05, T47, T43, T48  
 - **Ikke-E1-kilder (flyttet ut av `sources`, ikke belegg):** T02 (E2): lead i `leads` (ikke regel); T04 (E2): lead i `leads` (ikke regel); nevnt i uløst kildepåstand U-001; T26 (E2): lead i `leads` (ikke regel); T30 (E1X): E1X-funn i `e1xFindings` (eksternt verifisert, ikke lest av Claude)  
-- **Evidensnivå:** E1P · **Status:** `delvis_E1_og_E1X_gruppe_a_vekt` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **Evidensnivå:** E1P · **Status:** `delvis_E1_og_E1X_gruppe_a_vekt` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** ja — Christian 2026-10-19 (avgrenset omfang; se `parameterApproval` i rules.json)
 - **E1-funn (lest primærkilde):**
   - Avgiften beregnes for personbil og varebil i gruppe a og b på grunnlag av egenvekt og CO2-utslipp; satsendringer og omstrukturering av satstabellene i § 3 ble gjort 1.1.2026. _(kilde T03, 3.1, 13.1.1, lest 2026-10-15)_
 - **E1X-funn (eksternt verifisert, ikke lest av Claude):**
@@ -184,7 +184,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Avgrensning:** Omfang (inne): avgiftsgruppe a personbil, stortingsvedtaket § 3 første ledd a nr 2; motorvogn med stempeldrevet forbrenningsmotor (inkl. ladbar hybrid); WLTP-godkjent (EPA/NRCan behandles som WLTP); CO2 i HELE g/km fra feltet «kombinert» (ladbar hybrid: «vektet kombinert»); marginale bånd: første 100 / neste 50 / neste 75 / resten · Utenfor omfang (blokkert): NEDC (× 1,24), CO2 = egenvekt/10, desimal-CO2 og andre avgiftsgrupper: se R-OTA-015 (E1P; motoren blokkerer dem) · Avgrenset fra: R-OTA-002 (hele CO2-komponenten, E1P) · Sporbarhet: Kilder og funn for NEDC/fallback/andre grupper er flyttet uendret til R-OTA-015; tidligere formulering ligger i git-historikken (commit før runde 12).  
 - **Kilder:** T03, T05, T40, T41, T47, T43, T48  
 - **Ikke-E1-kilder (flyttet ut av `sources`, ikke belegg):** T02 (E2): lead i `leads` (ikke regel); T04 (E2): lead i `leads` (ikke regel); T30 (E1X): E1X-funn i `e1xFindings` (eksternt verifisert, ikke lest av Claude)  
-- **Evidensnivå:** E1 · **Status:** `E1_avgrenset_gruppe_a_WLTP_hele_gkm_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **Evidensnivå:** E1 · **Status:** `E1_avgrenset_gruppe_a_WLTP_hele_gkm_parameter_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** ja — Christian 2026-10-19 (avgrenset omfang; se `parameterApproval` i rules.json)
 - **E1-funn (lest primærkilde):**
   - CO2 hentes for WLTP-kjøretøy fra samsvarssertifikat (CoC); satstabellen i stortingsvedtaket brukes direkte for WLTP. _(kilde T03, 3.2.5, lest 2026-10-15)_
   - EPA/NRCan-målt CO2 beregnes som WLTP. _(kilde T03, 3.2.5, lest 2026-10-15)_
@@ -278,7 +278,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Styrende hendelse:** Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)  
 - **Kilder:** T05, T03, T41, T40, T47, T43  
 - **Ikke-E1-kilder (flyttet ut av `sources`, ikke belegg):** T19 (E2): lead i `leads` (ikke regel)  
-- **Evidensnivå:** E1 · **Status:** `E1_vilkaar_i_vedtak_og_forskrift_3_1_ingen_phev_saerregel_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **Evidensnivå:** E1 · **Status:** `E1_vilkaar_i_vedtak_og_forskrift_3_1_ingen_phev_saerregel_parameter_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** ja — Christian 2026-10-19 (avgrenset omfang; se `parameterApproval` i rules.json)
 - **E1-funn (lest primærkilde):**
   - Vektfradraget for ladbare hybridbiler er opphevet med virkning fra 1. januar 2024. _(kilde T03, 3.3.11, lest 2026-10-15)_
   - Ladbare hybridbiler: CO2-grunnlaget er feltet «vektet kombinert» (både WLTP og NEDC); NEDC-verdi × 1,24 i gruppe a. _(kilde T05, § 3-1 andre og tredje ledd (PDF s. 5), lest 2026-10-18)_
@@ -332,7 +332,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Styrende hendelse:** Første gangs registrering i Norge (forskrift § 1-2 nr. 1; vedtak § 1)  
 - **Kilder:** T03, T40, T41, T47  
 - **Ikke-E1-kilder (flyttet ut av `sources`, ikke belegg):** T02 (E2): lead i `leads` (ikke regel); T04 (E2): tidligere kilde-listing; ingen funn bygger på den; beholdt i kildregisteret (`sources.json`) som støttemateriale  
-- **Evidensnivå:** E1 · **Status:** `E1_generell_vektkomponent_ingen_ice_tillegg_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **Evidensnivå:** E1 · **Status:** `E1_generell_vektkomponent_ingen_ice_tillegg_parameter_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** ja — Christian 2026-10-19 (avgrenset omfang; se `parameterApproval` i rules.json)
 - **E1-funn (lest primærkilde):**
   - Fritaket for elektriske motorvogner er opphevet fra 1.1.2023; elektriske motorvogner i avgiftsgruppe a betaler engangsavgift etter stortingsvedtaket § 2. _(kilde T03, 6.12, lest 2026-10-15)_
   - Elektriske motorvogner i andre grupper enn a betaler ikke engangsavgift, fordi § 3 bare ilegges motorvogner med stempeldrevet forbrenningsmotor. _(kilde T03, 6.12, lest 2026-10-15)_
@@ -410,7 +410,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Avgrensning:** Omfang (inne): ordinær tabellmetode (forskrift § 3-3) med 41 trinn; alder fra første gangs registrering i utlandet til første gangs registrering her i landet, dato til dato; trinn nås på dagen for trinndatoen, også månedstrinn (kildens ordlyd, se e1Findings); fradrag i avgiften etter §§ 2 og 3, ikke i vrakpantavgiften; 20-årsregelen: 20 år fra 1. januar i året 20 år er gått · Utenfor omfang (uavklart): trinndato som ikke finnes i målmåneden (første registrering dag 29–31): R-OTA-016 / U-009; blokkert i vinduet; motorvogn 20 år eller eldre: 100 pst fradrag er belagt, men setningen «Avgiften kan likevel ikke settes lavere enn den avgift som skal svares for motorvogner som på innførselstidspunktet er 20 år eller eldre» er ikke utledet (R-OTA-011); motoren blokkerer (twenty_year_minimum_unresolved); alternativ beregning (§ 3-4): utenfor MVP · Avgrenset fra: R-OTA-010 (E1P) · Sporbarhet: Det uavklarte (dag 29–31) er flyttet til R-OTA-016.  
 - **Kilder:** T07, T03, T05, T42, T47, T43  
 - **Ikke-E1-kilder (flyttet ut av `sources`, ikke belegg):** T06 (E2): lead i `leads` (ikke regel); T04 (E2): tidligere kilde-listing; ingen funn bygger på den; beholdt i kildregisteret (`sources.json`) som støttemateriale  
-- **Evidensnivå:** E1 · **Status:** `E1_avgrenset_U009_i_R-OTA-016_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **Evidensnivå:** E1 · **Status:** `E1_avgrenset_U009_i_R-OTA-016_parameter_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** ja — Christian 2026-10-19 (avgrenset omfang; se `parameterApproval` i rules.json)
 - **E1-funn (lest primærkilde):**
   - Ordinært bruksfradrag gis som prosentvis fradrag i den utregnede avgiften etter tabell i forskrift § 3-3 (4.3). Alder regnes fra første gangs registrering i utlandet til registrering i Norge, dato til dato (4.2). _(kilde T03, 4.2–4.3, lest 2026-10-15)_
   - Tabellen (41 trinn) fra 2 % ved 1 måned til 100 % ved 20 år er transkribert fra Skatteetatens engelske satsside (bruksfradrag-tabell-T07.json). _(kilde T07, tabell, lest 2026-10-15)_
@@ -518,7 +518,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Styrende hendelse:** Beregning av skatte- og avgiftskravet (skattebetalingsforskriften § 10-4-4: «Ved beregning av skatte- og avgiftskrav»); for engangsavgift skjer beregningen ved første gangs registrering (vedtak § 1)  
 - **Avgrensning:** Omfang (inne): sluttkravet: det samlede engangsavgiftskravet (avgift etter bruksfradrag + vrakpantavgift) avrundes ned til nærmeste hele krone · Utenfor: avrunding av mellomledd (kg × sats, CO2-bånd, sum, prosentfradrag): U-012, ikke omtalt i noen kilde; mva.-avrunding: U-013 (ECON-004); forsinkelsesrenter (utkastets andre setning; ikke i gjeldende tekst); NEDC/fallback-CO2 (R-OTA-015), dag 29–31 (R-OTA-016), 20 år eller eldre (R-OTA-010) · Oppgradert 2026-10-18 fra E1P  
 - **Kilder:** T46, T45, T49, T47, T50, T51, T52  
-- **Evidensnivå:** E1 · **Status:** `E1_sluttkrav_avgrenset_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-18 · **Godkjent parameter:** nei
+- **Evidensnivå:** E1 · **Status:** `E1_sluttkrav_avgrenset_parameter_godkjent` · **Kontrollert dato:** 2026-10-18 · **Godkjent parameter:** ja — Christian 2026-10-19 (avgrenset omfang; se `parameterApproval` i rules.json)
 - **E1-funn (lest primærkilde):**
   - «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone.» _(kilde T46, § 10-4-4 (konsolidert; endret 25 mars 2010 nr. 462, i kraft 1 april 2010), lest 2026-10-18)_
   - Skattedirektoratets håndbok: «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone. Tilsvarende gjelder ved beregning av forsinkelsesrenter. … Bestemmelsen medfører at skatte- og avgiftsregnskapene ikke vil inneholde ørebeløp.» (publisert 24.06.2026) _(kilde T45, avsnitt «Skattebetalingsforskriften § 10-4-4 – Avrunding», lest 2026-10-18)_
@@ -549,7 +549,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Dato fra/til:** 2026-01-01 / ukjent — Rundskriv 2026 (1. januar). Skatteetaten-siden viser 2026 valgt. Endring senere i 2026 ikke dokumentert.  
 - **Styrende hendelse:** Første gangs registrering i Kjøretøyregisteret (rundskriv 2.1.1 og 3.4); betales sammen med engangsavgiften (T20)  
 - **Kilder:** T03, T20  
-- **Evidensnivå:** E1 · **Status:** `dokumentert_E1_parameter_ikke_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
+- **Evidensnivå:** E1 · **Status:** `dokumentert_E1_parameter_godkjent` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** ja — Christian 2026-10-19 (avgrenset omfang; se `parameterApproval` i rules.json)
 - **E1-funn (lest primærkilde):**
   - Vrakpantavgift 2 400 kr ved første gangs registrering for motorvogner i avgiftsgruppe a, b, c, g, j, k. _(kilde T03, 3.4 (PDF-side 17), lest 2026-10-15)_
   - Satsside for vrakpantavgift viser 2 400 kr for person-, vare- og campingbiler og busser under 6 m; 500 mopeder/motorsykler; 3 000 campingvogner; 5 000 lastebiler. Årsvelger 2026 valgt. _(kilde T20, satsside, lest 2026-10-15)_
