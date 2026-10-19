@@ -18,6 +18,8 @@ export interface ObservedPriceVersion {
   breakdown: { scrappage: string; oneOff: string; total: string } | null;
   totalAvgift: string;
   vat: string;
+  /** «Sum» / «Totalpris med avgifter og mva.» slik bildet viser den (ECON-003: observert sumidentitet avgift + pris + mva.). */
+  sum: string;
 }
 
 export interface ObservedRun {
@@ -57,8 +59,8 @@ export const OBSERVED_RUNS: readonly ObservedRun[] = [
       "Alternativ beregning (steg 11) ikke synlig i inputbildet",
     ],
     versions: [
-      { priceNok: 600000, file: `${dir}/01_PHEV/02_input_pris_600000.png`, fullInputDocumented: false, breakdown: null, totalAvgift: "529069.00", vat: "150000.00" },
-      { priceNok: 2600000, file: `${dir}/01_PHEV/03_nedbrytning_pris_2600000.png`, fullInputDocumented: false, breakdown: { scrappage: "2400.00", oneOff: "526669.74", total: "529069.00" }, totalAvgift: "529069.00", vat: "650000.00" },
+      { priceNok: 600000, file: `${dir}/01_PHEV/02_input_pris_600000.png`, fullInputDocumented: false, breakdown: null, totalAvgift: "529069.00", vat: "150000.00", sum: "1279069.00" },
+      { priceNok: 2600000, file: `${dir}/01_PHEV/03_nedbrytning_pris_2600000.png`, fullInputDocumented: false, breakdown: { scrappage: "2400.00", oneOff: "526669.74", total: "529069.00" }, totalAvgift: "529069.00", vat: "650000.00", sum: "3779069.00" },
     ],
   },
   {
@@ -80,8 +82,8 @@ export const OBSERVED_RUNS: readonly ObservedRun[] = [
       "Norsk registreringsdato = kalkulatorens automatiske dagsdato 2026-10-18 (brukerbekreftet)",
     ],
     versions: [
-      { priceNok: 350000, file: `${dir}/02_EV/02_input_pris_350000.png`, fullInputDocumented: true, breakdown: null, totalAvgift: "16748.00", vat: "12500.00" },
-      { priceNok: 300000, file: `${dir}/02_EV/03_nedbrytning_pris_300000.png`, fullInputDocumented: false, breakdown: { scrappage: "2400.00", oneOff: "14348.95", total: "16748.00" }, totalAvgift: "16748.00", vat: "0.00" },
+      { priceNok: 350000, file: `${dir}/02_EV/02_input_pris_350000.png`, fullInputDocumented: true, breakdown: null, totalAvgift: "16748.00", vat: "12500.00", sum: "379248.00" },
+      { priceNok: 300000, file: `${dir}/02_EV/03_nedbrytning_pris_300000.png`, fullInputDocumented: false, breakdown: { scrappage: "2400.00", oneOff: "14348.95", total: "16748.00" }, totalAvgift: "16748.00", vat: "0.00", sum: "316748.00" },
     ],
   },
   {
@@ -103,7 +105,7 @@ export const OBSERVED_RUNS: readonly ObservedRun[] = [
       "Norsk registreringsdato = kalkulatorens automatiske dagsdato 2026-10-18 (brukerbekreftet)",
     ],
     versions: [
-      { priceNok: 350000, file: `${dir}/03_DIESEL/02_input_pris_350000.png`, fullInputDocumented: true, breakdown: { scrappage: "2400.00", oneOff: "331323.97", total: "333723.00" }, totalAvgift: "333723.00", vat: "87500.00" },
+      { priceNok: 350000, file: `${dir}/03_DIESEL/02_input_pris_350000.png`, fullInputDocumented: true, breakdown: { scrappage: "2400.00", oneOff: "331323.97", total: "333723.00" }, totalAvgift: "333723.00", vat: "87500.00", sum: "771223.00" },
     ],
   },
 ];
