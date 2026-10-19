@@ -5,7 +5,8 @@ const zero = { amount: "0", basis: "quoted" } as const;
 const na = { state: "not_applicable", basis: "test assumption" } as const;
 const base: EconomicsInput = {
   price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "quote_document" },
-  fx: {}, transport: zero, insurance: zero,
+  fx: {}, transportToBorder: zero, transportAfterBorder: na, loadingHandling: na, insurance: zero,
+  vatHandling: { value: "registered_reports_in_vat_return", source: { kind: "dealer_profile" } },
   taxInput: {
     vehicleClass: "passenger_car_m1",
     propulsion: { pistonCombustionEngine: false, externallyChargeable: true, combustionFuel: null, hybridization: null, evidence: "type_approval" },
@@ -15,10 +16,14 @@ const base: EconomicsInput = {
     norwegianRegistration: { date: "2026-10-18", kind: "actual" },
   },
   deduction: { value: "non_recoverable", source: { kind: "dealer_profile" } },
-  evExemption: "applies",
+  evQualification: { batteryOnlyPropulsion: true, externallyChargeableBattery: true, passengerVehicle: true, notPreviouslyRegisteredInNorway: true }, evThresholdBasis: "customs_value",
   charges: { climateGas: na, registrationFee: na, customsDuty: na },
   asOf: "2026-10-18",
 };
+const ALL_TRUE = { batteryOnlyPropulsion: true, externallyChargeableBattery: true, passengerVehicle: true, notPreviouslyRegisteredInNorway: true } as const;
+const EV_APPLIES = { evQualification: ALL_TRUE, evThresholdBasis: "customs_value" } as const;
+const EV_NOT = { evQualification: { ...ALL_TRUE, batteryOnlyPropulsion: false }, evThresholdBasis: undefined } as const;
+const EV_UNKNOWN = { evQualification: undefined, evThresholdBasis: undefined } as const;
 const config: EconomicsConfig = { rounding: UNCONFIRMED_HALF_UP };
 const approved: EconomicsConfig = {
   rounding: { mode: "half_up", status: "approved" },
@@ -26,7 +31,7 @@ const approved: EconomicsConfig = {
 };
 const diesel: EconomicsInput = {
   ...base,
-  price: { ...base.price, advertisedNet: "100000" }, evExemption: "not_applicable",
+  price: { ...base.price, advertisedNet: "100000" }, evQualification: undefined, evThresholdBasis: undefined,
   taxInput: {
     ...base.taxInput,
     propulsion: { pistonCombustionEngine: true, externallyChargeable: false, combustionFuel: "diesel", hybridization: "none", evidence: "type_approval" },
@@ -47,7 +52,7 @@ describe("ECON-004 independent review regressions (original)", () => {
     if (unknown.importCashRequirement.kind === "lower_bound" && possible.importCashRequirement.kind === "value") {
       expect(unknown.importCashRequirement.lowerBoundNok).toBeLessThanOrEqual(possible.importCashRequirement.valueNok);
     }
-    expect(unknown.importVat.evExemption).not.toBe("not_applicable_vehicle");
+    expect(unknown.importVat.ev.qualification).not.toBe("not_applicable_vehicle");
   });
 
   it("unresolved rounding of other charges must not produce a single value total", () => {
@@ -59,7 +64,7 @@ describe("ECON-004 independent review regressions (original)", () => {
   });
 
   it("explicit assumed_default amounts must remain estimates even if rule flags are approved", () => {
-    const r = calculateEconomics({ ...diesel, transport: { amount: "8000", basis: "assumed_default" }, insurance: { amount: "0", basis: "assumed_default" } }, approved);
+    const r = calculateEconomics({ ...diesel, transportToBorder: { amount: "8000", basis: "assumed_default" }, insurance: { amount: "0", basis: "assumed_default" } }, approved);
     expect(r.status).not.toBe("validated");
     expect(r.estimateReasons.length).toBeGreaterThan(0);
   });
@@ -83,18 +88,18 @@ describe("rettingsrunde: nedre grenser, avrundingsusikkerhet, standardantakelser
   });
   it("1. ukjent drivlinje bevarer fritaksusikkerheten: nedre grense bygger på laveste mulige mva. og er ≤ mulig BEV-total (379 248)", () => {
     const r = calculateEconomics(unknownPropulsion(), config);
-    expect(r.importVat.evExemption).toBe("applies");
-    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["no_exemption", 87500n], ["with_exemption", 12500n]]);
+    expect(r.importVat.ev.qualification).toBe("unresolved");
+    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["no_exemption", 87500n], ["with_exemption__basis_customs_value", 12500n]]);
     expect(r.importCashRequirement).toMatchObject({ kind: "lower_bound", lowerBoundNok: 362500n });
     expect(r.estimatedLandedCost).toMatchObject({ kind: "lower_bound", lowerBoundNok: 362500n });
-    expect(r.incompleteReasons).toContain("powertrain_unknown_ev_exemption_unresolved");
+    expect(r.incompleteReasons).toContain("ev_qualification_unresolved");
     const possible = calculateEconomics(base, config).importCashRequirement;
     expect(possible).toEqual({ kind: "value", valueNok: 379248n });
     expect(362500n).toBeLessThanOrEqual(379248n);
   });
   it("1b. ukjent drivlinje og ukjent fritak (standard): samme trygge nedre grense; uttrykkelig not_applicable gir full mva. som forutsatt", () => {
-    expect(calculateEconomics(unknownPropulsion({ evExemption: undefined }), config).importCashRequirement).toMatchObject({ kind: "lower_bound", lowerBoundNok: 362500n });
-    expect(calculateEconomics(unknownPropulsion({ evExemption: "not_applicable" }), config).importCashRequirement).toMatchObject({ kind: "lower_bound", lowerBoundNok: 437500n });
+    expect(calculateEconomics(unknownPropulsion({ ...EV_UNKNOWN }), config).importCashRequirement).toMatchObject({ kind: "lower_bound", lowerBoundNok: 362500n });
+    expect(calculateEconomics(unknownPropulsion({ ...EV_NOT }), config).importCashRequirement).toMatchObject({ kind: "lower_bound", lowerBoundNok: 437500n });
   });
   it("2. avrundingslikhet i øvrige kostnader: totalfeltene er nedre grense (laveste kandidat), ikke value; kandidatene vises", () => {
     const r = calculateEconomics({ ...diesel, charges: { ...diesel.charges, otherKnown: [{ label: "x", amount: "2.5", basis: "quoted" }] } }, config);
@@ -112,7 +117,7 @@ describe("rettingsrunde: nedre grenser, avrundingsusikkerhet, standardantakelser
   });
   it("3. assumed_default er estimatgrunnlag uansett kilde: transport, forsikring og øvrige poster; validated kun uten slike antakelser", () => {
     for (const over of [
-      { transport: { amount: "8000", basis: "assumed_default" } },
+      { transportToBorder: { amount: "8000", basis: "assumed_default" } },
       { insurance: { amount: "0", basis: "assumed_default" } },
       { charges: { ...diesel.charges, registrationFee: { amount: "0", basis: "assumed_default" } } },
       { charges: { ...diesel.charges, otherKnown: [{ label: "x", amount: "0", basis: "assumed_default" }] } },
@@ -126,8 +131,8 @@ describe("rettingsrunde: nedre grenser, avrundingsusikkerhet, standardantakelser
     expect(clean.status).toBe("validated"); // kontrollcase: syntetisk godkjent konfigurasjon, ingen antakelser
   });
   it("4. fixture-proveniens: source.kind = fixture uten fixtureOnly avvises uten testflagg; fixtureOnly alene avvises også; manglende source avvises", () => {
-    const mk = (extra: Record<string, unknown>) => ({ pair: "EUR/NOK", rate: "10.6709", effectiveAt: "2026-10-18", quotedAt: "2026-10-18", ...extra }) as never;
-    const run = (q: unknown, cfg: EconomicsConfig) => calculateEconomics({ ...diesel, price: { ...diesel.price, currency: "EUR", advertisedNet: "10000" }, fx: { acquisition: q as never, customs: q as never } }, cfg);
+    const mk = (extra: Record<string, unknown>) => ({ pair: "EUR/NOK", rate: "10.6709", effectiveAt: "2026-10-18", quotedAt: "2026-10-18", validFrom: "2026-10-15", validTo: "2026-11-11", suspension: "not_suspended_confirmed", ...extra }) as never;
+    const run = (q: unknown, cfg: EconomicsConfig) => calculateEconomics({ ...diesel, customsDate: { date: "2026-10-20", kind: "actual_acceptance" }, price: { ...diesel.price, currency: "EUR", advertisedNet: "10000" }, fx: { acquisition: q as never, customs: q as never } }, cfg);
     for (const q of [mk({ source: { kind: "fixture" } }), mk({ source: { kind: "fixture" }, fixtureOnly: false }), mk({ source: { kind: "bank" }, fixtureOnly: true })]) {
       const r = run(q, approved);
       expect(r.status).toBe("blocked");
@@ -150,23 +155,27 @@ describe("rettingsrunde: gyldighet av nedre grenser (egenskap)", () => {
   it("hver nedre grense er ≤ minste verdi blant mulige utfyllinger av det ukjente (kontant og kost)", () => {
     const unknownPower = withPower(null, null, null, null);
     const variants: Array<[string, Partial<EconomicsInput>, Array<Partial<EconomicsInput>>]> = [
-      ["drivlinje × fritak", { ...unknownPower, evExemption: undefined }, [{ ...withPower(false, false, null, null), evExemption: "applies" }, { ...withPower(false, false, null, null), evExemption: "not_applicable" }, { ...withPower(true, false, "diesel", "none"), evExemption: "not_applicable" }]],
+      ["drivlinje × fritak", { ...unknownPower, ...EV_UNKNOWN }, [{ ...withPower(false, false, null, null), ...EV_APPLIES }, { ...withPower(false, false, null, null), ...EV_NOT }, { ...withPower(true, false, "diesel", "none"), ...EV_UNKNOWN }]],
       ["forsikring", { insurance: undefined }, [{ insurance: zero }, { insurance: { amount: "5000", basis: "quoted" } }]],
-      ["transport", { transport: "unknown" }, [{ transport: zero }, { transport: { amount: "20000", basis: "quoted" } }]],
+      ["transport", { transportToBorder: "unknown" }, [{ transportToBorder: zero }, { transportToBorder: { amount: "20000", basis: "quoted" } }]],
       ["øvrige avgifter", { charges: undefined }, [{ charges: { climateGas: na, registrationFee: na, customsDuty: na } }, { charges: { climateGas: { amount: "900", basis: "quoted" }, registrationFee: na, customsDuty: na } }]],
+      ["transport etter innførselsstedet", { transportAfterBorder: { state: "unknown" } }, [{ transportAfterBorder: na }, { transportAfterBorder: { amount: "4000", basis: "quoted" } }]],
+      ["lasting/håndtering (i tollverdien)", { loadingHandling: { state: "unknown" } }, [{ loadingHandling: na }, { loadingHandling: { amount: "1500", basis: "quoted" } }]],
+      ["elbilfritak: kvalifikasjon uavklart", { ...EV_UNKNOWN }, [{ ...EV_APPLIES }, { ...EV_NOT }]],
+      ["elbilfritak: målegrunnlag uavklart", { evQualification: ALL_TRUE, evThresholdBasis: "unresolved" }, [{ ...EV_APPLIES }, { evQualification: ALL_TRUE, evThresholdBasis: "vehicle_price_only" }]],
       ["fradragsstatus", { deduction: undefined }, [{ deduction: { value: "recoverable", source: { kind: "dealer_profile" } } }, { deduction: { value: "non_recoverable", source: { kind: "dealer_profile" } } }]],
     ];
     let checked = 0;
     for (const [label, unknownOver, fills] of variants) {
       const u = calculateEconomics(known(unknownOver), config);
       for (const fill of fills) {
-        const f = calculateEconomics(known({ evExemption: "applies", ...fill }), config);
+        const f = calculateEconomics(known({ ...EV_APPLIES, ...fill }), config);
         for (const [a, b] of [[u.importCashRequirement, f.importCashRequirement], [u.estimatedLandedCost, f.estimatedLandedCost]] as const) {
           const lb = minOf(a as never), fv = minOf(b as never);
           if (a.kind === "lower_bound" && fv !== null) { checked++; expect(lb! <= fv, `${label}: ${lb} ≤ ${fv}`).toBe(true); }
         }
       }
     }
-    expect(checked).toBeGreaterThanOrEqual(18); // ikke-tomhetsvern: 11 utfyllinger × 2 totaler, minus tilfeller uten lower_bound
+    expect(checked).toBeGreaterThanOrEqual(26); // ikke-tomhetsvern (observert antall sammenligninger med lower_bound)
   });
 });

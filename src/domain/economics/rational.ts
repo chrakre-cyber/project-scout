@@ -22,6 +22,14 @@ export function parseDecimal(s: unknown): Rat | null {
   const frac = m[2] ?? "";
   return norm({ n: BigInt(m[1]! + frac), d: 10n ** BigInt(frac.length) });
 }
+/** Rå publisert kurs (f.eks. Tolletatens «1142,960»): desimalkomma eller -punktum, ingen tusenskille, ingen fortegn. */
+export function parsePublishedDecimal(s: unknown): Rat | null {
+  if (typeof s !== "string") return null;
+  const m = new RegExp(`^(\\d{1,15})(?:[.,](\\d{1,${MAX_DECIMALS}}))?$`).exec(s);
+  if (!m) return null;
+  const frac = m[2] ?? "";
+  return norm({ n: BigInt(m[1]! + frac), d: 10n ** BigInt(frac.length) });
+}
 export const fromInt = (x: bigint): Rat => ({ n: x, d: 1n });
 export const mul = (a: Rat, b: Rat): Rat => norm({ n: a.n * b.n, d: a.d * b.d });
 export const add = (a: Rat, b: Rat): Rat => norm({ n: a.n * b.d + b.n * a.d, d: a.d * b.d });
@@ -56,6 +64,18 @@ export function roundToWhole(r: Rat, policy: RoundingPolicy): Rounded {
   const halfUp = twice >= r.d ? q + 1n : q;
   const halfEven = tie ? (q % 2n === 0n ? q : q + 1n) : halfUp;
   return { value: policy.mode === "half_up" ? halfUp : halfEven, tie, candidates: { halfUp, halfEven } };
+}
+
+/** Eksakt desimalstreng for et tall med endelig desimalutvikling (≤ maxScale desimaler); ellers null. Ingen avkorting. */
+export function toExactDecimalString(r: Rat, maxScale = 12): string | null {
+  for (let k = 0; k <= maxScale; k++) {
+    const scaled = r.n * 10n ** BigInt(k);
+    if (scaled % r.d === 0n) {
+      const v = (scaled / r.d).toString().padStart(k + 1, "0");
+      return k === 0 ? v : `${v.slice(0, -k)}.${v.slice(-k)}`; // k er minste skala: ingen etterfølgende nuller
+    }
+  }
+  return null;
 }
 
 /** Avkortet desimalvisning (kun dokumentasjon/visning, aldri videre beregning). */

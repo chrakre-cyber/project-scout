@@ -1,0 +1,926 @@
+AVLEDET LESEKOPI. Kontroller sitater i HTML-originalen.
+
+8-4.3 § 8-4 første ledd annet punktum – Fradragsrett for personkjøretøy ved nærmere bestemt bruk - Skatteetaten
+Hopp til hovedinnhold
+Kontakt oss
+Endre skriftstørrelse
+Hold Ctrl-tasten nede (Cmd-tasten på Mac).Trykk på + for å forstørre eller - for å forminske.
+Bokmål
+Bokmål
+English
+Nynorsk
+Logg inn
+Logg ut
+Startsiden til Skatteetaten
+Startsiden til Skatteetaten
+Merverdiavgiftshåndboken 2023
+Merverdiavgiftshåndboken 2023
+Lukk
+Søk
+Merverdiavgiftshåndboken 2023
+Innholdsmeny
+Forsiden
+Forord
+Forkortelser
+Innledning
+Merverdiavgiftsloven kapittel 1. Lovens virkeområde. Definisjoner
+1-1 § 1-1. Saklig virkeområde
+1-1.1 Forarbeider og forskrifter
+1-1.2 § 1-1 første ledd
+1-1.3 § 1-1 annet ledd
+1-2 § 1-2. Geografisk virkeområde
+1-2.1 Forarbeider
+1-2.2 Merverdiavgiftsområdet
+1-3 § 1-3. Definisjoner
+1-3.1 Forarbeider og forskrifter
+1-3.2 § 1-3 første ledd bokstav a – Omsetningsbegrepet
+1-3.3 § 1-3 første ledd bokstav b – Varebegrepet
+1-3.4 § 1-3 første ledd bokstav c – Tjenestebegrepet
+1-3.5 § 1-3 første ledd bokstav d – Avgiftssubjekt
+1-3.6 § 1-3 første ledd bokstav e – Utgående merverdiavgift
+1-3.7 § 1-3 første ledd bokstav f – Inngående merverdiavgift
+1-3.8 § 1-3 første ledd bokstav g – Unntak fra loven
+1-3.9 § 1-3 første ledd bokstav h – Fritak for merverdiavgift
+1-3.10 § 1-3 første ledd bokstav i – Fjernleverbare tjenester
+1-3.11 § 1-3 første ledd bokstav j – Elektroniske tjenester
+1-3.12 § 1-3 første ledd bokstav k – Offentlig virksomhet
+1-3.13 § 1-3 første ledd bokstav l – Spesialfartøy til bruk i petroleumsvirksomhet til havs
+1-3.14 § 1-3 annet ledd – Forskriftshjemmel
+Merverdiavgiftsloven kapittel 2. Registreringsplikt og -rett
+2-1 § 2-1. Registreringsplikt
+2-1.1 Forarbeider og forskrifter
+2-1.2 Generelt om § 2-1
+2-1.3 § 2-1 første ledd – Registreringsplikt og beløpsgrense
+2-1.4 Kravet til næringsvirksomhet
+2-1.5 Registrering av offentlig virksomhet
+2-1.6 Veldedige og allmennyttige institusjoner og organisasjoner
+2-1.7 § 2-1 annet ledd – Idrettsarrangementer
+2-1.8 § 2-1 tredje ledd – Tilbydere av varer med lav verdi og elektroniske tjenester
+2-1.9 § 2-1 fjerde ledd – Konkursbo
+2-1.10 § 2-1 femte ledd – Dødsbo
+2-1.11 § 2-1 sjette ledd – Registrering ved representant
+2-1.12 § 2-1 syvende ledd – Valgfri registrering for transportører hjemmehørende i utlandet
+2-1.13 § 2-1 åttende ledd – Forskriftshjemmel
+2-2 § 2-2. En registreringsenhet
+2-2.1 Forarbeider
+2-2.2 § 2-2 første ledd – Ett avgiftssubjekt
+2-2.3 § 2-2 annet ledd – Særskilt registrering
+2-2.4 § 2-2 tredje ledd – Fellesregistrering
+2-3 § 2-3. Frivillig registrering
+2-3.1 Forarbeider og forskrifter
+2-3.2 § 2-3 første ledd – Frivillig registrering av utleiere av bygg eller anlegg
+2-3.3 Utleie til kompensasjonsberettiget bruk
+2-3.4 § 2-3 annet ledd – Frivillig registrering av bortforpaktere av landbrukseiendom
+2-3.5 § 2-3 tredje ledd – Frivillig registrering ved tilkjennegivelse
+2-3.6 § 2-3 fjerde ledd – Frivillig registrering av skogsveiforeninger
+2-3.7 § 2-3 femte ledd – Frivillig registrering av utbygger av vann- og avløpsanlegg
+2-3.8 § 2-3 sjette ledd – Frivillig registrering av baneanlegg
+2-3.9 § 2-3 sjuende ledd – Forskriftshjemmel
+2-4 § 2-4. Forhåndsregistrering
+2-4.1 Forarbeider og forskrifter
+2-4.2 § 2-4 første ledd – Generelt om forhåndsregistrering
+2-4.3 § 2-4 annet ledd – Forskriftshjemmel
+2-5 § 2-5. Lottfiske
+2-5.1 Forarbeider
+2-5.2 Registrering av lottfiske
+Merverdiavgiftsloven kapittel 3. Merverdiavgiftspliktig omsetning, uttak og innførsel
+3-1 § 3-1. Varer og tjenester
+3-1.1 Forarbeider og forskrifter
+3-1.2 § 3-1 første ledd – Avgiftsplikt ved omsetning av varer og tjenester
+3-1.3 § 3-1 annet ledd – Avgiftsplikt ved levering av varer med lav verdi som innføres til andre mottakere enn næringsdrivende og offentlig virksomhet i merverdiavgiftsområdet
+3-1.4 § 3-1 tredje ledd – Omsetning av varer i kommisjon
+3-1.5 § 3-1 fjerde ledd – Omsetning av elektroniske tjenester ved bruk av formidler
+3-1.6 § 3-1 femte ledd – Tjenester omsatt eller formidlet ved elektroniske tjenester
+3-1.7 § 3-1 sjette ledd – Forskriftshjemmel
+3-2 § 3-2. Helsetjenester mv.
+3-2.1 Forarbeider
+3-2.2 § 3-2 første ledd – Helsetjenester mv.
+3-2.3 § 3-2 annet ledd – Omsetning og formidling av kosmetisk kirurgi og kosmetisk behandling
+3-2.4 § 3-2 tredje ledd - Omsetning og formidling av alternativ behandling
+3-2.5 § 3-2 fjerde ledd – Varer og tjenester som naturlig ledd i helsetjenester
+3-2.6 § 3-2 femte ledd – Formidling og utleie av arbeidskraft
+3-2.7 § 3-2 sjette ledd – Utleie av utstyr mv.
+3-2.8 § 3-2 syvende ledd – Tanntekniske produkter
+3-2.9 § 3-2 åttende ledd – Ambulansetjenester
+3-3 § 3-3. Alternativ behandling (opph.)
+3-4 § 3-4. Sosiale tjenester mv.
+3-4.1 Forarbeider
+3-4.2 § 3-4 første ledd – Omsetning og formidling av sosiale tjenester
+3-4.3 § 3-4 annet ledd – Varer og tjenester som naturlig ledd i sosiale tjenester
+3-4.4 § 3-4 tredje ledd – Utleie av arbeidskraft
+3-4.5 § 3-4 fjerde ledd – Drift av trygghetsalarmer
+3-5 § 3-5. Undervisningstjenester mv.
+3-5.1 Forarbeider
+3-5.2 § 3-5 første ledd – Omsetning og formidling av undervisningstjenester
+3-5.3 § 3-5 annet ledd – Varer og tjenester som naturlig ledd i undervisningstjenester
+3-5.4 § 3-5 tredje ledd – Utleie av arbeidskraft som utfører undervisning
+3-5.5 § 3-5 fjerde ledd – Servering fra elev- og studentkantiner
+3-6 § 3-6. Finansielle tjenester
+3-6.1 Forarbeider
+3-6.2 Generelt om unntaket for finansielle tjenester
+3-6.3 Om formidling av finansielle tjenester
+3-6.4 Sammensatte ytelser («hovedytelseslæren»)
+3-6.5 Om tjenester levert fra underleverandører
+3-6.6 § 3-6 bokstav a – Forsikringstjenester
+3-6.8 § 3-6 bokstav b – Finansieringstjenester
+3-6.9 § 3-6 bokstav c – Utføring av betalingsoppdrag
+3-6.10 § 3-6 bokstav d – Omsetning av gyldige betalingsmidler
+3-6.11 § 3-6 bokstav e – Omsetning av finansielle instrumenter og lignende
+3-6.12 § 3-6 bokstav f – Forvaltning av verdipapirfond
+3-6.13 § 3-6 bokstav g – Forvaltning av investeringsselskap
+3-7 § 3-7. Kunst og kultur mv.
+3-7.1 Forarbeider
+3-7.2 Innledning
+3-7.3 § 3-7 første ledd – Adgang til kulturarrangementer
+3-7.4 § 3-7 annet ledd – Kunstnerisk fremføring av åndsverk
+3-7.5 § 3-7 tredje ledd – Omvisningstjenester
+3-7.6 § 3-7 fjerde ledd – Kunstverk og opphavsrett til litterære og kunstneriske verk
+3-7.7 § 3-7 femte ledd – Formidling av kunstverk for opphaver
+3-7.8 § 3-7 sjette ledd – Bytte av kunstverk mellom offentlige museer og kunstsamlinger
+3-8 § 3-8. Idrett mv.
+3-8.1 Forarbeider
+3-8.2 § 3-8 første ledd – Adgang til enkeltstående idrettsarrangementer
+3-8.3 § 3-8 annet ledd – Rett til å utøve idrettsaktiviteter
+3-9 § 3-9. Offentlig myndighetsutøvelse mv.
+3-9.1 Forarbeider
+3-9.2 § 3-9 første ledd – Offentlig myndighetsutøvelse
+3-9.3 § 3-9 annet ledd – Etablering og drift av offentlige servicekontorer
+3-9.4 § 3-9 tredje ledd – Tvangssalg ved medhjelper
+3-10 § 3-10. Tjenester innen staten
+3-10.1 Forarbeider
+3-10.2 Bakgrunnen for unntaket
+3-10.3 Nærmere om unntaket for tjenester innen staten
+3-11 § 3-11. Fast eiendom
+3-11.1 Forarbeider og forskrifter
+3-11.2 § 3-11 første ledd – Omsetning og utleie av fast eiendom og rettighet til fast eiendom
+3-11.3 § 3-11 annet ledd – Avgiftspliktig omsetning av rettigheter til fast eiendom
+3-11.4 § 3-11 tredje ledd – Forskriftshjemmel
+3-12 § 3-12. Veldedige og allmennyttige institusjoner og organisasjoner
+3-12.1 Forarbeider og forskrifter
+3-12.2 Innledning
+3-12.3 § 3-12 første ledd – Særskilt varesalg mv.
+3-12.4 § 3-12 annet ledd – Omsetning fra kommisjonær
+3-12.5 § 3-12 tredje ledd – Begrenset kiosksalg og servering
+3-12.6 § 3-12 fjerde ledd – Interne fellesoppgaver
+3-12.7 § 3-12 femte ledd – Forskriftshjemmel
+3-13 § 3-13. Ideelle organisasjoner og foreninger
+3-13.1 Forarbeider og forskrifter
+3-13.2 § 3-13 første ledd – Medlemskontingenter
+3-13.3 § 3-13 annet ledd – Interne fellesoppgaver
+3-13.4 § 3-13 tredje ledd – Forskriftshjemmel
+3-14 § 3-14. Lotteritjenester
+3-14.1 Forarbeider
+3-14.2 Generelt om unntaket
+3-14.3 Agenter/formidlere
+3-14.4 Lotterientreprenører
+3-14.5 Andre som deltar i lotterivirksomhet på forretningsmessig grunnlag
+3-15 § 3-15. Seremonielle tjenester
+3-15.1 Forarbeider
+3-15.2 Seremonielle tjenester i tilknytning til begravelser og bisettelser
+3-16 § 3-16. Forvaltningstjenester fra boligbyggelag til borettslag
+3-17 § 3-17. Tjenester som medlem av styre mv.
+3-17.1 Forarbeider
+3-17.2 Unntak for tjenester som medlem av styre mv.
+3-18 § 3-18. Frimerker, sedler og mynter
+3-18.1 Forarbeider
+3-18.2 Omsetning av frimerker, sedler og mynter
+3-19 § 3-19. Varer brukt privat mv.
+3-19.1 Forarbeider
+3-19.2 Omsetning av varer brukt privat mv.
+3-20 § 3-20. Sletting av klimakvoter
+3-20.1 Forarbeider
+3-20.2 Nærmere om unntaket
+3-21 § 3-21. Varer
+3-21.1 Forarbeider
+3-21.2 § 3-21 første ledd – Avgiftsplikt ved uttak av varer
+3-21.3 § 3-21 annet ledd – Vilkår om fradragsrett ved anskaffelsen
+3-22 § 3-22. Tjenester
+3-22.1 Forarbeider
+3-22.2 § 3-22 første ledd – Avgiftsplikten ved uttak av tjenester
+3-22.3 § 3-22 annet ledd – Særskilte formål og byggearbeider mv.
+3-23 § 3-23. Særlige formål
+3-23.1 Forarbeider
+3-23.2 Uttak til særlige formål i virksomheten
+3-24 § 3-24. Motorkjøretøy
+3-24.1 Forarbeider
+3-24.2 Bilforhandler som registrerer kjøretøy på eget navn
+3-25 § 3-25. Varer og tjenester til vedlikehold, bruk og drift av personkjøretøy
+3-25.1 Forarbeider
+3-25.2 Uttak til vedlikehold, bruk og drift av personkjøretøy
+3-26 § 3-26. Oppføring av bygg eller anlegg for egen regning
+3-26.1 Forarbeider
+3-26.2 Avgiftsplikten ved oppføring av bygg eller anlegg for egen regning
+3-27 § 3-27. Tilsvarende unntak som ved omsetning
+3-27.1 Forarbeider
+3-27.2 Unntak for uttak tilsvarende som ved omsetning
+3-28 § 3-28. Offentlig virksomhet
+3-28.1 Forarbeider
+3-28.2 Unntaket for visse offentlige virksomheters uttak av varer og tjenester
+3-28.3 Enkeltsaker etter tidligere lov § 11
+3-29 § 3-29. Varer
+3-29.1 Forarbeider
+3-29.2 § 3-29 første ledd - Avgiftsplikten ved innførsel av varer
+3-29.3 § 3-29 annet ledd - Tidfesting
+3-30 § 3-30. Tjenester
+3-30.1 Forarbeider
+3-30.2 Generelt om § 3-30
+3-30.3 § 3-30 – Generell merverdiavgiftsplikt ved kjøp av fjernleverbare tjenester fra utlandet
+3-31 § 3-31 Dispensasjon
+3-31.1 Forarbeider og forskrifter
+3-31.2 Generelt om § 3-31
+3-31.3 § 3-31 – Avgiftsunntak mv. ved særlige forhold
+3-32 § 3-32. Våpensystemet F-35
+3-32.1 3-32.1 Forarbeider og forskrifter
+3-32.2 § 3-32 - Generelt
+3-33 § 3-33. Leveranser til militære enheter fra USA
+3-33.1 3-33.1 Forarbeider og forskrifter
+3-33.2 § 3-33 - Generelt
+Merverdiavgiftsloven kapittel 4. Grunnlaget for beregning av merverdiavgift
+4-1 § 4-1. Hovedregel
+4-1.1 Forarbeider
+4-1.2 § 4-1 første ledd – Beregningsgrunnlaget er vederlaget
+4-1.3 § 4-1 første ledd forts. – Sammensatte ytelser. Hovedytelseslæren
+4-1.4 § 4-1 annet ledd – Hva som ikke anses som del av vederlaget
+4-2 § 4-2. Hva inngår i beregningsgrunnlaget
+4-2.1 Forarbeider og forskrifter
+4-2.2 Generelt om § 4-2
+4-2.3 § 4-2 første ledd – Kostnader som skal med i beregningsgrunnlaget
+4-2.4 § 4-2 annet ledd – Rabatter og lignende
+4-2.5 § 4-2 tredje ledd – Forskriftshjemmel
+4-3 § 4-3. Byttehandel mv.
+4-3.1 Forarbeider og forskrifter
+4-3.2 § 4-3 første ledd – Beregningsgrunnlaget ved byttehandel mv.
+4-3.3 § 4-3 annet ledd – Forskriftshjemmel
+4-4 § 4-4. Interessefellesskap
+4-4.1 Forarbeider og forskrifter
+4-4.2 Beregningsgrunnlaget for merverdiavgift ved interessefellesskap
+4-4.3 Forskriftshjemmel
+4-5 § 4-5. Videresalg av brukte varer mv. – enkeltstående kjøp og salg
+4-5.1 Forarbeider
+4-5.2 § 4-5 første ledd – Avansesystemet ved enkeltstående kjøp og salg
+4-5.3 § 4-5 annet ledd – Egne innførte kunstverk, samleobjekter og antikviteter
+4-5.4 § 4-5 tredje ledd – Innkjøpspris overstiger salgspris
+4-5.5 Særlig om auksjon
+4-6 § 4-6. Videresalg av brukte varer mv. – samlet kjøp og salg
+4-6.1 Forarbeider
+4-6.2 Avansesystemet ved samlet kjøp og salg
+4-7 § 4-7. Tap på utestående fordringer og heving
+4-7.1 Forarbeider og forskrifter
+4-7.2 § 4-7 første ledd – Tap på utestående fordringer
+4-7.3 § 4-7 annet ledd – Heving av kjøp eller salg
+4-7.4 § 4-7 tredje ledd – Forskriftshjemmel
+4-8 § 4-8. Forenklet beregningsgrunnlag (opph.)
+4-9 § 4-9. Hovedregel
+4-9.1 Forarbeider og forskrifter
+4-9.2 § 4-9 første ledd – Den alminnelige omsetningsverdi
+4-9.3 § 4-9 annet ledd – Forskriftshjemmel
+4-10 § 4-10. Brukte varer, kunstverk, samleobjekter og antikviteter
+4-10.1 Forarbeider
+4-10.2 Avansesystemet kan også benyttes ved uttak
+4-11 § 4-11. Varer
+4-11.1 Forarbeider
+4-11.2 § 4-11 første ledd – Beregningsgrunnlaget
+4-11.3 § 4-11 annet ledd – Kunstverk, samleobjekter og antikviteter
+4-11.4 § 4-11 tredje ledd – Tanntekniske produkter
+4-11.5 § 4-11 fjerde ledd – Gjeninnførsel av varer etter foredling, bearbeiding eller reparasjon
+4-11.6 § 4-11 femte ledd – Varen er forringet som følge av skade eller bedervelse
+4-12 § 4-12. Tjenester
+4-12.1 Forarbeider
+4-12.2 § 4-12 første ledd – Beregningsgrunnlaget er vederlaget
+4-12.3 § 4-12 annet ledd – Omregning til norske kroner
+Merverdiavgiftsloven kapittel 5. Merverdiavgiftssatsene og områdene for disse
+5-1 § 5-1. Alminnelig og redusert sats
+5-1.1 Forarbeider
+5-1.2 Generelt om § 5-1
+5-1.3 § 5-1 første ledd – Alminnelig sats
+5-1.4 § 5-1 annet ledd – Redusert sats
+5-2 § 5-2. Næringsmidler
+5-2.1 Forarbeider og forskrifter
+5-2.2 Generelt om § 5-2
+5-2.3 § 5-2 første ledd – Omsetning mv. av næringsmidler. Forholdet til serveringstjenester
+5-2.4 § 5-2 annet ledd – Begrepet næringsmiddel
+5-2.5 § 5-2 tredje ledd – Varer som ikke anses som næringsmidler
+5-2.6 § 5-2 fjerde ledd – Forskriftshjemmel
+5-3 § 5-3 Persontransport mv.
+5-3.1 Forarbeider
+5-3.2 Generelt om § 5-3
+5-3.3 Persontransporttjenester – avgrensninger
+5-3.4 Formidling av persontransporttjenester
+5-4 § 5-4. Transport av kjøretøy på fartøy
+5-4.1 Forarbeider
+5-4.2 § 5-4 første ledd – Transporttjenester som består i ferging av kjøretøyer
+5-4.3 § 5-4 annet ledd – Innenlands veisamband
+5-4.4 § 5-4 tredje ledd – Forskriftshjemmel
+5-5 § 5-5. Romutleie i hotellvirksomhet mv.
+5-5.1 Forarbeider og forskrifter
+5-5.2 § 5-5 første ledd – Utleie av rom i hotellvirksomhet mv.
+5-5.3 § 5-5 annet ledd – Utleie av lokaler til konferanser og møter mv.
+5-5.4 § 5-5 tredje ledd – Varer og tjenester som utgjør et naturlig ledd i utleien
+5-5.5 § 5-5 fjerde ledd – Formidling av romutleie mv.
+5-5.6 § 5-5 femte ledd – Forskriftshjemmel
+5-6 § 5-6. Kinoforestillinger
+5-6.1 Forarbeider
+5-6.2 Generelt om § 5-6
+5-7 § 5-7. Allmennkringkasting
+5-7.1 Forarbeider
+5-7.2 Generelt om § 5-7
+5-8 § 5-8. Viltlevende marine ressurser
+5-8.1 Forarbeider
+5-8.2 Generelt om § 5-8
+5-8.3 Førstehåndsomsetning av viltlevende marine ressurser
+5-8.4 Annen omsetning
+5-9 § 5-9. Museer mv.
+5-9.1 Forarbeider
+5-9.2 Generelt om § 5-9
+5-9.3 Avgrensning av området for den reduserte satsen
+5-10 § 5-10. Fornøyelsesparker mv.
+5-10.1 Forarbeider
+5-10.2 Generelt om § 5-10
+5-10.3 Avgrensning av området for den reduserte satsen
+5-11 § 5-11. Idrettsarrangementer mv.
+5-11.1 Forarbeider
+5-11.2 Generelt om § 5-11
+5-11.3 Avgrensning av området for den reduserte satsen
+5-11.4 Formidling
+Merverdiavgiftsloven kapittel 6. Fritak for merverdiavgift
+6-1 § 6-1. Aviser
+6-1.1 Forarbeider
+6-1.2 Generelt om fritaket for aviser
+6-1.3 Enkeltsaker
+6-2 § 6-2. Elektroniske nyhetstjenester (opph.)
+6-3 § 6-3. Tidsskrift
+6-3.1 Forarbeider og forskrifter
+6-3.2 Generelt om fritaket for tidsskrifter
+6-3.3 § 6-3 første ledd – Tidsskrifter til faste abonnenter eller foreningsmedlemmer
+6-3.4 § 6-3 annet ledd – Politiske, litterære og religiøse tidsskrifter
+6-3.5 Levering fra trykkeri
+6-3.6 Utgivers meldeplikt
+6-3.7 Eldre årganger og enkelthefter
+6-3.8 Enkeltsaker
+6-4 § 6-4. Bøker
+6-4.1 Forarbeider og forskrifter
+6-4.2 Generelt om fritaket for bøker
+6-4.3 § 6-4 første og fjerde ledd – Den nærmere avgrensing av bokfritaket
+6-4.4 § 6-4 annet ledd – Felles vareenhet
+6-4.5 § 6-4 tredje ledd – Levering fra trykkeri
+6-5 § 6-5. Andre publikasjoner
+6-5.1 Forarbeider
+6-5.2 § 6-5 første ledd – Hvilke publikasjoner som omfattes av fritaket for trykkeriutgifter
+6-5.3 § 6-5 annet ledd – Utgivers omsetning av gatemagasin til vanskeligstilte
+6-6 § 6-6. Elektrisk kraft mv. til husholdningsbruk i Nord-Norge
+6-6.1 Forarbeider og forskrifter
+6-6.2 Generelt om § 6-6
+6-7 § 6-7. Kjøretøy som omfattes av Stortingets vedtak om omregistreringsavgift
+6-7.1 Forarbeider og forskrifter
+6-7.2 Generelt
+6-7.3 § 6-7 første ledd – Omsetning av brukte kjøretøy
+6-7.4 § 6-7 annet ledd – andre varer enn selve kjøretøyet og arbeid som utføres på kjøretøyet
+6-8 § 6-8. Kjøretøy som bare bruker elektrisitet til framdrift
+6-8.1 Forarbeider
+6-8.2 Generelt
+6-8.3 § 6-8 annet ledd – Omsetning av personkjøretøy som bare bruker elektrisitet til framdrift
+6-8.4 § 6-8 tredje ledd – Leasing av personkjøretøy som bare bruker elektrisitet til framdrift
+6-9 § 6-9. Fartøy mv.
+6-9.1 Forarbeider og forskrifter
+6-9.2 Generelt
+6-9.3 § 6-9 første ledd – Omsetning av fartøy mv.
+6-9.4 § 6-9 annet ledd – Bygging og reparasjon mv. av fartøy
+6-9.5 § 6-9 tredje ledd – Berging av fartøy uført fra fartøy
+6-9.6 § 6-9 fjerde ledd – Utleie av fartøy
+6-9.7 § 6-9 femte ledd – Forskriftshjemmel
+6-10 § 6-10. Luftfartøy mv.
+6-10.1 Forarbeider og forskrifter
+6-10.2 Generelt
+6-10.3 § 6-10 første ledd – Omsetning og utleie av luftfartøy
+6-10.4 § 6-10 annet ledd – Bygging og reparasjon mv. av luftfartøy
+6-10.5 § 6-10 tredje ledd – Berging av luftfartøy utført fra fartøy
+6-10.6 § 6-10 fjerde ledd – Omsetning av flysimulator til bruk i sivil luftfart
+6-11 § 6-11. Plattformer, rørledninger mv.
+6-11.1 Forarbeider og forskrifter
+6-11.2 Generelt
+6-11.3 § 6-11 første ledd – Omsetning og utleie av plattformer
+6-11.4 § 6-11 annet ledd – Bygging, reparasjon mv. av plattformer
+6-11.5 § 6-11 tredje ledd – Berging av plattform utført fra fartøy
+6-11.6 § 6-11 fjerde ledd – Rørledninger og tilhørende landanlegg
+6-12 § 6-12. Oppføring av ambassadebygg
+6-12.1 Forarbeider og forskrifter
+6-12.2 Generelt om § 6-12
+6-13 § 6-13. Internasjonale militære styrker og kommandoenheter
+6-13.1 Forarbeider og forskrifter
+6-13.2 Generelt om § 6-13
+6-14 § 6-14. Overdragelse av virksomhet
+6-14.1 Forarbeider
+6-14.2 Generelt om overdragelse av virksomhet
+6-14.3 Vilkår
+6-14.4 Enkeltsaker
+6-15 § 6-15. Biologisk materiale
+6-15.1 Forarbeider
+6-15.2 Omsetning av biologisk materiale
+6-16 § 6-16. Begravelsestjenester
+6-16.1 Forarbeider
+6-16.2 Omsetning av begravelsestjenester
+6-17 § 6-17. Tilsvarende fritak som ved omsetning
+6-17.1 Forarbeider og forskrifter
+6-17.2 Uttak
+6-18 § 6-18. Bedriftskantiner mv.
+6-18.1 Forarbeider
+6-18.2 Uttak av varer og tjenester til bedriftskantine
+6-19 § 6-19. Veldedige formål mv.
+6-19.1 Forarbeider
+6-19.2 § 6-19 første ledd – Tjenester som ytes vederlagsfritt på veldedig grunnlag
+6-19.3 § 6-19 annet ledd – Næringsmidler som leveres vederlagsfritt til veldedige formål
+6-19.4 § 6-19 tredje ledd – Varer og tjenester som leveres vederlagsfritt til frivillige organisasjoner som ledd i en nødhjelpsaksjon
+6-20 § 6-20. Primærnæringer
+6-20.1 Forarbeider og forskrifter
+6-20.2 Uttak av produkter fra eget fiske, skogbruk eller jordbruk med binæringer
+6-20.3 Uttak av foredlet skogsvirke – allmenninger
+6-21 § 6-21. Utførsel av varer
+6-21.1 Forarbeider og forskrifter
+6-21.2 Generelt om utførsel av varer
+6-21.3 Omsetning av varer ut av merverdiavgiftsområdet
+6-21.4 Levering av varer i Norge
+6-22 § 6-22. Utførsel av tjenester
+6-22.1 Forarbeider og forskrifter
+6-22.2 Generelt om utførsel av tjenester
+6-22.3 § 6-22 første ledd – Levering av tjenester helt ut til bruk utenfor merverdiavgiftsområdet
+6-22.4 § 6-22 annet ledd – Fjernleverbare tjenester
+6-22.5 § 6-22 tredje ledd – Levering av elektronisk kommunikasjonstjenester gjennom fast terminal
+6-23 § 6-23. Varer som legges inn på tollager
+6-23.1 Forarbeider og forskrifter
+6-23.2 Generelt om § 6-23
+6-24 § 6-24. Varer som videreselges ut av merverdiavgiftsområdet
+6-24.1 Forarbeider og forskrifter
+6-24.2 Avgiftsfritaket for varer som kjøper videreselger ut av merverdiavgiftsområdet
+6-25 § 6-25. Varer til turister
+6-25.1 Forarbeider og forskrifter
+6-25.2 Generelt om varesalg til turister
+6-25.3 § 6-25 første ledd – Varer omsatt til personer bosatt utenfor merverdiavgiftsområdet
+6-25.4 § 6-25 annet ledd – Frist for utførsel m.m.
+6-25.5 § 6-25 tredje ledd – Forskriftshjemmel
+6-26 § 6-26. Utsalg på lufthavn ved utreise
+6-26.1 Forarbeider og forskrifter
+6-26.2 Avgiftsfritaket for varer omsatt på lufthavn ved utreise
+6-27 § 6-27. Utsalg på lufthavn ved ankomst
+6-27.1 Forarbeider og forskrifter
+6-27.2 Avgiftsfritaket for varer omsatt på lufthavn ved ankomst
+6-28 § 6-28. Transporttjenester
+6-28.1 Forarbeider og forskrifter
+6-28.2 § 6-28 første ledd – Direkte transport til eller fra steder utenfor merverdiavgiftsområdet
+6-28.3 § 6-28 annet ledd – Tilknytningstransport
+6-28.4 § 6-28 tredje ledd – Tjenester som i alminnelighet leveres i forbindelse med transporttjenesten
+6-28.5 § 6-28 fjerde ledd – Rundreiser
+6-28.6 § 6-28 femte ledd – Varetransport
+6-28.7 § 6-28 sjette ledd – Posten Norges AS’ brevtransport
+6-28.8 § 6-28 syvende ledd – Forskriftshjemmel
+6-28.9 Legitimasjon
+6-29 § 6-29. Formidlingstjenester
+6-29.1 Forarbeider
+6-29.2 Generelt om formidlingsfritaket
+6-30 § 6-30. Varer og tjenester til fartøy
+6-30.1 Forarbeider og forskrifter
+6-30.2 Generelt
+6-30.3 § 6-30 første ledd – Avgiftsfritaket for varer og tjenester til utenlandske fartøy
+6-30.4 § 6-30 annet ledd – Avgiftsfritaket for varer og tjenester til norske fartøy i utenriks fart
+6-30.5 § 6-30 tredje ledd – Avgiftsfritaket for omsetning av varer og tjenester til norske spesialfartøyer til bruk i petroleumsvirksomhet til havs
+6-30.6 § 6-30 fjerde ledd – Varer til bruk på fartøy utenfor merverdiavgiftsområdet, men der levering skjer i merverdiavgiftsområdet
+6-30.7 § 6-30 femte ledd – Forskriftshjemmel
+6-31 § 6-31. Varer og tjenester til luftfartøy
+6-31.1 Forarbeider og forskrifter
+6-31.2 Generelt om § 6-31
+6-32 § 6-32. Varer og tjenester til petroleumsvirksomheten
+6-32.1 Forarbeider og forskrifter
+6-32.2 Generelt
+6-32.3 § 6-32 første ledd – Fritaket for varer og tjenester til bruk i petroleumsvirksomheten
+6-32.4 § 6-32 annet ledd – Tjenester fra baseselskaper
+6-32.5 § 6-32 tredje ledd – Forskriftshjemmel
+6-33 § 6-33. Reklamepublikasjoner på fremmed språk mv.
+6-33.1 Forarbeider og forskrifter
+6-33.2 Avgiftsfritaket for reklamepublikasjoner på fremmed språk mv.
+6-34 § 6-34. Garantireparasjoner
+6-34.1 Forarbeider
+6-34.2 Avgiftsfritaket for garantireparasjoner utført for utenlandsk oppdragsgiver
+6-35 § 6-35. Forskriftsfullmakt
+6-35.1 Forarbeider og forskrifter
+6-35.2 Forskriftsfullmakten § 6-35
+6-36 § 6-36. Dispensasjon
+6-36.1 Forarbeider
+6-36.2 Generelt
+6-37 § 6-37. Våpensystemet F-35
+6-37.1 Forarbeider
+6-37.2 Generelt
+Merverdiavgiftsloven kapittel 7. Varer som det ikke skal beregnes merverdiavgift av ved innførsel
+7-1 § 7-1. Varer som er fritatt eller unntatt ved omsetning i merverdiavgiftsområdet
+7-1.1 Forarbeider og forskrifter
+7-1.2 Generelt om § 7-1
+7-1.3 § 7-1 første ledd
+7-1.4 § 7-1 annet ledd
+7-1.5 § 7-1 – tredje ledd
+7-1.6 Enkeltsaker
+7-1.7 § 7-1 fjerde ledd - Forskriftsfullmakt
+7-2 § 7-2. Varer som er unntatt fra deklarasjonsplikt etter vareførselsloven § 4-1 og varer det ikke skal beregnes tollavgift av ved innførsel
+7-2.1 Forarbeider og forskrifter
+7-2.2 Generelt om § 7-2
+7-2.3 § 7-2 første ledd – Varer som er unntatt fra deklarasjonsplikt etter vareførselsloven § 4-1 tredje ledd
+7-2.4 § 7-2 annet ledd – Særlige vilkår for fritak
+7-2.5 § 7-2 tredje ledd – Forskrifter
+7-3 § 7-3. Varer til personlig bruk
+7-3.1 Forarbeider og forskrifter
+7-3.2 Generelt om § 7-3
+7-3.3 § 7-3 første ledd – Fritakene
+7-3.4 § 7-3 annet ledd – Betingelser for fritak
+7-3.5 § 7-3 tredje ledd – Forskriftsfullmakt
+7-4 § 7-4. Vareprøver, varer til teknisk og vitenskapelig bruk mv.
+7-4.1 Forarbeider og forskrifter
+7-4.2 Generelt om § 7-4
+7-4.3 § 7-4 første ledd – Fritakene
+7-4.4 § 7-4 tredje ledd – Forskriftsfullmakt
+7-5 § 7-5. Diverse fritak
+7-5.1 Forarbeider og forskrifter
+7-5.2 Generelt om § 7-5
+7-5.3 § 7-5 første ledd
+7-5.4 § 7-5 annet ledd
+7-5.5 § 7-5 tredje ledd – Forskriftsfullmakt
+7-6 § 7-6. Varer som mottas vederlagsfritt
+7-6.1 Forarbeider og forskrifter
+7-6.2 Generelt om § 7-6
+7-7 § 7-7. Elektrisk kraft
+7-7.1 Forarbeider og forskrifter
+7-7.2 Generelt om § 7-7
+7-8 § 7-8. Dispensasjon
+7-8.1 Forarbeider og forskrifter
+7-8.2 Generelt om § 7-8
+Merverdiavgiftsloven kapittel 8. Fradrag for inngående merverdiavgift
+8-1 § 8-1. Hovedregel
+8-1.1 Forarbeider
+8-1.2 Generelt om lovens kapittel 8 – fradrag for inngående merverdiavgift
+8-1.3 § 8-1 – Hovedregel - Tilknytningskravet
+8-1.4 Tilknytningskravet - Praksis
+8-1.5 Aktsomhetskriteriet
+8-1.6 Endring av fastsetting
+8-1.7 Fradragsretten for virksomhet som drives i fellesskap (sameie mv.)
+8-2 § 8-2. Fradragsrett for anskaffelser delvis til bruk i registrert virksomhet
+8-2.1 Forarbeider og forskrifter
+8-2.2 Generelt om delvis fradragsrett for inngående merverdiavgift
+8-2.3 § 8-2 første ledd første punktum – Fradragsrett for anskaffelser delvis til bruk i registrert virksomhet
+8-2.4 § 8-2 første ledd annet punktum – Fradragsrett for anskaffelser til bruk innenfor avgiftssubjektets samlede virksomhet
+8-2.5 § 8-2 annet ledd – Fradragsrett for offentlig virksomhet som hovedsakelig har til formål å tilgodese egne behov
+8-2.6 § 8-2 tredje ledd – Fradragsrett for fellesanskaffelser hvor avgiftspliktig omsetning er ubetydelig i forhold til samlet omsetning
+8-2.7 § 8-2 fjerde ledd – Fradragsrett for fellesanskaffelser hvor ikke-avgiftspliktig omsetning er ubetydelig i forhold til samlet omsetning
+8-2.8 § 8-2 femte ledd – Forskriftsbestemmelser om fordeling av inngående merverdiavgift
+8-2.9 Hva skal regnes med til omsetning i FMVA § 8-2-2?
+8-3 § 8-3. Andre begrensninger i fradragsretten
+8-3.1 Forarbeider og forskrifter
+8-3.2 Generelt om andre begrensninger i fradragsretten
+8-3.3 § 8-3 første ledd bokstav a og b – Servering og leie av selskapslokaler i forbindelse med servering
+8-3.4 § 8-3 første ledd bokstav c – Kunst og antikviteter
+8-3.5 § 8-3 første ledd bokstav d – Kost og naturalavlønning
+8-3.6 § 8-3 første ledd bokstav e – Representasjon
+8-3.7 § 8-3 første ledd bokstav f – Gaver og varer og tjenester til utdeling i reklameøyemed
+8-3.8 § 8-3 første ledd bokstav g – Fast eiendom som skal dekke bolig- eller velferdsformål
+8-3.9 § 8-3 annet ledd – Varer til bruk for luftfartøy eller fartøy på minst 15 meter i utenriks fart
+8-3.10 § 8-3 tredje ledd første punktum – Fradragsrett for fast eiendom i tilknytning til primærnæringene
+8-3.11 § 8-3 tredje ledd annet punktum – Forskriftshjemmel
+8-4 § 8-4. Personkjøretøy
+8-4.1 Forarbeider
+8-4.2 § 8-4 første ledd første punktum – Fradragsretten for personkjøretøy
+8-4.3 § 8-4 første ledd annet punktum – Fradragsrett for personkjøretøy ved nærmere bestemt bruk
+8-4.4 § 8-4 annet ledd – Forskriftshjemmel
+8-5 § 8-5. Varer og tjenester av samme art som omsettes i virksomheten
+8-5.1 Forarbeider
+8-5.2 Generelt om § 8-5 – Fradrag for inngående avgift på varer av samme art som omsettes i virksomheten
+8-6 § 8-6. Anskaffelser foretatt før registrering
+8-6.1 Forarbeider og forskrifter
+8-6.2 § 8-6 første ledd første til tredje punktum – Tilbakegående avgiftsoppgjør
+8-6.3 Tilbakegående avgiftsoppgjør – Frivillig registrerte
+8-6.4 § 8-6 første ledd femte punktum – Treårsfristen gjelder ikke for kapitalvaren fast eiendom
+8-6.5 § 8-6 annet ledd – Forskriftshjemmel
+8-7 § 8-7. Fradragsrett ved konkurs og skifte av insolvent dødsbo
+8-7.1 Forarbeider
+8-7.2 § 8-7 første ledd – Fradragsrett ved konkurs
+8-7.3 § 8-7 annet ledd – Fradragsretten for insolvente dødsboer
+8-8 § 8-8. Betaling via bank som vilkår for fradrag for inngående merverdiavgift
+8-8.1 Forarbeider og forskrifter
+8-8.2 Generelt om § 8-8
+8-8.3 § 8-8 første ledd – Fradragsrett ved betaling via bank
+8-8.4 § 8-8 annet ledd – Fradragsføring i en termin før betaling skjer
+8-8.5 § 8-8 tredje ledd – Unntak fra vilkåret om betaling via bank
+8-8.6 § 8-8 fjerde ledd – Forskriftshjemmel
+Merverdiavgiftsloven kapittel 9. Justering og tilbakeføring av inngående merverdiavgift
+9-1 § 9-1. Justering eller tilbakeføring av inngående merverdiavgift
+9-1.1 Forarbeider og forskrifter
+9-1.2 Oversikt over bestemmelsen
+9-1.3 Generelt om justeringsreglene. Virkeområde i tid mv.
+9-1.4 Rettslig plassering; forholdet til uttak og de alminnelige fradragsreglene
+9-1.5 § 9-1 annet ledd bokstav a – Begrepet kapitalvare; maskiner mv.
+9-1.6 § 9-1 annet ledd bokstav b – Begrepet kapitalvare; byggetiltak
+9-1.7 Registrering og dokumentasjon knyttet til anskaffelse og bruk
+9-2 § 9-2. Når inngående merverdiavgift skal justeres
+9-2.1 Forarbeider
+9-2.2 Oversikt over bestemmelsen
+9-2.3 § 9-2 første ledd – Bruksendringer
+9-2.4 § 9-2 første ledd forts. – Bruksendringer – særlig om byggetiltak
+9-2.5 § 9-2 annet ledd – Omsetning av andre driftsmidler enn byggetiltak
+9-2.6 § 9-2 tredje ledd – Overdragelse av byggetiltak
+9-2.7 § 9-2 fjerde ledd – Virksomhetsoverdragelse
+9-2.8 § 9-2 femte ledd – Forholdet mellom justering og uttak
+9-2.9 § 9-2 sjette ledd – Omorganisering av kommuner
+9-3 § 9-3. Overføring av retten og plikten til å justere inngående merverdiavgift
+9-3.1 Forarbeider og forskrifter
+9-3.2 § 9-3 første ledd – Overføring av retten og plikten til å justere
+9-3.3 § 9-3 annet ledd – Skjæringspunktet for overdragers og mottakers justeringsforpliktelse
+9-4 § 9-4. Justeringsperioden
+9-4.1 Forarbeider
+9-4.2 § 9-4 første ledd – Justeringsperioden for maskiner o.a. driftsmidler
+9-4.3 § 9-4 annet ledd – Justeringsperioden for byggetiltak – generelt
+9-4.4 § 9-4 annet ledd forts. – Når anses et byggetiltak fullført?
+9-4.5 § 9-4 tredje ledd – Justering ved gjenopptakelse av avgiftspliktig virksomhet
+9-5 § 9-5. Beregning av justeringsbeløpet mv.
+9-5.1 Forarbeider og forskrifter
+9-5.2 § 9-5 første ledd – Gjenstand for justering
+9-5.3 § 9-5 annet ledd – Årlig justering ved bruksendringer
+9-5.4 § 9-5 annet ledd forts. – Samlet justering ved overdragelse og opphør
+9-5.5 § 9-5 tredje ledd – Bagatellgrense ved endret bruk
+9-5.6 § 9-5 fjerde ledd – Delvis justering ved endring av del av kapitalvare
+9-5.7 § 9-5 femte ledd – Innberetning av justeringsbeløpet
+9-6 § 9-6. Salg mv. av personkjøretøy
+9-6.1 Forarbeider og forskrifter
+9-6.2 Tilbakeføring av inngående avgift på personkjøretøy
+9-6.3 Overgangsregler
+9-7 § 9-7. Salg mv. av fast eiendom før fullføring
+9-7.1 Forarbeider og forskrifter
+9-7.2 § 9-7 første ledd – Tilbakeføring av inngående avgift vedrørende fast eiendom
+9-7.3 § 9-7 annet og tredje ledd – Overføring av tilbakeføringsplikten
+9-8 § 9-8. Salg mv. av bygg og anlegg fullført før 1. januar 2008 (opph.)
+9-9 § 9-9. Forskriftsfullmakt
+9-9.1 Forarbeider og forskrifter
+9-9.2 Forskriftsfullmakt
+Merverdiavgiftsloven kapittel 10. Refusjon av merverdiavgift
+10-1 § 10-1. Næringsdrivende uten forretningssted eller hjemsted i merverdiavgiftsområdet
+10-1.1 Forarbeider og forskrifter
+10-1.2 Generelt om § 10-1
+10-1.3 § 10-1 første ledd – Nærmere om refusjonsordningen
+10-1.4 § 10-1 annet ledd – Tilbydere av fjernleverbare tjenester og varer med lav verdi
+10-1.5 § 10-1 tredje ledd – Utenlandske transportører
+10-1.6 § 10-1 fjerde ledd – Varer og tjenester for omsetning
+10-1.7 § 10-1 femte ledd – Forskriftshjemmel
+10-2 § 10-2. Fremmede lands ambassader og konsulater
+10-2.1 Forarbeider og forskrifter
+10-2.2 § 10-2 første ledd – Generelt om refusjonsordningen
+10-2.3 § 10-2 annet ledd – Forskriftshjemmel
+10-3 § 10-3. Internasjonale organisasjoner og samarbeidsprosjekter
+10-3.1 Forarbeider og forskrifter
+10-3.2 Generelt om § 10-3
+10-3.3 Nærmere om de ulike refusjonsordningene
+10-3.4 Søknadsprosedyren og dokumentasjonsplikt
+10-4 § 10-4. Nødhjelpsaksjoner
+10-4.1 Forarbeider og forskrifter
+10-4.2 § 10-4 første ledd – Generelt om refusjonsordningen
+10-4.3 § 10-4 annet ledd – Forskriftshjemmel
+10-6 § 10-6. Lottfiskere
+10-6.1 Forarbeider og forskrifter
+10-6.2 § 10-6 første ledd – Generelt om ordningen
+10-6.3 § 10-6 annet ledd – Forskriftshjemmel
+10-7 § 10-7. Varer som gjenutføres eller er feildeklarert
+10-7.1 Forarbeider og forskrifter
+10-7.2 Generelt om § 10-7
+10-7.3 § 10-7 første ledd – Omfanget
+10-7.4 § 10-7 annet ledd – Vilkår
+10-7.5 Refusjon til avgiftssubjekt
+10-8 § 10-8. Varer som innføres midlertidig – delvis refusjon
+10-8.1 Forarbeider
+10-8.2 Refusjon av avgift betalt ved midlertidig innførsel av varer
+Merverdiavgiftsloven kapittel 11. Beregning og betaling av merverdiavgift
+11-1 § 11-1. Omsetning, uttak og innførsel av varer
+11-1.1 Forarbeider og forskrifter
+11-1.2 § 11-1 første ledd – Avgiftssubjektet skal beregne og betale avgiften
+11-1.3 § 11-1 annet ledd – Mottakere av klimakvoter
+11-1.4 § 11-1 tredje ledd – Innenlands omsetning av gull
+11-1.5 § 11-1 fjerde ledd – Representantens ansvar
+11-1.6 § 11-1 femte ledd – Forskriftshjemmel – representantordningen
+11-1.7 § 11-1 sjette ledd – Forskriftshjemmel – gull
+11-2 § 11-2. Varer med lav verdi
+11-2.1 Forarbeider
+11-3 § 11-3. Innførsel av tjenester
+11-3.1 Forarbeider
+11-3.2 § 11-3 første ledd – Innførsel av tjenester
+11-3.3 § 11-3 annet ledd – Andre enn næringsdrivende eller offentlig virksomhet
+11-4 § 11-4. Beløp uriktig oppgitt som merverdiavgift
+11-4.1 Forarbeider
+11-4.2 § 11-4 første og annet ledd – Uriktig anført merverdiavgift skal innbetales
+11-4.3 § 11-4 tredje ledd – Retting annullerer betalingsplikten
+11-5 § 11-5. Utbetaling av inngående merverdiavgift
+11-5.1 Forarbeider
+11-5.2 § 11-5 første ledd – Inngående avgift overstiger utgående avgift
+11-5.3 § 11-5 annet ledd – Manglende utbetaling innen neste avgiftstermin
+11-6 § 11-6. Utbetaling ved forlis mv.
+11-6.1 Forarbeider og forskrifter
+11-6.2 § 11-6 første ledd – Utbetaling ved forlis, større redskapstap mv.
+11-6.3 § 11-6 annet ledd – Forskriftshjemmel
+Merverdiavgiftsloven kapittel 12. Omgåelsesregler mv.
+12-1 § 12-1. Omgåelse
+12-1.1 Forarbeider
+12-1.2 Gjeldende rett før vedtakelse av en lovfestet omgåelsesregel
+12-1.3 EU-retten
+12-1.4 Den lovfestede omgåelsesregelen
+Merverdiavgiftsloven kapittel 14. Registrering i Merverdiavgiftsregisteret mv. og forenklet registreringsordning
+14-1 § 14-1. Vilkår for registrering
+14-1.1 Forarbeider
+14-1.2 § 14-1 første ledd – Foretaksregisteret mv.
+14-1.3 § 14-1 annet ledd – Virkningstidspunktet for frivillig registrering og fellesregistrering etter § 2-3.
+14-1.4 § 14-1 tredje ledd – Utleie av bygg eller anlegg og bortforpaktning av landbrukseiendommer
+14-1.5 § 14-1 fjerde ledd – Registrering ved tilkjennegivelse
+14-1.6 § 14-1 sjette ledd – Forskrift om søknad og skjema for søknad
+14-2 § 14-2. Registrering av konkursbo og dødsbo
+14-2.1 Forarbeider
+14-2.2 Generelt om § 14-2
+14-3 § 14-3. Sletting og fortsatt registrering
+14-3.1 Forarbeider
+14-3.2 § 14-3 første og annet ledd – Sletting og fortsatt registrering
+14-3.3 § 14-3 tredje ledd – Solidaransvar
+14-3.4 Uriktig registrerte
+14-4 § 14-4. Hvem ordningen gjelder for mv.
+14-4.1 Forarbeider
+14-4.2 Hvem kan registrere seg i forenklet ordning
+14-5 § 14-5. Identifikasjonsnummer
+14-5.1 Forarbeider
+14-5.2 Identifikasjonsnummer
+14-6 § 14-6. Refusjon av merverdiavgift
+14-6.1 Forarbeider
+14-6.2 Refusjon av merverdiavgift
+14-7 § 14-7. Sletting
+14-7.1 Forarbeider
+14-7.2 Sletting fra registeret
+Merverdiavgiftsloven kapittel 15. Dokumentasjon mv.
+15-1 § 15-1. Føring av skattemelding
+15-1.1 Forarbeider
+15-1.2 Generelt om § 15-1
+15-1.3 § 15-1 første ledd – Skattemelding for primærnæringene
+15-1.4 § 15-1 annet ledd – Fjernleverbare tjenester
+15-1.5 § 15-1 tredje ledd – Beløp uriktig betegnet som merverdiavgift
+15-1.6 § 15-1 fjerde ledd – Enkeltvedtak i forbindelse med humanitære innsamlingsaksjoner
+15-9 § 15-9. Tidfesting
+15-9.1 Forarbeider og forskrifter
+15-9.2 Generelt om § 15-9
+15-9.3 § 15-9 første ledd – Tidfesting
+15-9.4 § 15-9 annet ledd – Bokføring etter kontantprinsippet
+15-9.5 § 15-9 tredje ledd – Forskriftshjemmel
+15-10 § 15-10. Dokumentasjonsplikt
+15-10.1 Forarbeider og forskrifter
+15-10.2 § 15-10 første ledd – Dokumentasjon av inngående merverdiavgift
+15-10.3 § 15-10 annet ledd – Dokumentasjon av avgiftsfri omsetning
+15-10.4 § 15-10 tredje ledd – Salgsdokumentet utstedes tidligst ved levering
+15-10.5 § 15-10 fjerde ledd – Dokumentasjon ved forenklet registreringsordning
+15-10.6 § 15-10 femte ledd – Forskriftshjemmel
+15-11 § 15-11. Adgang til å oppgi merverdiavgift i salgsdokumentasjon mv.
+15-11.1 Forarbeider og forskrifter
+15-11.2 Generelt om § 15-11
+15-11.3 § 15-11 første ledd – Bare registrerte avgiftssubjekter og tilbydere i forenklet registreringsordning kan fakturere med merverdiavgift
+15-11.4 § 15-11 annet ledd – Beløp oppgitt i strid med § 15-11 første ledd
+15-11.5 § 15-11 tredje ledd – Forskriftshjemmel om visse foretaks adgang til å oppgi avgift i avregningsoppgjør med ikke-avgiftspliktige leverandører
+15-14 § 15-14. Adgang til å oppgi merverdiavgift i salgsdokumentasjon mv. (opph.)
+Merverdiavgiftsloven kapittel 22. Sluttbestemmelser
+22-1 § 22-1. Endringer i merverdiavgiftsregelverket
+22-1.1 Forarbeider og forskrifter
+22-1.2 § 22-1 første ledd
+22-1.3 § 22-1 annet ledd
+22-1.4 § 22-1 tredje ledd
+22-2 § 22-2. Ikrafttredelse. Overgangsbestemmelser
+22-2.1 Forarbeider og forskrifter
+22-2.2 § 22-2 første ledd
+22-2.3 § 22-2 annet ledd
+22-2.4 § 22-2 tredje ledd
+22-3 § 22-3. Endringer i andre lover
+22-3.1 Forarbeider
+22-3.2 Nærmere om § 22-3
+Kapittel 23. Kompensasjon av merverdiavgift for kommuner, fylkeskommuner mv.
+23.1 Hovedpunkter. Bakgrunnen for kompensasjonsloven
+23.2 § 1 Formål
+23.2.1 Forarbeider
+23.2.2 Motvirke konkurransevridninger som følge av merverdiavgiftssystemet
+23.3 § 2 Virkeområde
+23.3.1 Forarbeider og forskrifter
+23.3.2 Generelt om hvem som er subjekt etter § 2
+23.3.3 § 2 første ledd bokstav a og b – Kommuner og fylkeskommuner mv.
+23.3.4 § 2 første ledd bokstav c – Private og ideelle virksomheter
+23.3.5 § 2 første ledd bokstav d – Barnehager
+23.3.6 § 2 første ledd bokstav e – kirkelig fellesråd
+23.3.7 § 2 første ledd bokstav f og g – internat og opplæring av voksne elever uten rett til videregående opplæring
+23.3.8 § 2 andre ledd – borettslag og eierseksjonssameier
+23.3.9 § 2 tredje ledd – Krav om registrering i enhetsregisteret
+23.4 § 3 Kompensasjon
+23.4.1 Forarbeider
+23.4.2 Hva som kompenseres
+23.5 § 4 Begrensninger
+23.5.1 Forarbeider og forskrifter
+23.5.2 Begrensninger etter § 4 første ledd – til bruk i den kompensasjonsberettigede virksomheten
+23.5.3 Begrensningen etter § 4 annet ledd nr. 1 – fradrag for inngående merverdiavgift
+23.5.4 Begrensninger etter § 4 annet ledd nr. 2 – anskaffelser som nevnt i merverdiavgiftsloven § 8-3 og § 8-4
+23.5.5 Begrensningen etter § 4 annet ledd nr. 3, jf. tredje ledd – salg eller utleie av fast eiendom
+23.5.6 Begrensningen etter § 4 annet ledd nr. 4 – økonomisk aktivitet
+23.5.7 Begrensningen etter § 4 annet ledd nr. 5 – betaling via bank eller foretak med rett til å drive betalingsformidling
+23.6 § 5 Finansiering
+23.6.1 Forarbeider
+23.6.2 Finansieringen
+23.7 § 6 Beløpsgrenser og tidfesting
+23.7.1 Forarbeider og forskrifter
+23.7.2 § 6 første ledd – Beløpsgrensen
+23.7.3 § 6 andre ledd – tidfesting av kompensasjonskravet
+23.8 § 7 oppgavefrist (opphevet)
+23.9 § 8 Revisorattest (opphevet)
+23.10 § 9 Krav på kompensasjon
+23.10.1 Forarbeider
+23.10.2 Krav på kompensasjon
+23.11 § 10 Foreldelse
+23.11.1 Forarbeider
+23.11.2 Praksis om foreldelse
+23.12 § 11 Tilbakebetaling (opphevet)
+23.13 § 12 Regnskap og kontroll
+23.13.1 Forarbeider
+23.13.2 Praksis om regnskap og kontroll – dokumentasjon
+23.14 § 13 Kontroll hos selger (opphevet)
+23.15 § 14 Omgjøring (opphevet)
+23.16 § 15 Renter (opphevet)
+23.17 § 16 Justering
+23.17.1 Forarbeider og forskrifter
+23.17.2 Praksis om justering
+23.17.3 Endret formål før fullføring
+23.18 § 17 Administrasjon (opphevet)
+23.19 § 18 Forskriftshjemmel
+23.19.1 Forarbeider og forskrifter
+23.20 § 19 Straff (opphevet)
+23.21 § 20 Overgangsregler
+23.22 § 21 Ikrafttredelse. Opphevelse av tidligere lov
+23.22.1 Forskrifter
+23.22.2 Generelt
+Rettskilder
+Rettskilder per type
+Håndbøker
+Merverdiavgift
+Merverdiavgiftshåndboken 2023
+Merverdiavgiftsloven kapittel 8. Fradrag for inngående merverdiavgift
+8-4 § 8-4. Personkjøretøy
+8-4.3 § 8-4 første ledd annet punktum – Fradragsrett for personkjøretøy ved nærmere bestemt bruk
+Unntak fra hovedregelenUnntakene fra hovedregelen om ingen fradragsrett for inngående avgift på personkjøretøy, finner vi altså i merverdiavgiftsloven § 8-4 første ledd annet punktum bokstav a til c.
+VideresalgEtter § 8-4 første ledd bokstav a kan inngående avgift fradragsføres ved anskaffelse av personkjøretøy for videresalg. Unntaket kom inn i loven med virkning fra 1. mars 2004, men er en kodifisering av tidligere forvaltningspraksis. Vedlikehold, reparasjoner, klargjøringFradragsretten gjelder også anskaffelser til vedlikehold og reparasjoner, samt klargjøring av slike kjøretøyer. I en uttalelse til Sivilombudsmannen har Finansdepartementet uttalt at virksomhet med salg av personkjøretøyer har Forflytning av kjøretøy som salgsvarefradragsrett for inngående avgift på drivstoff som er brukt ved forflytninger av kjøretøyer (som er salgsvarer) fra lager/importsted til utsalgssted/leveringssted. Enkelte spørsmål om avgiftsbehandling av drivstoff i tilknytning til virksomhet med salg av personkjøretøy (herunder demonstrasjonskjøretøy) er nærmere behandlet i Skattedirektoratets brev av 16. november 2005 til et advokatkontor.
+Yrkesmessig utleievirksomhetVidere kan inngående merverdiavgift etter § 8-4 første ledd bokstav b fradragsføres ved anskaffelse av personkjøretøy til bruk som utleiekjøretøy i yrkesmessig utleievirksomhet. Spørsmål om det foreligger yrkesmessig utleievirksomhet har vært oppe i en del enkeltsaker.
+Oslo byretts dom av 19. juni 1999 (KMVA 3546)
+Utleie fra morselskap til datterselskapKlagenemndas vedtak ble opphevet. Retten fant at det forelå yrkesmessig utleievirksomhet hvor datterselskapene solgte biler til morselskap som leide disse tilbake til datterselskapene.
+AS X er morselskapet til de to heleide datterselskapene AS A og AS B. Datterselskapene driver bilomsetning, verksted mv. I kontrollperioden kjøpte morselskapet 17 biler fra datterselskapene. Bilene ble leiet tilbake til datterselskapene til markedsleie. Leien ble fakturert med merverdiavgift. Merverdiavgiften ble ikke fradragsført i datterselskapene, som hadde benyttet bilene dels til utleie, dels til demonstrasjon og dels til utlån til verkstedkunder. Fylkesskattekontoret tilbakeførte avgiften som var trukket fra i morselskapet, da morselskapet, etter fylkesskattekontorets oppfatning, ikke kunne anses å drive yrkesmessig utleievirksomhet. Fylkesskattekontorets oppfatning var begrunnet med at eiendomsretten til bilene reelt sett aldri hadde gått over fra datterselskapene til morselskapet. Det ble antatt at motivet for å opprette morselskapet var å spare avgift i datterselskapene, og dermed i konsernet totalt, da datterselskapene ved å leie biler fra morselskapet, fremfor å ta ut biler fra egen virksomhet iht. forskrift nr. 69 (nå § 3-24 første ledd), ville oppnå en avgiftsbesparelse.
+Oslo byrett bemerket innledningsvis at det ikke var av betydning for utfallet av saken, hvordan datterselskapene benyttet bilene, da avgift på leien fra morselskapet uansett ikke var fradragsført i datterselskapene. Retten uttalte videre at opprettelsen av morselskapet ga en mer fordelaktig avgiftsbehandling for konsernet samlet sett, men at opprettelsen også var motivert ut fra et ønske om risikospredning i forbindelse med at det skulle investeres betydelige midler i nye biler.
+Oslo byretts dom av 22. oktober 1999 (KMVA 3776)
+Utleie til selskapets eier og bekjenteRetten fastholdt klagenemndas vedtak. Retten fant i likhet med klagenemnda og fylkesskattekontoret at anskaffelse av personkjøretøyer ikke var anskaffet til bruk i yrkesmessig utleievirksomhet.
+Et selskap ble forhåndsregistrert i avgiftsmanntallet for kjøp, salg og utleie av biler på bakgrunn av opplysninger om at selskapet hadde anskaffet fem personbiler til bruk i yrkesmessig utleievirksomhet. Selskapet hadde blitt slettet i avgiftsmanntallet samtidig som fradragsrett for inngående merverdiavgift ble nektet. Retten fant det ikke nødvendig å ta stilling til statens anførsel om at utleiedelen isolert sett måtte være egnet til å gå med overskudd for at forholdet kunne anses som yrkesmessig utleievirksomhet. Retten fant det sannsynliggjort at bilene ikke var anskaffet til bruk i yrkesmessig utleievirksomhet, men for at selskapets eier og hans bekjente skulle oppnå rimelig bilhold. Retten viste blant annet til at hensikten med opprettelsen av selskapet og anskaffelsen av bilene, var at staten skulle subsidiere bilholdet gjennom jevnlig refusjon av inngående avgift. For å realisere ønsket om rimelig bilhold, skulle eieren og bekjentskapskretsen betale et lavt månedlig vederlag til selskapet, mens refusjon av inngående avgift ved anskaffelse av bilene, samt inntekter fra senere salg av bilene, skulle tjene som selskapets inntektskilder. Refusjon av inngående avgift skulle følgelig komme leietakerne til gode gjennom subsidiering av den lave leien. Dette viste, etter rettens oppfatning, at selskapet ikke hadde et kommersielt formål.
+Borgarting lagmannsretts dom av 23. mars 2004 (Li Bil AS) (KMVA 3998)
+I 1993–1994 anskaffet A AS 12 biler fra B AS. Aksjene i A AS ble i 1994 solgt fra B AS til NN, eneaksjonær i B AS og styreformann i A AS. A AS og staten var enige om at én av bilene (utleid til person utenfor B-systemet) var til bruk i yrkesmessig utleievirksomhet, og at to av bilene ikke var det. Tvisten gjaldt de resterende ni bilene. Disse var leid ut til B AS og dets ansatte, og ble i større eller mindre grad brukt til demonstrasjonsformål i B AS, samt til korttidsutleie til kunder. A AS fakturerte korttidsutleien, som reduserte leien fra B AS. Etter leieperioden ble bilene solgt. Biler solgt fra A AS i 1993–1994, ble solgt til B AS, til en pris fastsatt på forhånd iht. tabell. Skjedde salgene senere enn åtte måneder etter anskaffelsen, kunne bilene etter forskrift nr. 90, slik den da lød, selges uten tilbakeføring av fradragsført avgift.
+Staten anførte at utleien objektivt sett ikke var egnet til å gi overskudd, og at A AS dessuten ikke hadde gjort noe for å tiltrekke seg eksterne kunder. Videre ble det anført at faren for avgiftsunndragelse er et relevant reelt hensyn ved tolkningen av «yrkesmessig utleievirksomhet», og at virksomheten – utover å spare avgift på en illojal måte sett opp mot avgiftsreglenes formål – var uten egen verdi.
+Retten la innledningsvis til grunn at det i uttrykket «yrkesmessig utleievirksomhet» ikke ligger noe mer eller annet enn et krav om næringsdrift, jf. merverdiavgiftsloven § 10 første ledd (nå § 2-1 første ledd). Rettens flertall anså under tvil at de ni bilene var anskaffet til bruk i yrkesmessig utleievirksomhet. Flertallet la til grunn at selskapets siktemål var å komme inn på utleiemarkedet, og fant etter en konkret vurdering at virksomheten var egnet til å gi overskudd. Selv om avgiftsfordelen sannsynligvis var et viktig element ved etableringen av A AS, og selv om det kan reises spørsmål ved om alle disposisjonene mellom partene var fullt ut forretningsmessige, bemerket flertallet at det ikke var sannsynliggjort noen illojal omgåelse av fradragsretten. Rettens mindretall anså imidlertid at etableringen av A AS ikke har hatt noen forretningsmessig realitet utover å oppnå en avgiftsbesparelse, og at lovens krav om yrkesmessig utleievirksomhet da ikke var oppfylt.
+Skattedirektoratet er uenig i dommen.
+KMVA 4874A
+Saken gjaldt et tilfelle som omhandlet flere av de samme problemstillingene som er berørt i Li Bil-dommen. Etter en konkret vurdering fastholdt klagenemnda fylkesskattekontorets etterberegning.
+Det vises også til Oslo byretts dom av 6. april 2001 og Stavanger byretts dom av 25. april 2001 for spørsmålet om det foreligger yrkesmessig utleievirksomhet. Staten fikk medhold i begge disse sakene. Se også KMVA 4036 om tilsvarende tilfelle, inntatt i Av 8/2000 av 26. oktober 2000 kapittel 1.9.
+KMVA 3898 av 5. oktober 1998
+En personbil, som ble tatt ut av varelager, ble ikke ansett å være til bruk i yrkesmessig utleievirksomhet. Bilen, som kun ble leiet ut 2 ganger med til sammen 22 døgn, ble også benyttet til andre formål i klagers virksomhet. I KMVA 4694 hadde klager fradragsført inngående avgift fullt ut ved anskaffelse av varebil. Utleie av bilen skjedde til selskap hvor utleier var eneeier. Bilen kunne ikke anses anskaffet til bruk i yrkesmessig utleievirksomhet. Se også KMVA 5627 og 5736, hvor det etter konkrete vurderinger ble lagt til grunn at det ikke forelå yrkesmessig utleie.
+KMVA 6357 av 27. april 2009
+Underskudd første driftsårSpørsmålet var om utleie av en enkelt bil til bruk som reservedrosje, var yrkesmessig utleie. Skattekontoret tilbakeførte fradragsført inngående avgift med den begrunnelse at utleievirksomheten isolert sett gikk med underskudd det første driftsåret i 2008. Klagenemndas flertall på 4 opphevet etterberegningen. Nemnda anså at utleien på sikt var egnet til å gi overskudd og næringskravet var dermed oppfylt.
+Inntrøndelag tingretts dom av 6. februar 2013 (KMVA 7229)
+Retten kom etter en konkret vurdering til at utleievirksomheten knyttet til bobil ikke var «yrkesmessig». Det ble presisert at utleievirksomheten må vurderes som sådan, separat fra øvrig virksomhet som selskapet drev. Staten fikk medhold.
+Persontransport mot vederlagDet er etter merverdiavgiftsloven § 8-4 første ledd annet punktum bokstav c fradragsrett for inngående avgift på personkjøretøy som middel til å transportere personer mot vederlag i persontransportvirksomhet. Fradragsretten for persontransportvirksomhet ble gitt i forbindelse med at persontransport ble avgiftspliktig fra 1. mars 2004. Det er ikke fradragsrett ved anskaffelse mv. av personkjøretøy til annen bruk i slike virksomheter, f.eks. til transport av varer eller ansatte til arbeidsmøter mv. Se melding SKD 16/03 og SKD 7/04). Dersom en persontransportvirksomhet bruker et personkjøretøy både til transport av betalende passasjerer og annen bruk som ikke gir rett til fradrag for inngående avgift (herunder privat bruk), må det foretas en fordeling av inngående avgift for både anskaffelsen av personkjøretøyet og senere drift. Fordeling skal skje i henhold til merverdiavgiftsloven § 8-2. I den grad virksomheter med utleie av kjøretøy eller persontransport har fradragsført inngående merverdiavgift for personkjøretøy, kommer bestemmelsene om bindingstid og tilbakeføring av merverdiavgift i merverdiavgiftsloven § 9-6 til anvendelse, se nærmere omtale under M-9-6.
+Chat
+footer/desktop/standard
+Skatteetaten. Logo
+Om Skatteetaten
+Kontakt oss
+Sikkerhet og personvern
+Informasjonskapsler
+Tilgjengelighetserklæring
+Jobb i Skatteetaten
+Om oss
+Analyse og rapporter
+Forskning
+Følg oss
+Se våre kontoer i sosiale medier
+Presse
+Pressemeldinger, pressekontakter og annen informasjon for journalister.
+Se vårt presserom
+Samarbeidspartnere
+Skatteetaten deler data, gir tilgang til opplysninger og legger til rette for at sluttbrukersystemer kan lage gode tjenester.
+Sluttbrukersystemer og deling av data
+For oppdragsgivere ved innkreving
+Satser
+Skjema og tjenester
+Sámegillii
+RSS
+Tips oss
+Koronatiltak
+Del skjermen din med Skatteetaten
+×
+Gi veilederen du snakker med på telefon tilgang til å se det du ser på skatteetaten.no.
+Hva er skjermdeling?
+Når du deler skjerm med oss kan vi hjelpe deg med å finne fram på skatteetaten.no.
+Veilederen ser kun det du ser på skatteetaten.no og kan ikke fylle inn opplysninger eller sende inn noe på dine vegne.
+Det er du som godkjenner skjermdeling. Ingenting blir lagret.
+For å avslutte skjermdelingen, må du lukke nettleseren din.
+Skriv inn koden du får fra veilederen
+Du må fylle inn en kode, og den må bestå av 5 siffer
+Avbryt
+Start skjermdeling

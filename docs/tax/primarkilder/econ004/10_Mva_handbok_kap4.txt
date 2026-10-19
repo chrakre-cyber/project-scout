@@ -1,0 +1,955 @@
+AVLEDET LESEKOPI. Kontroller sitater i HTML-originalen.
+
+Merverdiavgifts­håndboken - Skatteetaten
+Gå til hovedinnhold
+Bokmål Meny
+Meny
+Vis hele stien/
+Merverdiavgift/
+Merverdiavgifts­håndboken/
+Håndbok fra SkattedirektoratetMerverdiavgifts­håndboken
+Last nedDel
+Søk
+Bruk piltaster ned/opp for å velge forslag når de vises
+Søk
+Siste endringer
+Om loven
+Kapittel 1. Lovens virkeområde. Definisjoner
+Åpne Merverdiavgiftsloven kapittel 1. Lovens virkeområde. Definisjoner
+Kapittel 2. Registreringsplikt og -rett
+Åpne Merverdiavgiftsloven kapittel 2. Registreringsplikt og -rett
+Kapittel 3. Merverdiavgiftspliktig omsetning, uttak og innførsel
+Åpne Merverdiavgiftsloven kapittel 3. Merverdiavgiftspliktig omsetning, uttak og innførsel
+Kapittel 4. Grunnlaget for beregning av merverdiavgift
+Åpne Merverdiavgiftsloven kapittel 4. Grunnlaget for beregning av merverdiavgift
+Kapittel 5. Merverdiavgiftssatsene og områdene for disse
+Åpne Merverdiavgiftsloven kapittel 5. Merverdiavgiftssatsene og områdene for disse
+Kapittel 6. Fritak for merverdiavgift
+Åpne Merverdiavgiftsloven kapittel 6. Fritak for merverdiavgift
+Kapittel 7. Varer som det ikke skal beregnes merverdiavgift av ved innførsel
+Åpne Merverdiavgiftsloven kapittel 7. Varer som det ikke skal beregnes merverdiavgift av ved innførsel
+Kapittel 8. Fradrag for inngående merverdiavgift
+Åpne Merverdiavgiftsloven kapittel 8. Fradrag for inngående merverdiavgift
+Kapittel 9. Justering og tilbakeføring av inngående merverdiavgift
+Åpne Merverdiavgiftsloven kapittel 9. Justering og tilbakeføring av inngående merverdiavgift
+Kapittel 10. Refusjon av merverdiavgift
+Åpne Merverdiavgiftsloven kapittel 10. Refusjon av merverdiavgift
+Kapittel 11. Beregning og betaling av merverdiavgift
+Åpne Merverdiavgiftsloven kapittel 11. Beregning og betaling av merverdiavgift
+Kapittel 12. Omgåelsesregler mv.
+Åpne Merverdiavgiftsloven kapittel 12. Omgåelsesregler mv.
+Kapittel 14. Registrering i Merverdiavgiftsregisteret mv. og forenklet registreringsordning
+Åpne Merverdiavgiftsloven kapittel 14. Registrering i Merverdiavgiftsregisteret mv. og forenklet registreringsordning
+Kapittel 15. Dokumentasjon mv.
+Åpne Merverdiavgiftsloven kapittel 15. Dokumentasjon mv.
+Kapittel 22. Sluttbestemmelser
+Åpne Merverdiavgiftsloven kapittel 22. Sluttbestemmelser
+RF-skjemaer – merverdiavgift
+Sentrale endringer etter 1970
+Merverdiavgiftsloven kapittel 4. Grunnlaget for beregning av merverdiavgift
+Åpne alt innhold
+§ 4‑1. Hovedregel
+Vis regelverk
+Vis forarbeider
+§ 4‑1 første ledd – Beregningsgrunnlaget er vederlaget
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Vis nyeste endringer
+Håndbok fra Skattedirektoratet
+Publisert 01.01.2026
+Hovedregelen og det klare utgangspunktet er at beregningsgrunnlaget for merverdiavgift er det vederlaget selgeren oppnår for den avgiftspliktige omsetningen. Det vil normalt si det beløp som kjøper og selger har blitt enige om skal betales for en avgiftspliktig levering. For at vederlaget skal være bindende som avgiftsgrunnlag for staten, må det imidlertid dreie seg om et reelt vederlag for en reell omsetning.
+Vederlaget kan foruten vanlige betalingsmidler – kontanter – bestå av varer, tjenester, fordringer eller andre finansielle instrumenter mv. Det avgjørende er den fulle verdi av kjøpers gjenytelse for de leverte varer og tjenester.
+Hovedregelen i § 4‑1 må suppleres med bestemmelser om at beregningsgrunnlaget skal omfatte alle kostnader selger har ved oppfyllelsen av avtalen (§ 4‑2), bestemmelser om hvordan beregningsgrunnlaget skal fastlegges når vederlaget består helt eller delvis av annet enn penger (§ 4‑3) og bestemmelser for det tilfellet at det består et interessefellesskap mellom selger og kjøper (§ 4‑4). I tillegg har man etablert særskilte regler for beregningsgrunnlaget ved omsetning av brukte varer mv. (§§ 4‑5 og 4-6). Videre er det gitt regler om korrigering av beregningsgrunnlaget pga. visse etterfølgende omstendigheter som manglende oppgjør fra kjøper eller mislighold som fører til heving av kjøp eller salg (§ 4‑7). Endelig er det gitt regler om beregningsgrunnlaget ved uttak av varer og tjenester fra avgiftspliktig virksomhet (§§ 4‑9 og 4-10) og om beregningsgrunnlaget ved innførsel av varer (§§ 4‑11 og 4-12). Det vises til § 4‑2. Hva inngår i beregningsgrunnlaget til 4-12 nedenfor.
+Spørsmålet om hva som inngår i beregningsgrunnlaget for merverdiavgift henger uløselig sammen med lovens omsetningsbegrep: levering av varer og tjenester mot vederlag. Det vises til omtalen av definisjonen i § 1‑3 første ledd bokstav a i § 1‑3 første ledd bokstav a – Omsetningsbegrepet ovenfor.
+Selve avgiften tas ikke med i avgiftsgrunnlaget. Det er således tale om en avgift som, teknisk sett, kommer i tillegg til det vederlaget, prisen, selgeren oppnår for sine varer eller tjenester.
+Tilskudd
+Tilskudd som utgjør en del av prisen på de leverte varene eller tjenestene, inngår i vederlaget og dermed beregningsgrunnlaget. Formuleringen «utgjør en del av prisen» innebærer først og fremst at beregningsgrunnlaget ikke vil reduseres ved at selgeren mottar en del av vederlaget fra en tredjeperson. Bare tilskudd til en virksomhet som ikke har sammenheng med noen form for gjenytelse til tilskuddsyter, vil kunne anses å ikke være en del av prisen på omsatte varer eller tjenester. I praksis vil dette kun gjelde tilskudd fra det offentlige eller fra ideelle organisasjoner og foreninger. Tilskuddets tilknytning til prisen innebærer imidlertid ikke at subsidier til generell nedsettelse av priser i et marked, anses å inngå i vederlaget for omsetning.
+Offentlig tilskudd
+Hovedregelen er at offentlig tilskudd som utbetales direkte til avgiftspliktig selger/tjenesteyter ikke kan anses som en del av vederlaget, og derfor ikke skal tas med i avgiftsberegningen. Det avgjørende er at det offentlige ikke anses å få noen konkret gjenytelse fra leverandøren av varene eller tjenestene for sine tilskudd. Tilskudd i form av tradisjonelle subsidier og andre generelle støtteordninger for å sikre eller opprettholde publikums tilgang på varer og tjenester, vil således ikke bli ansett som del av leverandørenes vederlag. Dette gjelder selv om det offentlige stiller relativt konkrete krav til tjenesteleverandørers tjenestetilbud, f.eks. i form av krav til rutetilbudet for kollektiv persontransport eller omfanget av postombæring. Det har i den forbindelse ikke hatt noen betydning at angjeldende konsesjoner legges ut på «anbud», noe som kan innvirke på tilskuddenes størrelse.
+Når det gjelder spørsmålet om hva som nærmere ligger i kravet om konkret gjenytelse kan man ut fra forvaltningspraksis på området for offentlige tilskudd legge til grunn at motytelsen må ha et substansielt innhold. Det innebærer at det offentlige må motta en direkte og identifiserbar fordel i retur for det gitte tilskuddet.
+For nærmere omtale av offentlige tilskudd vises til Offentlige tilskudd mv..
+Erstatning
+Mottatt erstatning for varer som ødelegges eller skades, anses ikke som vederlag for levering av vare. Heller ikke erstatning som utbetales ved mislighold eller ugyldige avtaler utløser avgiftsplikt.
+Gjeldsovertagelse
+Overtagelse av gjeld er å anse som vederlag. I de tilfeller kjøper overtar en fordring på selger, vil dette være et vederlag som selger skal betale merverdiavgift av.
+Premier
+To hesteforbund har reglementsfastsatt at oppdrettere av trav- og galopphester har krav på en prosentvis andel av de premiebeløp hestene vinner på totalisatorbaner. Premiene betales direkte fra forbundene og det er uten betydning hvem som eier hesten. Slike premier til oppdrettere regnes ikke som vederlag for avgiftspliktige ytelser for oppdretterne. Dette stiller seg annerledes for andeler av premier avtalt i forbindelse med salg av hest. Se Horten namsretts dom av 4. januar 1988, referert nedenfor.
+Premier i entrepriseforhold
+Premiering for levering før det avtalte leveringstidspunktet, blir ansett som en del av vederlaget for den leverte ytelsen. Dette gjelder uansett om premien er avtalt på forhånd eller ikke. Slik premiering er særlig vanlig i forbindelse med bygge- og anleggsarbeider. Premien tas med i avgiftsgrunnlaget for den termin da premiebeløpet skal bokføres.
+Dagmulkt/konvensjonalbot
+Motsatsen til premiering ved for tidlig levering i entrepriseforhold er dagmulkt eller konvensjonalbot. Konvensjonalbøter kan både ha en tvangsmessig og en erstatningsmessig funksjon. Da det ofte vil være vanskelig å fastslå den rettslige karakter av en avtale om konvensjonalbot, har departementet lagt til grunn at påløpt dagmulkt/konvensjonalbot kan trekkes fra i beregningsgrunnlaget for merverdiavgift. Det vises til F 16. januar 1976.
+Se også AV 3/76 av 9. august 1976 nr. 5.
+Kranselagspenger
+Kranselagspenger skal medtas i avgiftsgrunnlaget når de utbetales til og bokføres av entreprenøren, idet pengene anses å inngå i entreprenørens vederlag fra byggherren. Dette gjelder uansett om de i faktura/nota føres som særskilt post eller ikke. Dersom pengene utbetales direkte til arbeiderne fra byggherren, skal det ikke beregnes avgift.
+Tips
+Tips som ytes direkte til den som utfører serveringen, skal i utgangspunktet ikke regnes som en del av vederlaget, og skal derfor ikke avgiftsberegnes. Mottas ikke tips kontant, men ved at kredittkort eller lignende belastes et høyere beløp enn det serveringen koster, må det av dokumentasjonen fremgå hvilket beløp som er mottatt for serveringen og hvilket beløp som er mottatt som tips. Kan det ikke skilles, vil det mottatte beløp bli ansett som avgiftspliktig i sin helhet.
+Prisavslag
+Det er det faktiske vederlaget som skal legges til grunn ved fastsettelsen av beregningsgrunnlaget for merverdiavgift. Prisavslag som er rettslig begrunnet, for eksempel mangelsinnsigelser, vil derfor komme til fradrag i beregningsgrunnlaget.
+Inndrivelsesomkostninger
+Det kan ikke gjøres fradrag i beregningsgrunnlaget for omkostninger som selgeren blir påført for å få fastsatt eller inndrevet sine avgiftspliktige fordringer.
+Etterbetaling
+Tilleggsbetaling/etterbetaling til skogeiere som ble henvist til å levere sitt tømmer til trelastfirma X, anses for å være en del av vederlaget for det leverte tømmer.
+Returemballasje
+Returemballasje anses som produsentens driftsmidler, som bare lånes ut mot pantesikkerhet til videreforhandlere og forbrukere. Bryggerier, mineralvannfabrikker o.l. skal på denne bakgrunn ikke betale merverdiavgift av pant som blir godtgjort kundene ved retur av emballasjen. En betingelse for å unnlate avgiftsberegning er at pantet føres opp særskilt i salgsdokumenter og holdes for seg regnskapsmessig. (U 3/70 av 5. november 1970 nr. 12). Se for øvrig Pant.
+Rabatt
+Praksis
+Rt.2000 s.402 (Vest kontorutvikling AS)
+Høyesterett kom til et annet resultat enn i ovennevnte KMVA 3060 når det gjaldt et tilsvarende saksforhold. Ved salg av nye kontormaskiner ble brukte maskiner overtatt fra kundene for skroting. I salgsdokumentene var de brukte maskinene ført opp med et beløp til «innbytte» e.l. I omsetningsoppgavene var derimot det aktuelle beløpet behandlet som rabatt på de nye maskinene. Staten anførte at en ved avgiftsoppgjøret var bundet av ordlyden i salgsdokumentene og at det ikke var tilstrekkelig bevist at avtalene gikk ut på noe annet enn det som fremgikk av salgsdokumentene. Høyesteretts flertall (4–1) tok utgangspunkt i at avgiftsforvaltningen plikter å vurdere alle opplysninger som foreligger i en sak. Uttrykksmåten i salgsdokumentene må tillegges vesentlig bevismessig betydning og det vil være en naturlig presumsjon for at det som er skrevet i eller kan utledes fra salgsdokumentene, har mest for seg. Klagenemndas vedtak ble likevel kjent ugyldig, da en ved spørsmålet om det forelå byttehandel ikke utelukkende kunne legge vekt på uttrykksmåten i salgsdokumentene.
+Les mer
+Spørsmål om prisavslag
+Praksis
+TOSLO-2012-105228 (KMVA 7120)
+Retten kom til at saksøker ikke hadde rett til refusjon av tidligere innberettet utgående merverdiavgift som følge av prisavslag foretatt i ettertid. Retten fant at selskapet, ut fra de avtaler som var fremlagt, ikke hadde påtatt seg et totalentrepriseansvar for boligene. Prisavslaget fremsto som fiktivt ut fra kontraktsreguleringen mellom partene.
+I sin vurdering viser retten også til at konsernet som saksøker var en del av, var involvert i flere saker med Skatteetaten av tilsvarende karakter; I alle sakene var reklamasjonen løst ved at det ble skrevet ut kreditnotaer basert på prisavslag på mellom 80–100 % av opprinnelig fakturert beløp i stedet for utbedring. Det ble reklamert i lang tid etter ferdigstillelse og det var de samme parter som satt på begge sider av bordet og som fremforhandlet prisavslaget. Det var alltid selskap som var unntatt fra merverdiavgiftsplikt som reklamerte og som mottok kreditnota, hvilket bidro til likviditetsøkning i det aktuelle selskapet.
+Se også KMVA 7555 av 22. april 2013 som omhandler tilsvarende forhold. Nemnda stadfestet skattekontorets innstilling. Prisavslaget iht. krediteringsavtalen mellom partene ble ikke ansett rettslig begrunnet ut fra obligasjonsrettslige regler. Se også Borgarting lagmannsretts dom 10. januar 2014 omtalt nedenfor i avsnitt 4-9.2.
+Les mer
+Premieandel ved hesteoppdrett
+Praksis
+Horten namsrett dom 4. januar 1988
+En hesteoppdretter solgte travhester for 2 000 kroner per stk. I tillegg skulle han få de første 35 000 kroner som hestene oppnådde ved deltakelse i løp. Retten var enig med staten i at premieandelene måtte anses som delvis vederlag for salg av hestene og at hesteoppdretteren skulle betale merverdiavgift av beløpene.
+Renteinntekter
+Praksis
+Oslo byrett dom 20. januar 1997 (KMVA 3204)
+Kontraktssummen inkl. merverdiavgift ble av byggherren innbetalt på sperret konto i klagerens navn. Ifølge avtalen skulle renteinntektene tilfalle klageren. Byretten fant at partenes forutsetning om at rentene skulle tilfalle entreprenøren måtte ha hatt sammenheng med byggeoppdragene. Rentene måtte følgelig anses som del av avtalt vederlag. Etter rettens oppfatning hadde byggherren ved å la entreprenøren få rett til rentene på innskuddskontoen, overført et formuesgode til sistnevnte. Det ble i den forbindelse uttalt at vederlagskravet ikke nødvendigvis må fremgå av kontrakten om den avtalte prisen. Vederlaget vil være det som den avgiftspliktige faktisk mottar. Staten ble frifunnet og tilkjent saksomkostninger.
+Se også nedenfor under § 4‑2. Hva inngår i beregningsgrunnlaget vedrørende rentekostnader.
+Les mer
+Valutaregulering
+Praksis
+KMVA 2885 av 31. oktober 1993
+Klagen gjaldt bl.a. etterberegning av utgående merverdiavgift vedrørende avgiftsfri fakturering av valutaregulering. Klageren hevdet at valutareguleringene som var avtalt, måtte likestilles med renter eller kurstapserstatning, og således ikke var gjenstand for avgiftsberegning. Klagenemnda kom til at valutareguleringen fremsto som en del av vederlaget for selve leveransen og som derfor var avgiftspliktig.
+Innbytte
+Praksis
+KMVA 3060 av 18. september 1994
+Ved omsetning av nye kontormaskiner hadde klager tatt i retur innbyttemaskiner fra kunder. Klager beregnet utgående merverdiavgift av et beløp tilsvarende differansen mellom avtalt pris for den nye maskinen og avtalt pris for innbyttemaskinen. Bytte, herunder delvis bytte, anses avgiftsmessig som to salg som begge må vurderes for seg i henhold til merverdiavgiftslovens regler, jf. tidligere lov § 19 første ledd første punktum (nå § 4‑3 første ledd første punktum). Maskinforhandleren kunne derfor ikke med virkning for merverdiavgiftsberegningen av den nye maskinen trekke fra prisen for innbyttemaskinen.
+Sammensatte ytelser. Hovedytelseslæren
+Kopier lenke til underoverskrift
+Bakgrunn
+Det forekommer at det leveres to eller flere ytelser med ulik avgiftsstatus hvor det er mer eller mindre sammenheng mellom ytelsene. Det leveres f.eks. en avgiftspliktig vare og/eller tjeneste samtidig som det tilbys opplæring i bruken av varen og/eller tjenesten. Opplæringen vil her, isolert sett, kunne ses som en unntatt undervisningstjeneste etter merverdiavgiftsloven § 3-5, og spørsmålet er hvilken betydning dette skal tillegges for avgiftsbehandlingen. Det kan tenkes tre mulige utfall: (1) Man ser helt bort fra den unntatte delen og beregner merverdiavgift av hele vederlaget (2) Det foretas en oppsplitting av vederlaget, slik at bare den avgiftspliktige delen blir avgiftsberegnet (3) Begge elementer anses unntatt, og det beregnes ikke avgift på noen del av vederlaget.
+Rekkevidde
+Nevnte situasjon, som gjerne omtales som «sammensatte ytelser», er ikke bare aktuell for forholdet mellom hhv. unntatte og ikke unntatte ytelser, slik eksempelet indikerer. Spørsmålet kan være aktuelt også hvor leveransen består av flere ytelser med ulik avgiftssats eller hvor noen elementer faller innenfor og noen utenfor et fritak etter kapittel 6. Det omsettes for eksempel en fjernleverbar tjeneste, f.eks. reklame, til en næringsdrivende hjemmehørende i utlandet parallelt med at det utføres stedbundne tjenester i Norge, se nærmere § 6‑22. Utførsel av tjenester om tjenester levert til subjekter i utlandet. Om problemstillingen ved ulike satser, se Skatteklagenemndas vedtak av 14. november 2019. Nemnda antok at levering av næringsmidler fra kantineoperatør til kantineeier måtte ses som en del av en samlet leveranse, som også omfattet bl.a. administrasjon av kantinen. Dermed ble verdien av næringsmidlene avgiftsbelagt med alminnelig sats sammen med de øvrige leveransene.
+Dokumentasjonskrav
+Utfordringen omkring problemstillingen sammensatte ytelser må ses i sammenheng med bokføringsforskriften 1. desember 2004 nr. 1558 § 5-1-5, som krever at både avgiftspliktig og avgiftsfritt salg, samt salg med snudd avregning og unntatt salg, skal fremgå hver for seg og summeres særskilt i fakturaen, slik også hvis det benyttes forskjellige satser. Se også merverdiavgiftsloven § 15-10 annet ledd som gir staten grunnlag for å kreve at det skal beregnes merverdiavgift med mindre det ved regnskapsmateriale eller på annen måte som avgiftsmyndighetene godkjenner kan godtgjøres at det ikke skal beregnes merverdiavgift.
+Rettslig plassering
+Spørsmålet om håndteringen av sammensatte ytelser kan ikke løses alene ut fra reglene i merverdiavgiftsloven § 4-1. Riktignok kan bestemmelsen etter omstendighetene brukes som grunnlag for å avgjøre om en ellers unntatt ytelse skal inngå i avgiftsgrunnlaget til en avgiftspliktig ytelse, dvs. valget mellom alternativ (1) og (2) ovenfor, jf. Oslo byretts dom av 14. februar 2001 (WM-data Consulting AS) og Rt. 2004 side 2000 (Geelmuyden Kiese). Bestemmelsen gir imidlertid ikke grunnlag for å behandle en sammensatt ytelse som fullt ut unntatt, jf. alternativ (3). Et slikt standpunkt må eventuelt bygges på en forståelse av det aktuelle unntaket, sammenholdt med læren om sammensatte ytelser, jf. nedenfor.
+Merverdiavgiftsloven har også enkeltbestemmelser som åpner for å la ellers avgiftspliktige varer og tjenester som inngår som (naturlig) ledd i en ellers unntatt ytelse, omfattes av unntaket for den aktuelle ytelsen. Disse bestemmelsene gjelder imidlertid bare for noen av unntakene og skal dessuten tolkes strengt, jf. § 3‑4 annet ledd – Varer og tjenester som naturlig ledd i sosiale tjenester(sosiale tjenester), § 3‑5 annet ledd – Varer og tjenester som naturlig ledd i undervisningstjenester(undervisning), § 3‑7 annet ledd – Kunstnerisk fremføring av åndsverk(kunstverk mv.) og § 3‑11 første ledd – Omsetning og utleie av fast eiendom og rettighet til fast eiendom (utleie av fast eiendom).
+UtgangspunktetPapir- og e-avisDatalagring og drift av server
+Utgangspunktet i norsk rett er at det enkelte omsetningsobjektet behandles hver for seg, jf. ordlyden i § 4‑1, samt bokføringsforskriften § 5-1-5. Et eksempel kan være ytelser innenfor pakkereisetilbud, jf. nedenfor. Et annet finnes i KMVA 7040 av 20. juni 2011 som gjaldt et selskap som tilbød et abonnement som omfattet samme avis i papirutgave og elektronisk utgave (pdf-format). Saken er nærmere omtalt nedenfor, se HR-2014-969-A (Polaris Media). I Skatteklagenemndas vedtak av 14. oktober 2020 (Stor avdeling) ble det lagt til grunn at et slikt senter leverte to atskilte tjenester, dvs. oppbevaring av server, som er en stedbunden tjeneste, og datadriftstjenesten, som er en fjernleverbar tjeneste, se nærmere kap. 1-3. Kundene hadde en særskilt interesse i begge disse elementene, og ingen av dem kunne anses mer overordnet enn den andre. Dermed var bare datadriftstjenesten omfattet av fritaket for omsetning av tjenester til utlandet i mval. § 6-22, mens oppbevaringsdelen var avgiftspliktig i Norge. Se også Skatteklagenemndas vedtak av 4. november 2020 (Stor avdeling), hvor man kom til samme resultat på et, ifølge vedtaket, «tilnærmet identisk faktum».
+Rabattkort
+Skattedirektoratet har videre lagt til grunn at salg av rabattkort, som gir kjøperen rett til rabatt på gitte varer eller tjenester fra ulike leverandører, må anses som en egen tjeneste (avgiftspliktig rabattrettighet), ikke en forhåndsbetaling av de underliggende varene/tjenestene. Dette innebærer at vederlaget for kortet skal avgiftsberegnes med alminnelig sats etter § 5-1 uten hensyn til om kortet brukes til å kjøpe ytelser som skal behandles annerledes, f.eks. med redusert sats etter §§ 5-2 til 5-11.
+Pakkereiser
+Videre har ytelser som inngår i pakkereiser, typisk persontransport, overnatting, servering og guiding vært ansett som selvstendige ytelser. I Skattedirektoratets brev av 5. januar 2006 til Norges Turbileierforbund avvises det således at man ved salg av pakkereiser som inneholder avgiftspliktige ytelser med ulike satser, samt både avgiftspliktige og unntatte ytelser, sjablongmessig kunne la hele vederlaget bli avgiftsberegnet med redusert sats (nå 12 %). Vederlaget må således splittes i en avgiftspliktig og en avgiftsfri del, og dersom det inngår ytelser med ulike satser, må den avgiftspliktige delen av vederlaget splittes opp i henhold til de aktuelle satsene.
+Opplæring
+Hvorvidt opplæring til bruk av leverte varer eller tjenester skal ses som en del av selve leveringen må vurderes konkret. Hvis kontrakten som regulerer leveringen ikke omfatter opplæring, må opplæringen som utgangspunkt ses som en egen tjeneste. Det samme må normalt gjelde hvis kontrakten oppstiller plikt for selger til å avholde kurs, men da slik at kjøperen må etterspørre dette. Skattedirektoratet har i et brev 26. august 1996 uttalt at vederlag for opplæringstjenester som inngår i avtale om salg av standard programvare, er omkostninger som skal inn i avgiftsgrunnlaget for programvaren. Det forutsettes at det er tilstrekkelig at opplæringen følger av kontrakten om salg av programvaren, men dette synspunkt, som er knyttet til mval. (1969) § 18 annet ledd nr. 1, er imidlertid ikke godtatt i KMVA 4873 av 7. april 2003. Hvis opplæringen fra selger er helt nødvendig for at kjøper skal kunne være i stand til å bruke programvaren, og selger i realiteten er den eneste som kan utføre den, må det imidlertid antas at den for avgiftsformål må ses som en del av leveringen av varen eller tjenesten.
+Vederlaget – problemstillingenVederlaget – krav om reell pris
+Der det foreligger flere selvstendige ytelser som må undergis separat avgiftsbehandling oppstår spørsmålet om hvordan vederlaget skal fordeles. Dette må ses i lys av at den næringsdrivende vil ha et incitament til å henføre mest mulig av vederlaget til den ytelse som gir lavest avgiftsbelastning. Spørsmålet har kommet på spissen bl.a. hvor den næringsdrivende selger avgiftspliktige og unntatte eller fritatte ytelser samlet og hvor prisen som oppkreves for den avgiftspliktige ytelsen er lavere enn der varene eller tjenestene selges hver for seg. I slike og lignende tilfeller er det oppstilt et krav om at avtalt reell pris skal legges til grunn, jf. merverdiavgiftsloven § 4-1, se også § 4‑1 første ledd – Beregningsgrunnlaget er vederlaget ovenfor. At prisen på en ytelse er lavere enn det den næringsdrivende oppkrever ved separat salg av samme ytelse, kan tilsi at prisingen må kunne tilsidesettes. Hvis en slik prising kan forsvares kommersielt, vil imidlertid vurderingen kunne bli annerledes. Spørsmålet var oppe i HR-2014-969-A (Polaris Media).
+Praksis
+Rt-2014-486 (Polaris Media)
+Partene var enige om at abonnentenes kjøp av hhv. papir- og e-utgaven av selskapets avis var to atskilte ytelser, og at hovedytelsestilnærmingen ikke var relevant. Spørsmålet var om avisen, uten avgiftsmyndighetenes inngripen, kunne tilby abonnenter, som holdt både (avgiftsfri) papiravis og (avgiftspliktig) e-avis, en lavere pris for e-avisen fra disse enn fra abonnenter som bare holdt e-avisen. For abonnenter som holdt begge utgaver kostet e-utgaven kr 519 + MVA, mens for andre abonnenter kostet den kr 1 934 + MVA. Høyesterett ga ikke staten medhold i at «rabatten» på e-avisen måtte fordeles forholdsmessig. Prisen ble ansett som reell, jf. mval § 4-1. Retten la til grunn at de som kjøpte e-avis separat og de som kjøpte den sammen med papiravis var to ulike kundegrupper. Prisundersøkelser viste at den oppfattede markedsverdi for e-avis sammen med papiravis er lavere enn enkeltstående abonnementer, både for e-avis og papiravis.
+Les mer
+Vederlaget – kostpris som nedre grense
+I en sak, omtalt i Skattedirektoratets brev av 5. januar 2006, reiste Norges Turbileierforbund spørsmål om det var adgang til å operere med «lokkepriser» og derved selge visse tjenester med tap. Skattedirektoratet aksepterte ikke dette. Utgangspunktet for fordelingen av nettovederlaget er omsetningsverdien av de ulike ytelsene sett i forhold til hverandre, og selgerens direkte og indirekte kostnader for ytelsen med et påslag for fortjeneste. Vurderingen må riktignok være konkret og til en viss grad bero på et skjønn, men selgeren kan ikke sette beregningsgrunnlaget for avgiftspliktige ytelser lavere enn ytelsens kostpris, ei heller henføre hele fortjenesten til ytelser som ikke skal avgiftsberegnes eller avgiftsberegnes med lav sats. Som et alminnelig utgangspunkt må det skje en fordeling av påslaget for fortjeneste på alle ytelsene, basert på forholdsmessighet og sedvanemessige forhold.
+Vederlaget – krav om jevn fordeling
+Et spørsmål beslektet med saken om Norges Turbileierforbund var oppe i KMVA 5430 av 22. august 2005, som gjaldt bl.a. etterberegning av utgående merverdiavgift vedrørende omsetning av innenlands opplevelsesturer. For mange av turene var den avgiftspliktige serveringstjenestedelen fakturert lavere enn de tilhørende kostnadene. Fylkesskattekontoret mente at påslaget på de enkelte elementer måtte fordeles jevnt, og at påslag ikke kun skulle gjelde den del av omsetningen som var unntatt fra avgiftsplikt. Klageren på sin side mente at det ikke var grunnlag for å legge noe påslag på serveringskostnadene i de tilfeller hovedytelsen åpenbart var noe annet enn servering. Det ble bl.a. anført at det ikke er «forbudt» å viderefakturere tjenester uten påslag. Klagenemnda sluttet seg enstemmig til etterberegningen. I avgjørelsen heter det bl.a. at det ikke var grunnlag for å sondre mellom turer/arrangement, hvor hovedytelsen var avgiftspliktig, og turer/arrangement, hvor hovedytelsen falt utenfor merverdiavgiftsloven. Avgjørende ville i begge tilfeller være omsetningsverdien, og avgiftssubjektet kunne ikke velge å henføre hele sin fortjeneste til ytelser som ikke skulle avgiftsberegnes.
+Vederlaget – rabatter
+I ovennevnte brev av 5. januar 2006 til Norges Turbileierforbund fra Skattedirektoratet omtales også rabatter/prisreduksjoner på «pakkereiser» bestående av ytelser med ulik avgiftsstatus. Det presiseres her at det som utgangspunkt må skje en forholdsmessig reduksjon av avgiftsgrunnlaget. Rabatten/prisreduksjonen må fordeles på de ulike ytelsene, og det vil ikke være anledning til å henføre hele eller en uforholdsmessig stor del av rabatten til den avgiftspliktige delen av pakken. Dersom en reduksjon av prisen på én eller flere utvalgte ytelser kan forklares kommersielt, vil det imidlertid ikke være naturlig å tale om «rabatt», jf. HR-2014-969-A (Polaris Media), omtalt ovenfor. I så fall må en rabattordning, som ikke er basert på forholdsmessighet, også kunne godtas.
+TV-dekodere
+Finansdepartementet har i brev 8. mars 2021 til Skattedirektoratet uttalt seg om avgiftsbehandling av TV-dekodere og i hvilke situasjoner leveringen skal anses som en og samme ytelse som levering av tilgang til kanalpakke.
+Hovedytelseslæren – generelt
+Hovedytelseslæren, eller som nevnt ovenfor, og som er mer presist, læren om sammensatte ytelser (eng. «composite supplies»), er i norsk rett hovedsakelig utviklet gjennom rettspraksis, med bakgrunn i tolkningen av den enkelte bestemmelsen, eller eventuelt sammenholdt med tolkningen av bestemmelsen i § 4‑1 første ledd. Både innholdet og rekkevidden av læren kan anses som noe uklart, herunder om den gjelder generelt eller bare på området for finansielle tjenester, se pkt. 2.3, siste avsnitt, i Finansdepartementets brev 8. mars 2021, jf. også lagmannsrettsdommen i Fresenius Kabi (LB-2022-130117).
+I EU er læren utviklet gjennom praksis i EU-domstolen. Domstolen har presisert at hver leveranse som utgangspunkt («normally») må anses selvstendig og uavhengig, samtidig som den også understreker at en leveranse som økonomisk fremstår som én ytelse ikke må «kunstig splittes opp». I vurderingen av om det foreligger en eller flere tjenester skal man bl.a. søke å identifisere hva som særpreger ytelsen («the essential features») og herunder identifisere en mulig hovedytelse («hovedytelsestilnærmingen»), som eventuelt sammen med de øvrige elementene er å anse som én tjeneste. Synspunktet er kommet til uttrykk i bl.a. C-349/96 (Card Protection Plan) og C-453/05 (Volker Ludwig).
+I norsk rettspraksis er det særlig avgjørelsene inntatt i Rt. 2004 s. 2000 (Geelmuyden Kiese) og Rt. 2012 s. 1547 (Norwegian Claims Link) som kan anses å gi uttrykk for at vi i norsk rett har en lære om sammensatte ytelser, ref. også ovenfor. Høyesteretts dom i Rt. 2009 s. 1632 (Sundal Collier) kan ses som en endelig bekreftelse på at rettssetningene fra EU-retten er en del av norsk rett innenfor området for finansielle tjenester, jf. også Finansdepartementet i pkt. 2.3 siste avsnitt i brev 8. mars 2021. Begge de nevnte EU-dommene og Sundal Collier-dommen er nærmere omtalt i § 3-6 - Om formidling av finansielle tjenester. I det følgende gjøres rede for momenter som kan være relevante ved avgiftsbehandlingen av sammensatte ytelser. Fremstillingen tar utgangspunkt i norske rettskilder, i lys av departementets uttalelser i brev av 8. mars 2021 som nevnt ovenfor. Vi redegjør samtidig enkelte steder også for norsk retts- og forvaltningspraksis som viser at EU-rettens hovedytelsestilnærming kan ha betydning også utenfor området for finansielle tjenester.
+Praksis
+Rt.2004 s.2000 (Geelmuyden Kiese)
+Saken inntatt i Rt. 2004 s. 2000 (Geelmuyden Kiese) gjaldt to informasjonsrådgivningsbedrifter som ga råd om innholdet og utformingen av årsrapporter og andre publikasjoner. I tillegg påtok selskapene seg – for de kunder som ønsket det – å ordne med produksjonen av publikasjonene. Før merverdiavgiftsreformen 2001 var rådgivningstjenester ikke avgiftspliktige mens det, som nå, skulle svares avgift av publikasjonene. Høyesterett fant at det skulle beregnes utgående avgift også av den delen av vederlaget som gjaldt rådgivningen. Retten avgjorde saken med utgangspunkt i tidligere merverdiavgiftslov § 18 første ledd (nå mval. § 4-1 første ledd), som fastslo at merverdiavgiften «skal beregnes av vederlaget for den avgiftspliktige omsetningen» (avsnitt 31). Dette måtte bety at vederlaget omfatter alle innsatsfaktorer som har vært benyttet for å produsere varen, uten hensyn til om disse isolert sett er avgiftsfrie. På bakgrunn av dette ble det uttalt at når selskapene hadde påtatt seg ansvaret med å produsere en publikasjon, måtte utgangspunktet være at de ulike komponentene bak publikasjonen ikke kunne anses for å være omsatt som selvstendige ytelser. Det var ikke naturlig å betrakte rådgivningstjenestene som et avtalt tillegg til den tekniske produksjonen av publikasjonene. Disse redaksjonelle tjenestene var å anse som «en helt nødvendig og integrert del» av det produktet kundene hadde bestilt. Det skulle derfor beregnes avgift av hele vederlaget.
+Les mer
+Synspunktet inntatt i Geelmuyden Kiese-dommen er bl.a. opprettholdt i høyesterettsdommen om Møller Bil Vest AS (Rt. 2006 s. 396) avsnitt 39, samt i høyesterettsdommen om Norwegian Claims Link (Rt. 2012 s. 1547). Synspunktet er også lagt til grunn i lagmannsrettsdommen vedrørende Fresenius Kabi (LB-2022-130117) som gjaldt spørsmål om omsetning av stabilitetsstudier til utlandet kunne anses som fritatt for norsk merverdiavgift. I saken kom lagmannsretten til at omsetningen ikke kunne anses fritatt etter merverdiavgiftsloven § 6‑21 ettersom det ville være kunstig å si at stabilitetsstudiene var en «nødvendig og integrert del» av den senere leveransen av legemidler. Konklusjonen i saken ble likevel avgiftsfritak, men da på et annet rettslig grunnlag (§ 6‑22 første ledd).
+Praksis
+Rt-2012-1547 (Norwegian Claims Link)
+Saken om Norwegian Claims Link gjaldt spørsmålet om et norsk advokatfirmas utførelse av prosessoppdrag for utenlandske klienter skulle faktureres med merverdiavgift, ikke bare for den delen som gjaldt selve rettssaken, men også den delen som gjaldt forberedende arbeid, jf. merverdiavgiftsloven av 1969 § 16 første ledd nr. 1 bokstav a, jf. forskrift av 23. februar 1970 nr. 1 § 8 fjerde ledd. Høyesterett kom til at prosessoppdrag for utenlandske næringsdrivende klienter i sin helhet er avgiftspliktig i Norge. I sin vurdering tok førstvoterende utgangspunkt i hva som mest naturlig kan anses som selve omsetningsobjektet i saken – hvilken tjeneste som er omsatt, jf. merverdiavgiftsloven av 1969 § 18 første ledd, og jf. også Rt. 2004 s. 2000. Førstvoterende la videre til grunn at forarbeid og forberedelser til dette er ytelser som naturlig inngår som del av slike prosessoppdrag, og som det var nærliggende å anse som nødvendige og integrerte deler av tjenesten (avsnitt 36). På denne bakgrunn, samt med støtte i forvaltningspraksis, konkluderte førstvoterende med at merverdiavgiften måtte beregnes av alle innsatsfaktorer som var benyttet, jf. også her Rt. 2004 s. 2000.
+Les mer
+Kundens mål
+I vurderingen av om en har med en sammensatt ytelse å gjøre, ser en i EU-retten særlig hen til spørsmålet om ytelsen representerer et mål for kunden i seg selv, og da slik at de øvrige ytelser mer er å anse som midler til å utnytte denne best mulig, heller enn egne selvstendige ytelser (hovedytelsestilnærmingen). Det sentrale i denne sammenheng er altså hva som fremstår som det viktigste for kunden. Synspunktet er også kommet til uttrykk enkelte steder i norsk rettspraksis, bl.a. i lagmannsrettsdommen vedrørende Fresenius Kabi (LB-2022-130117) under rettens drøftelse av subsidiær anførsel om avgiftsfritak etter merverdiavgiftsloven § 6‑22 annet ledd.
+I LB-2008-184780 (Grieg Investor) vektla således retten at det var den avgiftspliktige investeringsrådgivningen som kundene «primært [var] ute etter», ikke selve gjennomføringen av de transaksjoner som rådgivningen eventuelt resulterte i. Sistnevnte, som innebar at Grieg Investor formidlet mulige kjøps- eller salgsordrer for kunden, var isolert sett formidling av kjøp/salg av finansielle instrumenter, som er unntatt fra avgiftsplikt etter mval. § 3-6 bokstav e. Imidlertid ble hele honoraret til Grieg Investor ansett avgiftspliktig, idet det var den avgiftspliktige rådgivningen som trakk kundene til selskapet. Se også Borgarting lagmannsretts dom av 15. april 2008 (Redcats AS) hvor retten fant at et postordreselskap ikke drev unntatt låneformidling, idet det sentrale for banken i avtaleforholdet med selskapet ikke var selskapets rolle som mellommann, men tilgangen til selskapets varemerke og kunderegister. Vederlaget ble dermed i sin helhet ansett som avgiftspliktig vederlag for disse ytelsene, ikke formidling av banklån, jf. mval. § 3-6 bokstav b. Begge dommer er omtalt i § 3-6 - Om formidling av finansielle tjenester.
+Ytelsens særpreg
+I EU-retten skal man også se på hva som særpreger den sammensatte ytelsen; det sentrale er hvilket karaktertrekk som etter en helhetsvurdering fremstår som det mest dominerende. For meglingstjenester vil for eksempel selvstendighet være en faktor som skiller dem fra andre typer tjenester. I den nevnte dom i Rt. 2009 s. 1632 (Sundal Collier) la Høyesterett til grunn at selvstendighetselementet i «utpreget liten grad» var til stede for to verdipapirforetak som bistod hver sin bank i tilknytning til en mulig forestående fusjon mellom disse. Det som derimot «særpreger oppdraget [var] rådgivning og forhandlingsbistand», jf. dommens pkt. 64. Hele honoraret ble her ansett som vederlag for en avgiftspliktig ytelse, ikke formidling av finansielle instrumenter som er unntatt fra avgiftsplikt etter mval. § 3-6 bokstav e.
+Praksis
+BFU 31/14
+BFU 31/14 illustrerer lignende avveininger vedrørende salg av fast eiendom, som er unntatt fra avgiftsplikt, og prosjekterings- og reguleringsarbeid utført før salget, som isolert sett er avgiftspliktig. Direktoratet fant at et entreprenørselskap ikke pliktet å beregne avgift på verdien av prosjekteringsarbeid som selskapet utførte vedrørende en ubebygd eiendom, som i neste omgang skulle selges til et byggherreselskap hvor E skulle stå som entreprenør for byggearbeidene. Es arbeid med eiendommen gjaldt bl.a. omregulering til boligformål, utarbeidelse av prospekter, samt forhåndssalg av 50-60 % av de boliger som senere skulle bygges på eiendommen. Direktoratet mente at boligprosjektene med solgte eiendommer måtte ses som en del av den faste eiendom som kunne overdras uten merverdiavgift, med den virkning at det ikke skulle beregnes merverdiavgift på prosjekteringsarbeidet.
+Les mer
+Prising
+Hvorvidt de ulike elementene prises under ett eller som to atskilte tjenester er som utgangspunkt av underordnet betydning. Se i denne retning Rt. 2004 s. 2000 (Geelmuyden Kiese) pkt. 39 og innen EU f.eks. C-349/96 (Card Protection Plan) pkt. 31 Derimot vil det kunne tillegges vekt at størrelsen på prisen er knyttet til den aktuelle tjenesten. I LB-2008-184780 (Grieg Investor), omtalt ovenfor og nærmere i § 3-6 - Om formidling av finansielle tjenester, vektla retten således at det årlige honorar som kundene betalte var helt upåvirket av antall transaksjoner, hvilket trakk i retning av at det ikke kunne være ordreformidlingen som var hovedytelsen.
+Avtalestruktur og avgiftssubjektets avgiftshåndtering
+Kontroll- og nøytralitetshensyn tilsier at partenes valg av avtalestruktur ikke kan være avgjørende for om man står overfor én eller flere ytelser. Dette er også utgangspunktet i rettspraksis. De samme grunnene gjør seg også gjeldende når man skal vurdere betydningen av den næringsdrivendes egen avgiftshåndtering. Hvorvidt avgiftssubjektet selv har undergitt to eller flere elementer felles eller ulik avgiftsbehandling, må normalt tillegges begrenset vekt. At dette likevel kan være et tilleggsmoment illustreres i KMVA 5555 av 3. april 2006, som gjaldt fradragsrett på anskaffelse av filmfremvisningsutstyr. En stiftelse tilbød publikum å se levende fisk og dyr mot inngangsbillett, et tilbud som frem til 1. juli 2010 var unntatt etter tidligere lov § 5 b nr. 5, nå § 3-7 første ledd, som omfatter bl.a. fornøyelsesparker og opplevelsessentra. Konseptet ga også publikum mulighet til å se film i et innredet kinolokale, noe som er avgiftspliktig fra 1. januar 2005. Det ble ikke oppkrevd særskilt vederlag for kinotilbudet, og heller ikke merverdiavgift, idet muligheten til å se film var inkludert i hovedinngangsbilletten. Nemnda fant etter en konkret vurdering at filmtilbudet inngikk i det avgiftsunntatte opplevelsestilbudet med den virkning at det ikke forelå fradragsrett på anskaffelse av filmfremvisningsutstyret. I den sammenheng ble det påpekt at stiftelsen «heller ikke [hadde] innrettet seg slik at deler av inngangsbilletten var avgiftsberegnet».
+§ 4‑1 annet ledd – Hva som ikke anses som del av vederlaget
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Paragrafens annet ledd angir noen typer omkostninger som ikke anses som del av vederlaget.
+Oppregningen er ikke uttømmende, og det vil bero på en konkret vurdering i hver enkelt sak om en omkostning utgjør en del av vederlaget og dermed inngår i beregningsgrunnlaget for merverdiavgift. Finansdepartementet uttaler således i merknadene til bestemmelsen i Ot. prp. nr. 76 (2008–2009) kapittel 13 at eksempelvis gebyr som ilegges ved betalingsmislighold og som er forutsatt i avtale mellom partene, etter omstendighetene skal holdes utenfor beregningsgrunnlaget. Det må fremgå av avtalen at det dreier seg om gebyr som kan ilegges som en misligholdsbeføyelse. Se for øvrig departementets uttalelse om dagmulkt/konvensjonalbot i entrepriseforhold omtalt ovenfor i § 4‑1 første ledd – Beregningsgrunnlaget er vederlaget.
+Utlegg
+Etter annet ledd bokstav a skal godtgjørelse for utlegg pådratt i kjøpers navn og for kjøpers regning ikke anses som del av vederlaget. Det er en forutsetning at selger bare oppkrever det utlagte beløp av kjøper uten påslag og at utlegget regnskapsføres som utlegg, ikke omsetning.
+Som eksempler på utlegg som normalt ikke vil bli ansett som en omkostning for selger har Skattedirektoratet i brev av 18. juni 2001 til Norges Eiendomsmeglerforbund nevnt bl.a. gebyrer for offentlige utskrifter, rettsgebyr, dokument­avgift og tinglysingsgebyr. I brev av 29. mai 2002 til Den norske advokatforening uttalte Skattedirektoratet også at omkostninger til reise- og oppholdsutgifter kan holdes utenfor beregningsgrunnlaget dersom en klient bestiller og betaler reise- og hotellutgifter for advokaten, klienten fremstår som kjøper overfor selger av tjenesten og faktura utstedes til klienten. De to brevene er omtalt nærmere i § 4‑2 første ledd – Alle kostnader ved oppfyllelsen
+I brev 8. desember 2011 uttaler Skattedirektoratet at bomavgiften kan holdes utenfor beregningsgrunnlaget ved utleie av bil med autopassbrikke, dersom utleieselskapet ikke beregner noe påslag og avgiften føres som utlegg i regnskapet. Som eksempel på påslag nevnes administrasjonsgebyr i tilknytning til autopassbrikken, samt at utleieselskapet overfor kunden gir et påslag tilsvarende rabatten fra bompengeselskapet. Ved påslag må bomavgiften inngå i beregningsgrunnlaget.
+Se for øvrig § 4‑2 første ledd – Alle kostnader ved oppfyllelsen som omtaler noen saker der omkostningen ikke ble ansett som et utlegg, men som en del av vederlaget.
+Inkasso- og purregebyr
+Etter annet ledd bokstav b skal videre lovbestemt inkasso- og purregebyr ikke anses som del av vederlaget, jf. Av 8/94 av 31. mai 1994.
+Forsinkelsesrenter
+Etter annet ledd bokstav c skal heller ikke forsinkelsesrente etter forsinkelsesrenteloven (lov 17. desember 1976 nr. 100) anses som del av vederlaget.
+§ 4‑2. Hva inngår i beregningsgrunnlaget
+Vis regelverk
+Vis forskrifter og forarbeider
+§ 4-2 - Generelt
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Paragrafen er et supplement til § 4‑1 med oppregning av en del omkostninger som skal medtas i grunnlaget for beregning av merverdiavgiften og en del omkostninger som ikke skal medtas. Oppregningen av omkostninger som skal medtas er ikke uttømmende. Bestemmelsen innebærer en «smitteeffekt» ved at ytelser som isolert sett er avgiftsfrie (0-sats) eller unntatt fra loven, men er å anse som en omkostning ved oppfyllelsen av avtalen mellom kjøper og selger, vil inngå i beregningsgrunnlaget for en avgiftspliktig ytelse. Det er sikker praksis at en ikke kan unngå avgift på slike omkostninger ved at de faktureres særskilt.
+Ved omsetning av programvare og opplæring i dette, vil opplæringen kunne bli ansett som en omkostning ved omsetningen av programvaren, dvs. en unntatt tjeneste vil inngå i beregningsgrunnlaget med en sats på 25 %. Ved omsetning av næringsmidler hvor selger har påtatt seg transport frem til kunden, vil transporten inngå i beregningsgrunnlaget med en sats på 15 %, eventuelt 0-sats dersom det er snakk om transport av bøker.
+To leveranser
+En vare- eller tjenesteleverandør kan i tilknytning til en avgiftspliktig levering også levere en avgiftsfri ytelse, uten at denne kan anses som en kostnad for å få levert den avgiftspliktige ytelsen. Da trekker ikke avgiftsplikten for den ene ytelsen med seg avgiftsplikt for den andre. Dette gjelder f.eks. hvor bokhandleren selger en avgiftsfri bok samtidig med skrivepapir. Salget av boken er ingen kostnad for å få levert skrivepapiret, og avgift skal bare beregnes av prisen for skrivepapiret. Her er det åpenbart tale om levering av to separate ytelser, varer. Se imidlertid § 6‑4 annet ledd – Felles vareenhet om bokfritaket som ikke gjelder ved omsetning av publikasjoner som selges sammen med vare av annet slag som inngår som del av felles vareenhet.
+§ 4‑2 første ledd – Kostnader som skal med i beregningsgrunnlaget
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Vis nyeste endringer
+Håndbok fra Skattedirektoratet
+Publisert 01.01.2026
+§ 4‑2 første ledd – Alle kostnader ved oppfyllelsen
+Kopier lenke til underoverskrift
+Første ledd fastslår hovedregelen om at alle omkostninger som er nødvendige for at avtalen om levering skal kunne oppfylles, skal tas med i grunnlaget for beregning av merverdiavgift. Omkostninger som skal tas med i beregningsgrunnlaget vil typisk være omkostninger til emballasje, forsendelse (porto, transport), forsikring o.l. Forutsetningen er at selger dekker omkostningene, enten ved at de inngår i vederlaget eller at selger krever særskilt betaling for dem. Når anskaffelser inngår i selgers vederlag for den leverte ytelsen, blir de en del av avgiftsgrunnlaget og skal medtas i avgiftsberegningen. Det ligger ingen begrensning i ordlyden i nevnte bestemmelse, og alle omkostninger ved oppfyllelsen, som ikke uttrykkelig er unntatt etter nærværende bestemmelse med tilhørende forskrift eller § 4‑1 annet ledd, skal medtas i avgiftsgrunnlaget, enten de refererer seg til ytelser som er avgiftspliktige, unntatte fra loven eller positivt er fritatt fra avgiftsplikt.
+Regler om levering finnes i kjøpsloven (lov 13. mai 1988 nr. 27 kapittel II), se særlig §§ 6 og 7 og forbrukerkjøpsloven (lov 21. juni 2002 nr. 34 kapittel 2), se særlig §§ 5–8. Forbrukerkjøpsloven er i motsetning til kjøpsloven, ufravikelig, jf. § 3. Det er således ikke adgang til å avtale at levering har skjedd før tingen overtas av forbrukeren. Dette får betydning for selgers avgiftsberegning. I alle tilfeller der tingen skal sendes til kjøper, enten etter avtale eller fordi det dreier seg om postordre, skal forsendelsesomkostningene med i selgers beregningsgrunnlag.
+Leveringsstedet
+Går avtalen ut på levering på kjøpers forretningssted, må selger ta med til avgiftsberegning alle kostnader som han må betale for å få varen/ytelsen frem til leveringsstedet.
+Porto
+Porto skal med i avgiftsgrunnlaget når den er selgers/tjenesteyters omkostning ved oppfyllelsen av avtalen. Andre eksempler på omkostninger knyttet til leveringen som skal medtas i beregningsgrunnlaget er:
+DDP «fritt levert» – selger påtar seg kostnaden til bestemmelsesstedet, toll og avgifter, samt tollformaliteter ved fortolling
+FOB «fritt» salg – selger dekker omkostningene for å få varene frem til avskipningshavn og omkostninger vedrørende innlasting
+Er det på det rene at det er avtalt et FOB-salg mellom partene (overlevering i skipets lasterom), hindrer ikke dette at selger som en særskilt avtalt serviceytelse, f.eks. av praktiske hensyn, legger ut fraktbeløpet for kjøper. En forutsetning er at transportørens faktura på frakten lyder på kjøperens navn, og at det også i realiteten dreier seg om et rent utlegg som selger helt og holdent (inkl. merverdiavgift) krever refundert av kjøperen (U 4/73 av 28. juni 1973 nr. 7).
+Ved netthandel med betaling ved oppkrav skjer leveringen ved utlevering til kjøper fra poststed mot betaling. Porto og oppkravsgebyr må da tas med i beregningsgrunnlaget. Når det gjelder masseforsendelse, hvor servicefirmaets oppdrag består i pakking, adressering mv., samt forsendelse gjennom postverket, anses oppdraget avsluttet ved leveringen til postverket. Portoutgifter vil da være oppdragsgivers kostnader og medtas ikke til avgiftsberegning på servicefirmaets hånd selv om det legger ut beløpet. Har firmaet imidlertid også påtatt seg å bekoste forsendelsen, tas portoutgiftene med i beregningsgrunnlaget (Av 15/88 av 12. oktober 1988).
+Emballasje
+Omkostninger til emballasje skal som nevnt, medtas i beregningsgrunnlaget. Det siktes her først og fremst til emballasje som brukes under transport o.l. Emballasje som engangsflasker, melkekartonger og syltetøyglass er en del av varen og anses ikke som omkostning etter § 4‑2. For returemballasje omfattet av panteordninger kan pantebeløpet på nærmere vilkår unnlates avgiftsberegnet, se enkeltsak under omtalen av § 4‑1 ovenfor.
+Forsikring
+Dersom selger forsikrer varene for egen regning og senere tar denne utgiften med i oppgjøret fra oppdragsgiver eller krever særskilt betaling for det, må dette medtas i beregningsgrunnlaget. På den annen side skal varekjøpers forsikringspremie på grunnlag av avtale direkte med forsikringsselskapet, holdes utenfor selgers avgiftsgrunnlag.
+Ved leasing av motorkjøretøy gjelder særlige regler for leasingselskapene. Se nedenfor i omtalen av forskriftshjemmelen i tredje ledd og FMVA § 4‑2‑2.
+Reiseutgifter mv.
+Skattedirektoratet har i brev 29. mai 2002 til Den norske advokatforening uttalt at advokater som i tilknytning til et avgiftspliktig oppdrag pådrar seg utgifter til reise, kost, losji (hotellutgifter), telefon, litteratur mv. skal medta disse utgiftene i beregningsgrunnlaget for merverdiavgift. At alle omkostninger skal med i beregningsgrunnlaget for merverdiavgift vil i utgangspunktet gjelde selv om det er klienten som betaler utgiftene. Imidlertid heter det også i brevet at det i praksis har blitt godtatt at utgifter til kost og overnatting ikke skal med i beregningsgrunnlaget i de tilfeller kunden ordner dette. Skattedirektoratet la derfor til grunn at dersom en klient bestiller og betaler reise- og hotellutgifter for advokaten i forbindelse med et møte e.l., klienten fremstår som kjøper overfor selger av tjenesten og faktura utstedes til klienten, vil utgiftene ikke anses som advokatens omkostninger.
+Offentlig gebyrer mv.
+I brev 18. juni 2001 til Norges Eiendomsmeglerforbund uttalte Skattedirektoratet at utlegg til offentlige gebyrer som for eksempel rettsgebyr, dokumentavgift, tinglysingsgebyr mv. i utgangspunktet ikke vil anses som omkostninger for eiendomsmegleren. Det ble imidlertid presisert at spørsmålet om en omkostning kan anses som et utlegg for klienten som ikke skal med i avgiftsgrunnlaget for meglerhonoraret, må avgjøres konkret. Skattedirektoratet la i brevet dessuten til grunn at annonseomkostninger normalt måtte ses som eiendomsmeglerens omkostning ved utføring av et oppdrag.
+I ovennevnte brev til Den norske advokatforening viste direktoratet til brevet til Norges Eiendomsmeglerforbund. I den forbindelse ble det uttalt at gebyr for utskrift fra domsregisteret skal medtas i advokatens beregningsgrunnlag for merverdiavgift når disse skal benyttes som grunnlag for rådgivning for en klient. På samme måte vil gebyrer for offentlige utskrifter som ikke innhentes særskilt for oppdragsgiver, anses å være til bruk i en eiendomsmeglers virksomhet og således anses som en omkostning for denne.
+Ventetidskostnader
+I en entreprisekontrakt påtar byggherre seg å betale ventekostnader til entreprenøren. Ventetidskostnader utløses ved forsinkelser og mangler på grunn av byggherrens forhold. Ventetidskostnadene skal dekke entreprenørens tap knyttet til utsettelser mv. I brev 16. mars 2015 uttaler Skattedirektoratet at merutgifter som oppstår ved forsinkelser på grunn av byggherrens forhold må anses som kostnader for arbeid ved oppfyllelsen av avtalen. Kostnadene skal følgelig faktureres med merverdiavgift. Dette er også gjentatt i Skattedirektoratets prinsipputtalelse av 25. september 2020.
+Fakturagebyr
+Belastes kunden et fakturagebyr av selger anses dette som en kostnad som skal inngå i beregningsgrunnlaget for merverdiavgift. Merverdi­avgift skal beregnes med den sats som gjelder for selve leveransen, dvs. normalt 25 %.
+Kompensasjon for likviditetstap
+Praksis
+LA-1997-367 (Kruse Smith AS)
+I forbindelse med utførelsen av et entreprise­oppdrag ble betalingstidspunktene for vederlagene forskjøvet i forhold til det som opprinnelig var avtalt. Som følge av betalingsutsettelsen, ble det avtalt at entreprenøren skulle ha kompensasjon for likviditetstapet i forbindelse med oppfyllelsen av entreprisen. Lagmannsretten konkluderte med at dette i realiteten innebar at det var avtalt et høyere vederlag for entreprisetjenestene, og som følgelig måtte inngå i beregningsgrunnlaget. Den delen av vederlaget som skulle kompensere entreprenørens likviditetstap ble ikke ansett som en etterfølgende, selvstendig avtale om finansiering. Anke til Høyesterett ble nektet fremmet ved kjæremålsutvalgets kjennelse 7. desember 1998.
+Les mer
+Opplæring
+Praksis
+Oslo Byrett dom 14. februar 2001 WM-data Consulting AS (KMVA 2040 og KMVA 4134)
+Saken gjaldt spørsmålet om den del av en vedlikeholdsavtale som gjaldt opplæring/undervisning måtte anses som en omkostning ved oppfyllelsen av en avtale om levering av standard programvare. Retten la til grunn at vederlaget for opplærings- og undervisningstjenestene måtte anses å inngå som en del av avtalen om salg av programvaren, og således var omkostninger som skulle medtas i avgiftsgrunnlaget. Det ble vist til at de aktuelle tjenestene var regulert i de generelle avtalevilkårene for salg av dataprogramvaren, hvilket etter rettens syn klart trakk i retning av å anse undervisnings- og opplæringsytelsene som en del av omsetningen av selve programvaren. Videre ble det vist til at ved levering av en komplisert dataprogramvare vil for øvrig også brukerveiledning eller opplæring i utgangspunktet måtte anses å være en integrert del av den avgiftspliktige programleveransen. Omkostninger til brukerveiledning er derfor i utgangspunktet en naturlig og påregnelig kostnad i forbindelse med salget av programvaren.
+Se også KMVA 4873 av 7. april 2003 når det gjelder undervisning knyttet til omsetning av standard programvare. Nemndas flertall (3-2) var enig med klager i at det ble levert to separate ytelser.
+Les mer
+Rentekostnader
+Praksis
+LB-2004-45797 (Veidekke ASA) (KMVA 4400)
+Entreprenøren finansierte byggeprosjektene for de respektive byggherrer, dvs. at alle påløpte prosjektkostnader ble dekket av egne midler. Oppgjør fra byggherrene for de totale kostnader, herunder finansieringskostnadene/rentekostnadene, fant først sted ved eller etter prosjektenes ferdigstillelse. Lagmannsretten la til grunn at finansieringsavtalene og entrepriseavtalene hadde en så nær og direkte tilknytning, at disse måtte anses å inngå i samme avtaleforhold i relasjon til merverdiavgiftsloven § 18 første ledd, jf. annet ledd nr. 1. Veidekkes kapitalkostnader som følge av at oppgjør for entreprisene først fant sted etter ferdigstillelse, var dermed å anse som omkostninger ved oppfyllelsen av entrepriseavtalene, og den avtalte rentekompensasjon skulle derved inngå i beregningsgrunnlaget for merverdiavgift etter merverdiavgiftsloven § 18. Anke til Høyesterett ble nektet fremmet ved kjæremålsutvalgets kjennelse av 22. mars 2006.
+Les mer
+Stallboksutleie
+Praksis
+LE-2006-54168 (Birgit Næss og Morten Nilsen ANS)
+Et selskap drev virksomhet med tjenester i form av fôr, stell og trening av hester, samt utleie av stallboks og/eller beite. Stallboksutleie mv. er utleie av fast eiendom og dermed unntatt fra avgiftsplikt etter merverdiavgiftsloven, mens fôr, stell og trening av hester er avgiftspliktige tjenester. Tvistetemaet var om utleie av stallboks (og beite) i dette tilfellet ble avgiftspliktig som integrerte deler av ett produkt etter tidligere lov § 18 første ledd, eller om nevnte ytelser kunne anses som en omkostning etter § 18 annet ledd nr. 1 når selskapet samtidig leverte avgiftspliktige tjenester.
+Lagmannsretten kom til at de aktuelle tjenestene i denne saken ikke utgjorde integrerte ytelser som kunne anses som ett produkt. Retten fant det videre klart ut fra lovtekst og forarbeider at stallboksutleie mv. ikke kunne ses på som en omkostning i forbindelse med avgiftspliktige tjenester med fôring, stell og trening av hestene som oppholdt seg i stallboksene.
+Se også Borgarting lagmannsretts dom av 18. desember 2001 (Tanum Ridesenter) omtalt foran under avsnitt 4-1.3.
+Les mer
+Optikers opplæring
+Praksis
+LB-2006-36361 (Brilleland AS) (KMVA 4800)
+Saken gjaldt avgiftsbehandlingen av flere forhold hos optikeren. Lagmannsretten stadfestet tingrettens konklusjon om at optikers opplæring av kunder i bruk av linser, er en omkostning ved salget av linsene som skal med i avgiftsgrunnlaget. Dommen er også omtalt i § 3‑2 første ledd – Helsetjenester mv. og § 3-23 - Uttak til særlige formål i virksomheten.
+Les mer
+Kredittkostnader
+Praksis
+LB-2022-142311 (Thorn Norge AS)
+Saken gjaldt spørsmål om hvor selskapets kredittinntekter knyttet til varesalg på avbetaling, med andre ord inntekter i form av renter, etablerings- og termingebyr, skulle allokeres ved bruk av fordelingsnøkkelen. Thorn Norge AS hevdet at disse inntektene er å anse som en del av den «avgiftspliktige omsetning» som gir grunnlag for fradrag for inngående merverdiavgift. Staten gjorde derimot gjeldende at kredittinntektene kun skulle anses som en del av «virksomhetens samlede omsetning» ved fastleggelse av fordelingsbrøken, jf. merverdiavgiftsloven § 8‑2, jf. merverdiavgiftsforskriften § 8‑2‑2. Lagmannsretten konkluderte med at kredittkostnadene (i dommen omtalt som kredittinntektene) ikke kan anses som fritatt omsetning, men må anses som unntatt omsetning. Forannevnte innebar at kredittkostnadene ikke skulle inngå både på teller- og nevnersiden av fordelingsbrøken, men kun på nevnersiden, dvs. som del av «virksomhetens samlede omsetning», se merverdiavgiftsloven § 8‑2. Det at kredittinntektene ble opptjent i forbindelse med salg av vare (på avbetaling) kunne ikke endre på dette.
+Les mer
+Transportomkostninger
+Praksis
+KMVA 3036 av 22. desember 1994
+I forbindelse med en forretnings cateringvirksomhet ble det benyttet taxi til å frakte maten ut til kundene. Persontransport var den gang unntatt fra merverdiavgiftsloven. På fakturaen inngikk utlegg for drosje som en egen post, uten beregning av merverdiavgift. Fylkesskattekontoret etterberegnet drosjeutgiftene, da disse var å anse som omkostninger som skulle med i beregningsgrunnlaget. Klagenemndas flertall (3–2) stadfestet etterberegningen.
+Les mer
+Praksis
+KMVA 3182 av 7. mars 1996
+Spørsmålet i saken var om klager, som kjøpte varen i utlandet og solgte den videre til norsk kjøper, skulle beregne merverdiavgift også av den andel av vederlaget som gjaldt transporten fra utlandet til Norge, eller om «transportdelen» var fritatt etter tidligere lov § 16 nr. 4 (nå § 6‑28). Klagenemnda kom enstemmig til at transporten måtte anses som en omkostning klageren hadde pådratt seg for å kunne gjennomføre en ordinær avgiftspliktig omsetning i Norge.
+Les mer
+Praksis
+KMVA 4506 av 13. desember 2001
+Saken gjaldt et selskap som avholdt datakurs. I forbindelse med kursene ble det delt ut en del kursmateriell, og det ble ikke beregnet merverdiavgift på noen del av vederlaget for kurset. Klagenemnda la til grunn at den som avholder kurs må beregne utgående avgift når det deles ut kursmateriell til kursdeltakerne som deltakerne får beholde. Klager anmodet Finansdepartement om å omgjøre klagenemndas avgjørelse. Finansdepartementet kom i brev av 12. mars 2004 til at det ikke forelå grunnlag for omgjøring. Det ble uttalt at det ikke foreligger grunnlag for en omvendt tolkning av merverdiavgiftsloven § 18. Departementet fant heller ikke at det etter en konkret vurdering av de faktiske forhold var naturlig å se på kursmateriellet som noe som inngikk i undervisningstjenesten. Se F 18. mars 2005.
+Les mer
+Forsikring
+Praksis
+KMVA 5185 av 30. august 2004
+Klagenemnda kom til at et bilutleiefirma som fakturerte for kaskoforsikring ved utleie av biler, skulle ta med vederlaget for forsikringen i beregningsgrunnlaget for utgående merverdiavgift. Det ble lagt til grunn at det ikke dreide seg om en reell forsikring, men et ekstra vederlag som hadde den virkning at egenandelen ble redusert ved en eventuell skade.
+Les mer
+Legemiddelavgift
+Praksis
+KMVA 8703 av 26. oktober 2015
+Etterberegning av utgående merverdiavgift etter tidligere merverdiavgiftslov § 18‑1 første ledd bokstav b (nå skatteforvaltningsloven § 12‑1) og merverdiavgiftsloven § 4‑2 første ledd bokstav a som følge av at klager ikke har tatt lovpålagt oppkrevd legemiddelavgift med i beregningsgrunnlaget for utgående merverdiavgift. Klagenemnda fastholdt etterberegningen (dissens 3-2).
+Les mer
+Selvrisikoforsikring
+Praksis
+SKNS1-2018-130
+Spørsmål om selvrisikoforsikring som tilbys leietakere av utleiebiler skal anses som en selvstendig tjeneste eller om tjenesten skal inngå i beregningsgrunnlaget for merverdiavgift. Nemnda kom til at selvrisikoforsikringen ikke er en del av skattepliktiges kostnad ved oppfyllelse av avtalen om bilutleie og skal derfor ikke inngå i beregningsgrunnlaget. Klagen ble tatt til følge.
+Les mer
+Optikers synsprøver
+Praksis
+Av 2/96 av 5. februar 1996
+Synsprøver som ytes av optiker er å anse som ytelse av selvstendige tjenester som faller utenfor merverdiavgiftsloven, og ikke som omkostninger som skal regnes med i avgiftsgrunnlaget ved optikers salg av briller/kontaktlinser. Se Av 2/96 av 5. februar 1996
+Les mer
+Følgende saker innenfor byggebransjen illustrerer også «smitteregelen», selv om de ikke lenger har direkte praktisk betydning etter merverdiavgiftsreformen 2001, da avgiftsplikten ble gjort generell også for tjenester.
+ByggeledelseAdministrerende sideentreprenør
+Praksis
+KMVA 3378 av 18. august 1995
+Klager hadde ved oppføring av bygg unnlatt å beregne utgående avgift av mottatt vederlag for byggeledelse, med begrunnelse at en avgiftsfri tjeneste ikke blir avgiftspliktig fordi den leveres sammen med en avgiftspliktig tjeneste. I dette tilfellet var det inngått en hovedentreprisekontrakt. Skattedirektoratet kom i likhet med fylkesskattekontoret til at byggeledelsen som klager utførte måtte anses som en del av det entrepriseoppdraget som klageren hadde påtatt seg, herunder administrasjon av egne underentreprenører. Byggeledelsen inngikk som en integrert del av de varer og tjenester som klager hadde levert og mottatt vederlag for. Klagenemnda sluttet seg enstemmig til Skattedirektoratets innstilling.
+I forbindelse med en anbudsvurdering ble det reist spørsmål om avgiftsberegningen i forbindelse med hovedentreprenørs godtgjørelse for arbeid som administrerende sideentreprenør. Sistnevnte arbeid bestod i byggeplassadministrasjon, fremdriftskontroll mv. vedrørende sideentreprenørers arbeid. Skattedirektoratet la til grunn at bistand av administrativ art kan faktureres avgiftsfritt så fremt den på forhånd er særskilt avtalt og spesifisert mellom partene og arbeidet kan vurderes som en selvstendig ytelse i forhold til den avgiftspliktige hovedentreprisen. Det er ikke avgjørende om godtgjørelsen for den administrative bistand beregnes på prosentbasis av sideentreprisens sluttsum eller som en fast avtalt sum. I de tilfeller hvor ovennevnte administrasjonstjenester må anses som en del av hovedentreprisen, skal de avgiftsberegnes som omkostninger ifm. oppfylling av avtalen.
+Se også Oslo byretts dom 18. september 1995 når det gjelder administrasjon av tiltransporterte underentreprenører og KMVA 3483 av 13. januar 1997 når totalentreprenør inngår egen avtale om prosjekteringsarbeid.
+Les mer
+§ 4‑2 første ledd bokstav a til c – Særskilt angitte omkostninger som skal medtas i beregningsgrunnlaget
+Kopier lenke til underoverskrift
+Oppregningen i § 4‑2 første ledd bokstav a til c er ikke uttømmende.
+Tollavgift
+Ved lov 11. mars 2022 ble uttrykket toll erstattet med tollavgift, i samsvar med begrepsbruken i tollavgiftsloven. Endringen er gjort med virkning fra 1. januar 2023. Etter bokstav a skal tollavgift og andre avgifter fastsatt med hjemmel i lov eller Stortingets plenarvedtak, unntatt engangsavgift på motorvogner mv., med i beregningsgrunnlaget for merverdiavgift. Tollavgift som en del av avgiftsgrunnlaget vil først og fremst være aktuelt ved innførsel, se § 4‑11. For øvrig vil tollavgift være en omkostning som tas med ved fastsettelsen av vederlaget for avgiftspliktige ytelser, og på denne måten komme med i avgiftsgrunnlaget. Dette gjelder selv om tollavgiftsbeløpet er spesifisert som en egen post i salgsdokumentet.
+Særavgifter
+Særavgifter på alkohol, tobakksvarer, drivstoff osv. skal tas med i avgiftsgrunnlaget. Årsavgiften for motorkjøretøyer, som isolert sett ikke er vederlag for avgiftspliktig omsetning (jf. § 3‑9 første ledd – Offentlig myndighetsutøvelse), skulle inn i avgiftsgrunnlaget ved bil-leasing, jf. Av 33/81 av 31. desember 1981. Fra 1. januar 2018 ble årsavgiften lagt om til en trafikkforsikringsavgift. Avgiften er nå en del av bilforsikringen. Endringen innebærer at leasingselskapene ikke lenger vil beregne merverdiavgift ved viderefakturering av årsavgift.
+Engangsavgift på motorkjøretøy
+Ved lov 6. april 2001 nr. 11 ble bestemmelsen i tidligere lov § 18 annet ledd nr. 2 endret ved tilføyelse av et nytt annet punktum slik at engangsavgift på motorkjøretøyer ikke skal medtas i beregningsgrunnlaget. Endringen ble gjort med virkning fra 1. april 2001. Bakgrunnen for endringen var at engangsavgiften fra 1. april 2001 ble lagt om fra å være en innførselsavgift til en avgift som skal betales ved førstegangsregistrering i motorvognregisteret. Omleggingen er nærmere omtalt i St.prp. nr. 1 (2000-2001) avsnitt 3.5.3, se også Ot.prp. nr. 37 (2000-2001) avsnitt 2.3 og SKD 6/01.
+Tilknytningsavgift mv.
+Etter bokstav b skal tilknytningsavgifter, gebyrer og andre beløp som påløper ved levering av varer eller tjenester inngå i beregningsgrunnlaget for merverdiavgift. Gebyrer og avgifter som fremtrer som vederlag for avgiftspliktige ytelser, skal medregnes i avgiftsgrunnlaget selv om vederlaget er betegnet som avgift o.l.
+Auksjonssalær mv.
+Bokstav c fastslår at auksjonssalærer, provisjoner o.l. skal medtas i avgiftsgrunnlaget for merverdiavgift. Ved auksjonssalg er det auksjonarius som skal beregne og betale avgift. Auksjonsvilkårene har som regel bestemmelser om at kjøperen i tillegg til tilslagsbeløpet helt eller delvis skal dekke salæret til auksjonarius. Av dette følger det at auksjonarius skal ta sitt salær med i beregningsgrunnlaget overfor auksjonskjøperen. Det at auksjonssalær skal være med i avgiftsgrunnlaget må ses i sammenheng med merverdiavgiftsloven § 3‑1 annet ledd om kommisjonssalg.
+NOx-avgift
+Skattedirektoratet har i brev 4. september 2008 til Norsk Skipsmeglerforbund uttalt at NOx-avgiften, en miljøavgift som påligger en fartøyeier å betale til staten for utslipp av nitrogenoksider, skal medregnes i avgiftsgrunn­laget ved fakturering fra rederiet til befrakter/vareeier.
+Omkostningsgebyr
+Praksis
+Av 24/82 8. november 1982 nr. 12
+Bensinforhandlere som belaster sine kredittkunder for et omkostningsgebyr i forbindelse med kredittsalg av bensin, skal beregne merverdiavgift av gebyret. Slik forhåndsbestemt rente/gebyr må anses å være en omkostning i forbindelse med leveransen/oppfyllelsen av avtalen. (Av 24/82 8. november 1982 nr. 12)
+Les mer
+Stengegebyr
+Praksis
+Av 5/89 av 15. februar 1989 nr. 8
+Stengegebyr og påkoblingsgebyr anses som omkostninger ved oppfyllelsen av avtalen mellom abonnent og energiverk om levering av strøm, og skal tas med ved avgiftsberegningen. (Av 5/89 av 15. februar 1989 nr. 8)
+Les mer
+Miljøgebyr
+Avfallsaktører som driver med transport/innsamling og behandling av spesialavfall i Norge plikter på vegne av NORSAS AS (et selskap eiet av staten, Kommunenes Sentralforbund og NHO) å kreve inn et miljøgebyr på avfall de mottar fra avfallsbesittere. Iht. avtalen mellom NORSAS og aktøren plikter aktøren å innbetale gebyret, uavhengig av om aktøren har mottatt vederlag fra avfallsbesitteren eller ikke. Aktøren kan selv velge om han vil avmerke gebyret særskilt på fakturaen eller la det gå inn i vederlaget for tjenesten. Miljø­gebyret er å anse som en omkostning for avfallsaktøren og skal inngå i beregningsgrunnlaget ved fakturering til avfallsbesitterne. Se Skattedirektoratets brev 27. oktober 1995 til fylkesskattekontoret.
+Hentegebyr
+Et utleiefirma belastet kunder, som til tross for purring ikke betalte forfalt leie, et hentegebyr. Lagmannsretten la til grunn at hentegebyret ikke var noen reell betaling for henting, men en omkostning forbundet med hjemmebesøk som følge av mislighold. Gebyret kunne således ikke anses som en kostnad selskapet hadde i forbindelse med oppfyllelsen av avtalen.
+Anleggsbidrag
+Såkalte anleggsbidrag som elverkene oppkrever av kundene ifm. kostnader til tilførselslinje til deres sluttbrukeranlegg, og som oppkreves med hjemmel i lov/forskrift, er ikke å anse som tilknytningsavgifter i relasjon til tidligere lov § 18 annet ledd nr. 3 og skal ikke med i beregningsgrunnlaget for merverdiavgift, jf. Skattedirektoratets brev 14. juli 2005 til et advokatfirma.
+§ 4‑2 annet ledd – Rabatter og lignende
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Bestemmelsen fastslår at forhåndsavtalte, betingede rabatter gitt direkte i forbindelse med salget, skal komme til fradrag i beregningsgrunnlaget i den utstrekning de er blitt effektive.
+Kontantrabatter og andre forhåndsavtalte reduksjoner av vederlaget for varen kommer til fradrag i beregningsgrunnlaget selv om de er betinget av omstendigheter som inntrer etter salgsavtalens inngåelse. Det samme gjelder når kjøper i henhold til forhåndsavtale godskrives reduksjon av selgers omkostninger ved oppfyllelsen av avtalen (hentegodtgjørelse) (U 1/69 av 6. oktober 1969 nr. 5).
+Om fordeling av rabatter ved sammensatte ytelser med ulik avgiftssats, vises til Sammensatte ytelser. Hovedytelseslæren.
+Kjøpeutbytte
+Kjøpeutbytte/kunderabatt som innrømmes direkte i forbindelse med salget, kommer også til fradrag i beregningsgrunnlaget. I de tilfeller hvor et slikt utbytte først blir beregnet og utbetalt til kjøper ved årets slutt kan det også komme til fradrag i beregningsgrunnlaget. Betingelsene for å godta fradrag er at det er gitt bindende tilsagn i salgsøyeblikket og at størrelsen på rabatten er gjort kjent. Kjøpeutbyttet må fremstå som et prisavslag og ikke som en etterfølgende andel av overskudd.
+Utbetaling av kjøpeutbytte som er avhengig av overskudd og vedtak i årsmøte i året etter driftsåret, anses imidlertid ikke som en forhåndsavtalt, betinget rabatt etter merverdiavgiftsloven § 4‑2 annet ledd. Dette gjelder selv om det i driftsåret er gitt tilsagn om å utbetale kjøpeutbytte i året etter driftsåret.
+Bonus utbetalt av andre enn selger
+«Erstatning for hyllevarer» gis av vareleverandører når detaljister går over fra å føre konkurrerende varer til kun å føre varer fra vedkommende leverandør. Denne godtgjørelsen er å anse som en rabatt/bonus med så nær tilknytning til både vareleverandørene og detaljistenes avgiftspliktige omsetning at avregningen skal skje inkl. merverdiavgift. Det fremgår av uttalelsen at salget av varer gikk gjennom grossist og ikke direkte fra vareleverandør til detaljist. Se Av 8/87 av 13. april 1987 nr. 2.
+I brev av 17. januar 2012 til et advokatfirma uttaler Skattedirektoratet at en grossist kan utstede kreditnota for bonus direkte til kunder av eksterne forhandlere. Direktoratet er av den oppfatning at dette ikke vil være i strid med bokføringsreglene, så fremt grunnlaget for bonusen er tilstrekkelig dokumentert, jf. bokføringsloven § 10 og bokføringsforskriften § 5‑2‑8, jf. § 5‑1‑1. Grossist kan da utstede salgsdokumentasjon (bonusavregning) til kundene, med den virkning at avgiftsgrunnlaget for grossisten blir redusert.
+Tilbakeføring av vederalg/bonus
+Tilbakeføring av vederlag/bonus fra grossist til detaljist på grunnlag av forutgående varekjøp er å anse som en korrigering av tidligere betalt vederlag. Grossisten kan derfor redusere sitt utgående merverdiavgiftsgrunnlag med det utbetalte beløpet og detaljisten korrigerer det inngående avgiftsgrunnlaget tilsvarende (Av 28/81 av 13. november 1981 nr. 7).
+Dokumentasjon
+I fellesskriv til skattekontorene 7. mai 2014 presiserer Skatte­direktoratet at merverdiavgiftsreglene og bokføringsreglene ikke er til hinder for at den som indirekte er selger av de varene rabatten knytter seg til, kan utstede salgsdokument for rabatten inklusive merverdiavgift. Det forutsettes at grunnlaget for rabatten er tilstrekkelig dokumentert, jf. bokføringsloven § 10 og bok­føringsforskriften § 5‑2‑7, jf. § 5‑1‑1.
+For at grunnlaget for bonusen og avgiftsberegningen skal være tilstrekkelig dokumentert, må det stilles krav om at den som utbetaler bonusen (opprinnelig selger) dokumenterer avgiftsgrunnlagene for salget som bonusen er opptjent fra. Dette kan gjøres ved at det mellomliggende salgsleddet utsteder en dokumentasjon til opprinnelig selger som viser grunnlaget for bonusopptjeningen spesifisert etter avgiftspliktig og avgiftsfritt salg, samt salg som er unntatt fra merverdi­avgiftsloven etter kapittel 3. Avgiftspliktig salg må spesifiseres etter de forskjellige avgiftssatsene. Tilsvarende spesifikasjon må gjøres i den dokumentasjon som utstedes for opptjent bonus eller rabatt, jf. bokføringsforskriften § 5‑1‑5. Grunnlaget for rabatten kan også dokumenteres ved at kjøper sammen med krav om bonusutbetaling, sender inn sitt kjøpsdokument til opprinnelig selger, som dokumenterer hvordan salget er avgiftsberegnet.
+Personalrabatt
+Ved salg (dvs. vanlig omsetning) til ansatte innrømmes ofte rabatter. Avgiftsgrunnlaget er i slike tilfeller den pris den ansatte faktisk betaler. Det vil vanligvis ikke bli foretatt noen avgiftskorrigering så lenge prisen ligger over avgiftssubjektets kostpris (innkjøpspris + omkostninger). Personalrabatter innrømmes normalt ikke til innehaver.
+Foreligger det reelt salg, men vederlaget er satt lavere enn selvkost, foreligger det en kombinasjon av salg og gave. KMVA 3954 av 13. oktober 1998 omhandler et slikt tilfelle. Der ble resultatet at avgiftsgrunnlaget ikke ble forhøyet helt opp til vanlig omsetningsverdi, men kun til antatt selvkost.
+Praksis
+KMVA 4110 av 18. februar 1999
+En lotterientreprenør omsatte varer til bruk som gevinster til lotteriarrangører. Rabatt/subsidiebeløp på kr 250 pr. arrangementsdag kom ikke til fradrag i avgiftsgrunnlaget. Beløpet var flatt og uavhengig av omsetningens størrelse. Tilstrekkelig tilknytning til avgiftspliktig omsetning forelå ikke. Dissens 4–1.
+Les mer
+Gruppebonus ved nettverkssalg
+Praksis
+LB-2003-12031 (LR International Norge AS) (KMVA 4577)
+Saken gjaldt spørsmålet om såkalt gruppebonus ved nettverkssalg kan regnes som rabatt som kan føres til fradrag i avgiftsgrunnlaget. Lagmannsretten kom til at ikke noen del av gruppebonusen kunne anses som en rabatt som reduserte varens pris, og dermed avgiftsgrunnlaget. Det ble vist til at en rabatt er avslag i pris eller vederlag for en vare man kjøper. Gruppebonusen mottas derimot i det vesentlige på grunnlag av andres varekjøp, og kunne oppnås nærmest uavhengig av eget varekjøp. Den bonus den rekrutterende forhandler mottok på gruppens samlede varekjøp, fremstod derfor etter rettens syn ikke som avslag i vederlag for vare, men som vederlag for opparbeiding av et forhandlernett som genererte salg. Kontant utbetalt gruppebonus kunne heller ikke ses på som vederlag for en markedsføringstjeneste fra forhandleren. Anke til Høyesterett ble nektet fremmet ved kjæremålsutvalgets kjennelse av 14. april 2005.
+Les mer
+§ 4‑2 tredje ledd – Forskriftshjemmel
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Etter tredje ledd kan departementet gi forskrift om at nærmere bestemte kostnader mv. ikke skal inngå i beregningsgrunnlaget.
+Kredittkostnader
+Av FMVA § 4‑2‑1 første ledd fremgår at ved kredittkjøp skal kredittkostnader etter finansavtaleloven § 1‑7 (7) ikke medtas i beregningsgrunnlaget for merverdiavgift. Det er et vilkår at kredittkostnadene er særskilt angitt i salgsdokumentet og at kreditt gis for mer enn 30 dager.
+Det følger av FMVA § 4‑2‑1 annet ledd at med kredittkjøp menes:
+kjøp av løsøre der det er avtalt utsettelse med betaling av kjøpesummen eller noen del av den,
+kjøp av løsøre der kjøpesummen helt eller delvis dekkes ved lån og kreditten gis av selgeren eller av en annen på grunnlag av avtale med selgeren, eller
+leie eller annen avtale om bruk av løsøre som i realiteten tjener til å sikre et avhendingsvederlag, dersom det er meningen at mottakeren skal bli eier av tingen.
+For kredittkjøp hvor kjøpesummen betales i terminer eller i rater gjelder ikke bestemmelsen.
+Ved å bruke begrepet «kredittkostnader» presiseres det at det kun er omkostninger knyttet til selve kreditten som skal holdes utenfor beregningsgrunnlaget, slik som renter, risikotillegg o.l. Andre alminnelige omkostninger som selger belaster kjøper, f.eks. transportforsikringspremie, kommer ikke til fradrag i avgiftsgrunnlaget.
+Kredittkort
+Finansieringstillegg ved bruk av kredittkort, som kontokunden betaler i tillegg til vederlaget for varen og som tilfaller finansieringsselskapet, skal ikke tas med i selgers avgiftsgrunnlag. Dette gjelder f.eks. kortselskapets etableringsgebyr, månedsgebyr, etterskuddsrente og purreomkostninger.
+Risikoprovisjon
+En bilforhandlers risikoprovisjon skal holdes utenfor beregningsgrunnlaget ved salg på kreditt, jf. finansavtaleloven. Tidligere lov § 18 tredje ledd unntok uttrykkelig omkostninger ved kredittsalg fra beregningsgrunnlaget. Unntaket gjelder imidlertid kun omkostninger som påløper når salget skjer på kreditt etter finansavtaleloven § 1‑7 (7). Det forhold at bilforhandleren også ved andre former for kredittsalg beregnet seg risikoprovisjon kan ikke medføre plikt til å medta slike finansieringskostnader ved ordinære kredittsalg (Av 28/81 av 13. november 1981 nr. 8).
+Etter FMVA § 4‑2‑2 inngår ikke leasingselskapets kostnader til premier for ansvarsforsikring i beregningsgrunnlaget for merverdiavgift ved leasing av motorkjøretøy. Bestemmelsen viderefører Finansdepartementets unntak fastsatt den 4. desember 1981 med hjemmel i tidligere lov § 70 (Av 33/81 av 30. desember 1981). Se også Skattedirektoratets uttalelse 21. oktober 2004 om bilutleiefirmas fakturering av en egen premie for personlig ulykkesforsikring referert under Enkeltsaker i § 4‑2 første ledd – Alle kostnader ved oppfyllelsen ovenfor. Her uttalte direktoratet også at unntaket for leasingselskapers premie for ansvarsforsikring ikke gjelder for ordinær korttids bilutleie.
+Etter FMVA § 4‑2‑3 inngår ikke produktavgift og salgsavgift ved fiskeres omsetning av fisk gjennom salgslag til registrerte videreforhandlere i beregningsgrunnlaget. Dette er en videreføring av et tidligere § 70-fritak, se F 23. desember 1974.
+§ 4‑3. Byttehandel mv.
+Vis regelverk
+Vis forskrifter og forarbeider
+§ 4‑3 første ledd – Beregningsgrunnlaget ved byttehandel mv.
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Paragrafen inneholder bestemmelser om hvordan avgiftsgrunnlaget skal fastsettes når det foreligger byttehandel og i tilfeller hvor det ikke er fastsatt noen særskilt pris. Avgiftsgrunnlaget kan i slike tilfeller aldri settes lavere enn den alminnelige omsetningsverdi, dvs. den pris som selgeren vanligvis tar for tilsvarende ytelser. Det vil kunne tas hensyn til normale rabatter, forutsatt at tilfellene er sammenlignbare.
+Det følger av første punktum at byttehandel anses avgiftsmessig som to salg, som må vurderes hver for seg i henhold til merverdiavgiftslovens bestemmelser. Hver av partene opptrer både som selger og kjøper og skal derfor, gitt at øvrige vilkår for avgiftsplikt foreligger, betale avgift på grunnlag av den prisen man har betinget seg for sin egen ytelse. Prisen som legges til grunn må minst tilsvare den alminnelige omsetningsverdien for tilsvarende ytelser. Dersom den er satt lavere, skal omsetningsverdien likevel legges til grunn ved avgiftsberegningen. Er den satt høyere, skal derimot den avtalte høyere pris legges til grunn.
+Også i tilfeller hvor pris ikke er avtalt, skal omsetningsverdien legges til grunn for avgiftsberegningen.
+Leieforedling
+Ved leieforedling av edelmetaller som sølv og gull, skal bare arbeidsytelsen, fortjeneste medregnet, avgiftsberegnes, i tillegg til eventuelt legeringsmetall, jf. FMVA § 4‑3‑1 første punktum (Av 22/83 av 14. september 1983). For smykker er det et krav at kunden får tilbake det samme metallet som ble innlevert, jf. FMVA § 4‑3‑1 annet punktum. Etter tredje punktum er det i andre tilfeller tilstrekkelig at det gis tilbake en tilsvarende mengde av samme slags metall i bearbeidet tilstand. Når det gjelder leieforedling av tømmer, leieskur, vises det til omtalen av § 6‑20 annet ledd i § 6-20 - Uttak av foredlet skogsvirke – allmenninger og FMVA § 6‑20‑2.
+Innbytte – motorkjøretøy
+Ved innbytte av motorkjøretøy kan avgiftsgrunnlaget for det nye kjøretøyet ikke settes lavere enn listepris med tillegg av fraktkostnader og med fradrag for alminnelig rabatt, se FMVA § 4‑3‑2. Bakgrunnen for denne bestemmelsen var at det hadde utviklet seg en praksis i bransjen som gikk ut på at alminnelig omsetningsverdi ble satt til bilens listepris med tillegg av fraktomkostninger frem til bilforretningen, men med fradrag for alminnelige rabatter som bilforhandleren kan dokumentere at han gir ved salg av samme slag biler uten innbytte på tidspunktet for avgiftsberegningen. Det vises også til høyesterettsdom omtalt nedenfor.
+Felleseide vannkraftverk
+En betydelig del av norsk kraftproduksjon skjer i kraftverk som er eid av flere kraftselskap i fellesskap, som ofte er organisert slik at det felleseide kraftverket utgjør et eget rettssubjekt. Kraftselskapene dekker kraftverkets kostnader i henhold til sine eierandeler og mottar til gjengjeld kraften som produseres. Kraftverkene benytter kostnadsdekningen som mottas fra kraftselskapene som avgiftsgrunnlag for leveringen av strøm til kraftselskapene.
+Finansdepartementet var av den oppfatning at kraftverk som selger kraft i henhold til denne «modellen», ikke kan benytte et lavere avgiftsgrunnlag enn alminnelig omsetningsverdi for sine leveranser av strøm til kraftselskapene. Se Finansdepartementets uttalelse 5. mars 2014.
+Demonstrasjonskjøretøy
+Praksis
+Rt.1987 s.385 (Pedersen Auto AS)
+Det ble reist spørsmål om avgiftsgrunnlaget i forbindelse med uttak av demonstrasjonsbiler og ved innbytte av biler. Ved etterberegningen ble den alminnelige omsetningsverdi satt til listepris med tillegg for frakt og med et rabattfradrag på 2 % eller 5 %. Høyesteretts flertall (3–2) kom til et annet resultat enn byretten og lagmannsretten, og opphevet etterberegningen. Flertallet fant at den fremgangsmåten som var brukt ved skjønnsfastsettelsen ikke tok tilstrekkelig hensyn til de enkelte bilenes verdi. Saken er fra før det ble fastsatt forskrift på området. Forskriften tar hensyn til at man må se hen til de enkelte bilenes verdi.
+Les mer
+Praksis
+Oslo byretts dom 19. juni 1987
+En lastbil ble solgt for 250 000 kroner ekskl. merverdiavgift like etter at den var innkjøpt for 328 000 kroner ekskl. merverdiavgift. Retten fant det overveiende sannsynlig at overdragelsen av lastebilen var et ledd i et bytte og at prisen åpenbart var betydelig lavere enn omsetningsverdien.
+Tvangsauksjon
+Praksis
+Stavanger byretts dom 9. april 1991
+For å sikre sitt krav overfor en næringsdrivende som ikke kunne betale for vareleveranser, fikk selgeren tinglyst en pantobligasjon i en eiendom som tilhørte hovedaksjonæren i kjøperfirmaet. Selgeren overtok eiendommen på tvangsauksjon for 400 000 kroner. Etter at de foranstående krav var dekket var det ikke noe igjen til dekning av selgerens krav, og kravet ble avskrevet. Senere ble eiendommen solgt for 900 000 kroner. Avskrivningen ble ikke godtatt av avgiftsmyndighetene. Byretten ga staten medhold i at det var eiendommens virkelige verdi ved tvangsauksjonen, ikke tilslagsbeløpet, som måtte legges til grunn ved vurderingen av om det forelå tap til avskrivning.
+Ny bil - innbytte
+Praksis
+KMVA 3464 av 24. mars 1996
+Saken gjaldt klage over fylkesskattekontorets etterberegning som ble begrunnet med at klageren solgte en ny bil til for lav verdi ved innbytte av bil pluss mellomlegg. Ved kontraktsinngåelsen aksepterte kjøperen å betale full pris for den nye bilen. Et halvt år senere ble bilen satt ned med 20 000 kroner, med den begrunnelse at han hadde glemt å gi kjøperen rabatt. Samtidig ble innbyttebilens pris satt ned med 20 000 kroner, med begrunnelse at den var satt for høyt. Kjøperen skulle betale det samme kronebeløp i mellomlegg. Klagenemnda kom enstemmig frem til at det her så ut til at salgene var blandet sammen, til tross for at salg av ny bil mot innbyttebil og kontant mellomlegg normalt anses som to ulike salg. Det var lite trolig at bilforhandleren skulle gi rabatt til en kunde som allerede hadde akseptert å betale full pris. Det var heller ingen grunn til at prisen på innbyttebilen skulle settes ned, idet den ikke var forringet i verdi på grunn av skade eller fordi den hadde kjørt ekstra langt. Ved å sette ned prisen på begge bilene med samme beløp fikk kjøperen i realiteten ingen rabatt.
+Les mer
+Leasing
+Det forekommer at leaser av varer skyter inn beløp i leasingselskapet. Rentene på innskuddet og renter på leasingleien kan da ikke motregnes mot hverandre med virkning for fastsettelsen av grunnlaget for beregning av merverdiavgift. Avgiftsgrunnlaget skal i slike tilfeller være hva en leasingkunde i samme situasjon, men uten å ha gjort innskudd i finansieringsselskapet, blir avkrevet i leie. (Av 20/86 av 16. desember 1986O
+§ 4‑3 annet ledd – Forskriftshjemmel
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+§ 4‑3 annet ledd inneholder en todelt forskriftshjemmel. Første punktum gir departementet adgang til å fastsette forskrift om begrenset beregningsgrunnlag ved såkalt leieforedling. Bestemmelsen er generell, men ble gitt for å regulere leieforedling av edelmetaller, jf. FMVA § 4‑3‑1 og omtale ovenfor.
+Annet punktum gir departementet fullmakt til å bestemme hva som skal anses som alminnelig omsetningsverdi ved innbytte av motorkjøretøy, jf. FMVA § 4‑3‑2 og omtale ovenfor. Se for øvrig tilsvarende hjemler i § 4‑4 ved interessefellesskap og § 4‑9 ved uttak.
+§ 4‑4. Interessefellesskap
+Vis regelverk
+Vis forskrifter og forarbeider
+§ 4-4 første ledd - Beregningsgrunnlaget for merverdiavgift ved interessefellesskap
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Etter første ledd kan beregningsgrunnlaget for merverdiavgift ikke settes lavere enn den alminnelige omsetningsverdi dersom det består et interessefellesskap mellom leverandør og mottaker av varer og tjenester, og dette må antas å føre til en annen fastsettelse av vederlaget enn om interessefellesskapet ikke hadde foreligget. Det er ikke tilstrekkelig å konstatere at det foreligger et interessefellesskap for å sette en eventuell avgiftsberegning til side. Det må i tillegg antas at interessefellesskapet har kunnet påvirke vederlaget som ble lagt til grunn ved avgiftsberegningen. Dersom det foreligger et interessefellesskap og det kan konstateres at vederlaget er satt lavere enn den alminnelige omsetningsverdi, må det kunne hevdes å foreligge en presumsjon for at vilkåret for å tilsidesette avgiftsberegningen er til stede. Det må i slike tilfeller påligge leverandøren å godtgjøre at det lave vederlaget skyldes andre forhold enn interessefellesskapet med mottakeren av ytelsene.
+Viderefakturering
+Praksis
+Skattedirektoratets prinsipputtalelse av 4. november 2024
+Skattedirektoratet har i sin prinsipputtalelse 4. november 2024 foretatt en gjennomgang og redegjørelse for når en anskaffelse kan anses som viderefakturert, når anskaffelsen kan anses som kostnadsdeling eller som utlegg. Det er en konkret helhetsvurdering som skal legges til grunn, der vurderingen av selgeransvaret står sentralt.
+Les mer
+Motorkjøretøy
+Ved interessefellesskap mellom bilforhandler og kjøper kan omsetningsverdien for det nye motorkjøretøyet ikke settes lavere enn til listepris med tillegg av fraktkostnader frem til forretningen og med fradrag for alminnelig rabatt ved omsetning av samme slags kjøretøy uten innbytte på tidspunktet for beregning av merverdiavgift, jf. FMVA § 4‑4‑1.
+Praksis
+LB-1996-2309-2309 (KMVA 3221)
+Klagenemndas vedtak (dissens 3–2) ble opphevet. A hadde ført opp en forretningsgård for datterselskapet B. På grunnlag av at kostprisen ble høyere enn avtalt vederlag, antok avgiftsmyndighetene at interessefellesskap hadde bevirket at avtalt vederlag var satt lavere enn alminnelig omsetningsverdi. Saken gjaldt følgelig hva som var alminnelig omsetningsverdi for tilsvarende bygg i angjeldende periode. Lagmannsretten uttalte at det måtte gis et visst spillerom ved vurderingen av om avtalt vederlag lå under alminnelig omsetningsverdi. Det ble videre funnet sannsynliggjort at etterfølgende omstendigheter i en viss grad hadde ført til at bygget ble dyrere.
+Les mer
+Praksis
+Oslo byretts dom 28. juni 1979
+Et aksjeselskap drev hovedsakelig med oppføring av hus for hovedaksjonæren i selskapet på tomter som tilhørte ham selv. Byretten kom til at arbeidet var utført for hovedaksjonæren, ikke for selskapet. Avtalen mellom hovedaksjonæren og selskapet var så ensidig belastende for AS’et at bestemmelsen i tidligere lov § 19 annet ledd (nå § 4‑4) måtte komme til anvendelse. Bl.a. var risikoen for salgene av husene veltet over på selskapet, mens aksjonæren var dekket for sine omkostninger og fortjeneste. Verdien av byggearbeidene kunne derfor fastsettes skjønnsmessig.
+Praksis
+SKNA1-2020-031
+Klager A inngikk kontrakt med selskap D om oppføring av to eneboliger. A eies 100 % av B, og B er daglig leder og styreleder i A. B eier indirekte D med 50 %, og er styreleder i D. Skattekontoret hevdet at boligene var utfakturert med lavere påslag enn hva som ville vært tilfellet ovenfor en uavhengig byggherre. Selskapets revisor opplyste under kontrollen at det i tilbudet/kontrakten var uteglemt byggesett for begge boligene på kr 780 000 inkludert merverdiavgift. B opplyste at feilen skyldtes en feil han hadde gjort i regnearket, og at selskapet var bundet av kontrakten. Skattekontoret la til grunn at underfaktureringen skyldtes interessefellesskap mellom kontraktspartene og etterberegnet utgående merverdiavgift. Klager avviste at det forelå kvalifisert interessefellesskap mellom partene da en ekstern aktør eide 50 % av byggherreselskapet. Sekretariatet fant under tvil at det ikke forelå interessefellesskap. Klagenemnda opphevet etterberegningen da det ikke forelå interessefellesskap mellom partene. Skattekontoret hadde ikke påvist en «faktisk innflytelse» over byggherreselskapet utover de formelle posisjoner.
+Les mer
+Praksis
+KMVA 5235 av 15. oktober 2004
+Saken gjaldt omsetning av serveringstjenester fra et aksjeselskap til medlemmer av en losje i forbindelse med losjemøter. Selskapet eies av losjen i tillegg til at medlemmer i losjen eier B-aksjer i selskapet. Aksjeselskapet omsetter også serveringstjenester i forbindelse med utleie til bryllup, andre selskaper, minnestunder, møter o.l. Oppnådd bruttofortjeneste ved salg til losjemøter er vesentlig lavere enn ved salg til eksterne kunder (selskaper o.l.).
+Fylkesskattekontoret la til grunn at det forelå et interessefellesskap mellom aksjeselskapet og losjemedlemmene, og at selskapet således ikke hadde anledning til å omsette serveringstjenester til en lavere pris (og bruttofortjeneste) til losjemedlemmene enn til andre. Den alminnelige omsetningsverdi var etter fylkesskattekontorets oppfatning den pris selskapet oppkrevde ved omsetning til eksterne kunder. Skattedirektoratet la derimot til grunn at den overveiende del av selskapets virksomhet var knyttet til servering ved losjemøter (80 %) og at prisene til disse tilsvarte alminnelig omsetningsverdi. Det ble lagt vekt på bl.a. at serveringstjenesten («kelnertjenesten») var mer omfattende ved eksterne arrangementer enn ved losjemøter og at maten som ble servert ved losjemøter var enklere enn den som ble servert ved eksterne arrangementer. Klagenemnda opphevet i samsvar med Skattedirektoratets innstilling etterberegningen på dette punkt.
+Les mer
+Kostnadsfordeling
+Praksis
+KMVA 5500 av 12. desember 2005
+Et selskap utførte økonomiske og administrative tjenester for tre datterselskaper. Driftskostnadene ble fordelt på de tre selskapene, og man hadde nullsiktemål mht. fortjeneste.
+Klager mente at det ikke skjedde en omsetning fra klager til datterselskapene. Datterselskapene kjøpte ikke tjenester fra morselskapet, men pådro seg kostnader i fellesskap med morselskapet. Morselskapet hadde ikke mangel- eller resultatansvar overfor datterselskapene. Fylkesskattekontoret etterberegnet fordelte kostnader med et påslag på 10 % som et skjønnsmessig grunnlag for alminnelig omsetningsverdi på tjenestene. Fylkesskattekontoret viste i den forbindelse bl.a. til at det forelå et interessefellesskap og at ingen uavhengig part ville inngått en avtale som i beste fall medførte at driftsresultatet ble null. Etterberegningen ble enstemmig stadfestet av klagenemnda.
+Les mer
+Praksis
+SKNA2-2018-083
+Spørsmålet i saken er hvilken påslagssats som reflekterer alminnelig omsetningsverdi på tjenester levert fra et konsernselskap til et annet ved viderefakturering fra ekstern underleverandør. Klager ble ikke hørt med at en påslagssats på 1 % som dekket de administrative kostnadene var tilstrekkelig. Nemnda la til grunn en påslagssats på 4 %. Ved valget av påslagssats ble det tatt utgangspunkt i selskapets Transfer Pricing Policy hvor det framgikk at en hovedmetode for prising innad i konsernet var kostpluss metoden basert på indirekte kostnader + 10 % margin eller 4 % på totalkostnader.
+Les mer
+No cure no pay
+Praksis
+BFU 14/10
+BFU 14/10 gjaldt tjenester levert på no cure, no pay-vilkår fra et selskap innen eiendomsutvikling. Ett av spørsmålene i saken var om merverdiavgiftsloven § 4‑4 kom til anvendelse da selskapets kundemasse i ikke ubetydelig grad ville være konserninterne selskaper. Skattedirektoratet mente at dersom prissettingen kan dokumenteres å være uavhengig av om oppdragsgiver er et selskap i konsernet eller en ekstern oppdragsgiver, vil merverdiavgiftsloven § 4‑4 ikke komme til anvendelse. Interessefellesskapet, som åpenbart er til stede mellom selskapene i konsernet, vil i så fall ikke kunne antas å føre til en annen fastsettelse av vederlaget enn om interessefellesskapet ikke hadde foreligget.
+Les mer
+§ 4-4 annet ledd - Forskriftshjemmel
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Annet ledd gir adgang til å forskriftsfeste hva som skal anses som alminnelig omsetningsavgift ved omsetning av motorkjøretøy når det foreligger interessefellesskap mellom bilforhandleren og bilkjøperen. Slik forskrift er gitt i FMVA § 4‑4‑1, jf. omtale ovenfor. Bestemmelsen samsvarer med FMVA § 4‑3‑2 og FMVA § 4‑9‑1 første ledd.
+Se for øvrig tilsvarende hjemler i § 4‑3 annet ledd annet punktum ved innbytte av motorkjøretøy og § 4‑9 annet ledd ved uttak.
+§ 4‑5. Videresalg av brukte varer mv. – enkeltstående kjøp og salg
+Vis regelverk
+Vis forarbeider
+§ 4‑5 første ledd – Avansesystemet ved enkeltstående kjøp og salg
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Paragrafen fastsetter hovedreglene for bruk av avansesystemet som ble innført den 1. september 1997 for omsetning av brukte varer, kunstverk, samleobjekter og antikviteter. Avansesystemet innebærer at det kan benyttes et redusert beregningsgrunnlag for merverdiavgift tilsvarende differansen mellom innkjøpsprisen og salgsprisen. Systemet kan bare benyttes ved omsetning av brukte varer, kunstverk, samleobjekter og antikviteter innkjøpt for videresalg. Tilsvarende gjelder ved salg i kommisjon eller ved auksjon, se nedenfor § 4-5 - Særlig om auksjon. Skattedirektoratet ga en bred omtale av regelverket i Av 16/97 av 22. desember 1997.
+Før 1. september 1997 skilte ikke regelverket mellom nye og brukte varer. En hovedinnvending mot dette var at det i en viss utstrekning medførte dobbel avgiftsbelastning for brukte varer, kunstverk, samleobjekter og antikviteter. Dette gjaldt i tilfelle hvor næringsdrivende kjøpte brukte varer mv. for videresalg fra privatpersoner og andre som ikke hadde rett til fradragsføring av inngående avgift. Forholdet førte også til vridninger i markedet ved at det ble etablert en kunstig stor del ikke-avgiftspliktige private markeder eller ikke-avgiftspliktig formidlingsvirksomhet for slike varer.
+Enkeltgjenstander
+Avansesystemet kan benyttes både ved enkeltstående kjøp og salg av enkeltgjenstander med kjent innkjøpspris, og ved såkalt samlet kjøp og salg. De særlige reglene for samlet kjøp og salg reguleres i § 4‑6 omtalt nedenfor.
+Hva som menes med begrepene «kunstverk», «samleobjekter», «antikviteter» og «brukte varer» er med hjemmel i § 1‑3 annet ledd bokstav b fastsatt i forskrift, se FMVA §§ 1‑3‑2 til 1-3-5. Det vises til omtalen ovenfor i § 1‑3 annet ledd bokstav b – Kunstverk, samleobjekter, antikviteter og brukte varer mv..
+Paragrafens første ledd stiller to grunnleggende krav for at avansesystemet skal kunne benyttes.
+For det første må de brukte varene mv. være kjøpt inn for videresalg. Siden videreforhandlerens driftsmidler ikke kan anses innkjøpt for videresalg omfattes ikke omsetning av disse selv om de omfattes av begrepet brukte varer. På den annen side vil også faktisk ubrukte varer omfattes av avansesystemet. Det vises til eksemplet om sportsbutikken som tar et par ubrukte skøyter i innbytte fra en privatperson i omtalen av definisjonen av «brukte varer» ovenfor i § 1‑3 annet ledd bokstav b – Kunstverk, samleobjekter, antikviteter og brukte varer mv.. Sportsbutikken vil her kunne benytte avansesystemet ved videresalg av de faktisk ubrukte skøytene.
+For det andre må de være kjøpt fra en selger som enten ikke skal beregne avgift av salget eller som ikke oppgir merverdiavgift i salgsdokumentet etter bestemmelser gitt i eller i medhold av bokføringsloven. Disse selgerne har ikke hatt anledning til å fradragsføre inngående avgift da de anskaffet varene, hvilket er hovedbegrunnelsen for innføringen av avansesystemet for næringsdrivende videreforhandlere, jf. ovenfor.
+Dette gjelder følgende selgere:
+Privatpersoner
+Eksempel: Kjøp av et piano fra en privatperson. Privatpersoner skal ikke beregne merverdiavgift ved salg av gjenstander, jf. merverdiavgiftsloven § 3‑1 første ledd sammenholdt med kapittel 2 Registreringsplikt og -rett.
+Ikke-avgiftspliktige næringsdrivende eller offentlige institusjoner
+Eksempel: Kjøp fra ikke-avgiftspliktig næringsdrivende, f.eks. en bank av en pc.
+Eksempel: Kjøp fra en ikke-avgiftspliktig offentlig institusjon, f.eks. et sykehus, av kontormøbler.
+Andre avgiftspliktige videreforhandlere som benytter reglene i denne forskrift
+Eksempel: Kjøp av et maleri fra en avgiftspliktig videreforhandler som ved salget har benyttet avansesystemet. I et slikt tilfelle er denne videreforhandleren avskåret fra å anføre avgift i salgsdokumentet, jf. forskrift av 1. desember 2004 nr. 1558 om bokføring § 8‑10‑4 annet ledd annet punktum.
+Avgiftspliktige næringsdrivende med avskåret fradragsrett (merverdiavgiftsloven § 8‑3)
+Eksempel: Kjøp av diverse utstyr fra en avgiftspliktig virksomhet som ikke har hatt fradrag ved anskaffelsen, fordi varene ble innkjøpt til bruk i en firmahytte.
+Videre kan avansesystemet benyttes av avgiftspliktige videreforhandlere som anskaffer kunstverk fra kunstneren eller mellommann som nevnt i merverdi­avgiftsloven § 3‑7 fjerde og femte ledd for videresalg etter reglene om enkeltstående kjøp og salg.
+Avansesystemet innebærer, som nevnt, at forhandler beregner merverdiavgift av avansen istedenfor av det fulle salgsvederlaget. Avansen fremkommer ved å trekke kjøpsprisen fra salgsprisen. Selve avgiften tas heller ikke her med i beregningsgrunnlaget.
+Eksempel
+Eksempel
+En privatperson kjøper en ny båt for kr 50 000 inklusiv merverdiavgift. Merverdiavgiften utgjør (50 000 x 25: 125) = kr 10 000, som selgeren innbetaler til staten. Privatpersonen selger deretter båten til en videreforhandler for kr 20 000. Forhandleren selger båten videre for kr 30 000. Avgiften som skal betales inn til staten ved dette siste salget blir ((30 000 – 20 000) x 25: 125) = kr 2 000.
+Med kjøpspris menes videreforhandlerens inntakskost, dvs. alle omkostninger ved anskaffelsen. Dersom f.eks. den private selgeren skal ha vederlag for frakt av varene frem til videreforhandlerens butikk, tas dette vederlaget med i kjøpsprisen.
+Når det gjelder videreforhandlerens utgifter til reparasjon, rengjøring o.l. av brukte varer mv., har videreforhandleren fradragsrett for inngående avgift i samsvar med merverdiavgiftslovens alminnelige regler. Slike utgifter skal derfor ikke medtas i videreforhandlerens kjøpspris ved avanseberegningen.
+En videreforhandler kjøper to identiske stoler som begge har ulike skader. Ved å bruke intakte deler fra begge disse stolene, lager han én salgbar stol. Kjøpsprisen for begge stolene inngår i avanseberegningen.
+Videreforhandlere som kjøper inn mobiltelefoner fra privatpersoner og andre som ikke har rett til fradrag for inngående avgift, og som i forbindelse med videresalget mottar provisjon fra et teleoperatørselskap for inngåtte abonnementsavtaler, skal ikke ta provisjonen med i salgsprisen ved avanseberegningen. Videreforhandleren skal imidlertid beregne merverdiavgift av mottatte provisjoner. Det vises til Av 7/96 av 19. august 1996.
+I salgsprisen inngår omkostninger, avgifter m.m. som er nevnt i merverdi­avgiftsloven §§ 4‑1 og 4-2.
+Regnskapsregler
+Bokføringsforskriften §§ 8‑10‑2 til 8-10-4 inneholder detaljerte regler for forhandlernes spesifikasjon og dokumentasjon av kjøp og salg. Mottatte varer skal straks merkes med nummer som skal fremgå av spesifikasjonen som i tillegg skal inneholde opplysninger om kjøpsdato, kjøpesum, en klar beskrivelse av varen samt antall, størrelse, mengde eller vekt, navn og adresse til den person gjenstanden er ervervet fra, salgsdato, salgssum inkludert avgift og beregningsgrunnlag utgående avgift. Det skal fremgå av spesifikasjonen om avansen eller de alminnelige regler for beregning av avgiften er lagt til grunn ved videresalget av gjenstanden.
+Forhandleren må påse at det utstedes salgsdokument også når selger ikke er bokføringspliktig. I slike tilfeller regnes avregningsseddel eller annet bilag utstedt av forhandleren som salgsdokument. Salgsdokumentet skal foruten forhandlerens navn inneholde de ovennevnte spesifikasjoner. Forhandler som benytter avansesystemet ved videresalg skal utstede særskilt salgsdokument over leveransen. Gjenstandens nummer skal påføres salgsdokumentet. Selve avgiftsbeløpet skal ikke angis i salgsdokumentet. Det skal fremgå av dokumentet at avgift er inkludert i prisen, og at denne ikke er fradragsberettiget som inngående avgift. På den måten kan avansesystemet benyttes i flere ledd, jf. kravet til at varen er kjøpt fra selger som enten ikke skal beregne eller ikke skal oppgi merverdiavgift i salgsdokumentet etter bestemmelser gitt i eller i medhold av bokføringsloven. Kravet til særskilt salgsdokument er ikke til hinder for at varer og tjenester som ikke avgiftsberegnes etter avansemetoden inkluderes i det samme salgsdokumentet. De ulike ytelsene må spesifiseres hver for seg, jf. også den generelle regelen i bokføringsforskriften § 5‑1‑5 om å spesifisere avgiftspliktig, avgiftsfritt og unntatt salg mv. hver for seg og summere de ulike salgene særskilt.
+Praksis
+LB-2017-132117 (KMVA 8888)
+Spørsmål om avansemetoden i §§ 4‑5 og 4-6 skulle vært lagt til grunn ved etterberegning av utgående merverdiavgift ved privat kjøp og salg av brukte klokker. Lagmannsretten bemerket at ordlyden i § 4‑5, forarbeider og forvaltningspraksis talte for at det er en forutsetning for at bestemmelsen kommer til anvendelse at innkjøpsprisen og salgsprisen «for den enkelte varen» kunne fastsettes. Det var ikke tilfellet i den foreliggende saken. Videre gjelder merverdiavgiftsloven § 4‑6 tilfeller der videresalget skjer «samlet», noe som ikke var tilfellet i saken. Lagmannsretten kom til at verken § 4‑5 eller § 4‑6 kom til anvendelse. Dommen er rettskraftig.
+Les mer
+Se også Moss tingretts dom 5. september 2017 som fremhever at bruk av avansemetoden forutsetter at avansen på den enkelte vare kan dokumenteres.
+Praksis
+KMVA 8916 av 20. juni 2016
+Klagenemndssaken omhandler kravet til dokumentasjon og spesifikasjon for bruk av avansemetoden ved kjøp og salg av brukte båter. Klager kunne ikke fremlegge tilfredsstillende dokumentasjon for bruk av avansemetoden og etterberegnet utgående merverdiavgift ble fasthold av nemnda (4-1).
+Les mer
+§ 4‑5 annet ledd – Egne innførte kunstverk, samleobjekter og antikviteter
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Bestemmelsen åpner for at videreforhandler som selv innfører kunstverk, samleobjekter eller antikviteter for videresalg, kan benytte avansesystemet. Grunnlaget for beregning av merverdiavgift er da differansen mellom beregningsgrunnlaget fastsatt etter § 4‑11 første ledd (ordinær tollverdi) og salgsprisen for den enkelte vare. Bemerk her at dette ikke gjelder varer som omfattes av definisjonen på «brukte varer». Ved videresalg av andre egeninnførte brukte varer enn kunstverk, samleobjekter eller antikviteter, kan ikke avansesystemet benyttes. Det vises til Ot.prp. nr. 17 (1996–97) avsnitt 7.4. Departementet foreslo her at forhandler ikke skulle ha fradragsrett for inngående avgift betalt ved innførsel av kunstverk, samleobjekter eller antikviteter. Siden avgiftsgrunnlaget skal settes til 20 % av tollverdien, jf. § 4‑11 annet ledd, mente man at dette ville gi tilnærmet lik avgiftsbelastning for slike varer enten de var innført fra utlandet eller innkjøpt innenlands for videresalg. Ved innenlands kjøp er jo avgiften en del av kjøpesummen som ikke kan fradragsføres. Finanskomitéen fant imidlertid ikke å slutte seg til dette, se Innst. O. nr. 54 (1996–97) kapittel 5. Resultatet er således at forhandleren kan fradragsføre avgiften på vanlig måte. Bestemmelsen om redusert avgiftsgrunnlag ved innførsel får derved først og fremst betydning for privat innførsel av kunstverk, samleobjekter og antikviteter. Beregningsgrunnlaget ved videresalg av innførte kunstverk, samleobjekter og antikviteter er, som nevnt, differansen mellom tollverdien (§ 4‑11 første ledd) og salgsprisen.
+Utførsel av brukte varer mv.
+Ved utførsel av brukte varer mv. kommer lovens alminnelige regler om fritak for beregning av merverdiavgift til anvendelse også for videreforhandlere som benytter avansesystemet. Dette gjelder imidlertid bare ved enkeltstående kjøp og salg, jf. § 6‑21 annet punktum som gjør unntak for varer medtatt i et samlet terminvis oppgjør etter § 4‑6.
+§ 4‑5 tredje ledd – Innkjøpspris overstiger salgspris
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Dersom en vare må selges for mindre enn den er kjøpt inn for vil grunnlaget for merverdiavgiften bli null. Det skal følgelig ikke beregnes eller innberettes avgift av salget. I slike tilfeller kan differansen mellom innkjøpspris og salgspris ikke avregnes mot avanse fra salg av andre varer. Dette stiller seg annerledes ved såkalt samlet kjøp og salg etter § 4‑6.
+§ 4-5 - Særlig om auksjon
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Registrert auksjonsvirksomhet anses å omsette varer innkjøpt for videresalg i relasjon til avansesystemet, jf. paragrafens første ledd første punktum. De som driver registrert auksjonsvirksomhet kan således benytte avansen som avgiftsgrunnlag dersom de øvrige vilkår er til stede.
+Det er selgersalæret og kjøpersalæret som utgjør avgiftsgrunnlaget, jf. Ot.prp. nr. 17 (1996–97) avsnitt 7.5. Andre avgifter i forbindelse med auksjonssalget skal derfor ikke med i avgiftsgrunnlaget.
+En forutsetning for å kunne benytte avansesystemet er at salget skjer på oppdrag fra privatpersoner og virksomheter uten fradragsrett.
+Eksempel
+Eksempel
+En antikk vase selges for en privatperson på en auksjon. Vasen oppnår en tilslagspris på kr 100 000. Auksjonarius skal ha 10 % salær av både kjøper og selger.
+Tabellen viser beregningen av merverdiavgift på salæret for hhv. kjøper og selger
+Kjøper:
+Tilslagspriskr100 000
+Salær 10 %kr10 000
+MVA av salæretkr2 500
+Kjøper betaler i altkr112 500
+Selger:
+Tilslagspriskr100 000
+Salær 10 %kr10 000
+MVA av salæretkr2 500
+Selger får utbetaltkr87 500
+Auksjonarius innbetaler merverdiavgift med kr 5 000.
+Avgiftsbeløpet ved bruk av avansesystemet må ikke fremgå av fakturaen til kjøper eller av avregningsbilaget til selger. Det oppkreves således kun et beløp på 2 500 kroner fra både kjøper og selger.
+Det er opp til partene (selger, auksjonarius og kjøper) å avtale om avansesystemet skal benyttes, eller om varen skal selges etter de alminnelige regler. Denne beslutningen kan derfor treffes på selve auksjonsdagen.
+§ 4‑6. Videresalg av brukte varer mv. – samlet kjøp og salg
+Vis regelverk
+Vis forarbeider
+§ 4-6 - Avansesystemet ved samlet kjøp og salg
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Bestemmelsen supplerer § 4‑5 om avansen som beregningsgrunnlag for merverdiavgift ved videresalg av brukte varer, kunstverk, samleobjekter og antikviteter som regulerer enkeltstående kjøp og salg. Om bakgrunnen for innføring av avansesystemet, hvilke varer som omfattes av ordningen og vilkår for bruk av systemet for øvrig vises det til § 4‑5 omtalt ovenfor.
+Bestemmelsen regulerer bruk av avansesystemet i de tilfeller der det ikke er mulig å regne ut den enkelte vares kjøps- og salgspris. Dette gjelder når videreforhandleren selger en eller flere gjenstander som stammer fra et samlet innkjøp, f.eks. et dødsbo der prisen på den enkelte vare er ukjent. Samme forhold gjør seg gjeldende der en enkelt vare (med kjent innkjøpspris) inngår i et samlet videresalg av flere varer, f.eks. salg av en samling medaljer.
+Terminoppgjør
+I slike tilfeller skal beregningsgrunnlaget for merverdiavgift, dvs. avansen, fastsettes på grunnlag av samlet kjøp og salg i den enkelte termin.
+Eksempel
+Eksempel
+En virksomhet har i en termin kjøpt brukte varer, som nevnt i § 4‑6 første punktum, for kr 700 000 og solgt varer som er innkjøpt samlet for kr 900 000. Grunnlaget for terminen utgjør (900 000 – 700 000) = kr 200 000. Merverdiavgift for terminen utgjør (200 000 x 25: 125) = kr 40 000.
+Felles kjøp av f.eks. to helt identiske varer for til sammen kr 200 må i denne sammenheng betraktes som to enkeltkjøp hvor hver vare har kjent kjøpspris kr 100.
+Etter annet punktum kan reglene for samlet terminvis beregningsgrunnlag også benyttes for brukte varer mv. der kjøps- og salgsprisen er kjent, dersom samlet kjøp eller salg utgjør den hovedsakelige del av videreforhandlerens kjøp eller salg i terminen. For at hovedsakelighetskriteriet skal være oppfylt, må samlet kjøp eller salg utgjøre 80 % eller mer av videreforhandlerens kjøp eller salg i terminen. For varer hvor kjøps- og salgspris er kjent, må salgsprisen overstige kjøpsprisen. Det er bare de varer som avgiftsberegnes etter avansesystemet som skal tas med i beregningen av om hovedsakelighetskriteriet er oppfylt. Brukte varer mv. som selges med fullt salgsvederlag som beregningsgrunnlag, skal følgelig ikke regnes med.
+Videreforhandlere kan velge om de vil benytte reglene for samlet terminvis utregningsgrunnlag når hovedsakelighetskriteriet er oppfylt, jf. ordet «kan» i annet punktum.
+Dersom verdien av kjøp overstiger verdien av salg i en termin, kan det overskytende beløp regnes med til verdien av samlet kjøp i den etterfølgende termin. Dersom også denne terminen gir en «negativ avanse», kan denne igjen overføres til neste termin, jf. tredje punktum.
+Regnskapsregler
+Bokføringsforskriften delkapittel 8-10 fastsetter detaljerte regler for spesifikasjon og dokumentasjon av kjøp og salg og bokføringen. Det er gitt enkelte særskilte regler for samlet kjøp og salg.
+Spesielle salg
+Varer som er tatt med i et samlet terminvis oppgjør, kan ikke senere selges i henhold til lovens alminnelige regler om avgiftsberegning eller selges uten å beregne avgift i henhold til unntaks- eller fritaksbestemmelsene i merverdiavgiftsloven kapittel 3 og 6.
+Utførsel
+Dette innebærer f.eks. at varer som stammer fra et samlet innkjøp, og som senere eksporteres samlet eller enkeltvis, skal inngå i avansen for beregning av merverdiavgift dersom reglene om samlet terminvis oppgjør benyttes, jf. også merverdiavgiftsloven § 6‑21 annet punktum. Eksportfritaket kommer således ikke til anvendelse i disse tilfellene. Begrunnelsen for dette er at det ved samlet terminvise avanseoppgjør vedrørende kjøpet vil være regnskapsmessig umulig å skille mellom varer som senere vil bli solgt i Norge og til utlandet.
+Avgiftspliktig videreforhandler som ønsker å selge varer uten avgiftsberegning etter lovens unntaks- eller fritaksbestemmelser, kan imidlertid velge å holde disse varene utenfor nevnte samlede innkjøp.
+Eksempel
+Eksempel
+En videreforhandler kjøper et dødsbo som bl.a. omfatter verdifulle frimerker og et betydelig antall bøker. Han ønsker senere å kunne selge frimerkene og bøkene avgiftsfritt iht. bestemmelsene i hhv. lovens § 3‑18 og § 6‑4. Han oppnår dette ved at dødsboet fakturerer disse varene særskilt. Denne fakturaen tar videreforhandleren ikke med på innkjøpssiden i det samlede terminvise oppgjøret.
+En videreforhandler som ønsker å selge enkelte gjenstander som stammer fra et samlet innkjøp med vanlig avgiftsberegning med vederlaget som beregningsgrunnlag til registrert næringsdrivende, må likeledes sørge for å få disse gjenstandene fakturert særskilt. De øvrige gjenstandene tas med på innkjøpssiden i det samlede terminvise oppgjøret og inngår dermed i avansesystemet.
+§ 4‑7. Tap på utestående fordringer og heving
+Vis regelverk
+Vis forskrifter og forarbeider
+§ 4‑7 første ledd – Tap på utestående fordringer
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Vis nyeste endringer
+Håndbok fra Skattedirektoratet
+Publisert 19.05.2026
+Adgangen til å korrigere tidligere beregnet utgående merverdiavgift ved tap på krav fulgte tidligere forutsetningsvis av Skattedirektoratets forskrift om regnskapsplikt og bokføring for næringsdrivende (forskrift nr. 1). Av forskriften fremgikk at tap på utestående fordringer som tidligere var avgiftsberegnet på visse vilkår kunne føres til fradrag på omsetningsoppgaven i den terminen hvor tapet ble konstatert. Retten til å korrigere ble lovfestet ved teknisk revisjon av merverdiavgiftsloven i 2009.
+Den tilbakeføringsretten som følger av merverdiavgiftsloven § 4‑7 første ledd er et unntak fra symmetriprinsippet og innebærer at staten påføres tap som følge av at det ikke skjer en korresponderende tilbakeføring av den inngående merverdiavgiften som debitor er godskrevet. Staten er med andre ord med på å dekke en del av tapet når kreditor ikke får oppgjør fra sin skyldner. Kreditor har for så vidt angår merverdiavgiftsbeløpet en innkrevingsfunksjon for staten og ordningen forutsetter systematisk at kreditor mottar oppgjør fra debitor. Kreditor må derfor som utgangspunkt betale merverdiavgift av vederlaget selv om kjøper ikke betaler.
+Endelig konstatert tap
+Paragrafens første ledd fastslår at beregningsgrunnlaget for merverdiavgift kan korrigeres dersom en utestående fordring som det tidligere er beregnet utgående merverdiavgift av, anses endelig konstatert tapt på grunn av skyldnerens manglende betalingsevne.
+Med hjemmel i paragrafens tredje ledd er det fastsatt forskrift om når en fordring anses endelig tapt. Det vises til FMVA § 4‑7‑1. Etter forskriftsbestemmelsens første ledd anses en utestående fordring endelig tapt dersom:
+Regelverk
+foretatt tvangsinndriving eller inkasso har vært forgjeves,
+fordringen er en kundefordring som ikke er innfridd seks måneder etter forfall, til tross for minst tre purringskrav med normale purringsintervaller og slik aktivitet fra kreditors side som forholdene tilsier,
+offentlig gjeldmegling, konkurs, likvidasjons- eller avviklingsbehandling i skyldnerens bo gjør det klart at bomidlene ikke gir eller ikke vil gi fordringen dekning, eller
+det ellers er helt klart at fordringen ikke kan bli oppfylt på grunn av skyldnerens manglende betalingsevne.
+Etter § 4‑7‑1 annet ledd anses en fordring likevel ikke tapt i den utstrekning den er tilstrekkelig sikret ved pant, kausjon e.l. Se blant annet Skatteklagenemndas avgjørelse 6. november 2019 (SKNA1-2019-080).
+§ 4‑7 første ledd og tilhørende FMVA § 4‑7‑1 innebærer en harmonisering med skatteloven § 6‑2 annet ledd med tilhørende forskrift § 6‑2‑1. Tilsvarende bestemmelser i tidligere forskrift 27. januar 1993 nr. 49 om skattemessig nedskrivning av tap på utestående fordringer i næring mv. er kommentert i Finansdepartementets brev av 31. oktober 1994 til en bransjeorganisasjon. Se Utv. 1994 side 1428.
+Departementet legger her til grunn at inkasso i bokstav a i første rekke sikter til at fordringen er forsøkt innkrevet gjennom ekstern inkassator som driver virksomhet i samsvar med inkassoloven. Siden inkassoloven åpner for egeninkasso i visse tilfeller antok likevel departementet at tap kunne anses endelig konstatert også etter forgjeves egeninkasso etter loven.
+Til bokstav b og c bemerket departementet at det ikke kan oppstilles noen presumsjon for endelig konstatert tap at 6 måneder er gått og de beskrevne aktiviteter er fulgt. Det kan således være omstendigheter som gjør det påkrevet med aktivitet utover tre purringer, for eksempel at det undersøkes om skyldner har flyttet eller oppholder seg på en annen adresse i lengre periode. Likviditetssvikt hos skyldneren kan også vanskeliggjøre inndrivelse innen 6 måneder, men er det på det rene at denne er midlertidig, kan likevel ikke tapet anses som endelig. Hvis en skyldner må anses insolvent kan det tenkes at tap kan konstateres før det er åpnet konkurs mv. i skyldneres bo. På den annen side kan tvister om fordringer gjøre det vanskelig å anslå dekningsmuligheten i et bo i lang tid etter konkursåpning. Det åpnes derfor for at bostyrets foreløpige innberetning til skifteretten vil kunne antas å gi god veiledning av om tapet er endelig konstatert.
+Bokstav d ble endret ved forskrift 22. desember 2025 nr. 2848 med ikrafttredelse 1. januar 2026. Den tidligere ordlyden om at fordringen “ellers ut fra en samlet vurdering må anses klart uerholdelig” er nå endret til at det “ellers er helt klart at fordringen ikke kan bli oppfylt på grunn av skyldnerens manglende betalingsevne”. Finansdepartementet uttalte i høringsnotat 14. mai 2024 at endringen var ment som en presisering, slik at det fremgår klart at bestemmelsen kun kommer til anvendelse dersom det er “helt klart at fordringen ikke kan bli oppfylt på grunn av debitors manglende betalingsevne”. Bestemmelsen kommer til anvendelse dersom de typene begivenheter som er omtalt i bokstavene a til c ikke passer. Terskelen for anvendelse av bokstav d ikke er ment å være lavere for bokstavene a til c. Det må altså være klart at debitor som rettssubjekt ikke vil få inntekter som kan gi dekning for den aktuelle fordringen, og etter en helhetsvurdering være klart at fordringen er endelig konstatert tapt. Innhenting av kredittopplysning kan i denne sammenhengen være et moment i bevisvurderingen, men det kan ikke stilles opp som regel at slike opplysninger er tilstrekkelig for å fastslå at fordringen er tapt.
+Selv om det er foretatt en harmonisering med de omtalte skattereglene om tapsavskrivning, er det viktig å merke seg at det etter avgiftsretten ikke er gitt noen tilsvarende adgang til tapsføring etter en begrenset sjablongmessig (en bloc) nedskrivning av kundefordringer, slik skatteloven § 14‑5 fjerde ledd bokstav b åpner for.
+Det er avskrivningstidspunktet som er avgjørende for vurderingen av fordringens karakter.
+Mva-meldingen
+Ved endelig konstatert tap på utestående fordringer vil en korreksjon i beregningsgrunnlaget innebære en endring i tidligere avgiftsoppgjør. Tapet innebærer strengt tatt at tidligere innberettet beløp for utgående merverdiavgift kan reduseres. Tapet skal likevel ikke redusere utgående merverdiavgift i den terminen det er endelig konstatert. Teknisk føres dette som en økning av inngående merverdiavgift i mva-meldingen i angjeldende termin. Dette henger sammen med at det er tale om et fradrag ved skatteoppgjøret. På den måte håndteres tapet på samme måte etter merverdiavgiftsloven, skatteloven og regnskapsloven.
+Et tap på fordring som knytter seg til en konkursdebitors omsetning før konkursåpning, skal føres på debitors mva-melding. Dette gjelder selv om tapet først konstateres etter konkursåpning. Den korrigerte merverdiavgiften tas med på en endringsmelding for den terminen konkurs ble åpnet. Det vises til F 3. oktober 2011.
+Dersom debitor i ettertid innbetaler hele eller del av en fordring som er tapsført, må kreditor innberette og innbetale denne delen av det tapsførte merverdiavgiftsbeløpet til staten.
+Ettergitt/konvertert fordring
+Dersom en utestående kundefordring konverteres til finansieringsbistand vil det ikke være grunnlag for å korrigere etter reglene for tap på utestående fordringer. Det samme gjelder dersom en utestående fordring ettergis uten at dette skyldes debitors manglende betalingsevne, jf. LB-2013-144191 (Havnegata). Det vises til KMVA 3671 av 2. mars 1998 og omtalen av Oslo tingretts dom av 20. oktober 2010 og Aust-Agder tingretts dom av 1. februar 2009 omtalt nedenfor. Se også Hålogaland lagmannsretts dom 23. februar 1995 og Skatteklagenemndas avgjørelse 14. april 2018 (SKNA2-2018-035). I tillegg vises det til Oslo tingretts dom i saken vedr Olav Ingstadsvei 3 AS (UTV-2022-589) der tingretten i sin konklusjon la avgjørende vekt på at det ble etablert en praksis mellom utleier og leietaker som innebar at det ikke ble foretatt en aktiv innfordring av en etter hvert voksende leiegjeld, men at misligholdet isteden ble forsøkt ordnet ved etterfølgende gjeldsbrev inkluderende faste avdrag over flere år. Misligholdet varte i tillegg jevnlig over en periode på ca. 7 år. Det forelå ikke interessefellesskap mellom utleier og leietaker.
+Praksis
+Gulating lagmannsretts dom 10. februar 2026 (LG-2025-50057 - Seadrill)
+Gulating lagmannsrett avsa 10. februar 2026 dom i LG‑2025‑50057, hvor hovedspørsmålet var om Seadrill Europe Management AS hadde krav på tilbakeføring av tidligere innbetalt merverdiavgift etter merverdiavgiftsloven § 4‑7 første ledd første punktum. Retten kom til at vilkåret om utestående fordring ikke var oppfylt ettersom forliksavtalen inngått mellom SEM og SNOL-konsernene medførte at det ikke lenger kunne sies å foreligge en «utestående fordring» mellom partene som kunne gi grunnlag for tilbakeføringskravet. Høyesteretts ankeutvalg fant at det ikke var tilstrekkelig grunn til å tillate saken fremmet til behandling ved beslutning 6. mai 2026, slik at lagmannsrettsdommen er rettskraftig.
+Les mer
+Kombinert avgiftspliktig/avgiftsfri fordring
+Dersom det foreligger en kombinert avgiftspliktig/avgiftsfri fordring, kan det ikke oppstilles noen regel om at debitor først betaler den avgiftspliktige del, så den avgiftsfrie, eller omvendt. Betalingen medfører en forholdsmessig reduksjon av fordringens to deler (Av 26/83 av 11. november 1983 nr. 10). Saken gjaldt kombinert avgiftspliktig/avgiftsfri fordring som følge av salg av avgiftspliktig vare, hvor det var fastsatt månedlige innbetalinger og beregnet avgiftsfrie renter på grunnlag av fastsatt nedbetalingstid. Av-meldingen omtaler ikke påløpte forsinkelsesrenter, inndrivelseskostnader etc.). Det vises også til Skatteklagenemndas avgjørelse 31. mai 2017 (SKNS1-2017-044) omtalt nedenfor.
+Endrede markedsforhold
+I Finansdepartementets brev til et advokatfirma av 8. april 2020 jf. Finansministerens svar til Stortinget av 11. november 2020 , omtales blant annet grensen mellom selgers kommersielt begrunnede nedjusteringer av vederlaget, og selgers ettergivelse av krav. Førstnevnte tilfeller kan, som omtalt i brevet, gi grunnlag for at selger (utleier) reduserer innberetningen og innbetalingen av merverdiavgift. Dersom utleier allerede har fakturert husleie, f.eks. med 80 000 med tillegg av 20 000 i utgående merverdiavgift, og deretter setter ned leien til 50 000 (40 000 + 10 000) for den samme perioden pga. endrede markedsforhold under virusutbruddet, må utleier utstede kreditnota.
+Faktoring
+Ved faktoring kan klienten på visse vilkår fradragsføre merverdiavgift på uerholdelige fordringer selv om faktoren har overtatt tapsrisikoen. Forutsetningen er at det foregår en reell tilbaketransport av fordringen til klienten og at transporteringen fremgår av regnskapene. Det etterfølgende garantioppgjør må holdes regnskapsmessig adskilt fra tilbaketransporten av fordringen (Av 4/80 av 28. mars 1980 pkt. 5).
+Tyveri/underslag
+Det er ikke anledning til å korrigere tidligere beregnet merverdiavgift som følge av tyveri eller underslag av penger. Det vises til Generelt – «levering av varer og tjenester mot vederlag» og Borgarting lagmannsretts dom av 19. desember 2008 referert nedenfor.
+Kredittforsikring
+En kreditor har kjøpt en garantiforsikring for å sikre seg mot eventuelle tap på utestående fordringer. Det er reist spørsmål om en kreditor som gjennom en slik kredittforsikring får dekket tapet, har adgang til å tilbakeføre tidligere beregnet utgående merverdiavgift av den tapte fordringen. Skattedirektoratet uttalte i brev 21. februar 2013 til et rådgivningsfirma at det beløpet som utbetales av forsikringsselskapet ikke kan anses som vederlag for den avgiftspliktige ytelsen, men må avgiftsmessig anses som en erstatning. Dette har ikke betydning for adgangen til å tilbakeføre tidligere beregnet utgående merverdiavgift som tap på krav.
+Kreditors disposisjoner
+Praksis
+LB-2008-68274 (Eagle AS og Teknotherm AS)
+Selskapene hadde inngått en fakturaservice-avtale med et datterselskap av Finance Credit Norge AS. Finance Creditsystemet, som Finance Credit Norge AS var en del av, kollapset høsten 2002. Selskapene ble påført store tap som følge av at innbetalinger fra kunder ble underslått. Selskapene korrigerte utgående avgift på fakturaer omfattet av underslaget etter reglene for føring av tap på utestående fordringer idet man anså at vederlag for leveransene ikke var mottatt.
+Selskapene fikk medhold i klagenemnda. Etter anmodning fra Skattedirektoratet omgjorde Finansdepartementet klagenemndas vedtak i de to sakene. Det vises til omtalen av sakene i Merverdiavgiftshåndboken 6. utgave 2010 side 18.
+Selskapene tok ut stevning for å få opphevet departementets vedtak. Oslo tingrett frifant staten i begge sakene i dom av 14. februar 2008.
+Lagmannsretten kom til samme resultat. Retten la, med henvisning til tidligere forskrift nr. 1 § 13 om tap på utestående fordringer og forvaltningspraksis, til grunn at korrigering av tidligere beregnet avgift bare kan skje for utestående kundefordringer. Når kunden har betalt, eksisterer ikke kundefordringen lenger. Med henvisning til Merverdiavgiftshåndboken 5. utgave 2007, fant retten videre at både praksis og teori la til grunn som en absolutt forutsetning for korrigering, at tapet skyldes debitors forhold. Tap som følge av kreditors disposisjoner gir ingen adgang til korrigering. Retten konstaterte at selskapenes kunder hadde betalt fordringene med frigjørende virkning og at selskapene dermed ikke lenger hadde noen kundefordringer mot dem
+Retten vurderte deretter om det likevel kunne følge av merverdiavgiftslovens system, herunder av at «vederlaget» i tidligere lov § 18 (nå § 4‑1) må forstås som «mottatt vederlag». Retten mente at det faktum at det i samsvar med ovennevnte krav til tapsføringer har vært praktisert en ordning som gir avgiftssubjektet en snever og nærmere avgrenset adgang til å korrigere beregningsgrunnlaget for utgående avgift, talte sterkt mot et slikt syn. Dersom en slik lovforståelse hadde vært riktig, ville det ikke vært behov for noe unntak.
+Lagmannsretten var heller ikke enig med selskapene i at staten måtte være nærmere til å bære det tapet som oppstod på grunn av underslagene. Det er avgiftssubjektet som må ha risikoen for hva som skjer med det mottatte vederlaget. Organiseringen av innkrevingsfunksjonen kan ikke ha avgiftsmessig betydning. I denne sammenheng må avgiftssubjektet identifiseres med medhjelperen. Reelle hensyn taler for det samme. Når et avgiftssubjekt som opererer uten mellommann må bære risikoen for medhjelperes handlinger, ville det være urimelig om den som organiserer seg annerledes hadde kunnet velte tapet over på staten. Anke til Høyesterett ble nektet fremmet.
+Les mer
+Interessefellesskap - ettergivelse av gjeld
+Praksis
+TOSLO-2010-33878 (Autosalongen Eiendom AS)
+Et eiendomsselskap leide ut næringslokaler til søsterselskaper. Selskapet avskrev fordringer på husleie fra to søsterselskap for to kalenderår og sendte inn omsetningsoppgave med krav om tilbakebetaling av avgift med kr 635 611. Skattekontoret nektet å godkjenne oppgaven med fradraget, og selskapet tok ut stevning.
+Tingretten kom til at fordringene måtte anses ettergitt og frifant staten. Retten tok utgangspunkt i at fordringenes uerholdelighet beror på en bevisvurdering og må sannsynliggjøres av kreditor. Debitors økonomiske stilling, kreditors inndrivelsesforsøk, fordringens størrelse og forholdet mellom kreditor og debitor er momenter i vurderingen. Retten la vekt på at leieavtalenes betingelser om betaling ble fraveket for hele leieperioden. Årsaken til misligholdet var at søsterselskapene manglet likviditet og selskapet valgte å vike tilbake for øvrige kreditorer for å lette situasjonen. Retten la til grunn at betalingsvilkårene ble fraveket for å tilføre søstrene likviditet. Selskapet gjorde ingen inndrivelsesforsøk utover muntlige purringer. Avtalene ble heller ikke hevet, og selskapet undersøkte heller ikke mulighetene for andre leietakere i det retten fant var attraktive lokaler. Retten viste dessuten til at holdingselskapet tilførte søstrene kapital samtidig med at den økonomiske situasjon forverret seg. Selskapet måtte etter rettens vurdering ha forstått i god tid før konkurs og driftsopphør at fordringen ikke ville bli oppfylt. Når selskapet likevel holdt seg passiv, mente retten det skyldtes at fordringen var ettergitt.
+Les mer
+Én eller to leveranser
+Praksis
+SKNS1-2017-044
+Ved salg av varer inngår klager en avtale om leveringssted og betalingsmåte med sine kunder. Kjøper kan velge mellom direkte betaling, betaling ved mottak eller avdragsbetaling. For de tilfeller kjøperne ikke betalte, tilbakeførte klager beregnet utgående merverdiavgift. Skattekontoret mente at klager, i tillegg til varesalg, også som eget virksomhetsområde omsatte finansielle tjenester. Kontoret la derfor til grunn at tilbakeføring med virkning for merverdiavgift ikke kunne skje i de tilfeller kjøperne var kredittkunder; fordringen på kjøpesummen måtte anses betalt idet lån ble innvilget slik at det på tapstidspunktet ikke forelå en tidligere avgiftsberegnet fordring.
+Sekretariatet pekte i sin innstilling på at det sentrale spørsmålet i saken var hvorvidt klager hadde omsatt to selvstendige ytelser – en ytelse i form av avgiftspliktig varesalg og en annen ytelse i form av kreditt/finansiering som er unntatt fra merverdiavgift, eller om kredittstillelsen skal anses som integrert i det avgiftspliktige varesalget.
+Sekretariatet la til grunn at kjøps- og kredittavtalene var omfattet av definisjonen av kredittkjøp i FMVA § 4‑2‑1 annet ledd og at klagers krav på renter, gebyr mv. måtte anses som kredittkostnader etter finansavtaleloven § 44 a bokstav h, nå finansavtaleloven § 1‑7 (7), jf. § 4‑2‑1 første ledd.
+Sekretariatet la videre til grunn at kredittkostnader som nevnt må anses som en kostnad ved oppfyllelsen av avtalen, og at § 4‑2‑1 kun fastslår at slike kostnader ikke skal avgiftsberegnes. Det ble vist til Ot.prp. nr. 18 (1976-77) side 2. Sekretariatet konkluderte med at klagers kredittstillelser ikke kunne anses som selvstendige omsatte finansieringstjenester, men at de måtte anses som omkostninger ved oppfyllelsen av selve vareleveransen. Sekretariatet pekte også på at det forelå en etablert praksis for at det skal kunne foretas en korrigering av innbetalt merverdiavgift ved tap knyttet til kombinerte fordringer. Skatteklagenemnda sluttet seg enstemmig til sekretariatets innstilling.
+Les mer
+Foreldelse
+Praksis
+SKNS1-2017-030
+Skattekontoret godtok ikke klagers tilbakeføring av beregnet utgående merverdiavgift knyttet til fordringer som ikke var betalt og som var eldre enn tre år. Klager kunne ikke dokumentere at den utestående fordringen var endelig konstatert tapt. Det ble lagt til grunn at klager hadde tapt retten til oppfyllelse av fordringen på foreldelsestidspunktet og at fordringer som ikke er reelle ikke kan være gjenstand for tapsføring etter merverdiavgiftsloven § 4‑7‑1. Det ble vist til KMVA 6079 av 5. desember 2007. Skattekontoret pekte i tillegg på at det forelå tvist om kravet før det ble foreldet og da er retten til å korrigere uansett ikke til stede. Sekretariatet sluttet seg i det vesentligste til skattekontorets konklusjon og tilføyde at passivitet og overbærenhet fra kreditors side ikke vil kunne gi adgang til fradrag. Det må kunne dokumenteres hva som er blitt gjort i forbindelse med inndrivelse av fordringen. Skatteklagenemnda sluttet seg enstemmig til sekretariatets innstilling.
+Sekretariatet bemerket for øvrig at nemnda i KMVA 8385 (omtalt nedenfor) konkluderte med at foreldelse ikke vil være til hinder for tapsføring under forutsetning av at kreditor har gjort det som kan forventes og at de øvrige vilkår er oppfylt.
+Les mer
+Praksis
+SKNS1-2018-001Skatteklagenemndas avgjørelse 22. januar 2018 (SKNS1-2018-001)
+Klager hadde tapsført fordringer knyttet til et selskap som klager hadde eiermessig tilknytning til. Skattekontoret tilbakeførte beløpet med den prinsipale begrunnelse at fordringene var foreldet og derfor ikke kunne tapsføres. Subsidiært mente skattekontoret at fordringene ikke var å anse som ordinære kundefordringer pga. interessefellesskapet mellom klager og debitor. Nemndas flertall (4-1) var av den oppfatning, i samsvar med debitor og kreditors fellesforståelse, at fordringene ikke var foreldet. Nemnda sluttet seg imidlertid enstemmig til sekretariatets innstilling om at fordringen hadde skiftet karakter og at det ikke lenger kunne sies å foreligge ordinære kundefordringer.
+Praksis
+KMVA 8385
+Klager hadde foretatt minst tre purringskrav på kundefordringer som ikke var innfridd seks måneder etter forfall. Kundefordringene ble tapsført etter foreldelse. Skattekontoret mente at siden fordringene var foreldet hadde ikke lenger selskapet noe krav mot kundene og dermed heller ikke «utestående fordringer» som kunne tapsføres. Nemnda var uenig og uttalte blant annet at dersom kreditor har gjort det som kan forventes i inndrivingsøyemed vil foreldelse av fordringen være grunnlag for tapsføring. Det ble videre uttalt at en kreditor ikke skal måtte pådra seg kostnader til inkasso, utleggsforretning eller dom dersom utsiktene til dekning er dårlige. Det ble videre lagt til grunn at klager hadde dokumentert tilstrekkelige rutiner. Hver kundefordring gjaldt små beløp og at det var derfor forståelig at selskapet ikke ønsket å pådra ytterligere kostnader ved innfordringsskritt/rettslig pågang.
+Les mer
+Purringer
+Praksis
+KMVA 8490 av 13. april 2015
+Klagesaken gjelder tre fakturaer til samme kunde, datert hhv. 31. desember 2012, 7. januar 2013 og 15. september 2013. Purring ble sendt samlet for alle tre fakturaer hhv. 30. september 2013, 15. oktober 2013 og 30. oktober 2013. I desember ble kravet solgt for 10 % av pålydende og 90 % ble tapsført. Skattekontoret mente at det burde vært purret fortløpende, og at «oppsamlingen» av purringer innebærer at det ikke er utvist slike normale purringsintervaller som FMVA § 4‑7‑1 første ledd bokstav b forutsetter. Skattekontoret mente også at kravet ikke kunne anses endelig tapt. Klager hadde ikke lagt frem dokumentasjon på debitors økonomiske situasjon. Skattekontoret var av den oppfatning at klager burde foretatt ytterligere formelle skritt for å belyse betalingsevnen til skyldneren og at det mest nærliggende tapsføringsgrunnlaget fremstår å være en eventuell mislykket inndrivelse ved inkasso. Det ble også pekt på kreditors passivitet vedrørende både fakturering og inndrivelse.
+Nemnda opphevet etterberegningen. Det ble lagt til grunn at det var purret tilstrekkelig på kravet og at det ikke forelå indikasjon på nærstående forhold. Det faktum at fordringene selges til en brøkdel av pålydende tilsier etter nemndas oppfatning at fordringene anses tapt.
+Les mer
+Det vises til Fredrikstad tingretts dom 29. januar 2013 (Activ Eiendom AS) (KMVA 7184) som også omhandler leieforhold mellom nærstående parter. Retten kom til at kreditor hadde ettergitt husleiekravet for å styrke debitors egenkapital.
+Også i lagmannsrettsdommen vedrørende Pharma Production AS (LB-2023-48484) avsagt 29. juni 2023 var spørsmålet om interessefellesskap oppe til vurdering. Under henvisning til Lønningshaugen (Rt. 2015 s. 168) uttalte lagmannsretten at «det i første rekke når et selskapet eies med mer enn 50 prosent av et annet selskap, eller av ulike selskaper innen samme konsern, at det kan være naturlig å tale om et «sterkt» interessefellesskap». I sin helhetlige vurdering av om fordringen hadde skiftet karakter fra leverandørkreditt til en annen form for tilgodehavende, la lagmannsretten betydelig vekt på at Pharma Productions håndtering og oppfølging av fordringen – slik lagmannsretten så det – samlet sett fremstod som forretningsmessig begrunnet. Det ble bl.a. uttalt følgende: «Ved betalingsproblemer i forretningsforhold er det ikke uvanlig at kreditor gis betalingsutsettelser og at forsinkelsesrente frafalles, og lagmannsretten kan ikke se at Pharma Productions opptreden i så måte er særlig påfallende.» Lagmannsretten konkluderte dermed, i likhet med tingretten, med at fordringene ikke hadde skiftet karakter og at vilkårene for tapsføring i merverdiavgiftsloven § 4‑7 var oppfylt.
+Praksis
+Rt.2015 s.168 (Lønningshaugen 15 AS) (KMVA 7181)
+I motsetning til lagmannsretten kom Høyesterett til at selskapet kunne korrigere beregningsgrunnlaget for utgående merverdiavgift når det gjaldt utestående leieinntekter fra to leietakere som var konkurs. Det forelå interessefellesskap, og samme person var styreleder i alle tre selskaper. Misligholdet hadde vart i 1 ½ år. Utleier hadde vært mindre aktiv mht. innkrevingen enn det som gjerne er normalt. Staten ble ikke hørt med at tapskorreksjon var avskåret (1) fordi kravene hadde skiftet karakter fra leverandørgjeld til langsiktig kreditt. Det forelå intet tilsagn om henstand fra utleier, og det var ikke noe påvist motiv om å styrke leietakerens finansielle stilling. En instruks fra styrelederen hos utleier om å avstå fra å betale måtte anses avgitt som styreleder hos leietakerne. Uttalelser om betydningen av interessefellesskap. Staten ble heller ikke hørt med at tapskorreksjon var avskåret (2) fordi tapet ikke skyldes manglende betalingsevne. Også her stod den nevnte instruks fra styreleder sentralt, og Høyesterett pekte igjen på at denne var gitt innenfor leietakerselskapene, ikke av kreditor. Mindretallet mente på sin side at det «i realiteten [var] ytet driftskreditt til leietakerselskapene gjennom de løpende leveransene» og at en slik ettergivelse innebar at tapet ikke kunne sies å skyldes manglende betalingsevne, slik loven krever for å få tapskorreksjon. Dissens 4-1.
+Les mer
+Lånefordring
+Praksis
+TAUAG-2009-130090 (Nedrebø Eiendom Arendal AS) (KMVA 6346)
+Et eiendomsselskap korrigerte avgiftsgrunnlaget som følge av manglende betaling av husleie over flere år. Skattekontoret tilbakeførte det korrigerte avgiftsbeløpet med henvisning til at det forelå interessefellesskap mellom partene og at fordringen ikke kunne ses å være forsøkt inndrevet i tilstrekkelig grad. Den manglende betalingen medførte heller ikke at utleieavtalen ble endret. Skattekontorets vedtak ble enstemmig stadfestet av klagenemnda. Tingretten kom til samme resultat og frifant staten. Retten fant at husleiekravet liknet mer på en lånefordring enn en ordinær kundefordring. Lånet var ikke forsøkt inndrevet på fire år. Det ble også lagt vekt på interessefellesskapet mellom partene.
+Les mer
+I Oslo tingretts dom 4. desember 2015 (omtalt nedenfor) og KMVA 7825 A av 14. desember 2015 som begge omhandler tap på krav, er Høyesteretts avgjørelse i forannevnte sak trukket frem. Både tingretten og klagenemnda kom til at sakene skilte seg fra Lønningshaugen-dommen, både med hensyn til eierinteresser og eierstruktur.
+Kapitaltilførsel
+Praksis
+LB-2013-144191 (Havnegata 1 DA) (KMVA 7057)
+Saken gjaldt gyldigheten av vedtak om etterberegning av merverdiavgift. Ettergivelse av fordring ga ikke grunnlag for tapsfradrag. Det mest sannsynlige motivet bak ettergivelsen var kapitaltilførsel fra morselskapet til datterselskapet. Lagmannsretten kom til at kreditor ikke hadde sannsynliggjort at fordringen var klart uerholdelig, og at klagenemndas vedtak var gyldig. Det følger av dommen at det oppstilles en streng norm for at fradrag skal gis. Lagmannsretten slo fast at en streng praktisering av bestemmelsen også var best i samsvar med lovgiverviljen.
+Les mer
+Finansieringsbistand
+Praksis
+LA-2015-186489 (Mh Eiendom AS) (KMVA 8188)
+Datterselskapet (100 % eiet) misligholdt sin forpliktelse til å betale husleie i 19 måneder. Kravet på leievederlaget ble hele tiden regnskapsført som ordinær kundefordring i morselskapet. Morselskapet hadde ikke på noen formell måte ettergitt kravet eller foretatt en formell endring av kravet til finansieringsbistand e.l. Retten fant at morselskapet som kreditor for husleiekravet ikke opptrådte slik en uavhengig kreditor ville ha gjort for å ivareta sitt tilgodehavende og at det skyldtes interessefellesskapet med datterselskapet. Retten mente at husleiekravet hadde skiftet karakter fra ordinær kundefordring til finansieringsbistand.
+Les mer
+Praksis
+TOSLO-2015-20977 (Arve Myrsta AS) (KMVA 8261)
+Retten kom til at kreditorselskapet i realiteten hadde ytt kreditt for å styrke likviditeten i debitorselskapet. Debitorselskapet hadde svært anstrengt likviditet. Til tross for dette fortsatte kreditorselskapet å levere varer uten å kreve garantier, betalingsavtale mv. Det ble pekt på de tette bånd mellom selskapene (far-sønn) og at en uavhengig leverandør ikke ville fortsette å levere varer til debitor på de vilkår som leverandør gjorde
+Les mer
+Praksis
+SKNA1-2016-011
+Nemnda ga klager medhold i at beregningsgrunnlaget for merverdiavgift kunne korrigeres. Klager var engasjert av F AS som hovedentreprenør for å oppføre to leilighetsbygg. I forbindelse med prosjektet stilte flere selskaper, herunder klager, garantier for F AS sine forpliktelser overfor banken. Klager eide gjennom sitt heleide datterselskap 50 % av F AS.
+Les mer
+Etter å ha levert tjenester for rundt 56 millioner kroner som var innbetalt, fikk F AS finansieringsproblemer. Til tross for kunnskap om dette fullførte klager byggeprosjektet og tapsførte 671 600 kroner i merverdiavgift.
+Nemnda mente at den aktuelle eierstruktur ikke var tilstrekkelig til å anse at kundefordringen hadde skiftet karakter til finansieringsbistand.
+Nemnda drøftet videre om klagers særbehandling av F AS var forretningsmessig begrunnet. Nemnda pekte på at det var gunstig for klager å fullføre prosjektet for å prøve å sikre høye nok salgspriser og for på den måten å styrke mulighetene for et (best mulig) oppgjør for sitt krav. Når det gjaldt garantiene viser nemnda til at klager anså det mindre økonomisk belastende å fullføre prosjektet enn å måtte innfri garantistillelsen. Videre vises det til bostyrers merknader om at F AS ikke begjærte oppbud fordi bankene (pantekreditorene) ikke ønsket det.
+Når det gjelder spørsmålet om en fordring har skiftet karakter til finansieringsbistand, se også Skatteklagenemndas avgjørelse 19. desember 2018 (SKNA1-2018-168) og Skatteklagenemndas avgjørelse 8. oktober 2018 (SKNA1-2018-129)
+At et interessefellesskap mellom partene ikke alene er nok til at et tap ikke kan føres til fradrag i beregningsgrunnlaget fremgår også av Eidsivating lagmannsretts dom 10. januar 1977 (Trysil Systemhus AS).
+Frivillig gjeldsordning
+Praksis
+KMVA 7214 av 12. desember 2011
+Klager tilbakeførte beregnet utgående merverdiavgift og begrunnet dette med at fordringen var tapt. Tapsføringen var ifølge klager knyttet til en frivillig gjeldsordning som alle kreditorene hadde akseptert. Skatte­kontoret godkjente ikke fradraget og begrunnet dette med at tapsføringen ikke var tilstrekkelig dokumentert, blant annet forelå ingen purringskrav. Skattekontoret mente også at en frivillig gjeldsordning måtte anses som en ettergivelse av gjeld. Klagenemnda opphevet enstemmig etterberegningen. Nemnda mente at en frivillig akkord som er gjennomført på samme måte som en offentlig akkord med full deltagelse fra kreditorene, måtte likestilles med en offentlig akkord. Ved offentlig akkord har kreditor klart fradragsrett for merverdiavgift på den tapte delen av fordringen og det samme måtte da gjelde ved frivillig akkord.
+Les mer
+Praksis
+KMVA 6810 av 18. oktober 2010
+Et entreprenørselskap korrigerte merverdiavgift på to ubetalte fakturaer for byggetjenester. Byggherren hadde ikke klart å selge nok leiligheter og salget var stoppet opp. Skattekontoret viste til at byggearbeidene fortsatte til tross for manglende betaling og mente at selskapet heller ikke hadde gjort tilstrekkelig innfordringsforsøk. Korrigert avgiftsbeløp ble derfor tilbakeført. Klager viste til at salget av leiligheter var stoppet opp og at det var purret i tilstrekkelig grad. Det kan ikke forlanges at det tas rettslige skritt mot debitor. Disse vil for øvrig ikke føre frem. Dersom byggherren slås konkurs vil selskapets garanti overfor finansierende bank slå inn. Kravene til endelig konstatert tap i FMVA § 4‑7‑1 første ledd er alternative. Kravet var over seks måneder gammelt og det var purret flere ganger.
+Klagenemnda la til grunn at det var konstatert manglende betalingsevne, at klager via purringer, e-post og møter hadde forsøkt å inndrive kravet, og at det syntes klart at kravet var tapt. Etterberegningen ble derfor opphevet. Ett medlem avga eget votum hvor det bl.a. ble pekt på at klager vil måtte tilbakeføre korrigeringen dersom det mottas dekning for tidligere avskrevne fordringer.
+Les mer
+Motregning
+Praksis
+KMVA 5209 av 22. november 2004
+Morselskap og datterselskap gikk begge konkurs. Før konkursene hadde datterselskapet, klager, en fordring på morselskapet. Bl.a. de enkle pengekrav ble imidlertid abandonert fra konkursboet tilbake til skyldnerne. Når så morselskapet etter abandoneringen la ut for kjøp for klager, hadde derfor selskapet en fordring på klager som oversteg gjelden til klager. Selv om klagers krav på morselskapet måtte anses tapt på konkurstidspunktet, ble begge virksomhetene etter abandoneringen drevet videre i de samme selskapene og med samme organisasjonsnummer som før konkursåpning, og det var derved oppstått en ny motregningsmulighet for klager overfor morselskapet.
+Klagenemnda kom enstemmig til at klager ikke kunne foreta tapsavskrivning/tilbakeføring. I avgjørelsen heter det bl.a. at motregning må sidestilles med innbetaling og at selv om kravet på konkurstidspunktet kunne vært tilbakeført (klager tilbakeførte kravet først etter ny oppstart), så ville klager, dersom slik tilbakeføring faktisk hadde skjedd, vært pliktig til senere å innberette avgiften igjen. Når det skjer innbetaling på et avskrevet krav, skal merverdiavgiften knyttet til innbetalingen innberettes og innbetales til staten.
+I forbindelse med et byggeoppdrag oppsto det uenighet om størrelsen på entreprenørens sluttvederlag. Etter forgjeves å ha forsøkt å oppnå betaling gjennom utsendelser av betalingsvarsler, hadde entreprenøren tatt ut stevning mot byggherren med påstand om betaling av angjeldende beløp med tillegg av renter. Parallelt ønsket entreprenøren å foreta en korrigering av innberettet avgift. Skattedirektoratet la til grunn at vurderingstemaet «tap på utestående fordring» knytter seg til debitors manglende betalingsevne, og ikke som her, manglende betalingsvilje. Når entreprenøren hadde gått til det skritt å forfølge kravet rettslig, fant Skattedirektoratet at det på det aktuelle tidspunktet ikke kunne sies å foreligge et reelt tap. Se BFU 39/04
+Les mer
+Tvist om vederlaget
+Praksis
+KMVA 4833 av 30. juni 2003
+Etter et entrepriseoppdrag avsluttet i 1997 avskrev klageren sluttoppgjøret som tap på utestående fordring i 1998. Partene var uenige om sluttoppgjøret, og byggherren ville ikke betale. Byggherren var ikke insolvent eller konkurs. Klagenemndas flertall la til grunn at klager ikke hadde dokumentert eller sannsynliggjort at tapet på utestående fordring var reelt på det aktuelle tidspunkt, og klager kunne således ikke avskrive det omtvistede beløpet som tapt med virkning for tilbakeføring av betalt utgående avgift på dette tidspunkt.
+Les mer
+Praksis
+SKNA1-2018-068
+Klager tapsført fordringer knyttet til et krav på provisjon. Skattekontoret tilbakeførte merverdiavgift med den begrunnelse at vilkårene for tapsfradrag ikke var oppfylt da den manglende betalingsviljen skyldtes uenighet om kravet og ikke manglende betalingsevne. Nemnda var enig med sekretariatet i at en tvist mellom partene ikke er til hinder for at fordringen likevel kan tapsføres dersom det på tapsføringstidspunktet forelå manglende betalingsevne og reell uerholdelighet hos debitor. Etterberegnet merverdiavgift ble opphevet.
+Innen bygge- og anleggsvirksomhet kan salgsdokument med virkning fra 1. januar 2021 på visse vilkår utstedes først når arbeidet er «fullført», jf. bokføringsforskriften § 8‑1‑2a. Utgangspunktet om fakturering i samsvar med arbeidets fremdrift videreføres. Endringen består i at det også gis anledning til å utsette fakturering til arbeidet er «fullført», se nærmere Tidspunkt for utstedelse av salgsdokument. Partene gis dermed mulighet til å redusere likviditetsbelastningen som kan oppstå dersom oppdragsgiver bestrider kravet og nekter å betale. Se forøvrig Prop. 1 LS (2020-2021) pkt. 9.4.
+Les mer
+Tapskorrigering av merverdiavgift på fordring mot nærstående
+Kopier lenke til underoverskrift
+Fra 1. januar 2026 er det i § 4-7 første ledd annet punktum innført en særlig avskjæringsregel for det tilfelle at fordringen gjelder en nærstående, se Prop. 1 LS (2025-2026) pkt 11.3. I disse tilfeller går korreksjonsadgangen tapt hvis fordringen står uoppgjort i mer enn 24 måneder. Med hjemmel i tredje ledd (se under), er det i FMVAL § 4-7-2 første ledd gitt regler om beregning av 24-månedersperioden. Perioden starter fra det tidspunktet den leverte varen eller tjenester er eller skulle vært fakturert i eller i medhold av bokføringsloven, og visse kreditorrelaterte situasjoner bl.a. offentlig gjeldsforhandling, stanser periodens løp. Med hjemmel i tredje ledd er det også presisert hva som menes med nærstående i FMVAL § 4-7-2 annet ledd:
+Regelverk
+(2) Fordringen anses å gjelde nærstående i merverdiavgiftsloven § 4-7 første ledd annet punktum når kreditor på noe tidspunkt i fordringens levetid har eid 90 prosent eller mer av aksjene eller selskapsandelene i debitorselskapet, eller omvendt. Det samme gjelder ved indirekte eie der kravet til eierandel er oppfylt i hvert ledd i eierkjeden. Kreditor- og debitorselskap anses også som nærstående når selskapene sammen med ett eller flere andre nærstående selskap oppfyller kravet til eierandel i kreditor- eller debitorselskapet. Kreditor- og debitorselskap som begge eies av et selskap med eierandel som nevnt i første eller annet punktum, anses som nærstående.
+Om tilsvarende problemstilling på skattelovens område, se sktl. § 6-2 tredje ledd og FSFIN § 6-2-2.
+Praksis
+LG-2025-50057 (Seadrill)
+XXXXXX
+Skriv teksten her
+Les mer
+§ 4‑7 annet ledd – Heving av kjøp eller salg
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Vis nyeste endringer
+Håndbok fra Skattedirektoratet
+Publisert 01.01.2026
+En heving av en avtale innebærer i realiteten at avtalen oppheves og at rettsvirkningene av avtalen bortfaller. Dette gjelder uansett om levering av varer eller tjenester har skjedd. Som en konsekvens av dette har man i praksis lagt til grunn at heving av avtaler innebærer at det i merverdiavgiftslovens forstand ikke har skjedd noen omsetning mellom partene selv om levering har skjedd, jf. § 1‑3 første ledd bokstav a. En naturlig konsekvens av dette er at selger skal tilbakeføre beregnet utgående avgift og at kjøperen tilbakefører eventuelt fradragsført inngående avgift i sitt avgiftsoppgjør.
+Bestemmelsen fastslår at beregningsgrunnlaget skal korrigeres dersom kjøpet eller salget blir hevet. Det vises til at det her benyttes «skal» i motsetning til i første ledd hvor det benyttes «kan». En korrigering innebærer her en fullstendig tilbakeføring av de avgiftsmessige disposisjoner den annullerte transaksjon har utløst både hos selger og kjøper. I praksis skal korrigeringen skje på grunnlag av kreditnota som utstedes av selger.
+Heving kan skje både på grunnlag av selger og kjøpers mislighold. Dersom selger har krav på å få dekket omkostninger ved leveringen, vil dette være å anse som en erstatning som ikke anses som vederlag for omsetning etter loven og således heller ikke utløser noen form for plikt til å beregne avgift.
+Bestemmelsen gjelder ikke noen form for frivillig omgjøring av en avtale. Hvorvidt det skjer en heving eller en form for frivillig omgjøring må avgjøres etter kjøpsrettslige regler. I praksis gjelder bestemmelsen både varesalg og tjenesteyting. I avtaler som gjelder tjenesteyting hvor levering har skjedd vil tvister mellom tjenesteyter og oppdragsgiver oftere av praktiske og rettslige grunner måtte løses på annen måte enn ved en fullstendig oppheving av avtalen som ved heving.
+Skattedirektoratet legger til grunn at påberopt angrerett etter lov 21. desember 2000 nr. 105 om opplysningsplikt og angrerett mv. ved fjernsalg og salg utenfor fast utsalgssted (nå lov 20. juni 2014 nr. 27) må kunne hjemle en korrigering av avgiftsgrunnlaget hos selger på tilsvarende måte som ved heving. Også her blir omsetningen annullert.
+I annet forbrukerkjøp har man også godtatt at forretninger yter ekstra imøtekommenhet i form av adgang til å angre kjøp innen nærmere angitte korte frister (åpent kjøp). Dersom varene leveres tilbake og kjøpesummen tilbakebetales, bortfaller etter praksis omsetningen og avgiftsplikten. Se også Bytte om bytte av varer.
+Praksis
+SKNA1-2020-022
+Klager drev med utleie av lokaler og maskiner. På et tidspunkt ble leievederlaget redusert. Skattekontoret aksepterte ikke reduksjonen og etterberegnet merverdiavgift. Reduksjonen ble fra klager begrunnet med at klager og leietaker var gjensidig enige om å redusere leievederlaget og at dette var en disposisjon som lå så tett opp til en heving, at forholdet derfor burde behandles som heving. Nemnda la til grunn at det ikke forelå en heving av avtalen og heller ikke et prisavslag som var rettslig begrunnet. Det var heller ikke tale om at leieavtalen var misligholdt, og det var ikke anført at det forelå mangler ved tjenestene. Derimot fremgikk det klart at reduksjonene av vederlag for leien var motivert av leietakers svake likviditet. Reduksjonen i vederlaget skyldtes ikke mangler eller endringer knyttet til de tjenester som ble omsatt, men var en frivillig ettergivelse av gjeld. Etterberegnet merverdiavgift ble fastholdt.
+Les mer
+Praksis
+LB-2025-5975 (Slottsbygg-dommen)
+Saken gjelder spørsmål om rettslig grunnlag for en kreditering med avgiftsmessig virkning mellom to selskaper i konsern. Staten mente at det ble inngått endringsavtale (ved konkludent adferd og passivitet) som følge av at Mariboesgate 16 AS betalte fakturaene selv om det fakturerte beløpet langt oversteg avtalt kontraktssum. Lagmannsretten viste til at korrigering av avgiftsgrunnlag reguleres i merverdiavgiftsloven § 4-7 og viste i denne sammenheng til tidligere rettspraksis, Tønsberg-Bolig dommen LB-2012-105504, hvor det ble lagt til grunn at en forutsetning for korrigeringsadgang ved prisavslag er at omgjøring ikke er frivillig, men rettslig begrunnet. Lagmannsretten var enig med skattekontoret og mente at krediteringen ikke ville hatt rettslig grunnlag mellom uavhengige parter, og måtte anses som en frivillig disposisjon med et hovedsakelig avgiftsmessig formål. Staten fikk medhold i hovedspørsmålet samt sin avledete anke om skjerpet tilleggsskatt. Retten mente at det kunne bevises utover enhver rimelig tvil at avtalen var fraveket ved konkludent adferd/passivitet. Dommen er ikke rettskraftig.
+Les mer
+§ 4‑7 tredje ledd – Forskriftshjemmel
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Vis nyeste endringer
+Håndbok fra Skattedirektoratet
+Publisert 19.02.2026
+Departementet uttalte i sine merknader til bestemmelsen i Ot.prp. nr. 76 (2008–2009) at man anså det hensiktsmessig med en ny forskriftshjemmel for å kunne fastsette de nærmere vilkår for å kunne korrigere beregningsgrunnlaget ved tap som nevnt i første ledd. Forskriftshjemmelen er inntatt i paragrafens tredje ledd og slik forskrift er fastsatt i FMVA § 4‑7‑1. Se nærmere omtale ovenfor i § 4‑7 første ledd – Tap på utestående fordringer.
+Ved Prop. 1 LS (2025-2026) pkt. 11.3 ble § 4-7 tredje ledd endret slik at departementets forskriftskompetanse også omfatter å gi nærmere forskrift om hva som menes med "nærstående" og "beregning og forlengelse av perioden på 24 måneder", og slik forskrift er gitt i FMVAL. § 4-7-2. Endringen må ses i sammenheng med forslaget om nærmere regulering av tapsføring av utestående fordringer på nærstående, se omtale under § 4-7 første ledd. Endringene trer i kraft fra 1.1.2026.
+(Opphevet) § 4‑8. Forenklet beregningsgrunnlag
+Vis regelverk
+Ingen omtale.
+§ 4‑9. Hovedregel
+Vis regelverk
+Vis forskrifter og forarbeider
+§ 4‑9 første ledd – Den alminnelige omsetningsverdi
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Bestemmelsen gjelder uttak fra virksomhet med avgiftspliktig omsetning og uttak i virksomhet som for egen regning oppfører mv. bygg og anlegg for salg eller utleie som omhandlet i merverdiavgiftsloven kapittel 3 II.
+Rabatt
+Ved uttak av varer og tjenester kan beregningsgrunnlaget for merverdiavgift ikke settes lavere enn den alminnelige omsetningsverdien for tilsvarende varer og tjenester. Bestemmelsen må ses i sammenheng med § 4‑3 om beregningsgrunnlaget ved byttehandel dersom prisen er lavere enn den alminnelige omsetningsverdi, eller dersom det ikke er avtalt noen pris, og § 4‑4 om beregningsgrunnlaget ved interessefellesskap som antas å kunne føre til en annen fastsettelse av vederlaget enn om det ikke hadde foreligget. Med formuleringen «for tilsvarende varer og tjenester» menes også her «for tilsvarende varer og tjenester som omsettes i virksomheten», jf. § 4‑3 og tidligere lov § 19 første ledd annet og tredje punktum. Det avgjørende er altså hvilken pris avgiftssubjektet vanligvis benytter ved omsetning av tilsvarende ytelse. I den grad avgiftssubjektet kan dokumentere at tilsvarende ytelse ville vært gjenstand for rabattert pris ved omsetning, vil dette også kunne legges til grunn ved beregning av den alminnelige omsetningsverdi ved uttak. Gitt at det normalt ytes storforbrukerrabatt, vil dette for eksempel også kunne legges til grunn ved uttak av tilsvarende antall eller mengde varer eller tjenester.
+Korrigering
+Skattedirektoratet legger til grunn at det prinsipielt er anledning til å korrigere beregningsgrunnlaget for utgående merverdiavgift i egenregitilfellene hvis et etterfølgende reklamasjonsoppgjør viser at den verdi som opprinnelig ble lagt til grunn som alminnelig omsetningsverdi var for høy.
+Se blant annet Borgarting lagmannsretts dom 10. januar 2014 (Tønsberg Bolig AS) omtalt nedenfor. Skattekontoret mente opprinnelig at selskapet ikke kunne korrigere beregnet uttaksmerverdiavgift pga. etterfølgende omstendigheter noe klagenemnda sa seg enig i (KMVA 6499). Da saken kom opp for Oslo tingrett var det enighet mellom partene om at korreksjonsadgangen for beregnet uttaksmerverdiavgift er den samme som adgangen til å korrigere merverdiavgift ved omsetning.
+Departementet har med hjemmel i annet ledd fastsatt forskrifter om hva som menes med alminnelig omsetningsverdi ved ulike former for uttak av varer i FMVA § 4‑9‑1 til § 4‑9‑4. Forskriften omfatter uttak av motorkjøretøyer i bilbransjen (FMVA § 4‑9‑1), uttak av drikkevarer i hotell- og restaurantbransjen (FMVA § 4‑9‑2), uttak av kost i hotell- og restaurantbransjen (FMVA § 4‑9‑3) og veldedige og allmennyttige institusjoner og organisasjoners uttak av varer til kiosk eller serveringssted som er unntatt etter merverdiavgiftsloven § 3‑12 tredje ledd (FMVA § 4‑9‑4).
+Nye motorkjøretøy
+Etter FMVA § 4‑9‑1 kan den alminnelige omsetningsverdi ved bilforhandlers uttak av nye motorkjøretøy ikke settes lavere enn til listepris med tillegg av fraktomkostninger fram til forretningen og med fradrag for alminnelig rabatt. Det må kunne dokumenteres at rabatten gis ved omsetning av samme slags kjøretøy uten innbytte på tidspunktet for uttaket. Etter annet ledd åpnes det for «storforbruksrabatt» gitt at uttaket er så omfattende at dette ville blitt gitt ved omsetning til storforbrukere.
+Drikkevarer
+FMVA § 4‑9‑2 regulerer avgiftsgrunnlaget ved uttak av mineralvann, øl og vin til eier og ansatte i kafé- restaurant-, hotell- og cateringvirksomhet. Her kan den alminnelige omsetningsverdi settes til anskaffelseskost med et tillegg på 100 %. Dette gjelder kun drikkevarer som tas ut i forbindelse med arbeidet og til måltider som inngår i kostavtale. Ved andre uttak av tilsvarende og for eksempel brennevin vil de gjeldende utsalgspriser for varene måtte benyttes som grunnlag for beregningen av merverdiavgift. Beregningsgrunnlaget kan bli relativt høyt i motsetning til ved vanlig kjøp. En restaurant mv. har likevel ikke anledning til å anskaffe drikkevarer separat til sine ansatte og unnlate fradragsføring av merverdiavgift, jf. merverdiavgiftsloven § 8‑3 første ledd bokstav d. Det følger av § 8‑5 at selv om fradragsretten er begrenset etter §§ 8‑3 til 8-4 skal inngående merverdiavgift fradragsføres i sin helhet på varer og tjenester som er av samme art som de varer og tjenester som omsettes i virksomheten. Restauranten anses å omsette drikkevarer som del av serveringstjenesten.
+Kost
+Etter FMVA § 4‑9‑3 kan den alminnelige omsetningsverdi ved uttak av kost til eier og ansatte i kafé- restaurant-, hotell- og cateringvirksomhet settes til Skattedirektoratets satser for fri kost når disse legges til grunn ved beregning av forskuddstrekk og arbeidsgiveravgift, eller til Riksavtalens satser når de ansatte får kosten på arbeidsstedet mot avkortning i avtalt lønn. Etter annet ledd anses satsene som bruttopriser, merverdiavgift medregnet.
+Avgiftsunntatt kiosk- og serveringsvirksomhet
+FMVA § 4‑9‑4 regulerer veldedige og allmennyttige institusjoner og organisasjoners uttak av varer til kiosk- eller serveringsvirksomhet som er unntatt etter merverdiavgiftsloven § 3‑12 tredje ledd. Den alminnelige omsetningsverdi kan her settes til anskaffelseskost. Dette gjelder tilsvarende ved uttak til et avgiftssubjekt i organisasjonen som er særskilt registrert etter § 2‑2 annet ledd. Bestemmelsen innebærer at det blir uten betydning for avgiftsbelastningen om varer til slik virksomhet kjøpes inn direkte (uten fradragsrett) eller tas ut fra organisasjonens avgiftspliktige virksomhet som har gitt fradrag for inngående avgift.
+Arbeid for egen regning
+Praksis
+LG-2017-35169 (Klepphus AS og Øster Hus AS)
+Lagmannsretten mente at det ikke kunne legges til grunn at prisene på varer og tjenester på prosjekter i fremmed regi ga uttrykk for en «normalpris» som også måtte gjelde for egenregiprosjekter. Etter lagmannsrettens oppfatning burde skattekontoret sett nærmere på kalkylesatser og bransjesatser, samt omsetningen av tilsvarende varer og tjenester i bransjen før det kunne bli tatt stilling til om klagerne sine omsetningsoppgaver var feil eller ikke. Dommen er ikke anket.
+Les mer
+Prisavslag
+Praksis
+LB-2012-105504 (Tønsberg Bolig AS)
+Ved større ombyggingsarbeider i egen regi av en eiendom med 90 leiligheter, beregnet selskapet uttaksmerverdiavgift. Ved ferdigstillelse ble den faste eiendommen solgt til et borettslag. Det var samme eiere bak selskapet og borettslaget. Borettslaget krevde senere betydelig prisavslag på grunn av alvorlige feil og mangler. Det ble inngått avtale om tilbakebetaling og klager utstedte en kreditnota. Skattekontoret mente at beregnet uttaksmerverdiavgift ikke kunne tilbakeføres og klagenemnda fastholdt skattekontorets vedtak. Lagmannsretten kom til at prisavslaget ikke var rettslig begrunnet, men en frivillig avtale. Retten la til grunn et alminnelig tolkningsprinsipp i avgiftsretten om armlengdes avstand. Spørsmålet om det er grunnlag for prisavslag skal derfor bedømmes som mellom uavhengige parter. Retten pekte også på at det fremstår som høyst uvanlig at det ved fremsettelsen av prisavslagskravet ikke forelå underliggende dokumentasjon eller beregninger som ga grunnlag for de beløpene som var angitt i kravet.
+Les mer
+Praksis
+LF-2017-110225 (Næringsbygg AS)
+Næringsbygg AS la inn et anbud på oppføring av to leilighetsbygg med en kalkyle som utgangspunkt for fakturering i prosjektet. Da oppdragsgiver (A) ikke lyktes med finansieringen, kjøpte selskapet prosjektet og satte opp byggene i egen regi. Merverdiavgiften ble imidlertid beregnet og innberettet som et fremmedregiprosjekt basert på det opprinnelige pristilbud.
+Ved fullføringen av prosjektet viste det seg at byggekostnadene oversteg det som lå til grunn for det opprinnelige tilbud. Selskapet tapte dermed penger på prosjektet. Skattekontoret skjønnsfastsatte avgiften som skulle ha vært beregnet etter § 3‑21 og 3-22 med utgangspunkt i de faktisk medgåtte materialer og timer. Klagenemnda stadfestet skattekontorets vedtak.
+Selskapet ble ikke hørt med at kontrakten Næringsbygg AS hadde inngått «låste» salgsvederlaget for leilighetene, slik at Næringsbygg ikke hadde noen frihet til å fastsette en annen pris på disse i forhold til tredjeparter selv om de ferdigstilte prosjektet i egenregi. Selskapet mente også at det i en slik situasjon være urimelig å pålegge selskapet å rapportere kostnader og betale merverdiavgift av inntekter selskapet ikke har hatt.
+Om dette uttalte lagmannsretten: «At kontrakten mellom A og Næringsbygg AS «låste» salgsvederlaget for leilighetene, slik at Næringsbygg AS ikke hadde noen frihet til å fastsette en annen pris på disse i forhold til tredjeparter, er ikke avgjørende for uttaksberegningen. Det vises i denne forbindelse til at det er uten betydning for avgiftsberegning av uttak hvorvidt salg av bygg oppført i egenregi gir overskudd eller underskudd. At selskapets driftsresultat ble påvirket av at prisen var låst belyser ikke omfanget eller verdien av de uttatte avgiftspliktige varene og tjenestene i egenregiprosjektet.». Lagmannsretten kom, som tingretten, til at klagenemndas vedtak var gyldig.
+Dommen ble anket, men nektet fremmet for Høyesterett.
+Les mer
+Praksis
+Oslo byretts dom av 6. februar 1996
+Et entreprenørselskap var eier av et utleiebygg. I forbindelse med selskapets egne ombyggingsarbeider på bygget ble det søkt om fullfinansieringslån i Den Norske Stats Husbank. Kostnadsoverslaget som ble oppgitt i denne søknaden var vesentlig høyere enn det som ble innberettet til fylkesskattekontoret, og det ble bl.a. på denne bakgrunn foretatt en etterberegning. Byretten opprettholdt etterberegningen og begrunnet dette bl.a. med at påslagsprosenten for arbeidslønnen (50 %) var satt for lavt.
+Verdsettingen av varer og tjenester ved oppføring av bygg i egenregi har vært oppe i to tingrettsdommer, Oslo tingretts dom 16. november 2004 og Trondheim tingretts dom 15. november 2005. I førstnevnte dom opphevet retten etterberegningen pga. usikkerhet knyttet til skjønnet. Det ble blant annet vist til at det ikke var innhentet opplysninger om vanlige påslagssatser i bransjen. I saken for Trondheim tingrett fikk staten medhold i at det kunne legges til grunn en gjennomsnittsberegning for påslaget i fremmedregiprosjekter for egenregiprosjekter. Oslo byretts dom 19. desember 1990 er et eksempel på at man ikke fant å kunne legge avgjørende vekt på forhåndskalkylen, slik saksøker anførte.
+Praksis
+KMVA 6933 av 18. februar 2011
+I saken var det blant annet spørsmål om kostnader som inngår i fremmedregi-prosjekter og som blir avgiftsberegnet ved salg, også skal medtas ved beregning av uttaksmerverdiavgift i egenregi-prosjekter. Det gjaldt blant annet festeavgift, forsikringer, garantiprovisjoner, dokumentavgift og tinglysingsgebyr. Klagenemnda sluttet seg enstemmig til skattekontorets vedtak om at disse kostnadene måtte inngå i beregningsgrunnlaget for uttaksmerverdiavgift. Nemnda var også enig i at kostnader til sprenging, spunting, riving, jordarmering mv. skulle medtas i beregningsgrunnlaget. Tjenestene var av en art som ble omsatt i virksomheten, nemlig grunnarbeider.
+Les mer
+Ved uttak av egne arbeider på bygg har Klagenemnda for merverdiavgift normalt ikke godtatt et avgiftsgrunnlag som er lavere enn timelønn pluss et påslag på 75 %, se blant annet KMVA 7068 av 20. juni 2011.
+§ 4‑9 annet ledd – Forskriftshjemmel
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Bestemmelsen gir departementet adgang til å fastsette forskrifter om hva som menes med alminnelig omsetningsverdi ved uttak av varer og tjenester. Hjemmelen er benyttet til å gi FMVA § 4‑9‑1 til § 4‑9‑4. Se omtalen ovenfor i § 4‑9 første ledd – Den alminnelige omsetningsverdi.
+Tilsvarende forskriftshjemler er gitt i § 4‑3 annet ledd annet punktum ved innbytte av motorkjøretøy og § 4‑4 annet ledd ved omsetning av motorkjøretøy der det foreligger interessefellesskap.
+§ 4‑10. Brukte varer, kunstverk, samleobjekter og antikviteter
+Vis regelverk
+Vis forarbeider
+§ 4-10 - Avansesystemet kan også benyttes ved uttak
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Ved uttak er hovedregelen at merverdiavgift skal beregnes av den alminnelige omsetningsverdien, jf. § 4‑9. For brukthandlere mv. som benytter avansesystemet, vil dette ifølge merknadene til bestemmelsen i Ot.prp. nr. 76 (2008–2009) tilsvare den avansen de hadde beregnet seg ved tilsvarende omsetning. Ved uttak av brukte varer, kunstverk, samleobjekter og antikviteter kan beregningsgrunnlaget for merverdiavgiften derfor fastsettes i samsvar med §§ 4‑5 eller 4-6. Det vises til § 4‑5 første ledd – Avansesystemet ved enkeltstående kjøp og salg og § 4-6 - Avansesystemet ved samlet kjøp og salg med nærmere regler om hvilke varer som omfattes av avansesystemet og øvrige vilkår for å benytte systemet.
+§ 4‑11. Varer
+Vis regelverk
+Vis forarbeider
+§ 4‑11 første ledd – Beregningsgrunnlaget
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Første ledd første punktum fastslår hovedregelen for beregningsgrunnlaget for merverdiavgift ved innførsel av varer. Beregningsgrunnlaget skal fastsettes etter vareførselsloven §§ 6‑2 flg. om tollverdi. Hovedbestemmelsen i tollverdireglene fremgår av vareførselsloven § 6‑3 om varens transaksjonsverdi, det vil si den pris som faktisk er betalt eller skal betales for varen ved salg for eksport til Norge, justert i samsvar med bestemmelsene i lovens §§ 6‑10 og 6-11.
+Kan ikke verdien fastsettes etter vareførselsloven § 6‑3, er det fastsatt alternative metoder i vareførselsloven §§ 6‑4 flg. Disse metodene må prøves i den rekkefølge de står i loven.
+Tolldirektoratet har utarbeidet en kommentar til tollverdibestemmelsene (tollverdiveileder) som finnes på www.toll.no. Disse kommentarene gir utfyllende veiledning om hvordan beregningsgrunnlaget for toll skal fastsettes ved innførsel av varer. Tolldirektoratet har også utarbeidet en veileder om tollverdi og internprising. Dette er en veileder som omhandler problemstillinger som oppstår i forbindelse med fastsettelse av tollverdien i transaksjoner mellom avhengige parter. Denne finnes også på www.toll.no. Når det gjelder konserninterne overføringer o.l. se blant annet Borgarting lagmannsretts dom 31. oktober 2015 (Swedish Match Norge AS) og 22. juni 2017 (Klingel Norge AS).
+Skattedirektoratet er av den oppfatning at skattekontoret, Skattedirektoratet og Skatteklagenemnda har kompetanse til å endre tollverdien når denne er relatert til fastsetting av innførselsmerverdiavgift. Dette vil også gjelde i de tilfeller tollverdien er fastsatt av tollmyndighetene. Dette betyr blant annet at når skattekontoret skal ta stilling til beregningsgrunnlaget for merverdiavgift ved innførsel, eksempelvis i en klagesak, må kontoret også ta stilling til varens tollverdi. I de tilfeller dette reiser kompliserte og/eller prinsipielle tollverdispørsmål, skal skattekontoret kontakte Tolletaten for å få deres syn på spørsmålet. Se ellers Prop. 1 LS (2015-2016) avsnitt 24.5.5.
+Bestemmelsen i annet punktum slår fast at «[t]ollavgift og andre avgifter som skal beregnes ved innførsel av varer, skal inngå i beregningsgrunnlaget». Andre avgifter vil i all hovedsak være særavgifter, herunder motorvognavgifter og forskningsavgift på landbruksprodukter, jf. lov om særavgifter 19. mai 1933 nr. 1 § 1 og lov om forskningsavgift på landbruksprodukter 26. juni 1970 nr. 74 § 2.
+Utenlandsk merverdiavgift
+Dersom utenlandsk selger uriktig har beregnet merverdiavgift ved eksportsalg til Norge, skal denne merverdiavgiften i prinsippet med i beregningsgrunnlaget for innførselsmerverdiavgiften. Dersom kjøper mottar kreditnota, eller får refundert merverdiavgiften i salgslandet, skal beregningsgrunnlaget reduseres tilsvarende.
+Enkeltsaker
+Kopier lenke til underoverskrift
+Praksis
+SKNA2-2020-33
+Saken gjelder spørsmål om tollverdi etter tolloven § 7‑10 tredje ledd (nå vareførselsloven § 6‑3), varer fra Asia og hvilket salg som skal legges til grunn ved tollverdiberegningen. Grunnlaget for etterberegnet innførselsmerverdiavgift ble satt lik prisen ved salg til kjøper i Norge og ikke verdien ved innførsel til filialens hovedselskap i Danmark. Klage på vedtaket ble sendt Skatteklagenemda for behandling. Før saken kom til behandling i nemnda, forelå dom i Agder lagmannsrett 17. desember 2019 (LA-2019-72483). Retten fant etter en konkret vurdering at transaksjonsverdien i dette tilfellet var salget fra leverandørene i Asia, og at både kjøpsvilkåret og forsendelsesvilkåret i § 7‑10 tredje ledd var oppfylt. Tolldirektoratets vedtak for så vidt gjaldt toll ble opphevet og i tråd med dette ga Skatteklagenemnda klager fullt medhold.
+Les mer
+Praksis
+LB-2020-10664 (New Wave Norway AS)
+Saken gjaldt fastsettelse av tollverdi ved innførsel av klær og gaveartikler. Lagmannsretten fant at det ikke var grunnlag for å inkludere en betalt «konseptavgift» i tollverdien. Betingelsen om betaling av konseptavgiften hadde ingen tilknytning til selgerne av varene, men sprang ut av kjøperens egen interne organisering.
+Les mer
+§ 4‑11 annet ledd – Kunstverk, samleobjekter og antikviteter
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Bestemmelsen i annet ledd om et lavere beregningsgrunnlag ved innførsel av kunstverk, samleobjekter og antikviteter kom inn i forbindelse med innføringen av adgang til å benytte avansesystemet ved omsetning av brukte varer, kunstverk, samleobjekter og antikviteter. Det vises til § 4‑5 første ledd – Avansesystemet ved enkeltstående kjøp og salg ovenfor. Dette lavere beregningsgrunnlaget finner man ved å fastsette beregningsgrunnlaget etter reglene i første ledd, hvoretter 20 % av dette brukes som grunnlag ved beregningen av merverdiavgiften ved fortollingen. Hva som menes med kunstverk, samleobjekter og antikviteter i avgiftsrettslig forstand, er fastsatt i FMVA §§ 1‑3‑2 til 1-3-4, se § 1‑3 annet ledd bokstav b – Kunstverk, samleobjekter, antikviteter og brukte varer mv..
+Bestemmelsen om lavere beregningsgrunnlag gjelder både for næringsdrivende og for privatpersoner som innfører varer til Norge.
+§ 4‑11 tredje ledd – Tanntekniske produkter
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Ved innførsel av tanntekniske produkter kan fakturaverdien av materialdelen legges til grunn som beregningsgrunnlag for merverdiavgift, med mindre det er grunn til å tro at verdien av materialdelen er satt for lavt i forhold til verdien av arbeidsinnsatsen på det tanntekniske produktet. Dette medfører lik avgiftsbelastning for norskproduserte og utenlandske tanntekniske produkter. Materialkostnadene må være spesifisert på fakturaen.
+§ 4‑11 fjerde ledd – Gjeninnførsel av varer etter foredling, bearbeiding eller reparasjon
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Ved gjeninnførsel av varer som er bearbeidet eller reparert i utlandet, er varen i utgangspunktet merverdiavgiftspliktig. Spesialregelen i fjerde ledd fastsetter at beregningsgrunnlaget skal være omkostningene ved arbeidet samt omkostningene ved forsendelsen fram og tilbake. En tilsvarende bestemmelse finnes i tollavgiftsloven § 3‑4 første ledd bokstav a. Ser man bort fra eventuelle utskiftninger eller inkorporeringer av nye deler, er beregningsgrunnlaget først og fremst basert på omkostninger ved utførte tjenester. Dette avspeiler at det i disse tilfellene i realiteten er tale om innførsel av tjenester selv om det er innførselen av varen som utløser avgiftsplikt.
+Praksis
+Skattedirektoratets vedtak av 18. mars 2019
+Skattedirektoratet behandlet i denne saken klage på vedtak om å nekte refusjon av betalt innførselsmerverdiavgift ved gjeninnførsel av en bil som etter skade i utlandet var blitt reparert i utlandet. Skattedirektoratet er av den oppfatning at ved gjeninnførsel av kjøretøy skal det beregnes innførselsmerverdiavgift av reparasjonskostnader som er påløpt i utlandet når reparasjonen gjelder skade som har skjedd i utlandet. Men det skilles mellom reparasjoner hvor det er satt inn deler i bilen og hvor dette ikke er gjort. Når det i forbindelse med reparasjon etter skade ikke er satt inn deler i bilen, legger Skattedirektoratet til grunn at det ikke skal beregnes innførselsmerverdiavgift. Videre ble det presisert at selve bilen kan gjeninnføres avgiftsfritt etter § 7‑2 første ledd annet punktum, jf. tolloven § 5‑4 første ledd bokstav e (nå § 7‑2 annet ledd, jf. tollavgiftsloven § 6‑4 første ledd bokstav a).
+Dersom reparasjon er utført uten vederlag, settes beregningsgrunnlaget til null. Dette vil for eksempel gjelde når det er utført en garantireparasjon utenfor merverdiavgiftsområdet etter reklamasjon overfor en utenlandsk selger.
+Les mer
+§ 4‑11 femte ledd – Varen er forringet som følge av skade eller bedervelse
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+§ 4‑11 femte ledd gir adgang til å sette ned beregningsgrunnlaget dersom varen er forringet som følge av skade eller bedervelse før varen er underlagt tollprosedyren overgang til fri disponering. Denne bestemmelsen samsvarer med tollavgiftsloven § 3‑5. Det fremkommer av tollavgiftshåndboken at varen anses å ha blitt forringet dersom den relative verdien har blitt mindre, og årsaken til dette må enten være skade eller bedervelse. Prisfall, ukurans o.l. omfattes ikke. Oppdages det først i ettertid at varen er skadet eller bedervet må det tas stilling til når skadene eller bedervelsen mest sannsynlig oppstod. Dersom det etter en alminnelig bevisvurdering er sannsynlighetsovervekt for at skaden oppstod før varen ble stilt til fri disponering kan beregningsgrunnlaget i slike tilfeller settes ned forholdsmessig etter verdiforringelsen som skaden eller bedervelsen har medført.
+§ 4‑12. Tjenester
+Vis regelverk
+Vis forarbeider
+§ 4‑12 første ledd – Beregningsgrunnlaget er vederlaget
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Ved kjøp av fjernleverbare tjenester utenfor merverdiavgiftsområdet skal merverdiavgiften beregnes av vederlaget for tjenesten. Det vises for øvrig til de alminnelige regler om grunnlaget for beregning av merverdiavgift ved omsetning av tjenester i §§ 4‑1 til 4-4.
+§ 4‑12 annet ledd – Omregning til norske kroner
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 15.03.2025
+Når vederlaget er oppgitt i utenlandsk valuta ved kjøp av tjenester fra utlandet, skal det foretas omregning til norske kroner ut fra omregningskursen på leveringstidspunktet, jf. vareførselsloven § 6‑12.
+§ 4-12 tredje ledd - Forskriftshjemmel
+utvide
+Åpne historikkLast ned filSkriv utDel innhold
+Håndbok fra Skattedirektoratet
+Publisert 01.07.2026
+Bestemmelsen gir departementet hjemmel til å fastsette forskrift om beregningsgrunnlaget for merverdiavgift for fjernleverbare tjenester som er avgiftspliktige etter § 3-30 annet ledd. Bestemmelsen må ses i sammenheng med at de nye reglene gjelder grensekryssende tjenestebruk innenfor samme rettssubjekt, noe som kan reise særlige spørsmål om hvordan avgiftsgrunnlaget skal fastsettes i praksis.
+Bestemmelsen er en ren hjemmelsregel. Den fastsetter ikke selv nærmere regler om beregningsgrunnlaget, men åpner for at departementet kan gi slike regler dersom det viser seg nødvendig for en praktisk og ensartet gjennomføring av avgiftsplikten etter § 3-30 annet ledd.
+Bakgrunnen for forskriftshjemmelen er at de nye reglene kan omfatte tilfeller der tjenesten ikke omsettes mellom separate rettssubjekter, men brukes på tvers av etableringer innenfor ett og samme rettssubjekt. I slike tilfeller kan det oppstå særskilte spørsmål om hvordan beregningsgrunnlaget skal fastsettes på en måte som er forenlig med regelverkets formål.
+Til toppen
+Om Skatteetaten
+Kontakt oss (åpnes i ny fane)
+Sikkerhet og personvern (åpnes i ny fane)
+Tilgjengelighetserklæring (åpnes i ny fane)

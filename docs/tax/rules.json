@@ -3396,7 +3396,8 @@
    "movedTo": "ECON-004",
    "movedOn": "2026-10-19",
    "movedBy": "Christian (leveranseomfang presisert)",
-   "moveNote": "Flyttet uttrykkelig fra ECON-002 til ECON-004 (MVA-/tollkursgrunnlag). Ikke lukket, ikke undersøkt og ikke startet; state forblir open. Sporbar henvisning: reviews/ECON-002.md §28 og MVP_BACKLOG.md (ECON-004)."
+   "moveNote": "Flyttet uttrykkelig fra ECON-002 til ECON-004 (MVA-/tollkursgrunnlag). Ikke lukket, ikke undersøkt og ikke startet; state forblir open. Sporbar henvisning: reviews/ECON-002.md §28 og MVP_BACKLOG.md (ECON-004).",
+   "sourceReview": "ECON-004 kildevurdering 2026-10-19: håndboken er løpende oppdatert (T58); videresalgsavsnittet i gjeldende § 8-4.3 (T59) har samme ord som 2023 (T36); rettslig vilkår i mval. § 8-4 (1) a (T63). Dekning for lov 19.6.2026 nr. 41 er ikke lest. state forblir open; ingen godkjenning."
   },
   {
    "id": "U-004",
@@ -3452,7 +3453,8 @@
    "movedTo": "ECON-004",
    "movedOn": "2026-10-19",
    "movedBy": "Christian (leveranseomfang presisert)",
-   "moveNote": "Flyttet uttrykkelig fra ECON-002 til ECON-004 (MVA-/tollkursgrunnlag). Ikke lukket, ikke undersøkt og ikke startet; state forblir open. Sporbar henvisning: reviews/ECON-002.md §28 og MVP_BACKLOG.md (ECON-004)."
+   "moveNote": "Flyttet uttrykkelig fra ECON-002 til ECON-004 (MVA-/tollkursgrunnlag). Ikke lukket, ikke undersøkt og ikke startet; state forblir open. Sporbar henvisning: reviews/ECON-002.md §28 og MVP_BACKLOG.md (ECON-004).",
+   "sourceReview": "ECON-004 kildevurdering 2026-10-19: regelteksten for syklus, gyldighet, avvik og tidspunkt er lest (T65, T69, T68, T67, T53, T23, T24, T55). Hvilken akseptdato en konkret import får, suspensjon i konkrete tilfeller og kurser før 3.9.2026 er ikke dekket. state forblir open; ingen godkjenning."
   },
   {
    "id": "U-009",
@@ -3514,7 +3516,8 @@
     "R-IMP-VAT-003",
     "R-IMP-FX-001"
    ],
-   "state": "open"
+   "state": "open",
+   "sourceReview": "ECON-004 kildevurdering 2026-10-19: ingen regel om avrunding av tollverdi, valutaomregning, innførselsmva. eller mva-melding funnet i ECON-004-pakken (tekstsøk, ikke bevis for fravær). state forblir open; fixture-half-up er ikke godkjent."
   }
  ],
  "foundationStatus": {

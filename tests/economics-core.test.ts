@@ -8,17 +8,23 @@ import { calculateEconomics, REGISTRY_ECONOMICS_PROFILE, UNCONFIRMED_HALF_UP, ty
 import { ECON_CASES, FIXTURE_FX, FX_ROLES_SCENARIO, MEROVO_DEFAULT_EXPECTED } from "./fixtures/econ-golden";
 import { NO_OTA_2026_A_PB, type TaxInput } from "@/domain/tax";
 
-const fxq = (rate: string, over: Partial<FxQuote> = {}): FxQuote => ({ pair: "EUR/NOK", rate, source: { kind: "fixture" }, effectiveAt: null, quotedAt: null, fixtureOnly: true, ...over });
+const fxq = (rate: string, over: Partial<FxQuote> = {}): FxQuote => ({ pair: "EUR/NOK", rate, source: { kind: "fixture" }, effectiveAt: null, quotedAt: null, fixtureOnly: true, validFrom: "2026-10-15", validTo: "2026-11-11", ...over });
+/** Fixturens tilleggsforutsetninger (ECON-003 hadde ingen post for disse): uttrykkelig scenariovalg, ikke kilde. */
+const ALL_TRUE = { batteryOnlyPropulsion: true, externallyChargeableBattery: true, passengerVehicle: true, notPreviouslyRegisteredInNorway: true } as const;
+const NOT_EV = { ...ALL_TRUE, batteryOnlyPropulsion: false } as const;
+const evOf = (v: "applies" | "not_applicable" | "unknown"): Partial<EconomicsInput> =>
+  v === "applies" ? { evQualification: ALL_TRUE, evThresholdBasis: "customs_value" } : v === "not_applicable" ? { evQualification: NOT_EV, evThresholdBasis: undefined } : { evQualification: undefined, evThresholdBasis: undefined };
 const cfg = (over: Partial<EconomicsConfig> = {}): EconomicsConfig => ({ rounding: UNCONFIRMED_HALF_UP, allowFixtureFxQuotes: true, ...over });
 const EXCL = { state: "excluded_by_scenario", reason: "fixture" } as const;
 const zeroIns = { amount: "0", basis: "scenario_assumption" } as const;
 const fixtureInput = (i: number, over: Partial<EconomicsInput> = {}): EconomicsInput => ({
   price: { currency: "EUR", advertisedNet: String(ECON_CASES[i]!.advertisedNetPriceEur), priceBasis: "net", use: "advertised", evidence: "listing_claim" },
   fx: { acquisition: fxq(FIXTURE_FX.rate), customs: fxq(FIXTURE_FX.rate) },
-  transport: { amount: "8000", basis: "dealer_entered" }, insurance: zeroIns,
+  transportToBorder: { amount: "8000", basis: "dealer_entered" }, transportAfterBorder: EXCL, loadingHandling: EXCL, insurance: zeroIns,
+  customsDate: { date: "2026-10-20", kind: "expected_scenario" }, vatHandling: { value: "registered_reports_in_vat_return", source: { kind: "dealer_entered" } },
   taxInput: ECON_CASES[i]!.golden.input,
   deduction: { value: "non_recoverable", source: { kind: "dealer_entered" } },
-  evExemption: i === 1 ? "applies" : "not_applicable",
+  ...evOf(i === 1 ? "applies" : "not_applicable"),
   charges: { climateGas: EXCL, registrationFee: EXCL, customsDuty: EXCL },
   asOf: "2026-10-18",
   ...over,
@@ -34,7 +40,7 @@ describe("regresjon mot ECON-003 (fixtureforutsetninger, aldri validert)", () =>
   it.each([0, 1, 2])("B-standard (transport 8 000, begge kurser = fixturekurs) reproduserer ECON-001 §7.B — case %i", (i) => {
     const e = MEROVO_DEFAULT_EXPECTED[ids[i]!];
     for (const [state, landed] of [["recoverable", e.landedRecoverableNok], ["non_recoverable", e.landedNonRecoverableNok]] as const) {
-      const r = calculateEconomics(fixtureInput(i, { transport: undefined, deduction: { value: state, source: { kind: "dealer_entered" } } }), cfg({ transportDefaultNok: "8000" }));
+      const r = calculateEconomics(fixtureInput(i, { transportToBorder: undefined, deduction: { value: state, source: { kind: "dealer_entered" } } }), cfg({ transportDefaultNok: "8000" }));
       expect(r.customsValueNok).toBe(BigInt(e.customsValueNok));
       expect(r.importVat.valueNok).toBe(BigInt(e.importVatNok));
       expect(r.tax.totalRegistrationTaxesNok).toBe(BigInt(e.totalRegistrationTaxesNok));
@@ -59,7 +65,7 @@ describe("regresjon mot ECON-003 (fixtureforutsetninger, aldri validert)", () =>
     expect(nr.fx.customs.rate).toBe("10.7");
   });
   it("A-reproduksjon: transport 0 gir kjøpesum, mva. og total fra ECON-001 §7 (CASE-003: 411 491 / 102 873 / 848 087)", () => {
-    const r = calculateEconomics(fixtureInput(2, { transport: { amount: "0", basis: "dealer_entered" } }), cfg());
+    const r = calculateEconomics(fixtureInput(2, { transportToBorder: { amount: "0", basis: "dealer_entered" } }), cfg());
     expect(r.acquisition.acquisitionUsedNok).toBe(411491n);
     expect(r.importVat.valueNok).toBe(102873n);
     expect(val(r.importCashRequirement)).toBe(848087n - 0n);
@@ -95,24 +101,24 @@ describe("kontantbehov vs økonomisk kost; ukjent fradrag", () => {
 
 describe("transport og forsikring: én gang, bare i kostnadssum og avgiftsgrunnlag med merking", () => {
   it("transport 0 / 8 000 / 12 345: kontantbehov øker med transport + 25 % mva. (avrundet), ikke mer", () => {
-    const base = calculateEconomics(nokInput("100000", { transport: { amount: "0", basis: "dealer_entered" } }), cfg());
+    const base = calculateEconomics(nokInput("100000", { transportToBorder: { amount: "0", basis: "dealer_entered" } }), cfg());
     expect(val(base.importCashRequirement)).toBe(100000n + 25000n + 333723n);
-    const t = calculateEconomics(nokInput("100000", { transport: { amount: "12345", basis: "quoted" } }), cfg());
+    const t = calculateEconomics(nokInput("100000", { transportToBorder: { amount: "12345", basis: "quoted" } }), cfg());
     // mva. 25 % × 112 345 = 28 086,25 → 28 086
     expect(t.importVat.valueNok).toBe(28086n);
     expect(val(t.importCashRequirement)).toBe(100000n + 12345n + 28086n + 333723n);
     expect(val(t.estimatedLandedCost)).toBe(100000n + 12345n + 28086n + 333723n);
   });
   it("transport uten oppgave og uten produktstandard ⇒ ufullstendig nedre grense, aldri 0", () => {
-    const r = calculateEconomics(nokInput("100000", { transport: undefined }), cfg());
-    expect(r.transportNok).toBeNull();
+    const r = calculateEconomics(nokInput("100000", { transportToBorder: undefined }), cfg());
+    expect(r.transportToBorderNok).toBeNull();
     expect(r.importCashRequirement.kind).toBe("lower_bound");
     expect(r.status).toBe("incomplete");
   });
   it("transport = \"unknown\" overstyrer produktstandard; produktstandard er merket assumed_default", () => {
-    expect(calculateEconomics(nokInput("100000", { transport: "unknown" }), cfg({ transportDefaultNok: "8000" })).importCashRequirement.kind).toBe("lower_bound");
-    const d = calculateEconomics(nokInput("100000", { transport: undefined }), cfg({ transportDefaultNok: "8000" }));
-    expect(d.transportBasis).toBe("assumed_default");
+    expect(calculateEconomics(nokInput("100000", { transportToBorder: "unknown" }), cfg({ transportDefaultNok: "8000" })).importCashRequirement.kind).toBe("lower_bound");
+    const d = calculateEconomics(nokInput("100000", { transportToBorder: undefined }), cfg({ transportDefaultNok: "8000" }));
+    expect(d.transportToBorderBasis).toBe("assumed_default");
     expect(d.estimateReasons).toContain("transport_default_assumed");
   });
   it("ukjent forsikring (standard) gir nedre grense for mva. og totaler; 0 kun som uttrykkelig scenarioantakelse", () => {
@@ -159,15 +165,15 @@ describe("kjøpsgrunnlag og ugyldig input", () => {
   it("ugyldig valuta, dato, transportbeløp, tall (NaN/Infinity/number) og charges blokkerer", () => {
     expect(calculateEconomics(fixtureInput(2, { price: { currency: "eur", advertisedNet: "1", priceBasis: "net", use: "advertised", evidence: "dealer_entered" } }), cfg()).blockers[0]!.code).toBe("invalid_currency");
     expect(calculateEconomics(nokInput("1000", { asOf: "2026-02-30" }), cfg()).blockers.map((b) => b.code)).toContain("invalid_date");
-    expect(calculateEconomics(nokInput("1000", { transport: { amount: "-5", basis: "quoted" } }), cfg()).status).toBe("blocked");
-    expect(calculateEconomics(nokInput("1000", { transport: { amount: Number.NaN as unknown as string, basis: "quoted" } }), cfg()).status).toBe("blocked");
-    expect(calculateEconomics(nokInput("1000", { transport: { amount: 5 as unknown as string, basis: "quoted" } }), cfg()).status).toBe("blocked");
-    expect(calculateEconomics(nokInput("1000", { transport: { amount: "5", basis: "guess" as never } }), cfg()).status).toBe("blocked");
+    expect(calculateEconomics(nokInput("1000", { transportToBorder: { amount: "-5", basis: "quoted" } }), cfg()).status).toBe("blocked");
+    expect(calculateEconomics(nokInput("1000", { transportToBorder: { amount: Number.NaN as unknown as string, basis: "quoted" } }), cfg()).status).toBe("blocked");
+    expect(calculateEconomics(nokInput("1000", { transportToBorder: { amount: 5 as unknown as string, basis: "quoted" } }), cfg()).status).toBe("blocked");
+    expect(calculateEconomics(nokInput("1000", { transportToBorder: { amount: "5", basis: "guess" as never } }), cfg()).status).toBe("blocked");
     expect(calculateEconomics(nokInput("1000", { charges: { otherKnown: [{ label: "x", amount: "-1", basis: "quoted" }] } }), cfg()).status).toBe("blocked");
-    expect(calculateEconomics(nokInput("1000", { transport: { amount: "1000000001", basis: "quoted" } }), cfg()).blockers[0]!.code).toBe("amount_out_of_range");
+    expect(calculateEconomics(nokInput("1000", { transportToBorder: { amount: "1000000001", basis: "quoted" } }), cfg()).blockers[0]!.code).toBe("amount_out_of_range");
   });
   it("beløp ved grensen (1 000 000 000) regnes eksakt uten tap", () => {
-    const r = calculateEconomics(nokInput("1000000000", { transport: { amount: "0", basis: "quoted" } }), cfg());
+    const r = calculateEconomics(nokInput("1000000000", { transportToBorder: { amount: "0", basis: "quoted" } }), cfg());
     expect(r.importVat.valueNok).toBe(250000000n);
     expect(r.acquisition.acquisitionUsedNok).toBe(1000000000n);
   });
@@ -214,8 +220,8 @@ describe("kursroller og proveniens", () => {
 });
 
 describe("elbilfritak (R-IMP-VAT-003, ubekreftet) og avrunding (U-013, ubekreftet)", () => {
-  const ev = (price: string, evExemption: EconomicsInput["evExemption"]) =>
-    calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, transport: { amount: "0", basis: "quoted" }, evExemption }, cfg());
+  const ev = (price: string, evExemption: "applies" | "not_applicable" | "unknown" | undefined) =>
+    calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, transportToBorder: { amount: "0", basis: "quoted" }, ...evOf(evExemption ?? "unknown") }, cfg());
   it("kalkulatorobservasjon: 350 000 → 12 500; 300 000 → 0; 299 999 → 0", () => {
     expect(ev("350000", "applies").importVat.valueNok).toBe(12500n);
     expect(ev("300000", "applies").importVat.valueNok).toBe(0n);
@@ -225,21 +231,24 @@ describe("elbilfritak (R-IMP-VAT-003, ubekreftet) og avrunding (U-013, ubekrefte
     const r = ev("350000", "not_applicable");
     expect(r.importVat.valueNok).toBe(87500n);
     expect(val(r.importCashRequirement)).toBe(350000n + 87500n + 16748n);
-    expect(ev("350000", "applies").estimateReasons).toContain("ev_exemption_assumed");
+    expect(ev("350000", "applies").estimateReasons).toContain("ev_qualification_stated");
   });
   it("ukjent anvendelse (standard): to merkede mva.-/kontantscenarier, ingen enkeltverdi; cross-produkt med fradragsstatus", () => {
     const r = ev("350000", undefined);
-    expect(r.importVat).toMatchObject({ status: "scenarios", valueNok: null, evExemption: "unknown" });
-    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["no_exemption", 87500n], ["with_exemption", 12500n]]);
+    expect(r.importVat).toMatchObject({ status: "scenarios", valueNok: null, ev: { qualification: "unresolved" } });
+    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["no_exemption", 87500n], ["with_exemption__basis_customs_value", 12500n], ["with_exemption__basis_vehicle_price", 12500n]]);
     expect(r.importCashRequirement).toMatchObject({ kind: "scenarios", valueNok: null });
     expect(r.status).toBe("incomplete");
-    expect(r.incompleteReasons).toContain("ev_exemption_unresolved");
-    const u = calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, transport: { amount: "0", basis: "quoted" }, evExemption: undefined, deduction: undefined }, cfg());
-    expect((u.estimatedLandedCost as { scenarios: unknown[] }).scenarios).toHaveLength(4);
+    expect(r.incompleteReasons).toEqual(expect.arrayContaining(["ev_qualification_unresolved", "ev_threshold_basis_unresolved"]));
+    const u = calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, transportToBorder: { amount: "0", basis: "quoted" }, evQualification: undefined, evThresholdBasis: undefined, deduction: undefined }, cfg());
+    expect((u.estimatedLandedCost as { scenarios: unknown[] }).scenarios).toHaveLength(6);
   });
-  it("fritak gjelder bare elbil; diesel/PHEV får ingen fritaksscenario selv om 'applies' oppgis", () => {
-    const r = calculateEconomics(nokInput("350000", { evExemption: "applies", transport: { amount: "0", basis: "quoted" } }), cfg());
-    expect(r.importVat).toMatchObject({ valueNok: 87500n, evExemption: "not_applicable_vehicle" });
+  it("fritak gjelder bare elbil: diesel får ingen fritaksscenario; en kvalifikasjonspåstand som motsier avgiftsmotorens stempelmotor blokkeres", () => {
+    const unknownClaim = calculateEconomics(nokInput("350000", { ...evOf("unknown"), transportToBorder: { amount: "0", basis: "quoted" } }), cfg());
+    expect(unknownClaim.importVat).toMatchObject({ valueNok: 87500n, ev: { qualification: "not_applicable_vehicle", engineClassification: "ice" } });
+    const contradiction = calculateEconomics(nokInput("350000", { ...evOf("applies"), transportToBorder: { amount: "0", basis: "quoted" } }), cfg());
+    expect(contradiction.status).toBe("blocked");
+    expect(contradiction.blockers.map((b) => b.code)).toEqual(["inconsistent_ev_qualification"]);
   });
   it("avrundingsgrenser: 300 001 → 0,25 → 0; 300 003 → 0,75 → 1; 300 002 → 0,5 er LIKHET ⇒ nedre grense og uavklart (ikke stilltiende half-up)", () => {
     expect(ev("300001", "applies").importVat.valueNok).toBe(0n);
