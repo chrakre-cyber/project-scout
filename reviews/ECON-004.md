@@ -81,3 +81,5 @@ Se `reviews/ECON-004-kildevurdering-5.md` (19.10.2026): ajourført vedtak (T80) 
 Se `reviews/ECON-004-kildevurdering-6.md` (runde 32): korrigering — Tolletatens bilimportside inneholder elbilregelen (bilpris + frakt + forsikring over 300 000, avgift bare av overskytende) i serialiserte sidedata; R-IMP-VAT-004 E0 → E1P (delvis); ordinær tollsats 0 (Tolltariffen 2026 s. 501–502); engangsavgift utenfor innførselsgrunnlaget (rettsanvendelse). Kodeendringer er foreslått, ikke gjort. Avrunding åpen; flagg false; henvendelsene sendes ikke.
 
 Se `reviews/ECON-004-implementering-runde34.md` (runde 34): kodeendringer basert på kildevurdering 6 (elbilgrense mot tollverdi, ordinær tollsats 0 med dekningskrav, § 4-11-avgifter, provisjon, betalingskostnader, utenlandsk mva.). Ikke parametergodkjenning; flagg false; avrunding uendret.
+
+Se `reviews/ECON-004-r34-FIX1-retting.md`: rettingsrunde etter uavhengig review av afdc9f0 (to P2). Ikke parametergodkjenning.

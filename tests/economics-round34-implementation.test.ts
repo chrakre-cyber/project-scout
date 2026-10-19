@@ -170,8 +170,10 @@ describe("4. provisjon: innkjøps- og salgs-/meglerprovisjon behandles ulikt; uk
   });
   it("allerede i prisen ⇒ ingenting legges til; ukjent om betalt i tillegg ⇒ ukjent; ugyldig rolle blokkeres", () => {
     expect(val(run(base({ commission: [cm("sales_or_brokerage_commission", false)] })).importCashRequirement)).toBe(468723n);
+    // FIX1: innkjøpsprovisjon i prisen er ikke lenger bare en advarsel; uavklart utskilling (§ 6-11 (1) e) gir nedre grense (laveste mulige tollverdi 105 000 → 26 250)
     const w = run(base({ commission: [cm("purchase_commission", false)] }));
-    expect(w.warnings.join(" ")).toContain("trekkes ikke ut");
+    expect(w.incompleteReasons).toContain("commission_in_price_deduction_unresolved");
+    expect(w.importVat.valueNok).toBe(26250n);
     const n = run(base({ commission: [cm("sales_or_brokerage_commission", null)] }));
     expect(n.incompleteReasons).toContain("commission_price_inclusion_unknown");
     expect(missingOf(n.importCashRequirement)).toContain("commission[0]");

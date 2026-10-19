@@ -103,16 +103,22 @@ export type VatBaseTreatment = "in_base" | "outside_base" | "unknown";
 /** Mellommannens vederlag (vareførselsloven § 6-10 (1) a nr. 1, § 6-11 (1) e; T87/T88). Innkjøpsprovisjon og salgs-/meglerprovisjon behandles ulikt; ukjent rolle forblir ukjent. */
 export interface CommissionInput {
   role: "purchase_commission" | "sales_or_brokerage_commission" | "unknown";
-  /** Hele NOK. */
+  /** NOK; desimaler tillatt og avrundes til hele NOK med den uttrykkelige avrundingspolicyen (samme tall i kostnad og tollverdi). */
   amount: AmountInput;
   /** true: betalt i tillegg til varens pris. false: allerede inkludert i prisen. null: ukjent. */
   paidSeparatelyFromPrice: boolean | null;
+  /**
+   * Bare når `paidSeparatelyFromPrice = false`: er vilkårene i vareførselsloven § 6-11 (1) e oppfylt for å skille innkjøpsprovisjon ut av tollverdien (T88: «pålagt kjøperen
+   * og inkludert i prisen»)? `true` (og rolle `purchase_commission`) skiller beløpet ut (anskaffelseskostnaden er uendret; estimat inntil vilkårene er verifisert).
+   * `false`: ingen utskilling. Utelatt/`null`/ukjent rolle: uavklart ⇒ tollverdi og mva. er nedre grenser (laveste mulige tollverdi), aldri validated.
+   */
+  deductionConditionsMet?: boolean | null;
 }
 
 /** Betalingskostnader (bank-/valutagebyr o.l.). Ingen generell behandling: selvstendig kostnad skilles fra beløp som inngår i vareprisen. */
 export interface PaymentCostInput {
   label: string;
-  /** Hele NOK. */
+  /** NOK; desimaler avrundes til hele NOK med den uttrykkelige policyen. */
   amount: AmountInput;
   /** `separate_payment_cost`: selvstendig kostnad (ikke et tillegg etter § 6-10, utenfor tollverdi). `included_in_goods_price`: del av vederlaget til selger, allerede i prisen. `unknown`: ukjent. */
   nature: "separate_payment_cost" | "included_in_goods_price" | "unknown";
@@ -218,7 +224,7 @@ export type EstimateReason =
   | "customs_fx_fallback_acquisition_rate" | "transport_default_assumed" | "amount_scenario_assumption" | "charges_excluded_by_scenario"
   | "purchase_price_listing_claim" | "deduction_status_dealer_stated" | "deduction_rule_unapproved" | "ev_qualification_stated" | "fx_dates_missing"
   | "assumed_default_amount" | "customs_acceptance_date_expected" | "customs_fx_suspension_unverified"
-  | "customs_duty_ordinary_rate_unapproved" | "ev_threshold_components_unconfirmed" | "foreign_vat_exclusion_dealer_stated";
+  | "customs_duty_ordinary_rate_unapproved" | "ev_threshold_components_unconfirmed" | "foreign_vat_exclusion_dealer_stated" | "purchase_commission_deduction_unverified";
 
 export interface TaxLine {
   /** `approved` = avgiftsmotoren ga `calculated`; `estimate` = `calculated_unverified`; `blocked` = ingen avgift. */
