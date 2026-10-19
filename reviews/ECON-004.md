@@ -52,5 +52,8 @@ Review: `ECON-004-Codex-review-f12d44a` (konklusjon: behold REVIEW). Alle fire f
 4. **Fixture-proveniens**: `source.kind = "fixture"` krever `allowFixtureFxQuotes` også uten `fixtureOnly`; manglende/ugyldig `source` avvises; `fixtureOnly` kontrolleres som før.
 Ingen endring i avgiftsmotoren, godkjenninger eller åpne kildepunkter. Kontroller: se avslutningsrapport (fullt repo: 37 filer, 856 tester, typecheck, eslint og check-docs rene).
 
+### Rettingsreview (FIX1)
+Uavhengig rettingsreview av `cefe290`: `reviews/ECON-004-FIX1-review-cefe290.md`. Alle fire P2-funn lukket, ingen nye blokkerende funn; ECON-004 beholdes som REVIEW fordi produksjonsreglene er uavklarte. Kildebestilling: `docs/tax/ECON-004-kildebestilling.md`.
+
 ## 4. Gjenværende blokkeringer
 U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001 er åpne og ikke godkjent. Ingen produktstandard for transport er godkjent utover ECON-001 (8 000, `assumed-default`, må konfigureres av kalleren). ECON-005 er ikke startet.
