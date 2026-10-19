@@ -19,7 +19,7 @@
     "registrationWish": "personbil (M1)",
     "documentedVehicleClass": "M1 (må dokumenteres, f.eks. vognkort/COC)",
     "norwegianTaxGroup": "a",
-    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+    "approvedCalculationProfile": "utenfor støttet omfang (ingen egen klasse 1; runtime blokkerer med vehicle_profile_unsupported, 2026-10-19) — krever egen klasse 1-referanse og ny godkjenning"
    },
    "rules": [
     "R-OTA-001",
@@ -179,7 +179,7 @@
     "registrationWish": "personbil (M1)",
     "documentedVehicleClass": "M1",
     "norwegianTaxGroup": "a (antatt behandlet som forbrenningsbil – uavklart)",
-    "approvedCalculationProfile": "krever_avklaring (ingen godkjent profil finnes; ingen er støttet)"
+    "approvedCalculationProfile": "utenfor støttet omfang (ingen egen klasse 1; runtime blokkerer med vehicle_profile_unsupported, 2026-10-19) — krever egen klasse 1-referanse og ny godkjenning"
    },
    "rules": [
     "R-OTA-001",

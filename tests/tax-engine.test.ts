@@ -17,7 +17,7 @@ const table = DEDUCTION_STEPS_2026;
 
 const ice = (over: Partial<TaxInput> = {}): TaxInput => ({
   vehicleClass: "passenger_car_m1",
-  propulsion: { pistonCombustionEngine: true, externallyChargeable: false, evidence: "type_approval" },
+  propulsion: { pistonCombustionEngine: true, externallyChargeable: false, combustionFuel: "diesel" as const, hybridization: "none" as const, evidence: "type_approval" },
   norwegianTaxWeight: { kg: 1976, basis: "eu_type_approval_minimum_mass" },
   co2: { gramsPerKm: 179, method: "wltp_combined" },
   firstRegistration: { precision: "day", value: "2023-11-01" },
@@ -126,7 +126,7 @@ describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent
       const r = calculateNorwegianVehicleTax(c.input);
       expect(r.status, c.id).toBe("calculated_unverified");
       expect(r.finalClaim!.validation, c.id).toEqual(r.validation);
-      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: true, inputResolution: "estimate", estimateReasons: expect.arrayContaining(["weight_dealer_entered_undocumented"]), class1References: 3, weakestRuleEvidence: "E1" });
+      expect(r.validation, c.id).toMatchObject({ status: "estimate_not_approved", profileApproved: true, inputResolution: "estimate", estimateReasons: expect.arrayContaining(["weight_dealer_entered_undocumented"]), class1References: 1, engineProfileClass1References: 3, weakestRuleEvidence: "E1" });
     }
   });
   it("anvendte regler og svakeste nivå følger registeret (BEV: R-OTA-007 i stedet for 002/005; ny motorvogn: ingen R-OTA-010)", () => {
@@ -141,9 +141,10 @@ describe("finalClaim ledsages alltid av valideringsstatus og er aldri «godkjent
   });
   it("godkjent profil alene gjør ikke resultatet godkjent: krever også klasse 1-referanse og at alle anvendte regler er E1", () => {
     const flagOnly: TaxProfile = { ...NO_OTA_2026_A_PB, approval: { ...NO_OTA_2026_A_PB.approval, approved: true } };
-    const noClass1: TaxProfile = { ...flagOnly, approval: { ...flagOnly.approval, class1References: 0 } };
+    // klasse 1-dekning er per kjøretøyprofil: tom dekning for diesel (PB-DIE) gir aldri approved, selv om profilen har klasse 1 for andre profiler
+    const noClass1: TaxProfile = { ...flagOnly, vehicleProfiles: { ...flagOnly.vehicleProfiles, "PB-DIE": { powertrain: "ice", class1CaseIds: [] } } };
     expect(ok({}, noClass1).status).toBe("calculated_unverified");
-    expect(ok({}, noClass1).validation).toMatchObject({ status: "estimate_not_approved", profileApproved: true, class1References: 0 });
+    expect(ok({}, noClass1).validation).toMatchObject({ status: "estimate_not_approved", profileApproved: true, vehicleProfile: "PB-DIE", class1References: 0, engineProfileClass1References: 3 });
     const oneRuleE1P: TaxProfile = { ...flagOnly, ruleEvidence: { ...flagOnly.ruleEvidence, "R-OTA-014": "E1P" } };
     expect(ok({}, oneRuleE1P).status).toBe("calculated_unverified");
     expect(ok({}, oneRuleE1P).validation).toMatchObject({ status: "estimate_not_approved", weakestRuleEvidence: "E1P" });
@@ -207,7 +208,7 @@ describe("U-012: bare generell vekt har brøk; sensitivitet for mellomavrunding 
     // rutenettformelen er motorens egen: sjekk mot den faktiske motoren på et utvalg (BEV og ICE)
     for (const [kg, g] of [[2185, 0], [1976, 179], [2610, 140], [1500, 99], [3100, 226]] as const) {
       const ev = g === 0;
-      const r = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: !ev, externallyChargeable: false, evidence: "type_approval" }, norwegianTaxWeight: { kg, basis: "vehicle_register" }, co2: { gramsPerKm: ev ? null : g, method: "wltp_combined" }, firstRegistration: { precision: "none", value: null } }));
+      const r = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: !ev, externallyChargeable: false, combustionFuel: ev ? null : "diesel", hybridization: ev ? null : "none", evidence: "type_approval" }, norwegianTaxWeight: { kg, basis: "vehicle_register" }, co2: { gramsPerKm: ev ? null : g, method: "wltp_combined" }, firstRegistration: { precision: "none", value: null } }));
       const I = ev ? 0 : Math.max(0, kg - 1200) * 260 + co2(g);
       expect(r.finalClaim!.oneOffTaxNok, `${kg}/${g}`).toBe(Math.floor(((kg - 500) * 1271 + I * 100) * 100 / 10000));
     }
@@ -248,7 +249,7 @@ describe("avrundingskjeden (U-010): forskrift § 10-4-4, håndbok og lovens virk
 
 describe("drivlinje avgjøres av tekniske data, ikke merkenavn", () => {
   it("klassifiserer BEV / PHEV / ICE og krever kjente felt", () => {
-    const p = (piston: boolean | null, chg: boolean | null) => ({ pistonCombustionEngine: piston, externallyChargeable: chg, evidence: "type_approval" as const });
+    const p = (piston: boolean | null, chg: boolean | null) => ({ pistonCombustionEngine: piston, externallyChargeable: chg, combustionFuel: null, hybridization: null, evidence: "type_approval" as const });
     expect(classifyPowertrain(p(false, true))).toBe("bev");
     expect(classifyPowertrain(p(true, true))).toBe("phev");
     expect(classifyPowertrain(p(true, false))).toBe("ice");
@@ -256,8 +257,8 @@ describe("drivlinje avgjøres av tekniske data, ikke merkenavn", () => {
     expect(classifyPowertrain(p(true, null))).toBeNull();
   });
   it("annonsepåstand om drivlinje og ukjent drivlinje blokkerer", () => {
-    expect(codes(calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: false, externallyChargeable: false, evidence: "listing_claim" } })))).toContain("propulsion_evidence_insufficient");
-    const unk = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: null, externallyChargeable: null, evidence: "type_approval" } }));
+    expect(codes(calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: false, externallyChargeable: false, combustionFuel: null, hybridization: null, evidence: "listing_claim" } })))).toContain("propulsion_evidence_insufficient");
+    const unk = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: null, externallyChargeable: null, combustionFuel: null, hybridization: null, evidence: "type_approval" } }));
     expect(codes(unk)).toContain("propulsion_unknown");
     expect(unk.missingInputs).toContain("propulsion");
   });
@@ -272,7 +273,7 @@ describe("drivlinje avgjøres av tekniske data, ikke merkenavn", () => {
 });
 
 describe("vektkomponenter: EV får bare generell, forbrenningsmotor får tillegg", () => {
-  const ev = (kg: number): TaxInput => ice({ propulsion: { pistonCombustionEngine: false, externallyChargeable: false, evidence: "type_approval" }, norwegianTaxWeight: { kg, basis: "vehicle_register" }, co2: { gramsPerKm: null, method: "wltp_combined" } });
+  const ev = (kg: number): TaxInput => ice({ propulsion: { pistonCombustionEngine: false, externallyChargeable: false, combustionFuel: null, hybridization: null, evidence: "type_approval" }, norwegianTaxWeight: { kg, basis: "vehicle_register" }, co2: { gramsPerKm: null, method: "wltp_combined" } });
   it("EV 2 185 kg: bare (2185−500)×12,71 = 21 416,35; ingen 260-komponent og ingen CO₂", () => {
     const r = calculateNorwegianVehicleTax(ev(2185));
     expect(r.components.map((c) => c.id)).toEqual(["general_weight"]);
@@ -314,7 +315,7 @@ describe("CO₂: marginale bånd (T40) og målegrunnlag (§ 3-1)", () => {
     expect(co2(179)).not.toBe(179 * 3200);
   });
   it("PHEV må bruke «vektet kombinert»; vanlig ICE kan ikke bruke det; mangler/ugyldig blokkeres", () => {
-    const phev = (method: TaxInput["co2"]["method"], g: number | null = 140): TaxInput => ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "type_approval" }, co2: { gramsPerKm: g, method } });
+    const phev = (method: TaxInput["co2"]["method"], g: number | null = 140): TaxInput => ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, combustionFuel: "petrol" as const, hybridization: null, evidence: "type_approval" }, co2: { gramsPerKm: g, method } });
     expect(calculateNorwegianVehicleTax(phev("wltp_weighted_combined")).status).toBe("calculated");
     expect(codes(calculateNorwegianVehicleTax(phev("wltp_combined")))).toContain("phev_requires_weighted_combined_co2");
     expect(codes(calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: 150, method: "wltp_weighted_combined" } })))).toContain("co2_field_mismatch");
@@ -322,7 +323,7 @@ describe("CO₂: marginale bånd (T40) og målegrunnlag (§ 3-1)", () => {
     expect(codes(calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: 12.5, method: "wltp_combined" } })))).toContain("co2_invalid");
   });
   it("PHEV beholder ICE-komponentene (§ 3: stempeldrevet forbrenningsmotor) og har ingen vektfradrag", () => {
-    const r = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "type_approval" }, co2: { gramsPerKm: 140, method: "wltp_weighted_combined" } }));
+    const r = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, combustionFuel: "petrol" as const, hybridization: null, evidence: "type_approval" }, co2: { gramsPerKm: 140, method: "wltp_weighted_combined" } }));
     expect(r.powertrain).toBe("phev");
     expect(r.components.map((c) => c.id)).toEqual(["general_weight", "combustion_weight", "co2"]);
   });
@@ -537,16 +538,16 @@ describe("PHEV: definisjon → anvendelig bestemmelse → rundskriv er koblet i 
     expect(NO_OTA_2026_A_PB.ruleEvidence["R-OTA-005"]).toBe("E1");
   });
   it("anvendelsen følger av tekniske egenskaper, ikke av ordet PHEV eller markedsføringsnavn", () => {
-    const technical = { propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "type_approval" as const }, co2: { gramsPerKm: 60, method: "wltp_weighted_combined" as const } };
+    const technical = { propulsion: { pistonCombustionEngine: true, externallyChargeable: true, combustionFuel: "petrol" as const, hybridization: null, evidence: "type_approval" as const }, co2: { gramsPerKm: 60, method: "wltp_weighted_combined" as const } };
     const named = (label: string) => ({ ...ice(technical), marketingName: label, fuelLabel: label }) as unknown as TaxInput;
     expect(calculateNorwegianVehicleTax(named("Plug-in Hybrid"))).toEqual(calculateNorwegianVehicleTax(named("e-tron")));
     expect(calculateNorwegianVehicleTax(named("Plug-in Hybrid")).powertrain).toBe("phev");
     // uten dokumentert stempeldrevet motor/ladbarhet: ingen klassifisering, uansett navn
-    expect(calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: null, externallyChargeable: true, evidence: "type_approval" } })).blocked.map((b) => b.code)).toContain("propulsion_unknown");
+    expect(calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: null, externallyChargeable: true, combustionFuel: null, hybridization: null, evidence: "type_approval" } })).blocked.map((b) => b.code)).toContain("propulsion_unknown");
   });
   it("motoren behandler PHEV likt som forbrenningsmotor for vekt og CO₂, men krever «vektet kombinert»", () => {
     const base = calculateNorwegianVehicleTax(ice({ co2: { gramsPerKm: 140, method: "wltp_combined" } }));
-    const phev = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "type_approval" }, co2: { gramsPerKm: 140, method: "wltp_weighted_combined" } }));
+    const phev = calculateNorwegianVehicleTax(ice({ propulsion: { pistonCombustionEngine: true, externallyChargeable: true, combustionFuel: "petrol" as const, hybridization: null, evidence: "type_approval" }, co2: { gramsPerKm: 140, method: "wltp_weighted_combined" } }));
     expect(phev.components).toEqual(base.components);
     expect(phev.powertrain).toBe("phev");
   });
@@ -764,7 +765,7 @@ describe("godkjenningsregisteret (2026-10-19): sju regler, avgrenset omfang, pro
     expect(NO_OTA_2026_A_PB.approval.approved).toBe(true);
   });
   it("omfangsgrensene gjelder fortsatt: NEDC/fallback blokkert, 20 år blokkert, udokumentert/referansevekt og datofølsomt beløp er estimat", () => {
-    const base = { vehicleClass: "passenger_car_m1", propulsion: { pistonCombustionEngine: true, externallyChargeable: false, evidence: "type_approval" as const }, norwegianTaxWeight: { kg: 1976, basis: "vehicle_register" as const }, co2: { gramsPerKm: 179, method: "wltp_combined" as const }, firstRegistration: { precision: "day" as const, value: "2023-11-01" }, norwegianRegistration: { date: "2026-10-18", kind: "actual" as const } };
+    const base = { vehicleClass: "passenger_car_m1", propulsion: { pistonCombustionEngine: true, externallyChargeable: false, combustionFuel: "diesel" as const, hybridization: "none" as const, evidence: "type_approval" as const }, norwegianTaxWeight: { kg: 1976, basis: "vehicle_register" as const }, co2: { gramsPerKm: 179, method: "wltp_combined" as const }, firstRegistration: { precision: "day" as const, value: "2023-11-01" }, norwegianRegistration: { date: "2026-10-18", kind: "actual" as const } };
     expect(calculateNorwegianVehicleTax(base).status).toBe("calculated");
     expect(calculateNorwegianVehicleTax({ ...base, co2: { gramsPerKm: 150, method: "nedc" } }).status).toBe("blocked");
     expect(calculateNorwegianVehicleTax({ ...base, firstRegistration: { precision: "day", value: "2006-06-15" } }).status).toBe("blocked");

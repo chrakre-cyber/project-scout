@@ -43,7 +43,7 @@ export const OBSERVED_RUNS: readonly ObservedRun[] = [
     expectedTotalNok: 529069,
     input: {
       ...base,
-      propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "dealer_entered" },
+      propulsion: { pistonCombustionEngine: true, externallyChargeable: true, combustionFuel: "petrol", hybridization: null, evidence: "dealer_entered" },
       norwegianTaxWeight: { kg: 2610, basis: "dealer_entered" },
       co2: { gramsPerKm: 140, method: "wltp_weighted_combined" },
       firstRegistration: { precision: "day", value: "2026-09-01" },
@@ -67,7 +67,7 @@ export const OBSERVED_RUNS: readonly ObservedRun[] = [
     expectedTotalNok: 16748,
     input: {
       ...base,
-      propulsion: { pistonCombustionEngine: false, externallyChargeable: true, evidence: "dealer_entered" },
+      propulsion: { pistonCombustionEngine: false, externallyChargeable: true, combustionFuel: null, hybridization: null, evidence: "dealer_entered" },
       norwegianTaxWeight: { kg: 2185, basis: "dealer_entered" },
       co2: { gramsPerKm: 0, method: "wltp_combined" },
       firstRegistration: { precision: "day", value: "2023-08-01" },
@@ -90,7 +90,7 @@ export const OBSERVED_RUNS: readonly ObservedRun[] = [
     expectedTotalNok: 333723,
     input: {
       ...base,
-      propulsion: { pistonCombustionEngine: true, externallyChargeable: false, evidence: "dealer_entered" },
+      propulsion: { pistonCombustionEngine: true, externallyChargeable: false, combustionFuel: "diesel", hybridization: "none", evidence: "dealer_entered" },
       norwegianTaxWeight: { kg: 1976, basis: "dealer_entered" },
       co2: { gramsPerKm: 179, method: "wltp_combined" },
       firstRegistration: { precision: "day", value: "2023-11-01" },

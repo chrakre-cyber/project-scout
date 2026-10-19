@@ -78,7 +78,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
     expectedTotalNok: 529069,
     input: {
       vehicleClass: "passenger_car_m1",
-      propulsion: { pistonCombustionEngine: true, externallyChargeable: true, evidence: "dealer_entered" },
+      propulsion: { pistonCombustionEngine: true, externallyChargeable: true, combustionFuel: "petrol", hybridization: null, evidence: "dealer_entered" },
       norwegianTaxWeight: { kg: 2610, basis: "dealer_entered" },
       co2: { gramsPerKm: 140, method: "wltp_weighted_combined" },
       firstRegistration: { precision: "month", value: "2026-09" },
@@ -93,7 +93,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
     expectedTotalNok: 16748,
     input: {
       vehicleClass: "passenger_car_m1",
-      propulsion: { pistonCombustionEngine: false, externallyChargeable: true, evidence: "dealer_entered" },
+      propulsion: { pistonCombustionEngine: false, externallyChargeable: true, combustionFuel: null, hybridization: null, evidence: "dealer_entered" },
       norwegianTaxWeight: { kg: 2185, basis: "dealer_entered" },
       co2: { gramsPerKm: 0, method: "wltp_combined" },
       firstRegistration: { precision: "month", value: "2023-08" },
@@ -108,7 +108,7 @@ export const GOLDEN_CASES: readonly GoldenCase[] = [
     expectedTotalNok: 333723,
     input: {
       vehicleClass: "passenger_car_m1",
-      propulsion: { pistonCombustionEngine: true, externallyChargeable: false, evidence: "dealer_entered" },
+      propulsion: { pistonCombustionEngine: true, externallyChargeable: false, combustionFuel: "diesel", hybridization: "none", evidence: "dealer_entered" },
       norwegianTaxWeight: { kg: 1976, basis: "dealer_entered" },
       co2: { gramsPerKm: 179, method: "wltp_combined" },
       firstRegistration: { precision: "month", value: "2023-11" },

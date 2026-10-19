@@ -1,9 +1,11 @@
 /**
  * Avgiftsprofil NO-OTA-2026-A-PB: engangsavgift 2026, avgiftsgruppe a, personbil (M1). Gjenbruker `docs/tax/rules.json`
  * (datedParameters DP-WEIGHT-GEN-A-2026, DP-WEIGHT-A-2026, DP-CO2-A-2026; avrunding R-OTA-014) — ingen egen regelmodell. En test sammenligner
- * tallene her med rules.json. Parametrene er kilde-belagt (E1/E1P; stortingsvedtaket FOR-2025-12-18-2755 lest) men IKKE godkjent
- * (`approved: false`): godkjenning krever eksplisitt parameterApproval og klasse 1-referanser (docs/tax/rules.json foundationStatus).
+ * tallene her med rules.json. Parametrene er kilde-belagt (E1; stortingsvedtaket FOR-2025-12-18-2755 lest) og er uttrykkelig godkjent av Christian
+ * 2026-10-19 innen avgrenset omfang (`approval`, docs/tax/rules.json). Godkjent runtime gjelder bare de tre validerte personbilprofilene i `vehicleProfiles`.
  */
+import type { TaxPowertrain, VehicleProfileId } from "./types";
+
 export interface Co2Band {
   /** Eksklusiv nedre grense (g/km). */
   fromGramKm: number;
@@ -52,6 +54,8 @@ export interface TaxProfile {
   sources: readonly string[];
   /** `class1References`: antall klasse 1-referanser (docs/tax/references.json) som dekker profilen. 3 i dag (PHEV, EV, diesel); profilen er godkjent 2026-10-19 innen dokumentert omfang. */
   approval: { approved: boolean; class1References: number; reason: string; approvedBy?: string; approvedDate?: string; approvedAtCommit?: string };
+  /** Klasse 1-dekning per støttet kjøretøyprofil (docs/tax/references.json, `profileId`); en test holder dem lik registeret. Profiler som ikke står her er utenfor støttet omfang. */
+  vehicleProfiles: Readonly<Record<VehicleProfileId, { powertrain: TaxPowertrain; class1CaseIds: readonly string[] }>>;
   /** Regelnivå (docs/tax/rules.json evidenceLevel) per regel profilen anvender; en test holder dem lik registeret. */
   ruleEvidence: Readonly<Record<string, "E1" | "E1P">>;
   openItems: readonly string[];
@@ -107,6 +111,12 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     "R-IMP-OTH-001": "E1",
     "R-OTA-014": "E1", // sluttkravet (§ 10-4-4; forarbeid T50, omnummerering T52); mellomledd U-012 utenfor
   },
+  // Godkjent runtime er avgrenset til tre validerte personbilprofiler; bensin, ikke-ladbar hybrid og ukjent undertype er blokkert (`vehicle_profile_*`).
+  vehicleProfiles: {
+    "PB-DIE": { powertrain: "ice", class1CaseIds: ["C1-GR-20261018-03"] },
+    "PB-BEV": { powertrain: "bev", class1CaseIds: ["C1-GR-20261018-02"] },
+    "PB-PHEV": { powertrain: "phev", class1CaseIds: ["C1-GR-20261018-01"] },
+  },
   approval: {
     approved: true,
     class1References: 3,
@@ -124,7 +134,7 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     "R-OTA-015: NEDC, egenvekt/10 og desimal-CO₂ er blokkert (avrunding av desimaler mangler kilde)",
     "PHEV: anvendelsen hviler på det tekniske vilkåret i § 3 og på forskrift § 3-1 (E1-tekst); forutsetter dokumentert stempeldrevet motor og ekstern lading per kjøretøy",
     "Ingen eksplisitt sluttdato for 2026-satsene (intern sikkerhetssperre); endringer etter hentedato 2026-10-18 og lov 19 juni 2026 nr. 41 er ikke kontrollert",
-    "Godkjent av Christian 2026-10-19 innen omfanget over; PB-BEN og PB-HEV har ingen egen klasse 1-referanse (samme beregningsvei som diesel)",
+    "Godkjent av Christian 2026-10-19 innen omfanget over; runtime er avgrenset til PB-DIE, PB-BEV og PB-PHEV (klasse 1 per profil). Bensin, ikke-ladbar hybrid og ukjent undertype er blokkert (vehicle_profile_unsupported/unknown) og arver ikke dieselens dekning",
   ],
 
 };

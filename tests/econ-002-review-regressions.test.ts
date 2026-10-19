@@ -4,7 +4,7 @@ import { calculateNorwegianVehicleTax, NO_OTA_2026_A_PB, type TaxInput, type Tax
 
 const input: TaxInput = {
   vehicleClass: "passenger_car_m1",
-  propulsion: { pistonCombustionEngine: true, externallyChargeable: false, evidence: "type_approval" },
+  propulsion: { pistonCombustionEngine: true, externallyChargeable: false, combustionFuel: "diesel", hybridization: "none", evidence: "type_approval" },
   norwegianTaxWeight: { kg: 1976, basis: "vehicle_register" },
   co2: { gramsPerKm: 179, method: "wltp_combined" },
   firstRegistration: { precision: "day", value: "2023-11-01" },
@@ -77,7 +77,7 @@ describe("rettingen: godkjent regelprofil skilles fra kvalitet og entydighet i i
       else expect(c.estimate, c.id).toEqual({ reasons: ["weight_dealer_entered_undocumented"] });
     }
     expect(ok().components.every((c) => c.estimate === undefined)).toBe(true);
-    const ev = ok({ propulsion: { pistonCombustionEngine: false, externallyChargeable: true, evidence: "type_approval" }, norwegianTaxWeight: { kg: 2185, basis: "dealer_entered" } });
+    const ev = ok({ propulsion: { pistonCombustionEngine: false, externallyChargeable: true, combustionFuel: null, hybridization: null, evidence: "type_approval" }, norwegianTaxWeight: { kg: 2185, basis: "dealer_entered" } });
     expect(ev.components.map((c) => [c.id, c.estimate?.reasons])).toEqual([["general_weight", ["weight_dealer_entered_undocumented"]]]);
   });
 

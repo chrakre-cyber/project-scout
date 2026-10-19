@@ -11,7 +11,7 @@ import { add, dec, decInt, floorInt, max0, min, mul, sub, toExactString, toSafeN
 import { compareIso, lastDayOfMonth, parseIsoDate } from "./dates";
 import { TAX_PROFILES, type TaxProfile } from "./profile-no-2026-a";
 import type {
-  AgeDeductionResult, BlockCode, Blocker, EstimateReason, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, ValidationStatus, Warning,
+  AgeDeductionResult, BlockCode, Blocker, EstimateReason, ImplementationConclusion, MonthSensitivity, ProfileRef, TaxComponent, TaxInput, TaxPowertrain, TaxResult, ValidationStatus, VehicleProfileId, Warning,
 } from "./types";
 
 const VERIFIED_WEIGHT_BASES = new Set(["eu_type_approval_minimum_mass", "vehicle_register"]);
@@ -127,11 +127,22 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   // --- kjøretøyklasse og drivlinje (aldri fra markedsføringsnavn)
   if (input.vehicleClass !== "passenger_car_m1") block("vehicle_class_unsupported", `Kjøretøyklassen «${input.vehicleClass}» støttes ikke (bare personbil M1, avgiftsgruppe a).`);
   let powertrain: TaxPowertrain | null = null;
+  let vehicleProfile: VehicleProfileId | null = null;
   if (input.propulsion.evidence === "listing_claim") {
     block("propulsion_evidence_insufficient", "Drivlinje fra annonsepåstand er ikke et avgiftsgrunnlag; krever typegodkjenning, kjøretøyregister eller forhandlerens egen oppgave.");
   } else {
     powertrain = classifyPowertrain(input.propulsion);
     if (!powertrain) block("propulsion_unknown", "Stempeldrevet forbrenningsmotor og ladbarhet må være kjent.", "propulsion");
+    // Kjøretøyprofil: bare PB-DIE, PB-BEV og PB-PHEV er støttet (egen klasse 1). Undertype avgjøres av normalisert teknisk input, aldri av navn.
+    if (powertrain === "bev") vehicleProfile = "PB-BEV";
+    else if (powertrain === "phev") vehicleProfile = "PB-PHEV";
+    else if (powertrain === "ice") {
+      const fuel = input.propulsion.combustionFuel ?? null;
+      const hyb = input.propulsion.hybridization ?? null;
+      if (fuel === null || hyb === null) block("vehicle_profile_unknown", "Drivstoff og elektrifisering (combustionFuel, hybridization) må oppgis teknisk for en stempeldrevet, ikke-ladbar bil; ukjent undertype er utenfor støttet omfang.", "propulsion.combustionFuel/hybridization");
+      else if (fuel === "diesel" && hyb === "none") vehicleProfile = "PB-DIE";
+      else block("vehicle_profile_unsupported", `Kjøretøyprofilen (drivstoff «${fuel}», elektrifisering «${hyb}») er utenfor støttet omfang: bare PB-DIE (diesel uten hybrid), PB-BEV og PB-PHEV har klasse 1-dekning i denne leveransen. Bensin og ikke-ladbar hybrid er blokkert og arver ikke dieselens dekning.`);
+    }
     if (input.propulsion.evidence === "dealer_entered") warnings.push({ code: "propulsion_dealer_entered", message: "Drivlinje er oppgitt av forhandler, ikke dokumentert fra typegodkjenning/register." });
   }
 
@@ -272,8 +283,11 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   if (weightReason) estimateReasons.push(weightReason);
   if (monthSensitivity) estimateReasons.push("first_registration_date_sensitive");
   const inputResolution: "resolved" | "estimate" = estimateReasons.length === 0 ? "resolved" : "estimate";
-  const approved = prof.approval.approved && prof.approval.class1References > 0 && weakestRuleEvidence === "E1" && inputResolution === "resolved";
-  const validation: ValidationStatus = { status: approved ? "approved" : "estimate_not_approved", profileApproved: prof.approval.approved, inputResolution, estimateReasons, class1References: prof.approval.class1References, weakestRuleEvidence, appliedRules };
+  // Klasse 1-dekning gjelder DENNE kjøretøyprofilen (ikke det globale antallet): bensin/HEV/ukjent er allerede blokkert og arver aldri dieselens dekning.
+  const vp = vehicleProfile as VehicleProfileId; // alltid satt her: ellers er resultatet blokkert
+  const vehicleProfileClass1 = prof.vehicleProfiles[vp]?.class1CaseIds.length ?? 0;
+  const approved = prof.approval.approved && vehicleProfileClass1 > 0 && weakestRuleEvidence === "E1" && inputResolution === "resolved";
+  const validation: ValidationStatus = { status: approved ? "approved" : "estimate_not_approved", vehicleProfile: vp, profileApproved: prof.approval.approved, inputResolution, estimateReasons, class1References: vehicleProfileClass1, engineProfileClass1References: prof.approval.class1References, weakestRuleEvidence, appliedRules };
   return {
     status: approved ? "calculated" : "calculated_unverified",
     profile: profileRef(prof),
