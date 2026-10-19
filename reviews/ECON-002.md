@@ -708,5 +708,29 @@ ECON-003/004 er ikke startet. Ingen satser eller beregningsresultater er endret.
 ### 27.6 Kontroller
 `node docs/tax/check-docs.mjs` OK; `npx vitest run` — 33 filer, 765 tester bestått; typecheck og lint rene (se commit). Ikke kjørt: build, e2e, DB.
 
+## 28. Runde 18 — presisert leveranseomfang og profildekning (19.10.2026)
+
+Status **REVIEW**. Ikke DONE før uavhengig review av godkjenningscommiten (`fbf466c`, særlig valideringsskriptet) er gjennomført og manglende profilavgrensning er avklart. Ingen runtime-endring; ECON-003/004 ikke startet.
+
+### 28.1 U-003 og U-008 flyttet til ECON-004
+U-003 (MVA-kildenes årgang, R-DED-001) og U-008 (tollkurs, R-IMP-FX-001) er uttrykkelig flyttet fra ECON-002 til **ECON-004**. Sporbarhet: `rules.json` `unresolvedSourceClaims` (`movedTo = "ECON-004"`, `movedOn`, `moveNote`; state forblir `open`), `MVP_BACKLOG.md` (ECON-002- og ECON-004-radene), DECISIONS. De er ikke undersøkt, lukket eller startet.
+
+### 28.2 Akseptert restomfang (ikke godkjent, ikke løst)
+- **Blokkert:** NEDC/desimal-CO₂ (R-OTA-015), uavklarte datooverløp dag 29–31 (R-OTA-016/U-009), 20-årsminimum (kjøretøy 20 år eller eldre).
+- **Dokumenterte åpne punkter:** mellomavrunding (U-012) og MVA-avrunding (U-013, ECON-004).
+
+### 28.3 ECON-002s akseptkrav versus TAX-fundamentets DONE-port
+- **ECON-002 (avgrenset):** E1-kilder med hash ✔; godkjente parametere for de syv anvendte reglene ✔; EV-/PHEV-regler ✔; marginal CO₂/sluttavrunding innen omfanget ✔; U-002/U-005 lukket ✔; tre klasse 1-referanser ✔; U-003/U-008 flyttet (28.1); restomfang akseptert (28.2). **Gjenstår før DONE:** uavhengig review av `fbf466c` og avklart profilavgrensing (28.4).
+- **TAX-fundamentet (hele porten, `check-docs.mjs` DONE-grenen og `foundationStatus.doneRequires`):** klasse 1 for hver av de 10 profilene, minst én godkjent parameter per implementert komponent og lukkede U-* som berører godkjente regler. **Ikke svekket og ikke oppfylt** (klasse 1 finnes bare for PB-DIE, PB-BEV, PB-PHEV). Fundamentet står på REVIEW; ECON-002 kan bli DONE uten at fundamentet er det, men først etter 28.4.
+
+### 28.4 Bensin-ICE og profiler uten egen klasse 1
+**Styrende bestemmelser:** (1) `CLAUDE.md` pkt. 5: «Nye avgiftsprofiler/satser krever kilde, virkningsdato, versjon og uavhengig referanse. Ukjent/utløpt profil blokkerer marginvarsel»; (2) `IMPORT_ENGINE_SPEC.md` (linje 77 og 79): uavhengige referanser for alle profiler som gis margin i pilot; «manglende referanser er en blocker, ikke et bestått testresultat»; (3) `docs/tax/profiles.json` (note og laget `approvedCalculationProfile`): godkjent beregningsprofil er et eget lag, og profiler er «krever avklaring» til de er godkjent; (4) `rules.json` `foundationStatus.doneRequires` og `check-docs.mjs` DONE-grenen: klasse 1 per profil. R-OTA-006 (ikke-ladbar hybrid «som forbrenningsbil») er E1P: antagelsen er ikke belagt.
+**Dekning i dag:** klasse 1 finnes for PB-DIE (diesel), PB-BEV og PB-PHEV. PB-BEN (bensin) deler beregningsvei med diesel (samme regler og samme `ice`-klassifisering), men har ingen egen klasse 1. PB-HEV og alle VB-* har ingen, og PB-HEV er ikke belagt som forbrenningsbil (R-OTA-006).
+**Håndhever runtime dette? Nei.**
+- `classifyPowertrain` gir `ice` for enhver kombinasjon «stempeldrevet motor og ikke ladbar»; inputen har ikke noe drivstoff- eller hybridfelt. Bensin-ICE og ikke-ladbar hybrid (mild/full) kan derfor ikke skilles fra diesel, og får samme beregning og kan få `approved`/`calculated` med den godkjente profilen når inputene er entydige.
+- `validation.class1References` er et antall for hele motorprofilen (3), ikke dekning per drivlinje/profil. Det finnes ingen blokkering eller estimatårsak for «profil uten egen klasse 1».
+- `vehicleClass` begrenses til personbil (`passenger_car_m1`); varebiler (VB-*) blokkeres, så de håndheves via klassesperren, ikke via klasse 1-dekning.
+**Konsekvens:** avgrensningen «godkjent for PB-DIE, PB-BEV, PB-PHEV» står bare i `profiles.json` og dokumentasjonen; runtime kan godkjenne bensin-ICE og ikke-ladbar hybrid. Dette er ikke endret her (ingen runtime-endring) og må avklares før DONE: (a) skaff klasse 1 for PB-BEN og belegg/blokker PB-HEV, eller (b) innfør et uttrykkelig drivstoff-/hybridfelt og la runtime estimere/blokkere profiler uten klasse 1, eller (c) avgrens godkjenningen eksplisitt til diesel/PHEV/BEV og dokumenter at bensin og HEV er utenfor. Valget er ditt.
+
 **Sluttstatus: REVIEW.**
 
