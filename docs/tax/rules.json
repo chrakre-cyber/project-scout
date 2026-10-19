@@ -3454,7 +3454,7 @@
    "movedOn": "2026-10-19",
    "movedBy": "Christian (leveranseomfang presisert)",
    "moveNote": "Flyttet uttrykkelig fra ECON-002 til ECON-004 (MVA-/tollkursgrunnlag). Ikke lukket, ikke undersøkt og ikke startet; state forblir open. Sporbar henvisning: reviews/ECON-002.md §28 og MVP_BACKLOG.md (ECON-004).",
-   "sourceReview": "ECON-004 kildevurdering 2026-10-19: regelteksten for syklus, gyldighet, avvik og tidspunkt er lest (T65, T69, T68, T67, T53, T23, T24, T55). Hvilken akseptdato en konkret import får, suspensjon i konkrete tilfeller og kurser før 3.9.2026 er ikke dekket. state forblir open; ingen godkjenning."
+   "sourceReview": "ECON-004 kildevurdering 2026-10-19: regelteksten for syklus, gyldighet, avvik og tidspunkt er lest (T65, T69, T68, T67, T53, T23, T24, T55). Hvilken akseptdato en konkret import får, suspensjon i konkrete tilfeller og kurser før 3.9.2026 er ikke dekket. state forblir open; ingen godkjenning. Runde 3: deklarasjonsveiledningen (T72) bruker «fri rådighet» for kursvalg (rubrikk 23); lov/forskrift (tollavgiftsloven § 2-2, forskriften § 6-12-1 (3)) bruker aksept av deklarasjonen. Terminologisk spenning registrert; lov/forskrift legges til grunn. Fortsatt åpen."
   },
   {
    "id": "U-009",
@@ -3517,7 +3517,7 @@
     "R-IMP-FX-001"
    ],
    "state": "open",
-   "sourceReview": "ECON-004 kildevurdering 2026-10-19: ingen regel om avrunding av tollverdi, valutaomregning, innførselsmva. eller mva-melding funnet i ECON-004-pakken (tekstsøk, ikke bevis for fravær). state forblir open; fixture-half-up er ikke godkjent."
+   "sourceReview": "ECON-004 kildevurdering 2026-10-19: ingen regel om avrunding av tollverdi, valutaomregning, innførselsmva. eller mva-melding funnet i ECON-004-pakken (tekstsøk, ikke bevis for fravær). state forblir open; fixture-half-up er ikke godkjent. Runde 3 (19.10.2026, T46/T49/T72/T73): selve avgiftskravet har tekstlig støtte for nedrunding (§ 10-4-4 + § 10-4-1 (1) b + § 1-1 (2) g); hver importberegning og mva-meldingens linjer er ikke dekket; mva-FAQens ±1 kr-toleranse (T73) er en valideringstoleranse, ikke en avrundingsregel. Fortsatt åpen; ingen avrunding godkjent."
   }
  ],
  "foundationStatus": {

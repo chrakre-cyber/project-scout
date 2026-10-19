@@ -1,0 +1,142 @@
+AVLEDET LESEKOPI. Kontroller sitater i HTML-originalen.
+
+Innførselsdeklarasjon steg for steg - Tolletaten
+Hopp til hovedinnhold
+PRIVATBEDRIFT
+NO
+English
+Norsk
+Deutsch
+MENY
+Hjem
+Bedrift
+Import
+Deklarering av varer inn til Norge
+Hjelp til utfylling av innførselsdeklarasjon
+Innførselsdeklarasjon steg for steg
+Hvordan fylle ut innførselsdeklarasjon steg-for-steg
+Kun feltene merket med rødt i skjemaet skal fylles ut. Disse feltene er listet opp nedenfor.
+arrow down
+1 – Deklarasjon
+1. kolonne (avsenderland):
+Skriv «EU» ved innførsel fra EFTA-, EF- eller EØS-land.
+Skriv «IM» ved innførsel fra et land som ikke er tilknyttet EFTA, EF eller EØS (tredjeland).
+2. kolonne:
+Oppgi kode for ekspedisjonstype i følge nedenstående oversikt:
+Kode 4: Overgang til fri disponering
+Kode 5: Midlertidig innførsel
+Kode 6: Gjeninnførsel
+Kode 7: Innlegg på tollager
+2 – Avsender/eksportør
+Oppgi utenlandsk selgers (fakturautsteder) navn og adresse. Dersom forsendelsen omfatter flere selgere enn det er plass til i rubrikken, skrives «se vedlagt fakturaoversikt». I TVINN benyttes fritekstfelt (TXT) med henvisning til fakturaoversikt. Fakturaoversikt oppbevares hos deklarasjonspliktig.
+3 – Blanketter
+Når deklarasjonen bare dekker en varepost, skal ikke rubrikken fylles ut. I slike tilfeller oppgis tallet «1» i rubrikk 5. Når deklarasjonen dekker flere vareposter, oppgis blankettsettets nummer i forhold til det totale antall blankettsett som deklarasjonen omfatter.
+5 – Vareposter
+Oppgi antall vareposter som deklarasjonen omfatter. Antall vareposter må stemme med totalt antall av «varebeskrivelse»-rubrikker som fylles ut (totalt antall av rubrikk 31 som er benyttet på deklarasjonen og på fortsettelsesark).
+6 – Antall kolli
+Oppgi det samlede antall kolli som deklarasjonen omfatter.
+7 – Referansenummer
+Rubrikken står til deklarasjonspliktig/tollrepresentants disposisjon.
+8 – Mottaker
+Oppgi den deklarasjonspliktige sitt navn, kundenummer og adresse. Den som mottar varen fremgår av faktura og evt. fraktdokumenter. Kundenummer er organisasjonsnummer eller fødselsnummer.
+12 – Verdiopplysninger
+Oppgi fraktomkostningene (til norsk grense) for hele deklarasjonen når disse ikke inngår i fakturaprisen. Oppgis i norske kroner.
+14 – Deklarant/representant
+Hvis deklareringen er utført av tollrepresentant e.l. oppgis dennes navn, kundenummer og telefonnummer.
+15 – Kode avsender/utførselsland
+Med avsenderland forstås det land hvor varen er sendt fra uten mellomliggende handelstransaksjon (omlasting underveis endrer ikke forholdet).
+19 – Containere
+Oppgi med følgende koder om varene blir transportert i containere eller ikke ved innpassering til Norge:0: Varer som ikke transporteres i containere.1: Varer som transporteres i containere
+For forsendelser hvor varene fraktes i container i rubrikk 19 (kode 1), skal containernummer oppgis i rubrikk 31 i varebeskrivelsen.
+20 – Leveringsvilkår
+Rubrikken består av to felt:
+Felt 1: Leveringsvilkår - felt for trebokstavskode - dette feltet må fylles ut, se IncotermsFelt 2: Leveringssted– felt for angivelse av varens leveringssted, må fylles ut
+21 – Det aktive transportmidlets identitet og nasjonalitet ved grensepassering
+Oppgi det aktive transportmidlets nasjonalitet ved innpassering til Norge. Nasjonaliteten oppgis i kolonnen til høyre i rubrikken med kode i henhold til «Statistisk landliste» i Tolltariffen Når det dreier seg om en kombinert transport, eller hvis det benyttes flere transportmidler, oppgis nasjonaliteten til det transportmidlet som sørger for fremdriften. (Eks: Ved bil på ferge, oppgis nasjonaliteten til fergen.) Ved postforsendelser, transport med jernbane eller via faste transportinstallasjoner (rør, kabler, osv.) skal ikke rubrikken fylles ut.
+Se landliste med landkoder
+22 – Fakturert valuta og totalbeløp
+Oppgi valutakoden i første kolonne i henhold til «Statistisk landliste» bak i veilederen. Fakturabeløpet skrives i andre kolonne.
+Ved delfortolling (når fakturaen omfatter andre/mer varer enn det som innføres) oppgis bare den delen av fakturabeløpet som gjelder de innførte varene, eventuelt inkludert en forholdsmessig fordeling av fakturerte felleskostnader.
+Hvis ekspedisjonen omfatter flere fakturaer i forskjellig valuta, oppføres det samlede fakturabeløpet omregnet til norske kroner.
+23 – Omregningskurs
+Oppgi kursen som er benyttet ved omregning av fakturabeløp til norske kroner. Kursene fastsettes av Tolletaten, og kunngjøres på toll.no. Foreligger det valuta som ikke er med i kunngjøringen, nyttes Norges Banks daglige markedskurser jf. vareførselsforskriften § 6-12-1 første ledd.
+Omfatter ekspedisjonen varer som er fakturert i forskjellige valutaer oppgis kursene på fakturaoversikten og intet oppgis i rubrikken for omregningskurs.
+Hvis TVINN-ekspedisjonen omfatter flere fakturaer i forskjellig valuta og det samlede fakturabeløpet oppføres omregnet til norske kroner, skal kurs «100» oppgis i feltet.
+Det skal alltid nyttes den kurs som gjelder på det tidspunkt varene blir stilt til fri rådighet.
+24 – Transaksjonstype
+Oppgi med kode i første kolonne hva innførselen er basert på i henhold til nedenstående liste:
+01: Kjøp mot vederlag, finansiell leasing02: Gratis erstatningsleveranser.03: Gaver og andre leveranser som mottas uten kostnad04: Midlertidig innførsel for betalt bearbeiding05: Gjeninnførsel etter betalt bearbeiding06: Midlertidig innførsel for/gjeninnførsel etter reparasjon, leie, lån eller operasjonell leasing08: Bygg og anlegg, inkludert delsendinger09: Annet10: Varer i retur
+25 – Transportmåte ved grensen
+Oppgi med kode transportmåten ved innpassering til Norge i henhold til nedenstående oversikt:
+28 – Finansielle opplysninger og bankdata
+Oppgi fakturanummer og dato. Hovedregel er at det er handelsfaktura som skal angis. Dersom det er proformafaktura, betalingsbekreftelse eller liknende som benyttes som grunnlag for deklarering, skal det angis type dokument. Fakturaer med fortløpende nummer kan oppgis med første og siste nummer, for eksempel 270-275. Hvis fakturaen ikke er nummerert, oppgis bare dato.
+30 – Varenes lagringssted
+Varenes lagringssted oppgis i henhold til følgende koder:
+31 – Kolli og varebeskrivelse
+En varebeskrivelse er den vanlige handelsbetegnelsen for en vare, uttrykt så tydelig at varen kan gjenkjennes i forhold til fakturaen og klassifiseres.
+Varebeskrivelsen skal bare omfatte èn varelinje.
+Kollienes merker og nummer (registrerings- / ankomstnummer og dato for postsendinger) oppgir du ifølge forsendelsesdokumentet.
+32 – Varepost nummer
+Varepostene nummereres fortløpende jf rubrikk 5. Når deklarasjonen bare omfatter èn varepost, skal ikke rubrikken fylles ut. I slike tilfeller skal tallet 1 være oppgitt i rubrikk 5.
+33 – Varenummer
+Oppgi gjeldende tolltariffs varenummer. Varenummeret føres opp med de seks første sifrene i første kolonne, foran den stiplede linjen. I andre kolonne føres de to nasjonale sifrene (siffer 7 og 8) opp.
+34a – Kode opprinnelsesland
+Oppgis med kode i henhold til «Statistisk landliste». Med opprinnelsesland forstås det land hvor varen er produsert og/eller har fått sin nåværende form.
+Se landliste med landkoder
+35 – Bruttovekt
+Oppgi varepostens bruttovekt i kg uten desimaler.
+36 – Preferanse
+For å oppnå preferansetollbehandling skal importøren på fortollingstidspunktet framsette et krav om dette i rubrikk 36 på enhetsdokumentet, eller i tilsvarende rubrikk i TVINN. Kodene som skal anvendes i denne rubrikken knytter seg til de forskjellige handelsavtalene. Koden som skal velges er der varen har sin opprinnelse i henhold til gjeldende handelsavtale/preferanseordning.
+37 – Prosedyre
+Oppgi med kode i første kolonne hva innførselen gjelder i henhold til nedenstående oversikt.
+Det må være samsvar mellom rubrikkene 1 og 37. Det første siffer i koden i rubrikk 37 skal være lik koden som er oppgitt i andre kolonne i rubrikk 1.
+38 – Nettovekt
+Oppgi nettovekt i kg uten desimaler for de varene som er beskrevet i rubrikk 31. Nettovekten er varenes vekt uten emballasje.
+41 – Mengde i annen enhet
+Fylles bare ut når det av tolltariffen framgår at mengden også skal oppgis i annen enhet enn kg, f.eks. stk., liter, par og lignende.
+43 – Verdifastsettelseskode
+Det skal deklareres verdifastsettelseskode på alle deklarasjoner, foruten FO-deklarasjoner.
+Før opp koden for verdifastsettelse i henhold til nedenstående liste:
+Varens transaksjonsverdi (Vareførselsloven § 6-3)
+Transaksjonsverdien av identisk vare (Vareførselsloven § 6-4)
+Transaksjonsverdien av lignende vare (Vareførselsloven § 6-5)
+Tollverdi fastsatt med utgangspunkt i salgspris i Norge (Vareførselsloven § 6-7 )
+Utregnet tollverdi (Vareførselsloven § 6-8 )
+Alternativ tollverdi (Vareførselsloven § 6-9)
+44 – Tilleggsopplysninger/ Fremlagte dokumenter / Sertifikater og autorisasjoner
+Hvis varen er underlagt en spesiell bestemmelse/restriksjon hvor det må foreligge tillatelse, lisens eller lignende fra en offentlig institusjon (f.eks. for næringsmidler, medisiner m.m.), skal det oppgis en referanse til dette i denne rubrikken. Når det deklareres tollfrihet/tollnedsettelse i henhold til særskilte brev/skriv eller generelle rundskriv fra Tolletaten, oppgis hjemmel i denne rubrikk (skrivets journalnummer).
+45 – Justeringer
+Oppgi summen av eventuelle tillegg og/eller fradrag som gjelder vareposten. Hvis det er mer å trekke fra enn å legge til fakturabeløpet, blir det et negativt beløp her.Eksempel på tillegg:Frakt til norsk grense, forsikringspremie, provisjon og royalty.Eksempel på fradrag:Diverse rabatter som er gitt i tilknytning til de innførte varene.
+46 – Statistisk verdi
+Oppgi statistisk verdi som i de fleste tilfeller vil være varens verdi ved grensen, dvs. innkjøpsverdi inklusive frakt, forsikring og andre sendingskostnader til norsk havn eller grensestasjon.
+Statistisk verdi for varer som innføres for bearbeiding eller foredling i Norge, skal fastsettes som beskrevet i avsnittet om «Tollverdi», «De alternative metoder», inklusive frakt, forsikring og andre sendingskostnader til norsk havn eller grensestasjon.
+47 – Beregning av avgifter
+Denne rubrikken benyttes til beregning av avgifter, toll, særavgifter, merverdiavgift og så videre for hver varepost.
+Dersom du er registrert i merverdiavgiftsregisteret, skal du ikke benytte denne rubrikken for merverdiavgiften. Firmaer som er registrert i merverdiavgiftsregisteret skal fra 1.1.2017 beregne og innberette innførselsmerverdiavgiften i den nye skattemeldingen til Skatteetaten.
+Dersom du ikke er registrert i merverdiavgiftsregisteret (privatpersoner, utenlandske selskap etc.) skal rubrikken fylles ut og innførselsmerverdiavgiften betales til Tolletaten ved innførselen.
+48 – Kontonummer for tollkreditt
+Denne rubrikken blir automatisk utfylt iht. den betalerkode som blir brukt ved deklareringen (M for tollkreditt, D for dagsoppgjør og K for kontant). Ved betalerkode M blir den deklarasjonspliktige sitt kontonummer/kontrollsiffer (kundenummer) utfylt av TVINN, mens ved betalerkode D eller K fyller TVINN ut feltet med teksten "dagsoppgjør" eller "kontant". Ved fortolling av varer hvor det ikke skal deklareres toll og avgifter skal denne rubrikken være blank.
+49 – Godsnummer / lagerkode
+Godsnummeret består av 15 tegn og angir årstall, tollagerkode, dagnummer og posisjonsnummer.
+54 – Sted og dato
+Deklarasjonen skal være undertegnet av den deklarasjonspliktige (av en som har firmaets signatur eller prokura) eller av en spesielt bemyndiget funksjonær. Tollrepresentant som den deklarasjonspliktige har gitt fullmakt til å foreta tollekspedisjonen kan også undertegne deklarasjonen. I det sist nevnte tilfellet er det tollrepresentants ansvarshavende eller en spesielt bemyndiget funksjonær i firmaet som skal undertegne. Den som underskriver deklarasjonen på vegne av den deklarasjonspliktige, plikter å påse at alle nødvendige opplysninger foreligger, og at de bestemmelser som gjelder ved tollekspedisjon av varer er iakttatt.
+Oppdatert: 29.9.2026
+Skriv ut
+Kontakt oss
+Kontakt oss
+Tollsteder
+Nettredaksjonen
+Tips oss anonymt
+Jobb i Tolletaten
+Ledige stillinger(åpner i ny fane)
+Hva gjør vi?
+Om Tolletaten
+Om oss
+Aktuelt fra Tolletaten
+Tolletatens nyhetsbrev
+Nyheter for næringslivet
+Om nettstedet
+Personvern og informasjonskapsler
+Administrer informasjonskapsler
+Driftsstatus (alle systemer)(åpner i ny fane)
+Tilgjengelighet(åpner i ny fane)

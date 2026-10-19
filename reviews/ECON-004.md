@@ -67,5 +67,8 @@ Uavhengig review av `bd67c8d`: `reviews/ECON-004-SRC1-FIX1-review-bd67c8d.md` (b
 ### Kildeavklaring runde 2
 Se `reviews/ECON-004-kildeavklaring-2.md`: U-013 (selve innførselsmva.-kravet har tekstlig støtte i T46/T49/T50/T45, mellomledd og granularitet er åpne), elbilfritakets målegrunnlag (fortsatt uavklart; hydrogen avviklet 2024 besvart), omfangsgrenser, identitet og relevans for lov 19.6.2026 nr. 41 og kort innhentingsliste.
 
+### Tilleggskilder runde 2
+Se `reviews/ECON-004-kildevurdering-3.md`: lov 19.6.2026 nr. 41 = særavgiftsloven (ikke relevant for § 6-8/§ 4-11/§ 8-1/§ 8-4), lov 22.12.2025 nr. 121-overgangen gjelder bare leasing, Prop. 1 LS pkt. 11.2 besvarer ikke målegrunnlaget ved innførsel, U-013 skilt i tre nivåer (valideringstoleranse er ikke en regel), nytt gap: primærbelegg for selve 25 %-satsen. Kilder T70–T75 registrert.
+
 ## 4. Gjenværende blokkeringer
 U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001 er åpne og ikke godkjent. Ingen produktstandard for transport er godkjent utover ECON-001 (8 000, `assumed-default`, må konfigureres av kalleren). ECON-005 er ikke startet.

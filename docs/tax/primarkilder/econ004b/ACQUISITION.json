@@ -1,0 +1,56 @@
+[
+  {
+    "file": "01_Lov_2026-06-19-41.html",
+    "url": "https://lovdata.no/dokument/LTI/lov/2026-06-19-41",
+    "finalUrl": "https://lovdata.no/dokument/LTI/lov/2026-06-19-41",
+    "contentType": "text/html;charset=utf-8",
+    "bytes": 221369,
+    "sha256": "c97728a4e8c9493b87c113dc97b5564864cb5764f34d5a6065431a38516bd2c1",
+    "retrievedAt": "2026-10-19T14:02:54.929142+00:00"
+  },
+  {
+    "file": "02_Lov_2025-12-22-121.html",
+    "url": "https://lovdata.no/dokument/LTI/lov/2025-12-22-121",
+    "finalUrl": "https://lovdata.no/dokument/LTI/lov/2025-12-22-121",
+    "contentType": "text/html;charset=utf-8",
+    "bytes": 39253,
+    "sha256": "5f5cb145f2252856869c7113576ad2640f83f3dc4e28e2070037dc84de1cf037",
+    "retrievedAt": "2026-10-19T14:02:54.860170+00:00"
+  },
+  {
+    "file": "04_Deklarasjon_steg_for_steg.html",
+    "url": "https://www.toll.no/no/bedrift/import/deklarering-av-varer/hjelp-til-utfylling-av-innforseldeklarasjon/innforselsdeklarasjon-steg-for-steg",
+    "finalUrl": "https://www.toll.no/no/bedrift/import/deklarering-av-varer/hjelp-til-utfylling-av-innforseldeklarasjon/innforselsdeklarasjon-steg-for-steg",
+    "contentType": "text/html",
+    "bytes": 1119625,
+    "sha256": "6142b5a8a4cabea7d1a2369af65bf2d3f99b8b5b337ce89cd5b5bf7979634f2f",
+    "retrievedAt": "2026-10-19T14:02:54.968079+00:00"
+  },
+  {
+    "file": "05_Mva_melding_FAQ.html",
+    "url": "https://skatteetaten.github.io/mva-meldingen/mvameldingen/faq/",
+    "finalUrl": "https://skatteetaten.github.io/mva-meldingen/mvameldingen/faq/",
+    "contentType": "text/html; charset=utf-8",
+    "bytes": 67259,
+    "sha256": "86c26608272f4267b6c713353c182951886f0354121c7a4e256daad84c012743",
+    "retrievedAt": "2026-10-19T14:02:54.994664+00:00"
+  },
+  {
+    "file": "06_Mva_melding_hovedside.html",
+    "url": "https://skatteetaten.github.io/mva-meldingen/",
+    "finalUrl": "https://skatteetaten.github.io/mva-meldingen/",
+    "contentType": "text/html; charset=utf-8",
+    "bytes": 30788,
+    "sha256": "5334c1a4e44da04c64d7a2f346af552601c7fa29241d88b9650a7d3606f2faee",
+    "retrievedAt": "2026-10-19T14:02:54.964511+00:00"
+  },
+  {
+    "file": "07_Prop1LS_leseversjon.html",
+    "url": "https://www.regjeringen.no/no/dokumenter/prop.-1-ls-20252026/id3124192/?ch=2",
+    "finalUrl": "https://www.regjeringen.no/no/dokumenter/prop.-1-ls-20252026/id3124192/?ch=2",
+    "contentType": "text/html; charset=utf-8",
+    "bytes": 1190248,
+    "sha256": "7cbc5004af9368d7916d29b2345af3091a7cc51107c780e206f14ae8ba0c2454",
+    "retrievedAt": "2026-10-19T14:03:36.523630+00:00"
+  }
+]
