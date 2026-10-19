@@ -99,7 +99,7 @@
    "validity": {
     "from": "2026-01-01",
     "to": null,
-    "note": "Satsen gjelder fra 1.1.2026 (T76 § 1). Originalvedtak: senere endringsvedtak er ikke kontrollert."
+    "note": "Satsen gjelder fra 1.1.2026 (T76 § 1); ikrafttredelse «Budsjettåret 2026». Ajourført visning (T80) viser per 2026-10-19 14:22 UTC uendret 25 % i § 2 — status per hentedato, ingen garanti for senere endringer, og ingen sats dokumentert for 2027."
    },
    "sources": [
     {
@@ -141,6 +141,12 @@
     },
     {
      "id": "T79"
+    },
+    {
+     "id": "T80"
+    },
+    {
+     "id": "T81"
     }
    ],
    "evidenceLevel": "E1P",
@@ -162,8 +168,9 @@
     "Om engangsavgift inngår i innførselsgrunnlaget: unntaket i mval. § 4-2 (1) a er uttrykkelig for omsetning, ikke for § 4-11 (T63/T60).",
     "Om statistisk verdi (tolldeklarasjonens post 46) alltid er lik tollverdi: T72 sier «i de fleste tilfeller».",
     "Hva Tolletaten innkrever ved grensen fra mva-registrerte (utover at mva. rapporteres i skattemeldingen).",
-    "Senere endringsvedtak til satsvedtaket er ikke kontrollert (originalversjon lest).",
-    "Avrunding (U-013, tre nivåer) og tollkursens dato (U-008)."
+    "Satsvedtaket: ajourført visning per 2026-10-19 viser uendret 25 % (T80), men dette er en datert status og må hentes på nytt ved senere dato; vedtaket gjelder budsjettåret 2026 og dokumenterer ikke 2027.",
+    "Avrunding (U-013, tre nivåer) og tollkursens dato (U-008).",
+    "Bilimportsidene (T81/T82) gjelder privatpersoner; de besvarer ikke tollsats, hva 300 000-grensen måles mot, avrundingsnivå eller dokumentasjon for registrerte importører (samles i henvendelsesutkastet, kildevurdering 5)."
    ],
    "usableAsRuleParameter": false,
    "controlledDate": "2026-10-19",
@@ -209,6 +216,18 @@
      "claim": "Tolletatens deklarasjonsveiledning rubrikk 47: registrerte virksomheter skal ikke bruke rubrikken for mva.; ikke registrerte (privatpersoner, utenlandske selskap) betaler mva. til Tolletaten ved innførselen.",
      "source": "T72",
      "locator": "rubrikk 47",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Lovdatas ajourførte visning av FOR-2025-12-18-2752 viser per hentedato § 2 uendret («25 pst. av avgiftspliktig omsetning, uttak og innførsel»); §§ 1–5 har samme ordlyd som originalversjonen (T77) og § 1–2 som T76. Siden viser ingen «Endret ved»-/«Sist endret»-rad. Metadata: ikrafttredelse «Budsjettåret 2026». Dette er en datert status, ikke garanti for fremtiden.",
+     "source": "T80",
+     "locator": "§§ 1–5, metadata (hentet 2026-10-19T14:22:24Z)",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Tolletaten (privatperson-side, «Oppdatert: 5.2.2026»): mva. betales til Tolletaten ved deklarasjon; for nylig kjøpt bil «beregnes avgiften ut fra kjøpesummen, frakt og forsikring». Støtter privatpersonflyten og grunnlagets hovedelementer — ikke tollsats, ikke om toll/engangsavgift inngår, ikke registrerte importører og ikke hva 300 000-grensen måles mot.",
+     "source": "T81",
+     "locator": "«Avgifter du må betale til Tolletaten»",
      "readDate": "2026-10-19"
     }
    ],
@@ -284,6 +303,12 @@
     },
     {
      "id": "T72"
+    },
+    {
+     "id": "T81"
+    },
+    {
+     "id": "T82"
     }
    ],
    "evidenceLevel": "E1P",
@@ -344,6 +369,18 @@
      "claim": "Mval. § 4-11 (1): grunnlaget ved innførsel fastsettes etter tollverdireglene i vareførselsloven §§ 6-2 flg. (+ toll og andre avgifter).",
      "source": "T63",
      "locator": "§ 4-11 første ledd",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Tolletaten (betalingsside, «Oppdatert: 26.1.2026»): «Du skal betale merverdiavgift av fraktkostnaden med å få bilen til Norge»; bil fraktet på egne hjul fra Sverige, Danmark eller Tyskland kan bruke faste sjablongsatser (henvisning uten beløp; beløp og vilkår: T64). Privatperson-/tollkontorside.",
+     "source": "T82",
+     "locator": "avsnittet om frakt og sjablong",
+     "readDate": "2026-10-19"
+    },
+    {
+     "claim": "Tolletaten (bilimport, «Oppdatert: 5.2.2026»): for nylig kjøpt bil beregnes avgiften ut fra kjøpesummen, frakt og forsikring (samme innhold som T21, ny hentet kopi). Veiledningsspråk for privatperson, ikke tollverdidefinisjon og ikke kriterium for 300 000-grensen.",
+     "source": "T81",
+     "locator": "«Avgifter du må betale til Tolletaten»",
      "readDate": "2026-10-19"
     }
    ],
@@ -3279,6 +3316,9 @@
    "sources": [
     {
      "id": "T21"
+    },
+    {
+     "id": "T81"
     }
    ],
    "evidenceLevel": "E1P",
@@ -3290,6 +3330,12 @@
      "source": "T21",
      "locator": "Merk-boks før «Ankomst grensen»",
      "readDate": "2026-10-15"
+    },
+    {
+     "claim": "«Refusjon av utenlandsk merverdiavgift er en sak mellom kjøper og selger. Tolletaten har ingenting med dette å gjøre.» (samme ordlyd i ny hentet kopi, «Oppdatert: 5.2.2026»)",
+     "source": "T81",
+     "locator": "Merk-boks før «Ankomst grensen»",
+     "readDate": "2026-10-19"
     }
    ],
    "openQuestions": [

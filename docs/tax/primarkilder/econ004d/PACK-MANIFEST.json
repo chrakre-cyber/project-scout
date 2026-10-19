@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "path": "acquisition.json",
+      "bytes": 1279,
+      "sha256": "24fb6156634ba270cb2b2875b419c774063ae1b96b8b4e4cbbf1df46568297be"
+    },
+    {
+      "path": "CLAUDE_INSTRUCTIONS.md",
+      "bytes": 2046,
+      "sha256": "4d7e76183b0d06ca2994e4fd8a1317d22358d2f4bccd8490fcecdecf408662a6"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_MVA_vedtak_ajourfort.html",
+      "bytes": 36024,
+      "sha256": "3c844ca87f358d18e64e6ec7793f6d7cb44bbb2c65806ce32f9d2f83097a0bdf"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_MVA_vedtak_ajourfort.txt",
+      "bytes": 4253,
+      "sha256": "9f78e37369ba08f56b11c21824de56f95325c6d5dcdeb0bb7278f3fa46db0d52"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Tolletaten_bilimport.html",
+      "bytes": 822395,
+      "sha256": "a75ee10dc8f9cf8816d8b86616b0bf3effc1fee9359b8cff2a905bea300d0d4e"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Tolletaten_bilimport.txt",
+      "bytes": 5271,
+      "sha256": "4e6a6546129548319b8ee111e82b4b29b7950552737539c5098e34bf7f07dccd"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Tolletaten_bilimport_betaling.html",
+      "bytes": 779449,
+      "sha256": "4e5e73bac152fc093b5041227429eb23e87844f21900a933b09e3b98fb97e681"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Tolletaten_bilimport_betaling.txt",
+      "bytes": 3015,
+      "sha256": "77be74e89694f5faa3349b01efa90d7239bfeffbb6129b5e6d6e856274c6cc13"
+    },
+    {
+      "path": "docs/tax/primarkilder/MANIFEST.md",
+      "bytes": 2237,
+      "sha256": "c9f993ce8101135701f6610e156953e45b5784f1259f0cb884bb285363d594fc"
+    }
+  ]
+}

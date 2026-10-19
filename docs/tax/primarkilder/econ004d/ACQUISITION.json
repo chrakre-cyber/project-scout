@@ -1,0 +1,29 @@
+[
+  {
+    "file": "01_MVA_vedtak_ajourfort.html",
+    "url": "https://lovdata.no/dokument/STV/forskrift/2025-12-18-2752",
+    "finalUrl": "https://lovdata.no/dokument/STV/forskrift/2025-12-18-2752",
+    "contentType": "text/html;charset=utf-8",
+    "bytes": 36024,
+    "sha256": "3c844ca87f358d18e64e6ec7793f6d7cb44bbb2c65806ce32f9d2f83097a0bdf",
+    "retrievedAt": "2026-10-19T14:22:24.751567+00:00"
+  },
+  {
+    "file": "02_Tolletaten_bilimport.html",
+    "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport",
+    "finalUrl": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport",
+    "contentType": "text/html",
+    "bytes": 822395,
+    "sha256": "a75ee10dc8f9cf8816d8b86616b0bf3effc1fee9359b8cff2a905bea300d0d4e",
+    "retrievedAt": "2026-10-19T14:22:24.944698+00:00"
+  },
+  {
+    "file": "03_Tolletaten_bilimport_betaling.html",
+    "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport/betaling-av-avgifter",
+    "finalUrl": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport/betaling-av-avgifter",
+    "contentType": "text/html",
+    "bytes": 779449,
+    "sha256": "4e5e73bac152fc093b5041227429eb23e87844f21900a933b09e3b98fb97e681",
+    "retrievedAt": "2026-10-19T14:22:24.943190+00:00"
+  }
+]

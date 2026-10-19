@@ -1,6 +1,6 @@
 # TAX-001A–D — regel- og kilderegister (dokumentasjon, ikke regelsett)
 
-Oppdatert **16.10.2026** (TAX-001D: eksternt verifiserte fakta lagt inn som E1X, se `TAX-001D-evidence-status.md`). Status: **REVIEW**. **19.10.2026:** reglene R-IMP-VAT-001/-002/-003/-004, R-IMP-FX-001 og R-DED-001 samt U-007 er oppdatert fra rules.json etter ECON-004-kildepakkene (T53–T79); kildefortegnelsen i kap. 3 er ikke regenerert (se sources.json). Generert fra `rules.json` og `sources.json`. Dette er et *kartleggingsregister*. Ingen regel her er godkjent som parameter i kode (`usableAsRuleParameter=false` for alle); «dokumentert E1» betyr lest primærkilde, ikke godkjent regelprofil.
+Oppdatert **16.10.2026** (TAX-001D: eksternt verifiserte fakta lagt inn som E1X, se `TAX-001D-evidence-status.md`). Status: **REVIEW**. **19.10.2026:** reglene R-IMP-VAT-001/-002/-003/-004, R-IMP-FX-001 og R-DED-001 samt U-007 er oppdatert fra rules.json etter ECON-004-kildepakkene (T53–T82); kildefortegnelsen i kap. 3 er ikke regenerert (se sources.json). Generert fra `rules.json` og `sources.json`. Dette er et *kartleggingsregister*. Ingen regel her er godkjent som parameter i kode (`usableAsRuleParameter=false` for alle); «dokumentert E1» betyr lest primærkilde, ikke godkjent regelprofil.
 
 ## 1. Status for kontrollgrunnlaget
 
@@ -68,9 +68,9 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Nødvendig input:** tollverdi (NOK); engangsavgift (inngår i grunnlaget?); kjøretøyprofil (elbil-fritak)  
 - **Formel/trinn (struktur):** mva = sats × grunnlag; sats og grunnlagets sammensetning skal leses fra primærkilde  
 - **Beløp/enhet/avrunding:** 25 % (Stortingets vedtak om merverdiavgift for 2026 § 2, T76/T77, E1) av beregningsgrunnlaget etter mval. § 4-11 (tollverdi + toll og andre avgifter som beregnes ved innførsel, T63). Avrunding og øre: IKKE KONTROLLERT (U-013).  
-- **Dato fra/til:** 2026-01-01 / ukjent — Satsen gjelder fra 1.1.2026 (T76 § 1). Originalvedtak: senere endringsvedtak er ikke kontrollert.  
+- **Dato fra/til:** 2026-01-01 / ukjent — Satsen gjelder fra 1.1.2026 (T76 § 1); ikrafttredelse «Budsjettåret 2026». Ajourført visning (T80) viser per 2026-10-19 14:22 UTC uendret 25 % i § 2 — status per hentedato, ingen garanti for senere endringer, og ingen sats dokumentert for 2027.  
 - **Styrende hendelse:** Innførsel/deklarasjon til Tolletaten  
-- **Kilder:** T01, T08, T11, T21, T63, T76, T77, T56, T60, T72, T73, T78, T79  
+- **Kilder:** T01, T08, T11, T21, T63, T76, T77, T56, T60, T72, T73, T78, T79, T80, T81  
 - **Evidensnivå:** E1P · **Status:** `delvis_E1_sats_og_grunnlagsprinsipp` · **Kontrollert dato:** 2026-10-19 · **Godkjent parameter:** nei
 - **E1-funn (lest primærkilde):**
   - Kjøretøy innført av privatperson deklareres og merverdiavgift betales til Tolletaten (ved grensen); deretter engangsavgift til Skatteetaten etter godkjenning; til slutt registrering hos Statens vegvesen. (Betalingsrekkefølge – ikke beregningsrekkefølge eller grunnlag.) _(kilde T21, innledning, «Avgifter du må betale til Tolletaten», lest 2026-10-15)_
@@ -80,6 +80,8 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
   - Mval. § 3-29 (2): tollavgiftsloven § 2-2 om tidfesting gjelder tilsvarende ved beregning av mva. ved innførsel. _(kilde T63, § 3-29 annet ledd, lest 2026-10-19)_
   - Skatteetatens veiledning: mva-registrerte virksomheter beregner innførselsmva. selv og fører den i mva-meldingen; grunnlaget er «statistisk verdi + toll og avgifter»; eksempel 4 700 × 25 % = 1 175. _(kilde T56, Beregne og rapportere mva. ved import, lest 2026-10-19)_
   - Tolletatens deklarasjonsveiledning rubrikk 47: registrerte virksomheter skal ikke bruke rubrikken for mva.; ikke registrerte (privatpersoner, utenlandske selskap) betaler mva. til Tolletaten ved innførselen. _(kilde T72, rubrikk 47, lest 2026-10-19)_
+  - Lovdatas ajourførte visning av FOR-2025-12-18-2752 viser per hentedato § 2 uendret («25 pst. av avgiftspliktig omsetning, uttak og innførsel»); §§ 1–5 har samme ordlyd som originalversjonen (T77) og § 1–2 som T76. Siden viser ingen «Endret ved»-/«Sist endret»-rad. Metadata: ikrafttredelse «Budsjettåret 2026». Dette er en datert status, ikke garanti for fremtiden. _(kilde T80, §§ 1–5, metadata (hentet 2026-10-19T14:22:24Z), lest 2026-10-19)_
+  - Tolletaten (privatperson-side, «Oppdatert: 5.2.2026»): mva. betales til Tolletaten ved deklarasjon; for nylig kjøpt bil «beregnes avgiften ut fra kjøpesummen, frakt og forsikring». Støtter privatpersonflyten og grunnlagets hovedelementer — ikke tollsats, ikke om toll/engangsavgift inngår, ikke registrerte importører og ikke hva 300 000-grensen måles mot. _(kilde T81, «Avgifter du må betale til Tolletaten», lest 2026-10-19)_
 - **E1X-funn (eksternt verifisert, ikke lest av Claude):**
   - Mva. ved import av kjøretøy er 25 %; mva.-grunnlaget er tollverdien. _(kilde T33, Bilimport (Tolletaten), verifisert 2026-10-16)_
 - **Lead (ikke regel):**
@@ -90,8 +92,9 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
   - Om engangsavgift inngår i innførselsgrunnlaget: unntaket i mval. § 4-2 (1) a er uttrykkelig for omsetning, ikke for § 4-11 (T63/T60).
   - Om statistisk verdi (tolldeklarasjonens post 46) alltid er lik tollverdi: T72 sier «i de fleste tilfeller».
   - Hva Tolletaten innkrever ved grensen fra mva-registrerte (utover at mva. rapporteres i skattemeldingen).
-  - Senere endringsvedtak til satsvedtaket er ikke kontrollert (originalversjon lest).
+  - Satsvedtaket: ajourført visning per 2026-10-19 viser uendret 25 % (T80), men dette er en datert status og må hentes på nytt ved senere dato; vedtaket gjelder budsjettåret 2026 og dokumenterer ikke 2027.
   - Avrunding (U-013, tre nivåer) og tollkursens dato (U-008).
+  - Bilimportsidene (T81/T82) gjelder privatpersoner; de besvarer ikke tollsats, hva 300 000-grensen måles mot, avrundingsnivå eller dokumentasjon for registrerte importører (samles i henvendelsesutkastet, kildevurdering 5).
 - **Overvåking:**
   - Lov 19.6.2026 nr. 41 (særavgiftsloven, T70) nevner ikke mval. §§ 3-29, 4-11 eller satsvedtaket; ingen blokkering.
 
@@ -104,7 +107,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Beløp/enhet/avrunding:** Tollverdi = transaksjonsverdi + transport- og forsikringskostnad til innførselsstedet + lasting/håndtering (vareførselsloven § 6-10, T67; objektive og kvantifiserbare tillegg). Omregning: T69 § 6-12-1. Avrunding: IKKE KONTROLLERT (U-013).  
 - **Dato fra/til:** ukjent / ukjent — Ikke lest.  
 - **Styrende hendelse:** Innførsel/deklarasjon til Tolletaten (dato for tollkurs og tollverdi uavklart, se R-IMP-FX-001)  
-- **Kilder:** T08, T10, T21, T63, T64, T67, T69, T72  
+- **Kilder:** T08, T10, T21, T63, T64, T67, T69, T72, T81, T82  
 - **Evidensnivå:** E1P · **Status:** `delvis_E1_grunnlag_transport_forsikring` · **Kontrollert dato:** 2026-10-19 · **Godkjent parameter:** nei
 - **E1-funn (lest primærkilde):**
   - For nylig kjøpt bil beregnes avgiften ut fra kjøpesummen, frakt og forsikring; ellers må bilens verdi dokumenteres, og noen ganger kreves takst. _(kilde T21, «Avgifter du må betale til Tolletaten», lest 2026-10-15)_
@@ -113,6 +116,8 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
   - Tolletatens sjablonger for varer på egne hjul/egen kjøl: Sverige NOK 500, Danmark NOK 1 500, Tyskland NOK 2 500; andre land ingen felles sjablong; importøren kan dokumentere reelle kostnader. _(kilde T64, Fastsettelse av fraktkostnader, lest 2026-10-19)_
   - Deklarasjonsveiledningen: rubrikk 12 fraktomkostninger til norsk grense i NOK når de ikke er i fakturaprisen; rubrikk 45 tillegg (frakt til norsk grense, forsikringspremie, provisjon, royalty) og fradrag (rabatter); rubrikk 46 statistisk verdi «i de fleste tilfeller» innkjøpsverdi inkl. frakt, forsikring og andre sendingskostnader til norsk havn/grensestasjon. _(kilde T72, rubrikk 12, 45, 46, lest 2026-10-19)_
   - Mval. § 4-11 (1): grunnlaget ved innførsel fastsettes etter tollverdireglene i vareførselsloven §§ 6-2 flg. (+ toll og andre avgifter). _(kilde T63, § 4-11 første ledd, lest 2026-10-19)_
+  - Tolletaten (betalingsside, «Oppdatert: 26.1.2026»): «Du skal betale merverdiavgift av fraktkostnaden med å få bilen til Norge»; bil fraktet på egne hjul fra Sverige, Danmark eller Tyskland kan bruke faste sjablongsatser (henvisning uten beløp; beløp og vilkår: T64). Privatperson-/tollkontorside. _(kilde T82, avsnittet om frakt og sjablong, lest 2026-10-19)_
+  - Tolletaten (bilimport, «Oppdatert: 5.2.2026»): for nylig kjøpt bil beregnes avgiften ut fra kjøpesummen, frakt og forsikring (samme innhold som T21, ny hentet kopi). Veiledningsspråk for privatperson, ikke tollverdidefinisjon og ikke kriterium for 300 000-grensen. _(kilde T81, «Avgifter du må betale til Tolletaten», lest 2026-10-19)_
 - **E1X-funn (eksternt verifisert, ikke lest av Claude):**
   - Transport og forsikring fram til norsk innførselssted inngår i tollverdien. _(kilde T34, Incoterms/tollverdi, verifisert 2026-10-16)_
   - Norske avgifter som oppstår etter innførsel (f.eks. engangsavgift ved registrering) inngår ikke i tollverdien bare fordi de oppstår senere. _(kilde T34, Incoterms/tollverdi, verifisert 2026-10-16)_
@@ -804,10 +809,11 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
 - **Beløp/enhet/avrunding:** Ingen beløp (strukturell regel). Refusjonsbeløp kommer fra kjøpsbekreftelsen.  
 - **Dato fra/til:** ukjent / ukjent — Tolletatens side oppdatert 5.2.2026 (privatperson-side).  
 - **Styrende hendelse:** Kjøpsbekreftelse (avtalens innhold)  
-- **Kilder:** T21  
+- **Kilder:** T21, T81  
 - **Evidensnivå:** E1P · **Status:** `delvis_E1_tolletatens_posisjon` · **Kontrollert dato:** 2026-10-15 · **Godkjent parameter:** nei
 - **E1-funn (lest primærkilde):**
   - «Refusjon av utenlandsk merverdiavgift er en sak mellom kjøper og selger. Tolletaten har ingenting med dette å gjøre.» _(kilde T21, Merk-boks før «Ankomst grensen», lest 2026-10-15)_
+  - «Refusjon av utenlandsk merverdiavgift er en sak mellom kjøper og selger. Tolletaten har ingenting med dette å gjøre.» (samme ordlyd i ny hentet kopi, «Oppdatert: 5.2.2026») _(kilde T81, Merk-boks før «Ankomst grensen», lest 2026-10-19)_
 - **Uløste spørsmål:**
   - Selgerlandets regler for utbetaling/refusjon er ikke lest (T16/T17).
   - Om en konkret avtale er depositum/tilbakebetalingskrav eller betinget refusjon må dokumenteres per tilbud.
