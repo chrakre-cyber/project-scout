@@ -1,4 +1,6 @@
-# UTKAST — henvendelse til Tolletaten og Skatteetaten (IKKE SENDT)
+# UTKAST — felles henvendelse (ERSTATTET, IKKE SENDT)
+
+> **Erstattet** av to separate utkast: `ECON-004-henvendelse-skatteetaten-utkast.md` og `ECON-004-henvendelse-tolletaten-utkast.md`.
 
 **Status:** utkast til Christians vurdering. Ikke sendt, ikke journalført. Avsender, firma og kontaktinformasjon er plassholdere og må fylles inn av Christian. Ingen person- eller kundedata er med.
 
