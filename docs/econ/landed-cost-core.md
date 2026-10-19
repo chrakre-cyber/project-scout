@@ -5,7 +5,7 @@ Status: REVIEW. Ingen regel er godkjent; alle økonomiflagg (`vatRulesApproved`,
 ## Totaler
 - **`importCashRequirement` = BRUTTO utlegg.** Kjøpesum (anskaffelseskurs) + transport til og etter innførselsstedet + forsikring + lasting/håndtering + import-mva. + sum registreringsavgifter + øvrige kjente poster. Uavhengig av fradragsrett, betalingskanal og betalingstidspunkt. Det er **ikke** «kontant ved grensen», og heller ikke «alt minus mva.»: kjøpesum, transport, mva. og registreringsavgifter har ulike betalingstidspunkter. Det finnes ingen likviditetsmodell, og ingen terminer/frister er modellert. Navnet beholdes (ECON-003-forventningene er brutto).
 - **`estimatedLandedCost`** = samme poster, men import-mva. bare ved `non_recoverable`. `unknown` (standard) gir to merkede scenarier, ingen enkeltverdi.
-- **`importVatSettlement`** viser *bare mva.-beløpet* fordelt på kanal: `paidToCustomsAtImportNok` (ikke registrert; T56) eller `reportedInVatReturnNok` (registrert, rapporteres i mva-meldingen). Ukjent håndtering (standard) gir rader for begge kanaler og `vat_handling_unknown`.
+- **`importVatSettlement`** viser *bare mva.-beløpet* fordelt på kanal: `paidToCustomsAtImportNok` (ikke registrert; T56) eller `reportedInVatReturnNok` (registrert, rapporteres i mva-meldingen). Ukjent håndtering (standard) forblir ukjent (`vat_handling_unknown`, status `scenarios`) og gir rader for de kanalene som er forenlige med akseptert fradragsstatus: `recoverable` forutsetter registrering, så «ikke registrert» filtreres bort og listes i `excludedScenarios` — uten at registrering anses bekreftet. Ved `non_recoverable`/ukjent fradragsrett vises begge kanaler.
 
 ## Tre uavhengige spørsmål om mva.
 1. **Beløp** (grunnlag, sats, elbilfritak) → `importVat`.
@@ -13,7 +13,7 @@ Status: REVIEW. Ingen regel er godkjent; alle økonomiflagg (`vatRulesApproved`,
 3. **Fradragsrett** → `deduction` (`recoverable` | `non_recoverable` | `unknown`; samme kildekrav). `recoverable` uten registrering er selvmotsigende (mval. § 8-1) og blokkeres.
 
 ## Datoer (tre, adskilte)
-`asOf` = beregningsdato. `customsDate` = akseptdato for tolldeklarasjonen (tollavgiftsloven § 2-2 via vareførselsforskriften § 6-12-1 (3); `actual_acceptance` | `expected_scenario` | `unknown`) og styrer ordinær tollkurs. Norsk registreringsdato (`taxInput.norwegianRegistration`) styrer bare avgiftsmotoren. Ingen av dem er verifisert av kjernen; ukjent akseptdato gir `customs_acceptance_date_unknown`, forventet dato gir estimatårsaken `customs_acceptance_date_expected`.
+`asOf` = beregningsdato. `customsDate` = akseptdato for tolldeklarasjonen (tollavgiftsloven § 2-2 via vareførselsforskriften § 6-12-1 (3); `actual_acceptance` | `expected_scenario` | `unknown`) og styrer ordinær tollkurs. Norsk registreringsdato (`taxInput.norwegianRegistration`) styrer bare avgiftsmotoren. Ingen av dem er verifisert av kjernen; ukjent akseptdato gir `customs_acceptance_date_unknown`, forventet dato gir estimatårsaken `customs_acceptance_date_expected`. Statusen registreres uavhengig av valuta og kursgren (NOK, direkte tollkurs, kursfallback); kursperioden kontrolleres bare i tollkursgrenen.
 
 ## Kurser
 - To roller: `acquisition` (betalingskurs, kjøpesum) og `customs` (tollverdi, mva.-grunnlag). Fixture-kurs (`source.kind = fixture` eller `fixtureOnly`) avvises uten testflagg.

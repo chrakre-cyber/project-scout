@@ -7,6 +7,7 @@ const base: EconomicsInput = {
   price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "quote_document" },
   fx: {}, transportToBorder: zero, transportAfterBorder: na, loadingHandling: na, insurance: zero,
   vatHandling: { value: "registered_reports_in_vat_return", source: { kind: "dealer_profile" } },
+  customsDate: { date: "2026-10-18", kind: "actual_acceptance" },
   taxInput: {
     vehicleClass: "passenger_car_m1",
     propulsion: { pistonCombustionEngine: false, externallyChargeable: true, combustionFuel: null, hybridization: null, evidence: "type_approval" },

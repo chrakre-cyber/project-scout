@@ -232,8 +232,11 @@ export interface EconomicsResult {
   };
   /** Betalingskanal for import-mva. (adskilt fra fradragsrett). Kun mva.-beløpet; ingen tidspunkter og ingen likviditetsmodell. */
   importVatSettlement: {
+    /** `known` bare når håndteringen er oppgitt av godkjent kilde. Ukjent håndtering gir alltid `scenarios` (også når bare ett scenario er forenlig med akseptert fradragsrett). */
     status: "known" | "scenarios" | "not_calculated";
     handling: { value: VatHandling; accepted: boolean; source: VatHandlingInput["source"] | null };
+    /** Kanaler som er utelatt fordi de motsier akseptert fradragsstatus (registrering er ikke bekreftet av dette). */
+    excludedScenarios: Array<{ handling: "registered_reports_in_vat_return" | "not_registered_pays_at_import"; reason: string }>;
     rows: Array<{
       vatScenarioId: VatScenarioId;
       handling: "registered_reports_in_vat_return" | "not_registered_pays_at_import";

@@ -73,8 +73,12 @@ describe("1. mva-håndtering er skilt fra fradragsrett (T56, T63 § 8-1); brutto
       expect(r.importVatSettlement.status).toBe("scenarios");
       expect(r.warnings.join(" ")).toContain("mva-håndtering ignorert");
     }
+    // fradragsstatus alene registrerer ikke håndtering: den forblir ukjent, men «ikke registrert» filtreres bort som uforenlig med recoverable (SRC1 P2-2)
     const onlyDeduction = gross({ vatHandling: null, deduction: { value: "recoverable", source: { kind: "dealer_entered" } } });
-    expect(onlyDeduction.importVatSettlement.rows).toHaveLength(2);
+    expect(onlyDeduction.importVatSettlement.handling).toEqual({ value: "unknown", accepted: false, source: null });
+    expect(onlyDeduction.importVatSettlement.rows.map((r) => r.handling)).toEqual(["registered_reports_in_vat_return"]);
+    expect(onlyDeduction.importVatSettlement.status).toBe("scenarios");
+    expect(gross({ vatHandling: null, deduction: { value: "non_recoverable", source: { kind: "dealer_entered" } } }).importVatSettlement.rows).toHaveLength(2);
   });
   it("brutto er ikke «kontant ved grensen»: resultatet har ingen slik post, og mva.-kanalen oppgir bare mva.-beløpet", () => {
     const r = gross({});

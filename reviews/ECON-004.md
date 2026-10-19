@@ -58,5 +58,8 @@ Uavhengig rettingsreview av `cefe290`: `reviews/ECON-004-FIX1-review-cefe290.md`
 ### Kildejustering etter primærkildepakken
 Se `reviews/ECON-004-kildejustering.md` (endringsrapport) og `docs/econ/landed-cost-core.md` (feltenes betydning). Kildepakken er arkivert i `docs/tax/primarkilder/econ004/` (T53–T69; T23, T24, T35, T36 gjenbrukt). Alle økonomiflagg er fortsatt `false`; U-013 er åpen.
 
+### SRC1-retting
+Se `reviews/ECON-004-SRC1-retting.md` (to P2: akseptdato uavhengig av kursgren; mva-kanaler forenlige med akseptert fradragsstatus).
+
 ## 4. Gjenværende blokkeringer
 U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001 er åpne og ikke godkjent. Ingen produktstandard for transport er godkjent utover ECON-001 (8 000, `assumed-default`, må konfigureres av kalleren). ECON-005 er ikke startet.

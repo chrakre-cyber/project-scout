@@ -123,13 +123,12 @@ function checkQuote(
   if (q.validFrom && q.validTo && q.validFrom > q.validTo) return bad("validFrom er etter validTo");
   const hasPeriod = Boolean(q.validFrom && q.validTo);
   if (!hasPeriod) c.incomplete.push("customs_fx_period_missing");
+  // Akseptdatoens status (ukjent/forventet) registreres i hovedflyten, uavhengig av kursgren. Her kontrolleres bare perioden.
   let rateValidOnDate: boolean | null = null;
-  if (accept.kind === "unknown" || !accept.date) c.incomplete.push("customs_acceptance_date_unknown");
-  else if (hasPeriod) {
+  if (accept.kind !== "unknown" && accept.date && hasPeriod) {
     rateValidOnDate = accept.date >= q.validFrom! && accept.date <= q.validTo!;
     if (!rateValidOnDate) return bad(`kursperioden ${q.validFrom}–${q.validTo} dekker ikke akseptdatoen ${accept.date}`);
-    if (accept.kind === "expected_scenario") c.estimate.add("customs_acceptance_date_expected");
-  } else if (accept.kind === "expected_scenario") c.estimate.add("customs_acceptance_date_expected");
+  }
   const suspension = q.suspension ?? "unknown";
   if (!["not_suspended_confirmed", "suspended", "unknown"].includes(suspension)) return bad("suspension: ugyldig verdi");
   const suspended = suspension === "suspended";
@@ -228,6 +227,10 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   }
   const accept = { date: isIsoDate(cd.date) ? cd.date : null, kind: cd.kind === "actual_acceptance" || cd.kind === "expected_scenario" ? cd.kind : ("unknown" as const) };
   if (accept.kind !== "unknown" && !accept.date) block(c, "invalid_date", "customsDate: dato kreves når type er actual_acceptance eller expected_scenario", "customsDate");
+
+  // Akseptdatoens status gjelder tidfestingen av tollavgiftssats, mva.-regler og kurs (tollavgiftsloven § 2-2, mval. § 3-29 (2)) og er uavhengig av valuta og kursgren.
+  if (accept.kind === "unknown" || !accept.date) c.incomplete.push("customs_acceptance_date_unknown");
+  else if (accept.kind === "expected_scenario") c.estimate.add("customs_acceptance_date_expected");
 
   // --- Kurser: to separate roller ---
   const nok = currency === "NOK";
@@ -338,7 +341,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
       acquisition: { advertisedGross, advertisedNet, dealerAdjusted, used: { amount: usedAmount, currency: String(currency), selected: p?.use === "dealer_adjusted" ? "dealer_adjusted" : "advertised", basis: usedBasis, evidence: p?.evidence }, purchaseBasisResolved: false, acquisitionUsedNok: null, acquisitionUsedRaw: null },
       fx: { acquisition: acqFx, customs: custFx }, transportToBorderNok: null, transportToBorderBasis: toBorderBasis, transportAfterBorderNok: null, insuranceNok: null, loadingHandlingNok: null, customsValueNok: null,
       importVat: { status: "not_calculated", valueNok: null, scenarios: [], ev: { qualification: qual, thresholdBasis: null, engineClassification: engine }, reasons },
-      importVatSettlement: { status: "not_calculated", handling: { value: handling, accepted: hAccepted, source: h?.source ?? null }, rows: [] },
+      importVatSettlement: { status: "not_calculated", handling: { value: handling, accepted: hAccepted, source: h?.source ?? null }, rows: [], excludedScenarios: [] },
       tax: taxL, importCashRequirement: notCalculated(reasons), estimatedLandedCost: notCalculated(reasons),
       vatRecoverability: { value: "unknown", accepted: false, source: null }, estimateReasons: [...c.estimate], incompleteReasons: [...new Set(c.incomplete)], warnings: c.warnings, roundingTies: [],
     };
@@ -394,8 +397,17 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   };
 
   // --- Betalingskanal for import-mva. (adskilt fra fradragsrett; ingen tidspunkter) ---
-  const handlings: Array<"registered_reports_in_vat_return" | "not_registered_pays_at_import"> =
-    handling === "unknown" ? ["registered_reports_in_vat_return", "not_registered_pays_at_import"] : [handling];
+  // Ukjent håndtering forblir ukjent, men scenarioene skal ikke motsi akseptert fradragsstatus: `recoverable` forutsetter registrering (mval. § 8-1),
+  // så «ikke registrert» filtreres bort og oppgis som utelatt. Registrering anses ikke som bekreftet av dette.
+  const allHandlings: Array<"registered_reports_in_vat_return" | "not_registered_pays_at_import"> = ["registered_reports_in_vat_return", "not_registered_pays_at_import"];
+  const excludedScenarios: EconomicsResult["importVatSettlement"]["excludedScenarios"] = [];
+  const handlings = handling === "unknown" ? allHandlings.filter((hh) => {
+    if (hh === "not_registered_pays_at_import" && recov === "recoverable") {
+      excludedScenarios.push({ handling: hh, reason: "uforenlig med akseptert fradragsrett (recoverable forutsetter registrert avgiftssubjekt, mval. § 8-1); registrering er ikke bekreftet av dette" });
+      return false;
+    }
+    return true;
+  }) : [handling];
   const settlementRows = vatScenarios.flatMap((s) => handlings.map((hh) => ({
     vatScenarioId: s.id, handling: hh, vatNok: s.valueNok,
     paidToCustomsAtImportNok: hh === "not_registered_pays_at_import" ? s.valueNok : 0n,
@@ -403,9 +415,10 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     lowerBound: !vatExact,
   })));
   const importVatSettlement: EconomicsResult["importVatSettlement"] = {
-    status: !settlementRows.length ? "not_calculated" : settlementRows.length > 1 ? "scenarios" : "known",
+    status: !settlementRows.length ? "not_calculated" : settlementRows.length > 1 || !hAccepted ? "scenarios" : "known",
     handling: { value: handling, accepted: hAccepted, source: h?.source ?? null },
     rows: settlementRows,
+    excludedScenarios,
   };
 
   // --- Totaler (brutto utlegg og økonomisk kost) ---
