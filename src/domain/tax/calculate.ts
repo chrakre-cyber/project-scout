@@ -15,8 +15,12 @@ import type {
 } from "./types";
 
 const VERIFIED_WEIGHT_BASES = new Set(["eu_type_approval_minimum_mass", "vehicle_register"]);
-/** Vektgrunnlag som bare er referanse/ukjent (ECON-001 §11: «reference-only» blokkerer fullt krav): gir estimat, aldri godkjent beløp. `dealer_entered` er en forhandleroppgave og følger samme linje som forhandleroppgitt drivlinje (advarsel). */
-const REFERENCE_ONLY_WEIGHT_BASES = new Set(["reference_listing", "unverified"]);
+/**
+ * Policy (2026-10-19): vektgrunnlag uten dokumentert grunnlag gir estimat, aldri godkjent beløp. `reference_listing`/`unverified` (ECON-001 §11 «reference-only») og
+ * `dealer_entered` (forhandleroppgitt vekt uten typegodkjenning/register). Dokumentert grunnlag bruker `eu_type_approval_minimum_mass` / `vehicle_register`,
+ * uansett om verdien er lagt inn manuelt: grunnlaget, ikke inntastingsmåten, avgjør.
+ */
+const WEIGHT_ESTIMATE_REASON: Readonly<Record<string, EstimateReason>> = { reference_listing: "weight_reference_only", unverified: "weight_reference_only", dealer_entered: "weight_dealer_entered_undocumented" };
 
 export function classifyPowertrain(p: TaxInput["propulsion"]): TaxPowertrain | null {
   if (p.pistonCombustionEngine === null || p.externallyChargeable === null) return null;
@@ -264,7 +268,8 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
   const weakestRuleEvidence: "E1" | "E1P" = appliedRules.some((r) => r.evidence === "E1P") ? "E1P" : "E1";
   // Skill godkjent regelprofil fra kvaliteten/entydigheten i inputene: et estimat blir aldri «approved» fordi profilen er det.
   const estimateReasons: EstimateReason[] = [];
-  if (REFERENCE_ONLY_WEIGHT_BASES.has(input.norwegianTaxWeight.basis)) estimateReasons.push("weight_reference_only");
+  const weightReason = WEIGHT_ESTIMATE_REASON[input.norwegianTaxWeight.basis];
+  if (weightReason) estimateReasons.push(weightReason);
   if (monthSensitivity) estimateReasons.push("first_registration_date_sensitive");
   const inputResolution: "resolved" | "estimate" = estimateReasons.length === 0 ? "resolved" : "estimate";
   const approved = prof.approval.approved && prof.approval.class1References > 0 && weakestRuleEvidence === "E1" && inputResolution === "resolved";
@@ -273,7 +278,7 @@ export function calculateNorwegianVehicleTax(input: TaxInput, profile?: TaxProfi
     status: approved ? "calculated" : "calculated_unverified",
     profile: profileRef(prof),
     powertrain,
-    components,
+    components: weightReason ? components.map((c) => (c.id === "co2" ? c : { ...c, estimate: { reasons: [weightReason] } })) : components,
     preDeductionExact: toExactString(preDeduction),
     ageDeduction: ded,
     oneOffTaxExact: toExactString(oneOff),

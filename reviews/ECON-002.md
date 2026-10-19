@@ -669,5 +669,8 @@ Alle regler motoren anvender er nå **E1 med E1-kilder, `validity.from`, `govern
 ## 25. Runde 15 — retting av to P2-funn fra uavhengig review (19.10.2026)
 Codex-review av `a42a30b` ga to P2-funn: uverifisert referansevekt og et datofølsomt punktbeløp kunne få `approved`/`calculated` når profilen godkjennes. Rettet ved å skille godkjent regelprofil (`profileApproved`) fra inputenes entydighet (`inputResolution`, `estimateReasons`); estimat og sensitivitet er bevart, men ikke approved. Detaljer, tester og kontroller: `reviews/ECON-002-rettingsrapport-P2.md`. Ingen satser endret; ingen parametere godkjent; produksjonsprofilen er fortsatt ikke godkjent; `dealer_entered` vekt-policy er flagget for neste review.
 
+## 26. Runde 16 — policy for forhandleroppgitt vekt (19.10.2026)
+Policybeslutning (ikke parametergodkjenning): forhandleroppgitt vekt uten dokumentert grunnlag (`dealer_entered`) gir **estimat** med årsak `weight_dealer_entered_undocumented`, aldri `approved`/`calculated` (også med godkjent profil); vektkomponentene merkes som estimat, beregningen og beløpene er uendret. Vekt med dokumentert grunnlag (typegodkjenning/kjøretøyregister) bruker de tilsvarende basisene, også når den er lagt inn manuelt: grunnlaget avgjør. Det åpne policyspørsmålet i §25 er dermed besvart. Detaljer: `reviews/ECON-002-endringsrapport-dealer-entered.md`. Satser, sensitivitet og blokkeringer uendret; ingen parametere godkjent.
+
 **Sluttstatus: REVIEW.**
 

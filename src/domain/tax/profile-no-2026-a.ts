@@ -116,6 +116,7 @@ export const NO_OTA_2026_A_PB: TaxProfile = {
     "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
     "R-OTA-014 er E1 for sluttkravet (forarbeid T50: «generelt for alle skatte- og avgiftskrav»; omnummerering T52); den vedtatte 2007-ordlyden er ikke lest direkte, og mellomledd er ikke omtalt (U-012)",
     "U-009 / R-OTA-016: trinndato som ikke finnes i målmåneden (dag 29–31) er ikke spesifisert; blokkert i vinduet",
+    "Vekt: forhandleroppgitt vekt uten dokumentert grunnlag (dealer_entered), referansevekt og ukjent grunnlag gir estimat, ikke godkjent beløp (policy 2026-10-19); dokumentert grunnlag (typegodkjenning/kjøretøyregister) kreves for godkjent beløp",
     "20 år eller eldre: § 3-3-setningen om minimumsavgift er ikke utledet (R-OTA-011); motoren blokkerer (twenty_year_minimum_unresolved) og gir ikke sluttkrav",
     "R-OTA-015: NEDC, egenvekt/10 og desimal-CO₂ er blokkert (avrunding av desimaler mangler kilde)",
     "PHEV: anvendelsen hviler på det tekniske vilkåret i § 3 og på forskrift § 3-1 (E1-tekst); forutsetter dokumentert stempeldrevet motor og ekstern lading per kjøretøy",

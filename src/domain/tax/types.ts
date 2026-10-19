@@ -30,6 +30,11 @@ export interface PropulsionInput {
   evidence: PropulsionEvidence;
 }
 
+/**
+ * Grunnlaget for avgiftsvekten. Policy (2026-10-19, beslutning av Christian): det er DOKUMENTERT GRUNNLAG, ikke inntastingsmåten, som avgjør.
+ * `eu_type_approval_minimum_mass` / `vehicle_register`: verdi med dokumentert grunnlag i typegodkjenning (minimumsvekt) eller kjøretøyregister, også når den er
+ * lagt inn manuelt. `dealer_entered`: forhandleroppgitt vekt UTEN dokumentert grunnlag ⇒ estimat. `reference_listing` / `unverified` ⇒ estimat.
+ */
 export type WeightBasis = "eu_type_approval_minimum_mass" | "vehicle_register" | "dealer_entered" | "reference_listing" | "unverified";
 
 export type Co2Method =
@@ -104,6 +109,8 @@ export interface TaxComponent {
   /** Eksakt desimalstreng i NOK. */
   amountExact: string;
   ruleRef: string;
+  /** Satt når komponenten hviler på et uverifisert/udokumentert input (vekt): beregningen er beholdt, men beløpet er et estimat. */
+  estimate?: { reasons: EstimateReason[] };
 }
 
 export interface AgeDeductionResult {
@@ -158,7 +165,7 @@ export interface ImplementationConclusion {
  * `approved` kan bare oppstå når profilen er godkjent OG har klasse 1-referanse OG alle anvendte regler er E1 (ikke tilfelle i dag).
  */
 /** Årsaker til at et beløp er et estimat selv om regelprofilen er godkjent (kvalitet/entydighet i inputene, ikke regelgrunnlaget). */
-export type EstimateReason = "weight_reference_only" | "first_registration_date_sensitive";
+export type EstimateReason = "weight_reference_only" | "weight_dealer_entered_undocumented" | "first_registration_date_sensitive";
 
 export interface ValidationStatus {
   /** `approved` krever BÅDE godkjent regelprofil (+ klasse 1, E1) OG entydig, verifisert input (`inputResolution = "resolved"`). */

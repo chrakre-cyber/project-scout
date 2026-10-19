@@ -17,7 +17,7 @@
 | 1. Referansevekt | `weight_reference_only` | vektgrunnlag `reference_listing` eller `unverified` | estimat; beløp og `weight_basis_not_verified` bevart; aldri approved |
 | 2. Datofølsomt punktbeløp | `first_registration_date_sensitive` | bare måned kjent og ulike mulige dager gir ulikt krav (`monthSensitivity` finnes) | estimat; punktbeløpet (466 253 i eksempelet; alternativ 475 719) er ikke godkjent sluttkrav |
 
-Bevisst ikke endret: (a) bare måned som gir samme beløp for alle mulige dager blokkeres/nedgraderes ikke; (b) `dealer_entered` vekt er ikke likestilt med `reference_listing` (advarsel som før, ingen estimatårsak) — **policy som bør bekreftes i neste review**, siden ECON-001 §11 bare definerer «reference-only»; (c) ingen advarsel er gjort om til blokkering; (d) forhandleroppgitt drivlinje er uendret.
+Bevisst ikke endret: (a) bare måned som gir samme beløp for alle mulige dager blokkeres/nedgraderes ikke; (b) `dealer_entered` vekt var i denne runden ikke likestilt med `reference_listing` — **overstyrt av policybeslutningen 19.10.2026: se `reviews/ECON-002-endringsrapport-dealer-entered.md`**; (c) ingen advarsel er gjort om til blokkering; (d) forhandleroppgitt drivlinje er uendret.
 
 ## Tester
 `tests/econ-002-review-regressions.test.ts`: Codex' to regresjonstester uendret (de feilet på a42a30b) + utvidelser: entydig input får fortsatt approved; referanse-/ukjent vekt gir estimat med bevart beløp og advarsel; `dealer_entered` er ikke referansevekt; måned med sensitivitet gir estimat; måned uten sensitivitet er resolved; begge årsaker; uten profilgodkjenning er `profileApproved` false. Eksisterende tester er urørt.

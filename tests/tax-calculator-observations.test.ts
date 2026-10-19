@@ -6,7 +6,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
-import { calculateNorwegianVehicleTax } from "@/domain/tax";
+import { calculateNorwegianVehicleTax, NO_OTA_2026_A_PB } from "@/domain/tax";
 import { OBSERVED_RUNS } from "./fixtures/tax-calculator-observations";
 
 const ROOT = join(__dirname, "..");
@@ -91,5 +91,15 @@ describe("motoren mot observert kalkulatorresultat (18.10.2026)", () => {
     const b = calculateNorwegianVehicleTax({ ...ev.input, co2: { gramsPerKm: null, method: "unspecified" } });
     expect(b.status).toBe("calculated_unverified");
     expect(b.finalClaim?.totalRegistrationTaxesNok).toBe(a.finalClaim?.totalRegistrationTaxesNok);
+  });
+
+  it("policy 2026-10-19: testinputene bruker forhandleroppgitt vekt uten dokumentert grunnlag, så selv med godkjent syntetisk profil er resultatene estimater (totalene er uendret)", () => {
+    for (const run of OBSERVED_RUNS) {
+      const approvedProfile = { ...NO_OTA_2026_A_PB, approval: { ...NO_OTA_2026_A_PB.approval, approved: true } };
+      const r = calculateNorwegianVehicleTax(run.input, approvedProfile);
+      expect(r.finalClaim?.totalRegistrationTaxesNok, run.id).toBe(run.expectedTotalNok);
+      expect(r.status, run.id).toBe("calculated_unverified");
+      expect(r.validation, run.id).toMatchObject({ status: "estimate_not_approved", profileApproved: true, inputResolution: "estimate", estimateReasons: ["weight_dealer_entered_undocumented"] });
+    }
   });
 });
