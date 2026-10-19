@@ -7,6 +7,8 @@ import { describe, expect, it } from "vitest";
 import { calculateEconomics, REGISTRY_ECONOMICS_PROFILE, UNCONFIRMED_HALF_UP, type EconomicsConfig, type EconomicsInput, type EconomicsProfile, type FxQuote } from "@/domain/economics";
 import { ECON_CASES, FIXTURE_FX, FX_ROLES_SCENARIO, MEROVO_DEFAULT_EXPECTED } from "./fixtures/econ-golden";
 import { NO_OTA_2026_A_PB, type TaxInput } from "@/domain/tax";
+/** Fixture-/testforutsetning: utenlandsk mva. er dokumentert utelukket fra prisen (T88). Uten denne er tollverdiens pris en nedre grense. */
+const FV = { treatment: "excluded_documented", evidence: "invoice_or_contract" } as const;
 
 const fxq = (rate: string, over: Partial<FxQuote> = {}): FxQuote => ({ pair: "EUR/NOK", rate, source: { kind: "fixture" }, effectiveAt: null, quotedAt: null, fixtureOnly: true, validFrom: "2026-10-15", validTo: "2026-11-11", ...over });
 /** Fixturens tilleggsforutsetninger (ECON-003 hadde ingen post for disse): uttrykkelig scenariovalg, ikke kilde. */
@@ -18,7 +20,7 @@ const cfg = (over: Partial<EconomicsConfig> = {}): EconomicsConfig => ({ roundin
 const EXCL = { state: "excluded_by_scenario", reason: "fixture" } as const;
 const zeroIns = { amount: "0", basis: "scenario_assumption" } as const;
 const fixtureInput = (i: number, over: Partial<EconomicsInput> = {}): EconomicsInput => ({
-  price: { currency: "EUR", advertisedNet: String(ECON_CASES[i]!.advertisedNetPriceEur), priceBasis: "net", use: "advertised", evidence: "listing_claim" },
+  price: { currency: "EUR", advertisedNet: String(ECON_CASES[i]!.advertisedNetPriceEur), priceBasis: "net", use: "advertised", evidence: "listing_claim", foreignVat: FV },
   fx: { acquisition: fxq(FIXTURE_FX.rate), customs: fxq(FIXTURE_FX.rate) },
   transportToBorder: { amount: "8000", basis: "dealer_entered" }, transportAfterBorder: EXCL, loadingHandling: EXCL, insurance: zeroIns,
   customsDate: { date: "2026-10-20", kind: "expected_scenario" }, vatHandling: { value: "registered_reports_in_vat_return", source: { kind: "dealer_entered" } },
@@ -31,7 +33,7 @@ const fixtureInput = (i: number, over: Partial<EconomicsInput> = {}): EconomicsI
 });
 /** NOK-pris + diesel-avgiften fra CASE-003: isolerer mva./avrunding fra kursomregning. */
 const nokInput = (price: string, over: Partial<EconomicsInput> = {}): EconomicsInput => ({
-  ...fixtureInput(2), price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, ...over,
+  ...fixtureInput(2), price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV }, fx: {}, ...over,
 });
 const val = (t: { kind: string; valueNok?: bigint | null }) => (t.kind === "value" ? t.valueNok : undefined);
 
@@ -147,7 +149,7 @@ describe("kjøpsgrunnlag og ugyldig input", () => {
     }
   });
   it("annonsert, forhandlerjustert og brukt holdes adskilt; dealer_adjusted krever beløp", () => {
-    const p = { currency: "EUR", advertisedNet: "40000", advertisedGross: "50000", dealerAdjusted: "38562", priceBasis: "net", use: "dealer_adjusted", evidence: "quote_document" } as const;
+    const p = { currency: "EUR", advertisedNet: "40000", advertisedGross: "50000", dealerAdjusted: "38562", priceBasis: "net", use: "dealer_adjusted", evidence: "quote_document", foreignVat: FV } as const;
     const r = calculateEconomics(fixtureInput(2, { price: p }), cfg());
     expect(r.acquisition).toMatchObject({ advertisedNet: "40000", advertisedGross: "50000", dealerAdjusted: "38562", used: { amount: "38562", selected: "dealer_adjusted", basis: "dealer_adjusted" } });
     expect(r.acquisition.acquisitionUsedNok).toBe(411491n);
@@ -163,7 +165,7 @@ describe("kjøpsgrunnlag og ugyldig input", () => {
     expect(r.estimatedLandedCost.kind).toBe("not_calculated");
   });
   it("ugyldig valuta, dato, transportbeløp, tall (NaN/Infinity/number) og charges blokkerer", () => {
-    expect(calculateEconomics(fixtureInput(2, { price: { currency: "eur", advertisedNet: "1", priceBasis: "net", use: "advertised", evidence: "dealer_entered" } }), cfg()).blockers[0]!.code).toBe("invalid_currency");
+    expect(calculateEconomics(fixtureInput(2, { price: { currency: "eur", advertisedNet: "1", priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV } }), cfg()).blockers[0]!.code).toBe("invalid_currency");
     expect(calculateEconomics(nokInput("1000", { asOf: "2026-02-30" }), cfg()).blockers.map((b) => b.code)).toContain("invalid_date");
     expect(calculateEconomics(nokInput("1000", { transportToBorder: { amount: "-5", basis: "quoted" } }), cfg()).status).toBe("blocked");
     expect(calculateEconomics(nokInput("1000", { transportToBorder: { amount: Number.NaN as unknown as string, basis: "quoted" } }), cfg()).status).toBe("blocked");
@@ -221,7 +223,7 @@ describe("kursroller og proveniens", () => {
 
 describe("elbilfritak (R-IMP-VAT-003, ubekreftet) og avrunding (U-013, ubekreftet)", () => {
   const ev = (price: string, evExemption: "applies" | "not_applicable" | "unknown" | undefined) =>
-    calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, transportToBorder: { amount: "0", basis: "quoted" }, ...evOf(evExemption ?? "unknown") }, cfg());
+    calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV }, fx: {}, transportToBorder: { amount: "0", basis: "quoted" }, ...evOf(evExemption ?? "unknown") }, cfg());
   it("kalkulatorobservasjon: 350 000 → 12 500; 300 000 → 0; 299 999 → 0", () => {
     expect(ev("350000", "applies").importVat.valueNok).toBe(12500n);
     expect(ev("300000", "applies").importVat.valueNok).toBe(0n);
@@ -236,12 +238,14 @@ describe("elbilfritak (R-IMP-VAT-003, ubekreftet) og avrunding (U-013, ubekrefte
   it("ukjent anvendelse (standard): to merkede mva.-/kontantscenarier, ingen enkeltverdi; cross-produkt med fradragsstatus", () => {
     const r = ev("350000", undefined);
     expect(r.importVat).toMatchObject({ status: "scenarios", valueNok: null, ev: { qualification: "unresolved" } });
-    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["no_exemption", 87500n], ["with_exemption__basis_customs_value", 12500n], ["with_exemption__basis_vehicle_price", 12500n]]);
+    // Runde 34 (kildevurdering 6): målegrunnlaget er dokumentert for ordinær import (tollverdi), så scenarioet «kjøretøypris» er fjernet; bare kvalifikasjonen er uavklart.
+    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["no_exemption", 87500n], ["with_exemption__basis_customs_value", 12500n]]);
     expect(r.importCashRequirement).toMatchObject({ kind: "scenarios", valueNok: null });
     expect(r.status).toBe("incomplete");
-    expect(r.incompleteReasons).toEqual(expect.arrayContaining(["ev_qualification_unresolved", "ev_threshold_basis_unresolved"]));
-    const u = calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, transportToBorder: { amount: "0", basis: "quoted" }, evQualification: undefined, evThresholdBasis: undefined, deduction: undefined }, cfg());
-    expect((u.estimatedLandedCost as { scenarios: unknown[] }).scenarios).toHaveLength(6);
+    expect(r.incompleteReasons).toContain("ev_qualification_unresolved");
+    expect(r.incompleteReasons).not.toContain("ev_threshold_basis_unresolved");
+    const u = calculateEconomics({ ...fixtureInput(1), price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV }, fx: {}, transportToBorder: { amount: "0", basis: "quoted" }, evQualification: undefined, evThresholdBasis: undefined, deduction: undefined }, cfg());
+    expect((u.estimatedLandedCost as { scenarios: unknown[] }).scenarios).toHaveLength(4); // 2 mva.-scenarier × 2 fradragsutfall (tidligere 3 × 2)
   });
   it("fritak gjelder bare elbil: diesel får ingen fritaksscenario; en kvalifikasjonspåstand som motsier avgiftsmotorens stempelmotor blokkeres", () => {
     const unknownClaim = calculateEconomics(nokInput("350000", { ...evOf("unknown"), transportToBorder: { amount: "0", basis: "quoted" } }), cfg());
@@ -262,7 +266,7 @@ describe("elbilfritak (R-IMP-VAT-003, ubekreftet) og avrunding (U-013, ubekrefte
     expect(t.status).toBe("incomplete");
   });
   it("kjøpesum x,5 (tie) ved kursomregning: EUR 1 × 0.5 ⇒ likhet; x,4999 avrundes ned, x,5001 opp", () => {
-    const mk = (rate: string) => calculateEconomics(fixtureInput(2, { price: { currency: "EUR", advertisedNet: "1000", priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: { acquisition: fxq(rate), customs: fxq("10") } }), cfg());
+    const mk = (rate: string) => calculateEconomics(fixtureInput(2, { price: { currency: "EUR", advertisedNet: "1000", priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV }, fx: { acquisition: fxq(rate), customs: fxq("10") } }), cfg());
     expect(mk("10.4999").acquisition.acquisitionUsedNok).toBe(10500n); // 10 499,9
     expect(mk("10.4995").acquisition.acquisitionUsedNok).toBe(10500n); // 10 499,5 ⇒ likhet
     expect(mk("10.4995").importCashRequirement.kind).toBe("lower_bound");
@@ -300,19 +304,28 @@ describe("videreføring av avgiftsmotorens usikkerhet; validated er uoppnåelig 
   it("ukjente øvrige avgifter/gebyrer (standard) ⇒ nedre grense; klimagass, tollavgift o.l. er aldri antatt 0", () => {
     const r = calculateEconomics(fixtureInput(2, { charges: undefined }), cfg());
     expect(r.importCashRequirement.kind).toBe("lower_bound");
-    expect((r.importCashRequirement as { missing: string[] }).missing).toEqual(expect.arrayContaining(["charges.climateGas", "charges.registrationFee", "charges.customsDuty"]));
+    expect((r.importCashRequirement as { missing: string[] }).missing).toEqual(expect.arrayContaining(["charges.climateGas", "charges.registrationFee"]));
+    // Runde 34: tollavgift er ikke lenger «ukjent» her fordi personbil (87.03) + kjent drivlinje + akseptdato i 2026 dekkes av Tolltariffen 2026 (T83), ordinær sats 0.
+    expect(r.customsDuty).toEqual({ nok: 0n, basis: "ordinary_rate_tariff_2026" });
+    expect((r.importCashRequirement as { missing: string[] }).missing).not.toContain("charges.customsDuty");
     expect(r.status).toBe("incomplete");
   });
-  it("kjente øvrige kostnader legges til én gang; tollavgift > 0 er uavklart mot mva.-grunnlaget", () => {
+  it("kjente øvrige kostnader legges til én gang; eksplisitt tollavgift > 0 inngår i mva.-grunnlaget (mval. § 4-11), ikke bare ignorert", () => {
     const r = calculateEconomics(fixtureInput(2, { charges: { climateGas: EXCL, registrationFee: { amount: "1000", basis: "quoted" }, customsDuty: EXCL, otherKnown: [{ label: "x", amount: "500", basis: "dealer_entered" }] } }), cfg());
     expect(val(r.importCashRequirement)).toBe(858087n - 8000n + 8000n + 1500n);
     const d = calculateEconomics(fixtureInput(2, { charges: { climateGas: EXCL, registrationFee: EXCL, customsDuty: { amount: "2000", basis: "quoted" } } }), cfg());
-    expect(d.incompleteReasons).toContain("customs_duty_vat_base_unresolved");
+    const d0 = calculateEconomics(fixtureInput(2), cfg());
+    // Tidligere: incomplete «customs_duty_vat_base_unresolved» og tollavgiften var ikke i grunnlaget. Nå: grunnlag +2 000, mva. +500 (25 % × 2 000, uten avrundingslikhet), kontant +2 500.
+    expect(d.incompleteReasons).not.toContain("customs_duty_vat_base_unresolved");
+    expect(d.importVatBaseNok).toBe(d0.customsValueNok! + 2000n);
+    expect(d.importVat.valueNok).toBe(d0.importVat.valueNok! + 500n);
+    expect(val(d.importCashRequirement)).toBe(val(d0.importCashRequirement)! + 2500n);
+    expect(d.customsDuty).toEqual({ nok: 2000n, basis: "explicit" });
   });
   it("med alle godkjenningsflagg satt og ellers ren input kan statusen bli validated — men aldri med dagens register", () => {
     expect(REGISTRY_ECONOMICS_PROFILE).toEqual({ vatRulesApproved: false, roundingApproved: false, customsFxRuleApproved: false, deductionRuleApproved: false });
     const all: EconomicsProfile = { vatRulesApproved: true, roundingApproved: true, customsFxRuleApproved: true, deductionRuleApproved: true };
-    const clean = fixtureInput(2, { price: { currency: "NOK", advertisedNet: "100000", priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, deduction: { value: "non_recoverable", source: { kind: "dealer_profile" } }, charges: { climateGas: { state: "not_applicable", basis: "x" }, registrationFee: { amount: "0", basis: "quoted" }, customsDuty: { state: "not_applicable", basis: "x" } } });
+    const clean = fixtureInput(2, { price: { currency: "NOK", advertisedNet: "100000", priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV }, fx: {}, deduction: { value: "non_recoverable", source: { kind: "dealer_profile" } }, charges: { climateGas: { state: "not_applicable", basis: "x" }, registrationFee: { amount: "0", basis: "quoted" }, customsDuty: { state: "not_applicable", basis: "x" } } });
     // avgiftsmotoren gir fortsatt estimat (udokumentert vekt) ⇒ selv med alle økonomiflagg er resultatet ikke validert
     const r = calculateEconomics(clean, cfg({ profile: all, rounding: { mode: "half_up", status: "approved" } }));
     expect(r.status).toBe("estimate");

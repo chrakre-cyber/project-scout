@@ -5,6 +5,7 @@
  * Kildebelegg (ikke godkjenning): reviews/ECON-004-kildevurdering.md og docs/tax/sources.json (T53–T69).
  */
 import { calculateNorwegianVehicleTax, classifyPowertrain, type TaxPowertrain, type TaxResult } from "@/domain/tax";
+import { ordinaryDutyCoverage } from "./customs-tariff";
 import {
   MAX_AMOUNT, MAX_RATE, MIN_RATE, add, cmp, fromInt, isZero, mul, norm, parseDecimal, parsePublishedDecimal, roundToWhole, subFloor0, toDecimalString, toExactDecimalString,
   type Rat, type RoundingPolicy,
@@ -12,17 +13,22 @@ import {
 import {
   REGISTRY_ECONOMICS_PROFILE,
   type AmountBasis, type AmountInput, type ChargeState, type CustomsAcceptanceDate, type DeductionStatus, type EconBlocker, type EconomicsConfig, type EconomicsInput,
-  type EconomicsResult, type EstimateReason, type EvThresholdBasis, type FxQuote, type FxRoleResult, type TaxLine, type Total, type VatHandling, type VatRecoverability,
-  type VatScenarioId,
+  type EconomicsResult, type EstimateReason, type EvThresholdBasis, type FxQuote, type FxRoleResult, type TaxLine, type Total, type VatBaseTreatment, type VatHandling,
+  type VatRecoverability, type VatScenarioId,
 } from "./types";
 
 /** R-IMP-VAT-001: 25 % av grunnlaget (T56, T63). Ikke godkjent regel. */
 const VAT_RATE: Rat = { n: 25n, d: 100n };
-/** R-IMP-VAT-003: fritaksbeløp for elbil fra 2026-01-01 (T63 § 6-8, T35). Kvalifikasjon og målegrunnlag ved innførsel er uavklart. */
+/** R-IMP-VAT-003: fritaksbeløp for elbil fra 2026-01-01 (T63 § 6-8, T35). Målegrunnlag ved ordinær innførsel: tollverdi (R-IMP-VAT-004, E1P; ikke godkjent). */
 const EV_EXEMPTION_THRESHOLD: Rat = fromInt(300_000n);
 const FX_SOURCE_KINDS: readonly FxQuote["source"]["kind"][] = ["official_customs", "bank", "dealer_entered", "fixture"];
 const AMOUNT_BASES: readonly AmountBasis[] = ["dealer_entered", "quoted", "assumed_default", "scenario_assumption"];
 const ACCEPTED_STATUS_SOURCES = ["dealer_entered", "dealer_profile"];
+const VAT_BASE_TREATMENTS: readonly VatBaseTreatment[] = ["in_base", "outside_base", "unknown"];
+const COMMISSION_ROLES = ["purchase_commission", "sales_or_brokerage_commission", "unknown"] as const;
+const PAYMENT_NATURES = ["separate_payment_cost", "included_in_goods_price", "unknown"] as const;
+const FOREIGN_VAT_TREATMENTS = ["excluded_documented", "unconfirmed"] as const;
+const FOREIGN_VAT_EVIDENCE = ["invoice_or_contract", "dealer_entered", "listing_claim"] as const;
 
 const isIsoDate = (s: unknown): s is string => {
   if (typeof s !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
@@ -220,6 +226,23 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   if (!purchaseBasisResolved && !c.blockers.length) c.incomplete.push(usedBasis === "gross_only" ? "purchase_basis_gross_only" : "purchase_basis_unknown");
   if (purchaseBasisResolved && p.evidence === "listing_claim") c.estimate.add("purchase_price_listing_claim");
 
+  // --- Utenlandsk mva. i prisen (T88, vareførselshåndboken § 6-11): refusjonsrett/mva.-fri pris utledes aldri av annonsetekst eller en oppgitt nettopris alene ---
+  // Uten dokumentert utelukkelse er den oppgitte prisen bare en nedre grense for tollverdiens pris (utenlandsk mva. kan inngå i prisen).
+  const customsExtra: string[] = [];
+  const fv = p?.foreignVat;
+  let fvDocumented = false;
+  if (fv !== undefined && (typeof fv !== "object" || fv === null || !FOREIGN_VAT_TREATMENTS.includes(fv.treatment) || !FOREIGN_VAT_EVIDENCE.includes(fv.evidence))) {
+    block(c, "invalid_classification", "price.foreignVat: ugyldig behandling eller bevis", "price.foreignVat");
+  } else if (fv) {
+    if (fv.treatment === "excluded_documented" && fv.evidence === "listing_claim") c.warnings.push("utenlandsk mva.: en annonsepåstand dokumenterer ikke at kjøperen slipper å belastes avgiften; tollverdiens pris er en nedre grense");
+    fvDocumented = fv.treatment === "excluded_documented" && fv.evidence !== "listing_claim";
+    if (fvDocumented && fv.evidence === "dealer_entered") c.estimate.add("foreign_vat_exclusion_dealer_stated");
+  }
+  if (purchaseBasisResolved && !fvDocumented) {
+    c.incomplete.push("foreign_vat_exclusion_undocumented");
+    customsExtra.push("prisen kan inneholde utenlandsk mva.: utelukkelse er ikke dokumentert (T88)");
+  }
+
   // --- Datoer: beregningsdato, akseptdato for deklarasjon og norsk registreringsdato holdes adskilt ---
   const cd = input.customsDate ?? { date: null, kind: "unknown" as const };
   if (!["actual_acceptance", "expected_scenario", "unknown"].includes(cd.kind) || (cd.date !== null && cd.date !== undefined && !isIsoDate(cd.date))) {
@@ -285,16 +308,64 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   if (loading === null && lhMissing.length) c.incomplete.push("loading_handling_unknown");
 
   // --- Øvrige kjente kostnader ---
+  // Avgifter som oppstår ved innførsel (mval. § 4-11) vurderes hver for seg: tollavgift (nedenfor, etter drivlinjeklassifisering), klimagassavgift og andre
+  // importavgifter klassifiseres som «i grunnlaget», «utenfor» eller ukjent. Registreringsgebyr (Statens vegvesen) er ikke en importavgift.
   const ch = input.charges ?? {};
   let others = fromInt(0n);
-  for (const [k, v] of [["climateGas", ch.climateGas], ["registrationFee", ch.registrationFee], ["customsDuty", ch.customsDuty]] as const) {
-    const a = chargeAmount(c, `charges.${k}`, v, missing);
-    if (k === "customsDuty" && a && !isZero(a)) c.incomplete.push("customs_duty_vat_base_unresolved");
-    if (a) others = add(others, a);
+  let baseExtra = fromInt(0n);
+  let baseComplete = true;
+  const classify = (field: string, label: string, v: unknown): VatBaseTreatment => {
+    if (v === undefined) return "unknown";
+    if (!VAT_BASE_TREATMENTS.includes(v as VatBaseTreatment)) { block(c, "invalid_classification", `${field}: ugyldig behandling mot mva.-grunnlaget`, field); return "unknown"; }
+    void label;
+    return v as VatBaseTreatment;
+  };
+  const applyBase = (treatment: VatBaseTreatment, a: Rat, label: string) => {
+    if (isZero(a)) return;
+    if (treatment === "in_base") baseExtra = add(baseExtra, a);
+    else if (treatment === "unknown") { baseComplete = false; c.incomplete.push("vat_base_charge_unclassified"); c.warnings.push(`${label}: ukjent om beløpet er en avgift som beregnes ved innførsel (mval. § 4-11); mva.-grunnlaget er en nedre grense`); }
+  };
+  const climate = chargeAmount(c, "charges.climateGas", ch.climateGas, missing);
+  if (climate) { applyBase(classify("charges.climateGasVatBase", "klimagassavgift", ch.climateGasVatBase), climate, "klimagassavgift"); others = add(others, climate); }
+  const regFee = chargeAmount(c, "charges.registrationFee", ch.registrationFee, missing);
+  if (regFee) others = add(others, regFee); // Statens vegvesens gebyr: ikke importavgift, aldri i grunnlaget
+  for (const [i, lv] of (ch.importLevies ?? []).entries()) {
+    const a = amountInput(c, `charges.importLevies[${i}]`, lv);
+    const tr = classify(`charges.importLevies[${i}].vatBase`, lv?.label ?? "importavgift", lv?.vatBase);
+    if (a) { applyBase(tr, a, String(lv?.label ?? "importavgift")); others = add(others, a); }
   }
   for (const [i, o] of (ch.otherKnown ?? []).entries()) {
     const a = amountInput(c, `charges.otherKnown[${i}]`, o);
     if (a) others = add(others, a);
+  }
+
+  // --- Provisjon til mellommann: innkjøpsprovisjon og salgs-/meglerprovisjon behandles ulikt; ukjent rolle forblir ukjent (T87/T88) ---
+  let commissionInCustomsValue = fromInt(0n);
+  for (const [i, cm] of (input.commission ?? []).entries()) {
+    const f = `commission[${i}]`;
+    if (!cm || typeof cm !== "object" || !COMMISSION_ROLES.includes(cm.role) || ![true, false, null].includes(cm.paidSeparatelyFromPrice as boolean | null)) { block(c, "invalid_classification", `${f}: ugyldig rolle eller betalingsmåte`, f); continue; }
+    const a = amountInput(c, `${f}.amount`, cm.amount);
+    if (!a) continue;
+    if (cm.paidSeparatelyFromPrice === null) { c.incomplete.push("commission_price_inclusion_unknown"); customsExtra.push("provisjon: ukjent om betalt i tillegg til prisen"); missing.push(f); continue; }
+    if (cm.paidSeparatelyFromPrice === false) { // allerede i prisen: ingenting legges til
+      if (cm.role !== "sales_or_brokerage_commission") c.warnings.push(`${f}: innkjøpsprovisjon/ukjent rolle som allerede er i prisen trekkes ikke ut av tollverdien (§ 6-11 (1) e er ikke modellert)`);
+      continue;
+    }
+    others = add(others, a); // betalt i tillegg: kostnad, én gang
+    if (cm.role === "sales_or_brokerage_commission") commissionInCustomsValue = add(commissionInCustomsValue, a); // legges til tollverdien (§ 6-10 (1) a nr. 1)
+    else if (cm.role === "unknown") { c.incomplete.push("commission_role_unknown"); customsExtra.push("provisjon: rolle ukjent (innkjøps- eller salgsprovisjon)"); }
+    // purchase_commission: kostnad, ikke i tollverdien
+  }
+
+  // --- Betalingskostnader: ingen generell behandling; selvstendig kostnad skilles fra beløp som inngår i vareprisen ---
+  for (const [i, pc] of (input.paymentCosts ?? []).entries()) {
+    const f = `paymentCosts[${i}]`;
+    if (!pc || typeof pc !== "object" || !PAYMENT_NATURES.includes(pc.nature)) { block(c, "invalid_classification", `${f}: ugyldig art`, f); continue; }
+    const a = amountInput(c, `${f}.amount`, pc.amount);
+    if (!a) continue;
+    if (pc.nature === "separate_payment_cost") others = add(others, a); // selvstendig kostnad: utenfor tollverdi (§ 6-10 (2): tilleggene er uttømmende)
+    else if (pc.nature === "included_in_goods_price") c.warnings.push(`${f} (${String(pc.label)}): inngår i vederlaget til selger og er allerede i prisen; legges ikke til en gang til`);
+    else { c.incomplete.push("payment_cost_nature_unknown"); customsExtra.push(`betalingskostnad «${String(pc.label)}»: ukjent om selvstendig kostnad eller del av vareprisen`); missing.push(f); }
   }
 
   // --- Avgift (ECON-002) ---
@@ -329,8 +400,33 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   // --- Elbilfritak: kvalifikasjon og målegrunnlag adskilt fra drivlinjeklassifiseringen ---
   const engine: TaxPowertrain | null = tax.powertrain ?? classifyPowertrain(input.taxInput.propulsion);
   const qual = evQualification(c, input, engine);
-  const basisIn: EvThresholdBasis = input.evThresholdBasis ?? "unresolved";
-  if (!["customs_value", "vehicle_price_only", "unresolved"].includes(basisIn)) block(c, "invalid_amount", "evThresholdBasis: ugyldig verdi", "evThresholdBasis");
+  const basisIn: EvThresholdBasis = input.evThresholdBasis ?? "customs_value";
+  if (!["customs_value", "undocumented_import_type"].includes(basisIn)) block(c, "invalid_amount", "evThresholdBasis: ugyldig verdi (kjøretøypris alene er ikke et regelalternativ)", "evThresholdBasis");
+
+  // --- Tollavgift (mval. § 4-11: tollavgift inngår i mva.-grunnlaget). Ordinær sats 0 brukes bare når klassifisering og tariffgyldighet dekker tilfellet; ukjent blir aldri 0 ---
+  let dutyRat: Rat | null = null;
+  let dutyBasis: EconomicsResult["customsDuty"]["basis"] = "unknown";
+  const coverage = ordinaryDutyCoverage({ vehicleClass: input.taxInput?.vehicleClass, powertrain: engine, acceptanceDate: accept.date });
+  if (ch.customsDuty === undefined) {
+    if (coverage.covered) {
+      dutyRat = fromInt(0n);
+      dutyBasis = "ordinary_rate_tariff_2026";
+      if (!profile.vatRulesApproved) c.estimate.add("customs_duty_ordinary_rate_unapproved");
+      c.warnings.push("tollavgift: ordinær sats 0 (Tolltariffen 2026, personbil 87.03, T83); endringer i tolltariffen etter 1.1.2026 er ikke kontrollert");
+    } else {
+      missing.push("charges.customsDuty");
+      c.warnings.push(`tollavgift ukjent: ordinær sats 0 brukes ikke fordi ${coverage.reason}`);
+    }
+  } else {
+    const a = chargeAmount(c, "charges.customsDuty", ch.customsDuty, missing);
+    if (a !== null) {
+      dutyRat = a;
+      dutyBasis = "state" in ch.customsDuty ? "stated_not_applicable" : "explicit";
+      others = add(others, a);
+      if (!isZero(a) && coverage.covered) c.warnings.push("oppgitt tollavgift > 0 avviker fra ordinær sats 0 i Tolltariffen 2026 (kan skyldes særtiltak); oppgitt beløp brukes og inngår i mva.-grunnlaget");
+    }
+  }
+  if (dutyRat === null) baseComplete = false;
 
   // --- Ugyldig input stopper her ---
   if (c.blockers.length) {
@@ -339,7 +435,8 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
       status: "blocked", blockers: c.blockers,
       dates: { asOf: asOfOk ? asOf : null, customsAcceptance: { date: accept.date, kind: accept.kind, rateValidOnDate: null }, norwegianRegistration: { date: input.taxInput?.norwegianRegistration?.date ?? null, kind: input.taxInput?.norwegianRegistration?.kind ?? null } },
       acquisition: { advertisedGross, advertisedNet, dealerAdjusted, used: { amount: usedAmount, currency: String(currency), selected: p?.use === "dealer_adjusted" ? "dealer_adjusted" : "advertised", basis: usedBasis, evidence: p?.evidence }, purchaseBasisResolved: false, acquisitionUsedNok: null, acquisitionUsedRaw: null },
-      fx: { acquisition: acqFx, customs: custFx }, transportToBorderNok: null, transportToBorderBasis: toBorderBasis, transportAfterBorderNok: null, insuranceNok: null, loadingHandlingNok: null, customsValueNok: null,
+      fx: { acquisition: acqFx, customs: custFx }, transportToBorderNok: null, transportToBorderBasis: toBorderBasis, transportAfterBorderNok: null, insuranceNok: null, loadingHandlingNok: null, commissionInCustomsValueNok: null, customsValueNok: null,
+      customsDuty: { nok: null, basis: "unknown" }, importVatBaseNok: null,
       importVat: { status: "not_calculated", valueNok: null, scenarios: [], ev: { qualification: qual, thresholdBasis: null, engineClassification: engine }, reasons },
       importVatSettlement: { status: "not_calculated", handling: { value: handling, accepted: hAccepted, source: h?.source ?? null }, rows: [], excludedScenarios: [] },
       tax: taxL, importCashRequirement: notCalculated(reasons), estimatedLandedCost: notCalculated(reasons),
@@ -357,35 +454,40 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   const insuranceNok = insurance ? round(c, "forsikring", insurance) : insurance === null ? null : 0n;
   const loadingNok = loading ? round(c, "lasting og håndtering", loading) : loading === null ? null : 0n;
   const customsKnown = custPurchase !== null && toBorderNok !== null;
-  const customsValueRat = customsKnown ? add(add(add(fromInt(custPurchase), fromInt(toBorderNok)), fromInt(insuranceNok ?? 0n)), fromInt(loadingNok ?? 0n)) : null;
-  const customsComplete = insuranceNok !== null && loadingNok !== null;
+  const customsValueRat = customsKnown ? add(add(add(add(fromInt(custPurchase), fromInt(toBorderNok)), fromInt(insuranceNok ?? 0n)), fromInt(loadingNok ?? 0n)), commissionInCustomsValue) : null;
+  const customsComplete = insuranceNok !== null && loadingNok !== null && customsExtra.length === 0;
+  const vatBaseRat = customsValueRat ? add(customsValueRat, add(baseExtra, dutyRat ?? fromInt(0n))) : null;
   const customsValueNok = customsValueRat && customsComplete ? customsValueRat.n : null;
   if (!profile.vatRulesApproved) c.estimate.add("vat_rules_unapproved");
   if (!profile.roundingApproved || c.rounding.status !== "approved") c.estimate.add("rounding_unconfirmed");
 
   // --- Import-mva. per scenario ---
-  const withOptions: Array<"with_exemption__basis_customs_value" | "with_exemption__basis_vehicle_price"> =
-    basisIn === "customs_value" ? ["with_exemption__basis_customs_value"] : basisIn === "vehicle_price_only" ? ["with_exemption__basis_vehicle_price"] : ["with_exemption__basis_customs_value", "with_exemption__basis_vehicle_price"];
+  // Elbilgrensen måles mot tollverdien (bilpris + frakt + forsikring; R-IMP-VAT-004 E1P). Mva. = 25 % × (grunnlag − fritatt del), grunnlag = tollverdi + tollavgift + avgifter ved innførsel.
+  const basisDocumented = basisIn === "customs_value";
   const options: VatScenarioId[] = [];
   if (qual === "not_applicable_vehicle") options.push("single");
   else if (qual === "does_not_qualify") options.push("no_exemption");
   else {
     if (qual === "unresolved") { options.push("no_exemption"); c.incomplete.push("ev_qualification_unresolved"); } else c.estimate.add("ev_qualification_stated");
-    options.push(...withOptions);
-    if (basisIn === "unresolved") c.incomplete.push("ev_threshold_basis_unresolved"); else c.estimate.add("ev_threshold_basis_assumed");
+    options.push("with_exemption__basis_customs_value");
+    if (!basisDocumented) c.incomplete.push("ev_threshold_basis_not_documented_for_import_type");
+    if (customsValueRat && ((loadingNok ?? 0n) > 0n || !isZero(commissionInCustomsValue))) c.estimate.add("ev_threshold_components_unconfirmed");
+    c.warnings.push("elbilgrensen: målegrunnlaget (tollverdi) er hentet fra Tolletatens veiledning for privatpersoner, sammenstilt med mval. § 4-11 for registrert importør; lasting/håndtering og salgsprovisjon i målt beløp er ikke avgjort ordrett");
   }
-  const vatScenarios = customsValueRat
+  const vatScenarios = customsValueRat && vatBaseRat
     ? options.map((id) => {
-        const measured = id === "with_exemption__basis_customs_value" ? customsValueRat : id === "with_exemption__basis_vehicle_price" ? fromInt(custPurchase ?? 0n) : null;
-        const exempt = measured ? (cmp(measured, EV_EXEMPTION_THRESHOLD) < 0 ? measured : EV_EXEMPTION_THRESHOLD) : fromInt(0n);
-        const raw = mul(VAT_RATE, subFloor0(customsValueRat, exempt));
+        const exempt = id === "with_exemption__basis_customs_value" ? (cmp(customsValueRat, EV_EXEMPTION_THRESHOLD) < 0 ? customsValueRat : EV_EXEMPTION_THRESHOLD) : fromInt(0n);
+        const raw = mul(VAT_RATE, subFloor0(vatBaseRat, exempt));
         return { id, valueNok: round(c, `import-mva (${id})`, raw), raw: toDecimalString(raw, 4) };
       })
     : [];
-  const vatExact = customsValueRat !== null && customsComplete && !c.tieHit;
+  const vatExact = customsValueRat !== null && customsComplete && baseComplete && basisDocumented && !c.tieHit;
   const vatReasons: string[] = [];
   if (!customsValueRat) vatReasons.push("tollverdi kan ikke beregnes (kjøpesum/tollkurs/transport til innførselsstedet mangler)");
-  if (!customsComplete) vatReasons.push("forsikring eller lasting/håndtering ukjent: mva.-grunnlaget er en nedre grense");
+  if (insuranceNok === null || loadingNok === null) vatReasons.push("forsikring eller lasting/håndtering ukjent: mva.-grunnlaget er en nedre grense");
+  for (const r of customsExtra) vatReasons.push(`${r}: mva.-grunnlaget er en nedre grense`);
+  if (!baseComplete) vatReasons.push("tollavgift ukjent eller avgift ved innførsel uklassifisert (mval. § 4-11): mva.-grunnlaget er en nedre grense");
+  if (!basisDocumented) vatReasons.push("elbilgrensens målegrunnlag er ikke dokumentert for denne typen innførsel: nedre grense");
   if (c.tieHit) vatReasons.push("avrundingslikhet (U-013 uavklart)");
   const vatLower = vatScenarios.length ? vatScenarios.reduce((m, s) => (s.valueNok < m ? s.valueNok : m), vatScenarios[0]!.valueNok) : null;
   const importVat: EconomicsResult["importVat"] = {
@@ -428,13 +530,16 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   if (insuranceNok === null) missing.push("insurance");
   if (loadingNok === null) missing.push("loading_handling");
   if (!vatScenarios.length) missing.push("import_vat");
-  else if (!vatExact && customsComplete) missing.push("import_vat_rounding_tie");
+  else if (!vatExact && customsComplete && baseComplete && basisDocumented) missing.push("import_vat_rounding_tie");
+  if (vatScenarios.length && !baseComplete) missing.push("import_vat_base_incomplete");
+  if (vatScenarios.length && !basisDocumented) missing.push("ev_threshold_basis_not_documented");
+  if (customsExtra.length) missing.push("customs_value_components");
   if (taxL.totalRegistrationTaxesNok === null) missing.push("total_registration_taxes");
   const baseKnown = (acqNok ?? ZERO) + (toBorderNok ?? ZERO) + (afterBorderNok ?? ZERO) + (insuranceNok ?? ZERO) + (loadingNok ?? ZERO) + (taxL.totalRegistrationTaxesNok ?? ZERO) + round(c, "øvrige kostnader", others);
   // Avrundingslikhet i øvrige kostnader oppdages først her: totalene skal da ikke være entydige.
   if (c.tieHit && vatExact) missing.push("rounding_tie_unresolved");
   const exact = missing.length === 0 && vatExact && !c.tieHit;
-  const label = (id: string) => (id === "with_exemption__basis_customs_value" ? "med elbilfritak, grense målt mot tollverdi (scenario)" : id === "with_exemption__basis_vehicle_price" ? "med elbilfritak, grense målt mot kjøretøyets pris (scenario)" : id === "no_exemption" ? "uten elbilfritak" : "");
+  const label = (id: string) => (id === "with_exemption__basis_customs_value" ? "med elbilfritak (grense målt mot tollverdi)" : id === "no_exemption" ? "uten elbilfritak" : "");
   let cash: Total;
   let landed: Total;
   if (!exact) {
@@ -472,6 +577,8 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     },
     fx: { acquisition: acqFx, customs: custFx },
     transportToBorderNok: toBorderNok, transportToBorderBasis: toBorderBasis, transportAfterBorderNok: afterBorderNok, insuranceNok, loadingHandlingNok: loadingNok, customsValueNok,
+    commissionInCustomsValueNok: customsValueRat ? commissionInCustomsValue.n : null,
+    customsDuty: { nok: dutyRat ? dutyRat.n : null, basis: dutyBasis }, importVatBaseNok: vatBaseRat ? vatBaseRat.n : null,
     importVat, importVatSettlement, tax: taxL,
     importCashRequirement: cash, estimatedLandedCost: landed,
     vatRecoverability: { value: recov, accepted: dedAccepted, source: d?.source ?? null },

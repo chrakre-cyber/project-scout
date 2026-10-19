@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import { calculateEconomics, type EconomicsInput, type EconomicsConfig } from '@/domain/economics';
 import { ECON_CASES } from './fixtures/econ-golden';
+/** Fixture-/testforutsetning: utenlandsk mva. er dokumentert utelukket fra prisen (T88). Uten denne er tollverdiens pris en nedre grense. */
+const FV = { treatment: "excluded_documented", evidence: "invoice_or_contract" } as const;
 
 const na = { state: 'not_applicable', basis: 'explicit test' } as const;
 const cfg: EconomicsConfig = {
@@ -12,7 +14,7 @@ function base(): EconomicsInput {
   taxInput.norwegianTaxWeight.basis = 'vehicle_register';
   taxInput.propulsion.evidence = 'type_approval';
   return {
-    price: { currency: 'NOK', advertisedNet: '100000', priceBasis: 'net', use: 'advertised', evidence: 'quote_document' },
+    price: { currency: 'NOK', advertisedNet: '100000', priceBasis: 'net', use: 'advertised', evidence: 'quote_document', foreignVat: FV },
     fx: {}, taxInput, transportToBorder: { amount: '0', basis: 'quoted' }, transportAfterBorder: na, loadingHandling: na,
     insurance: { amount: '0', basis: 'quoted' }, deduction: { value: 'non_recoverable', source: { kind: 'dealer_profile' } },
     vatHandling: { value: 'registered_reports_in_vat_return', source: { kind: 'dealer_profile' } },

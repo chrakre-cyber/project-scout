@@ -99,6 +99,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
   - Avrunding (U-013, tre nivåer) forblir åpen.
 - **Overvåking:**
   - Lov 19.6.2026 nr. 41 (særavgiftsloven, T70) nevner ikke mval. §§ 3-29, 4-11 eller satsvedtaket; ingen blokkering.
+  - Implementert i kjernen (runde 34): ordinær tollsats 0 brukes bare når personbil (passenger_car_m1), kjent drivlinje og akseptdato i 2026 dekker tilfellet; eksplisitt toll > 0 inngår i grunnlaget; engangsavgift utenfor; ikke godkjent.
 
 ### R-IMP-VAT-002 — Tollverdi: kjøpspris + frakt + forsikring til norsk grense
 
@@ -138,6 +139,8 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
   - Statistisk verdi mot tollverdi: se R-IMP-VAT-001.
   - Sjablongene gjelder bare biler på egne hjul og tre land; for andre transporter gjelder faktiske/vanlige fraktkostnader (§ 6-10-4 (3)).
   - Avrunding av tollverdi/valutaomregning (U-013 B) og tollkursens dato (U-008).
+- **Overvåking:**
+  - Implementert i kjernen (runde 34): salgs-/meglerprovisjon i tollverdien, innkjøpsprovisjon utenfor, ukjent rolle ukjent; bank-/valutagebyr ikke generelt behandlet; utenlandsk mva. i pris krever dokumentasjon (T88); ikke godkjent.
 
 ### R-IMP-FX-001 — Tollkurs (Tolletatens kurs) kontra betalingskurs
 
@@ -224,7 +227,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
   - [dekket (veiledning + vareførselsloven § 6-10)] Tollverdi = innkjøpspris + frakt + forsikring fram til norsk grense; 25 % på tollverdi. _(kilde T81, T67, T87)_
   - [sammenstilling av T56 og § 4-11; ikke eget sitat] Det samme gjelder for mva.-registrert importør som beregner innførselsmva. selv (grunnlag etter § 4-11, ikke et annet verdigrunnlag fordi importøren er registrert). _(kilde T56, T63)_
   - [ikke avgjort ordrett (veiledningen forenkler)] Om beløp som lasting/håndtering og salgsprovisjon (tollverdi, men ikke nevnt i elbilsetningen) inngår i målt beløp. _(kilde T81, T87)_
-  - [ikke vurdert] Uvanlige kjøretøy/prosedyrer (gjeninnførsel, kunst osv.) og andre fritak. _(ingen kilde)_
+  - [ikke vurdert] Uvanlige kjøretøy/prosedyrer (gjeninnførsel, kunst osv.) og andre fritak. _(kilde )_
 - **E1-funn (lest primærkilde):**
   - Tolletaten (bilimport, serialiserte sidedata, indeks 11047): «For elbiler: Du betaler bare merverdiavgift hvis bilens pris, frakt- og forsikringskostnadene overstiger 300 000 kroner, og da kun på beløpet som overstiger 300 000 kroner.» _(kilde T81, «Dette betaler du avgift for» (utvidbart innhold), «Oppdatert: 5.2.2026»; samme tekst i fersk henting T85, lest 2026-10-19)_
   - Tolletaten, samme avsnitt (indeks 11054/11068): tollverdi = «Innkjøpspris + Fraktkostnader + Forsikringskostnader fram til norsk grense»; «25 prosent merverdiavgift … regnet på grunnlag av tollverdi til Norge». _(kilde T81, «Dette betaler du avgift for», lest 2026-10-19)_
@@ -241,6 +244,7 @@ Kolonnen «Beløp» er «IKKE KONTROLLERT» der ingen E1 finnes. `Lead` er søke
   - Uvanlige kjøretøy, gjeninnførsel og andre prosedyrer er ikke vurdert.
 - **Overvåking:**
   - Veiledningsregelen er hentet fra en privatpersonside; hvis Tolletaten/Skatteetaten publiserer egen veiledning for registrerte importører, kontroller mot den.
+  - Implementert i landed-cost-kjernen 2026-10-19 (runde 34): standard målegrunnlag = tollverdi, `vehicle_price_only` fjernet; ikke godkjent (vatRulesApproved = false).
 
 ### R-OTA-001 — Vektkomponent
 

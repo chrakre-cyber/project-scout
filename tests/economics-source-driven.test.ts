@@ -8,6 +8,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
 import { calculateEconomics, REGISTRY_ECONOMICS_PROFILE, UNCONFIRMED_HALF_UP, type EconomicsConfig, type EconomicsInput, type EconomicsProfile, type FxQuote } from "@/domain/economics";
 import { ECON_CASES } from "./fixtures/econ-golden";
+/** Fixture-/testforutsetning: utenlandsk mva. er dokumentert utelukket fra prisen (T88). Uten denne er tollverdiens pris en nedre grense. */
+const FV = { treatment: "excluded_documented", evidence: "invoice_or_contract" } as const;
 
 const na = { state: "not_applicable", basis: "test" } as const;
 const zero = { amount: "0", basis: "quoted" } as const;
@@ -23,13 +25,13 @@ const official = (over: Partial<FxQuote> = {}): FxQuote => ({
   validFrom: "2026-10-15", validTo: "2026-10-28", suspension: "not_suspended_confirmed", ...over,
 });
 const nokIn = (price: string, over: Partial<EconomicsInput> = {}): EconomicsInput => ({
-  price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: {}, taxInput: DIESEL,
+  price: { currency: "NOK", advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV }, fx: {}, taxInput: DIESEL,
   transportToBorder: { amount: "8000", basis: "quoted" }, transportAfterBorder: na, loadingHandling: na, insurance: zero,
   deduction: { value: "non_recoverable", source: { kind: "dealer_profile" } }, vatHandling: { value: "registered_reports_in_vat_return", source: { kind: "dealer_profile" } },
   charges: { climateGas: na, registrationFee: na, customsDuty: na }, asOf: "2026-10-19", ...over,
 });
 const eurIn = (over: Partial<EconomicsInput> = {}): EconomicsInput => ({
-  ...nokIn("1"), price: { currency: "EUR", advertisedNet: "38562", priceBasis: "net", use: "advertised", evidence: "dealer_entered" },
+  ...nokIn("1"), price: { currency: "EUR", advertisedNet: "38562", priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV },
   fx: { acquisition: bank("10.6709"), customs: official() }, customsDate: { date: "2026-10-20", kind: "actual_acceptance" }, ...over,
 });
 const val = (t: { kind: string; valueNok?: bigint | null }) => (t.kind === "value" ? t.valueNok : undefined);
@@ -150,7 +152,7 @@ describe("2. tollkurs: akseptdato, gyldighetsperiode, fremtidige perioder, suspe
 });
 
 describe("3. råkurs og omregningsenhet normaliseres nøyaktig én gang; råverdien beholdes", () => {
-  const withCustoms = (customs: FxQuote, price = "10000", ccy = "EUR") => calculateEconomics(eurIn({ price: { currency: ccy, advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered" }, fx: { acquisition: bank("1", { pair: `${ccy}/NOK` }), customs: { ...customs, pair: `${ccy}/NOK` } } }), cfg());
+  const withCustoms = (customs: FxQuote, price = "10000", ccy = "EUR") => calculateEconomics(eurIn({ price: { currency: ccy, advertisedNet: price, priceBasis: "net", use: "advertised", evidence: "dealer_entered", foreignVat: FV }, fx: { acquisition: bank("1", { pair: `${ccy}/NOK` }), customs: { ...customs, pair: `${ccy}/NOK` } } }), cfg());
   it("enhet 1: desimalkomma → eksakt punktumform; enhet 100: delt på 100 én gang", () => {
     const eur = withCustoms(official());
     expect(eur.fx.customs).toMatchObject({ rate: "10.817", raw: { rate: "10,817", unit: 1 } });
@@ -233,22 +235,30 @@ describe("5. elbilfritak: kvalifikasjon og målegrunnlag er adskilt fra avgiftsm
     for (const [price, vat] of [["299999", 0n], ["300000", 0n], ["300001", 0n], ["300003", 1n], ["350000", 12500n]] as const) {
       const r = ev(price, { evQualification: ALL_TRUE, evThresholdBasis: "customs_value" });
       expect(r.importVat.valueNok, price).toBe(vat);
-      expect(r.estimateReasons).toEqual(expect.arrayContaining(["ev_qualification_stated", "ev_threshold_basis_assumed"]));
+      expect(r.estimateReasons).toContain("ev_qualification_stated");
     }
   });
-  it("målegrunnlaget velges ikke av kjernen: uten grunnlag gir kvalifisert elbil to scenarier og ufullstendig resultat (295 000 + 8 000: tollverdi → 750, kjøretøypris → 2 000)", () => {
+  it("elbilgrensen måles mot tollverdi som standard (R-IMP-VAT-004 E1P): 295 000 + 8 000 → 750; «kjøretøypris alene» er ikke lenger et regelalternativ (var 2 000)", () => {
+    // Avvik fra tidligere runde (to scenarier 750/2 000): kildevurdering 6 — Tolletaten: «bilens pris, frakt- og forsikringskostnadene» over 300 000, avgift kun på overskytende.
+    // Håndregnet: tollverdi 295 000 + 8 000 = 303 000; (303 000 − 300 000) × 25 % = 750.
     const r = ev("295000", { transportToBorder: { amount: "8000", basis: "quoted" }, evQualification: ALL_TRUE });
-    expect(r.importVat.status).toBe("scenarios");
-    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["with_exemption__basis_customs_value", 750n], ["with_exemption__basis_vehicle_price", 2000n]]);
-    expect(r.importVat.valueNok).toBeNull();
-    expect(r.status).toBe("incomplete");
-    expect(r.incompleteReasons).toContain("ev_threshold_basis_unresolved");
-    expect(r.importCashRequirement).toMatchObject({ kind: "scenarios", valueNok: null });
-    const price = ev("295000", { transportToBorder: { amount: "8000", basis: "quoted" }, evQualification: ALL_TRUE, evThresholdBasis: "vehicle_price_only" });
-    expect(price.importVat.valueNok).toBe(2000n);
-    // over grensen er begge grunnlag like: 350 000 + 8 000 → 14 500
-    const over = ev("350000", { transportToBorder: { amount: "8000", basis: "quoted" }, evQualification: ALL_TRUE });
-    expect(over.importVat.scenarios.map((s) => s.valueNok)).toEqual([14500n, 14500n]);
+    expect(r.importVat.status).toBe("calculated");
+    expect(r.importVat.scenarios.map((s) => [s.id, s.valueNok])).toEqual([["with_exemption__basis_customs_value", 750n]]);
+    expect(r.importVat.valueNok).toBe(750n);
+    expect(r.incompleteReasons).not.toContain("ev_threshold_basis_unresolved");
+    expect(r.estimateReasons).toContain("ev_qualification_stated");
+    // 350 000 + 8 000 → (358 000 − 300 000) × 25 % = 14 500
+    expect(ev("350000", { transportToBorder: { amount: "8000", basis: "quoted" }, evQualification: ALL_TRUE }).importVat.valueNok).toBe(14500n);
+    // den gamle verdien er fjernet og avvises i stedet for å velges stille
+    const old = ev("295000", { transportToBorder: { amount: "8000", basis: "quoted" }, evQualification: ALL_TRUE, evThresholdBasis: "vehicle_price_only" as never });
+    expect(old.status).toBe("blocked");
+    expect(old.blockers.map((b) => b.field)).toContain("evThresholdBasis");
+    // ikke-ordinær innførsel: målegrunnlaget er ikke dokumentert ⇒ nedre grense og ufullstendig
+    const nd = ev("295000", { transportToBorder: { amount: "8000", basis: "quoted" }, evQualification: ALL_TRUE, evThresholdBasis: "undocumented_import_type" });
+    expect(nd.importVat.status).toBe("lower_bound");
+    expect(nd.status).toBe("incomplete");
+    expect(nd.incompleteReasons).toContain("ev_threshold_basis_not_documented_for_import_type");
+    expect(nd.importCashRequirement.kind).toBe("lower_bound");
   });
   it("kvalifikasjon: hvert kriterium som er false utelukker; null/manglende er uavklart (scenario + full mva.-variant); alle true uten kjent drivlinje er fortsatt uavklart", () => {
     for (const k of Object.keys(ALL_TRUE) as Array<keyof typeof ALL_TRUE>) {

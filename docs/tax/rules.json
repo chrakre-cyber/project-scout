@@ -278,7 +278,8 @@
     }
    ],
    "monitoring": [
-    "Lov 19.6.2026 nr. 41 (særavgiftsloven, T70) nevner ikke mval. §§ 3-29, 4-11 eller satsvedtaket; ingen blokkering."
+    "Lov 19.6.2026 nr. 41 (særavgiftsloven, T70) nevner ikke mval. §§ 3-29, 4-11 eller satsvedtaket; ingen blokkering.",
+    "Implementert i kjernen (runde 34): ordinær tollsats 0 brukes bare når personbil (passenger_car_m1), kjent drivlinje og akseptdato i 2026 dekker tilfellet; eksplisitt toll > 0 inngår i grunnlaget; engangsavgift utenfor; ikke godkjent."
    ]
   },
   {
@@ -480,6 +481,9 @@
      "verifiedDate": "2026-10-16",
      "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)"
     }
+   ],
+   "monitoring": [
+    "Implementert i kjernen (runde 34): salgs-/meglerprovisjon i tollverdien, innkjøpsprovisjon utenfor, ukjent rolle ukjent; bank-/valutagebyr ikke generelt behandlet; utenlandsk mva. i pris krever dokumentasjon (T88); ikke godkjent."
    ]
   },
   {
@@ -903,7 +907,8 @@
    ],
    "e1xFindings": [],
    "monitoring": [
-    "Veiledningsregelen er hentet fra en privatpersonside; hvis Tolletaten/Skatteetaten publiserer egen veiledning for registrerte importører, kontroller mot den."
+    "Veiledningsregelen er hentet fra en privatpersonside; hvis Tolletaten/Skatteetaten publiserer egen veiledning for registrerte importører, kontroller mot den.",
+    "Implementert i landed-cost-kjernen 2026-10-19 (runde 34): standard målegrunnlag = tollverdi, `vehicle_price_only` fjernet; ikke godkjent (vatRulesApproved = false)."
    ],
    "subClaims": [
     {

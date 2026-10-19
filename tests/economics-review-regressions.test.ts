@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { calculateEconomics, UNCONFIRMED_HALF_UP, type EconomicsInput, type EconomicsConfig } from "@/domain/economics";
+/** Fixture-/testforutsetning: utenlandsk mva. er dokumentert utelukket fra prisen (T88). Uten denne er tollverdiens pris en nedre grense. */
+const FV = { treatment: "excluded_documented", evidence: "invoice_or_contract" } as const;
 
 const zero = { amount: "0", basis: "quoted" } as const;
 const na = { state: "not_applicable", basis: "test assumption" } as const;
 const base: EconomicsInput = {
-  price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "quote_document" },
+  price: { currency: "NOK", advertisedNet: "350000", priceBasis: "net", use: "advertised", evidence: "quote_document", foreignVat: FV },
   fx: {}, transportToBorder: zero, transportAfterBorder: na, loadingHandling: na, insurance: zero,
   vatHandling: { value: "registered_reports_in_vat_return", source: { kind: "dealer_profile" } },
   customsDate: { date: "2026-10-18", kind: "actual_acceptance" },
@@ -163,7 +165,7 @@ describe("rettingsrunde: gyldighet av nedre grenser (egenskap)", () => {
       ["transport etter innførselsstedet", { transportAfterBorder: { state: "unknown" } }, [{ transportAfterBorder: na }, { transportAfterBorder: { amount: "4000", basis: "quoted" } }]],
       ["lasting/håndtering (i tollverdien)", { loadingHandling: { state: "unknown" } }, [{ loadingHandling: na }, { loadingHandling: { amount: "1500", basis: "quoted" } }]],
       ["elbilfritak: kvalifikasjon uavklart", { ...EV_UNKNOWN }, [{ ...EV_APPLIES }, { ...EV_NOT }]],
-      ["elbilfritak: målegrunnlag uavklart", { evQualification: ALL_TRUE, evThresholdBasis: "unresolved" }, [{ ...EV_APPLIES }, { evQualification: ALL_TRUE, evThresholdBasis: "vehicle_price_only" }]],
+      ["elbilfritak: målegrunnlag uavklart", { evQualification: ALL_TRUE, evThresholdBasis: "undocumented_import_type" }, [{ ...EV_APPLIES }]],
       ["fradragsstatus", { deduction: undefined }, [{ deduction: { value: "recoverable", source: { kind: "dealer_profile" } } }, { deduction: { value: "non_recoverable", source: { kind: "dealer_profile" } } }]],
     ];
     let checked = 0;

@@ -55,6 +55,16 @@ export interface PriceInput {
   use: "advertised" | "dealer_adjusted";
   /** Bevis for prisen: annonsepåstand er ikke bekreftet kjøpsgrunnlag. */
   evidence: "listing_claim" | "quote_document" | "dealer_entered";
+  /**
+   * Utenlandsk mva. i prisen (T88, vareførselshåndboken § 6-11): den er ikke del av tollverdiens pris når kjøperen ikke endelig belastes den, men kjøperen må
+   * sannsynliggjøre det ved overgang til fri disponering. En annonsepåstand eller en oppgitt nettopris alene utleder aldri dette. Standard `unconfirmed`.
+   */
+  foreignVat?: ForeignVatInput;
+}
+export interface ForeignVatInput {
+  /** `excluded_documented`: kjøperen belastes ikke utenlandsk mva. og kan dokumentere det. Aksepteres bare med bevis som ikke er en annonsepåstand. */
+  treatment: "excluded_documented" | "unconfirmed";
+  evidence: "invoice_or_contract" | "dealer_entered" | "listing_claim";
 }
 
 export interface DeductionStatus {
@@ -80,8 +90,33 @@ export interface EvQualificationInput {
   passengerVehicle: boolean | null;
   notPreviouslyRegisteredInNorway: boolean | null;
 }
-/** Hva 300 000-grensen måles mot ved innførsel. Ikke avklart i kildene: standard `unresolved` gir scenarier, ikke et valgt grunnlag. */
-export type EvThresholdBasis = "customs_value" | "vehicle_price_only" | "unresolved";
+/**
+ * Hva 300 000-grensen måles mot ved innførsel. Dokumentert for ordinær innførsel (R-IMP-VAT-004, E1P; T81 + mval. § 4-11): bilpris + frakt + forsikring = tollverdi.
+ * `customs_value` er standard. `undocumented_import_type`: innførselen er ikke ordinær (f.eks. gjeninnførsel); målegrunnlaget er ikke dokumentert og resultatet blir en nedre grense.
+ * Kjøretøypris alene er ikke lenger et regelalternativ.
+ */
+export type EvThresholdBasis = "customs_value" | "undocumented_import_type";
+
+/** Om et beløp inngår i mva.-grunnlaget ved innførsel (mval. § 4-11: tollavgift og andre avgifter som beregnes ved innførsel). `unknown` ⇒ grunnlaget er en nedre grense. */
+export type VatBaseTreatment = "in_base" | "outside_base" | "unknown";
+
+/** Mellommannens vederlag (vareførselsloven § 6-10 (1) a nr. 1, § 6-11 (1) e; T87/T88). Innkjøpsprovisjon og salgs-/meglerprovisjon behandles ulikt; ukjent rolle forblir ukjent. */
+export interface CommissionInput {
+  role: "purchase_commission" | "sales_or_brokerage_commission" | "unknown";
+  /** Hele NOK. */
+  amount: AmountInput;
+  /** true: betalt i tillegg til varens pris. false: allerede inkludert i prisen. null: ukjent. */
+  paidSeparatelyFromPrice: boolean | null;
+}
+
+/** Betalingskostnader (bank-/valutagebyr o.l.). Ingen generell behandling: selvstendig kostnad skilles fra beløp som inngår i vareprisen. */
+export interface PaymentCostInput {
+  label: string;
+  /** Hele NOK. */
+  amount: AmountInput;
+  /** `separate_payment_cost`: selvstendig kostnad (ikke et tillegg etter § 6-10, utenfor tollverdi). `included_in_goods_price`: del av vederlaget til selger, allerede i prisen. `unknown`: ukjent. */
+  nature: "separate_payment_cost" | "included_in_goods_price" | "unknown";
+}
 
 export type ChargeState =
   | AmountInput
@@ -140,16 +175,35 @@ export interface EconomicsInput {
   vatHandling?: VatHandlingInput | null;
   /** Standard: kvalifikasjon uavklart. Skilt fra avgiftsmotorens drivlinjeklassifisering. */
   evQualification?: EvQualificationInput;
-  /** Standard `unresolved` (kjernen velger ikke målegrunnlag for 300 000-grensen). */
+  /** Standard `customs_value` (dokumentert for ordinær innførsel, R-IMP-VAT-004 E1P). */
   evThresholdBasis?: EvThresholdBasis;
-  charges?: { climateGas?: ChargeState; registrationFee?: ChargeState; customsDuty?: ChargeState; otherKnown?: Array<{ label: string; amount: string; basis: AmountBasis }> };
+  /** Provisjon til mellommann. Utelatt ⇒ ingen mellommann oppgitt. */
+  commission?: CommissionInput[];
+  /** Bank-/valutagebyr o.l. Utelatt ⇒ ingen oppgitt. */
+  paymentCosts?: PaymentCostInput[];
+  charges?: {
+    climateGas?: ChargeState;
+    /** Om klimagassavgiften er en avgift som beregnes ved innførsel (§ 4-11) er ikke dokumentert: standard `unknown` (kun relevant når beløpet er > 0). */
+    climateGasVatBase?: VatBaseTreatment;
+    /** Statens vegvesens registreringsgebyr: ikke en importavgift, aldri i mva.-grunnlaget ved innførsel. */
+    registrationFee?: ChargeState;
+    /**
+     * Tollavgift. Utelatt ⇒ ordinær sats 0 (Tolltariffen 2026, T83) bare når kjøretøyklassifisering og tariffutgavens gyldighet dekker tilfellet; ellers ukjent (aldri 0).
+     * Eksplisitt beløp > 0 inngår i mva.-grunnlaget (mval. § 4-11). Eksplisitt `unknown` forblir ukjent.
+     */
+    customsDuty?: ChargeState;
+    /** Andre avgifter som oppstår ved innførsel (§ 4-11); må klassifiseres. `unknown` ⇒ mva.-grunnlaget er en nedre grense. */
+    importLevies?: Array<{ label: string; amount: string; basis: AmountBasis; vatBase: VatBaseTreatment }>;
+    /** Øvrige kostnader som ikke er importavgifter (utenfor mva.-grunnlaget). */
+    otherKnown?: Array<{ label: string; amount: string; basis: AmountBasis }>;
+  };
   /** Beregningsdato (ISO). Ikke akseptdato for deklarasjonen og ikke norsk registreringsdato. */
   asOf: string;
 }
 
 export type BlockCode =
   | "invalid_currency" | "invalid_amount" | "amount_out_of_range" | "invalid_date" | "invalid_fx_quote" | "dealer_adjusted_missing"
-  | "inconsistent_vat_status" | "inconsistent_ev_qualification";
+  | "inconsistent_vat_status" | "inconsistent_ev_qualification" | "invalid_classification";
 
 export interface EconBlocker { code: BlockCode; message: string; field?: string }
 
@@ -163,7 +217,8 @@ export type EstimateReason =
   | "tax_estimate" | "tax_profile_not_approved" | "vat_rules_unapproved" | "rounding_unconfirmed" | "customs_fx_rule_unconfirmed"
   | "customs_fx_fallback_acquisition_rate" | "transport_default_assumed" | "amount_scenario_assumption" | "charges_excluded_by_scenario"
   | "purchase_price_listing_claim" | "deduction_status_dealer_stated" | "deduction_rule_unapproved" | "ev_qualification_stated" | "fx_dates_missing"
-  | "assumed_default_amount" | "customs_acceptance_date_expected" | "customs_fx_suspension_unverified" | "ev_threshold_basis_assumed";
+  | "assumed_default_amount" | "customs_acceptance_date_expected" | "customs_fx_suspension_unverified"
+  | "customs_duty_ordinary_rate_unapproved" | "ev_threshold_components_unconfirmed" | "foreign_vat_exclusion_dealer_stated";
 
 export interface TaxLine {
   /** `approved` = avgiftsmotoren ga `calculated`; `estimate` = `calculated_unverified`; `blocked` = ingen avgift. */
@@ -194,7 +249,7 @@ export interface FxRoleResult {
   reason?: string;
 }
 
-export type VatScenarioId = "single" | "no_exemption" | "with_exemption__basis_customs_value" | "with_exemption__basis_vehicle_price";
+export type VatScenarioId = "single" | "no_exemption" | "with_exemption__basis_customs_value";
 
 export interface EconomicsResult {
   /** `validated` er bare mulig når alle grunnlag er godkjent (ikke tilfelle i registeret). `estimate` = alt kan regnes, men ikke validert. `incomplete` = delsummer. `blocked` = ugyldig input. */
@@ -221,7 +276,13 @@ export interface EconomicsResult {
   transportAfterBorderNok: bigint | null;
   insuranceNok: bigint | null;
   loadingHandlingNok: bigint | null;
+  /** Salgs-/meglerprovisjon som er lagt til tollverdien (vareførselsloven § 6-10 (1) a nr. 1). Innkjøpsprovisjon og ukjent rolle er aldri inkludert. */
+  commissionInCustomsValueNok: bigint | null;
   customsValueNok: bigint | null;
+  /** Tollavgift i mva.-grunnlaget. `basis`: `ordinary_rate_tariff_2026` = sats 0 fra tolltariffen (T83) fordi klassifisering og gyldighet dekker tilfellet; `explicit` = oppgitt beløp. */
+  customsDuty: { nok: bigint | null; basis: "ordinary_rate_tariff_2026" | "explicit" | "stated_not_applicable" | "unknown" };
+  /** Beregningsgrunnlag for import-mva. før elbilfritak (tollverdi + tollavgift + avgifter som beregnes ved innførsel); null når ikke beregnet. Nedre grense når `importVat.status` er `lower_bound`. */
+  importVatBaseNok: bigint | null;
   /** Mva. per scenario. `unresolved` ved avrundingslikhet (U-013). */
   importVat: {
     status: "calculated" | "lower_bound" | "scenarios" | "not_calculated";
