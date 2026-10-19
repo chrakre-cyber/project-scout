@@ -83,3 +83,5 @@ Se `reviews/ECON-004-kildevurdering-6.md` (runde 32): korrigering — Tolletaten
 Se `reviews/ECON-004-implementering-runde34.md` (runde 34): kodeendringer basert på kildevurdering 6 (elbilgrense mot tollverdi, ordinær tollsats 0 med dekningskrav, § 4-11-avgifter, provisjon, betalingskostnader, utenlandsk mva.). Ikke parametergodkjenning; flagg false; avrunding uendret.
 
 Se `reviews/ECON-004-r34-FIX1-retting.md`: rettingsrunde etter uavhengig review av afdc9f0 (to P2). Ikke parametergodkjenning.
+
+Se `reviews/ECON-004-r34-FIX2-retting.md` (rettingsrunde etter review av 33d2fb9) med sluttmatrise (ferdig / blokkerer godkjenning / kan utsettes).

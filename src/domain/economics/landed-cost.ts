@@ -204,6 +204,21 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   const profile = config.profile ?? REGISTRY_ECONOMICS_PROFILE;
   /** Beløpspost i hele NOK etter den eksisterende, uttrykkelige avrundingspolicyen (likhet ⇒ nedre grense). Resultatfeltene er alltid heltall; telleren brukes aldri alene. */
   const whole = (label: string, r: Rat): Rat => fromInt(round(c, label, r));
+  /**
+   * Avrunding av et beløp som TREKKES FRA (tollverdien): ved likhet og uavklart policy er `low`/`high` de støttede kandidatene (half_up/half_even). Et fradrag bidrar til
+   * en nedre grense med sin HØYESTE kandidat (størst fradrag ⇒ lavest tollverdi og mva.); `low` brukes bare til å kontrollere at fradraget ikke overstiger kjøpesummen.
+   */
+  const wholeDeduction = (label: string, r: Rat): { low: Rat; high: Rat } => {
+    const x = roundToWhole(r, c.rounding);
+    if (x.tie && c.rounding.status !== "approved") {
+      c.tieHit = true;
+      c.ties.push(`${label}: ${x.candidates.halfUp} (half_up) / ${x.candidates.halfEven} (half_even) [fradrag: høyeste kandidat brukes i nedre grense]`);
+      const lo = x.candidates.halfUp < x.candidates.halfEven ? x.candidates.halfUp : x.candidates.halfEven;
+      const hi = x.candidates.halfUp < x.candidates.halfEven ? x.candidates.halfEven : x.candidates.halfUp;
+      return { low: fromInt(lo), high: fromInt(hi) };
+    }
+    return { low: fromInt(x.value), high: fromInt(x.value) };
+  };
   const asOf = input.asOf;
   const asOfOk = isIsoDate(asOf);
   if (!asOfOk) block(c, "invalid_date", "asOf: ugyldig ISO-dato", "asOf");
@@ -351,29 +366,33 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   // --- Provisjon til mellommann: innkjøpsprovisjon og salgs-/meglerprovisjon behandles ulikt; ukjent rolle forblir ukjent (T87/T88) ---
   // Beløp avrundes til hele NOK én gang (eksisterende policy); samme tall brukes i kostnaden og i tollverdien.
   let commissionInCustomsValue = fromInt(0n);
-  let commissionDeducted = fromInt(0n); // innkjøpsprovisjon i prisen som er skilt ut (§ 6-11 (1) e), vilkår oppgitt oppfylt
-  let commissionDeductPossible = fromInt(0n); // i prisen, uavklart om den kan skilles ut: tollverdien er en nedre grense (laveste mulige = alt skilt ut)
+  let commissionDeducted = fromInt(0n); // innkjøpsprovisjon i prisen som er skilt ut (§ 6-11 (1) e), vilkår oppgitt oppfylt (høyeste avrundingskandidat ved likhet)
+  let commissionDeductPossible = fromInt(0n); // i prisen, uavklart om den kan skilles ut: tollverdien er en nedre grense (laveste mulige = alt skilt ut, høyeste kandidat)
+  let deductionsLow = fromInt(0n); // samme beløp med laveste kandidat: bare til kontroll mot kjøpesummen
   for (const [i, cm] of (input.commission ?? []).entries()) {
     const f = `commission[${i}]`;
     const cond = (cm as { deductionConditionsMet?: unknown } | undefined)?.deductionConditionsMet;
     if (!cm || typeof cm !== "object" || !COMMISSION_ROLES.includes(cm.role) || ![true, false, null].includes(cm.paidSeparatelyFromPrice as boolean | null) || ![undefined, true, false, null].includes(cond as boolean | null | undefined)) { block(c, "invalid_classification", `${f}: ugyldig rolle, betalingsmåte eller vilkår`, f); continue; }
     const raw = amountInput(c, `${f}.amount`, cm.amount);
     if (!raw) continue;
-    const a = whole(`provisjon ${f}`, raw);
     if (cm.paidSeparatelyFromPrice === null) { c.incomplete.push("commission_price_inclusion_unknown"); customsExtra.push("provisjon: ukjent om betalt i tillegg til prisen"); missing.push(f); continue; }
     if (cm.paidSeparatelyFromPrice === false) {
       // Allerede i prisen: anskaffelseskostnaden er uendret (ingen dobbelttelling). Innkjøpsprovisjon pålagt kjøperen og inkludert i prisen KAN trekkes ut av tollverdien (§ 6-11 (1) e, T88).
       if (cm.role === "sales_or_brokerage_commission") continue; // salgs-/meglerprovisjon i prisen er prisen (§ 6-3); ikke fradragsberettiget
-      if (cm.role === "purchase_commission" && cond === true) { commissionDeducted = add(commissionDeducted, a); c.estimate.add("purchase_commission_deduction_unverified"); }
-      else if (cond === false) continue; // vilkårene er oppgitt ikke oppfylt: ingen utskilling
+      if (cond === false) continue; // vilkårene er oppgitt ikke oppfylt: ingen utskilling
+      // Fradrag: ved avrundingslikhet brukes den HØYESTE kandidaten (størst fradrag ⇒ laveste tollverdi) slik at nedre grenser aldri overstiger en støttet fullføring.
+      const d = wholeDeduction(`provisjon ${f}`, raw);
+      deductionsLow = add(deductionsLow, d.low);
+      if (cm.role === "purchase_commission" && cond === true) { commissionDeducted = add(commissionDeducted, d.high); c.estimate.add("purchase_commission_deduction_unverified"); }
       else {
         // vilkår ikke oppgitt (eller rolle ukjent): tollverdien kan være lavere enn hele kjøpesummen. Det høyeste beløpet er ikke en nedre grense; laveste mulige brukes.
-        commissionDeductPossible = add(commissionDeductPossible, a);
+        commissionDeductPossible = add(commissionDeductPossible, d.high);
         c.incomplete.push("commission_in_price_deduction_unresolved");
         customsExtra.push(`provisjon i prisen (${f}): uavklart om den kan skilles ut av tollverdien (innkjøpsprovisjon, § 6-11 (1) e)`);
       }
       continue;
     }
+    const a = whole(`provisjon ${f}`, raw); // tillegg/kostnad: laveste kandidat er en trygg nedre grense
     others = add(others, a); // betalt i tillegg: kostnad, én gang
     if (cm.role === "sales_or_brokerage_commission") commissionInCustomsValue = add(commissionInCustomsValue, a); // legges til tollverdien (§ 6-10 (1) a nr. 1)
     else if (cm.role === "unknown") { c.incomplete.push("commission_role_unknown"); customsExtra.push("provisjon: rolle ukjent (innkjøps- eller salgsprovisjon)"); }
@@ -383,7 +402,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   {
     // Provisjon som skilles ut av prisen kan ikke overstige kjøpesummen (kontroll før ugyldig input stopper beregningen).
     const priceForCheck = usedAmount !== null && purchaseBasisResolved ? parseDecimal(usedAmount) : null;
-    if (priceForCheck && custRate && cmp(add(commissionDeducted, commissionDeductPossible), fromInt(roundToWhole(mul(priceForCheck, custRate), c.rounding).value)) > 0) {
+    if (priceForCheck && custRate && cmp(deductionsLow, fromInt(roundToWhole(mul(priceForCheck, custRate), c.rounding).value)) > 0) {
       block(c, "invalid_classification", "provisjon som skilles ut av prisen er større enn kjøpesummen (tollkurs)", "commission");
     }
   }
