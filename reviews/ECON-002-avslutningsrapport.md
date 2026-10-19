@@ -11,10 +11,13 @@ Norsk engangsavgift 2026, personbil i avgiftsgruppe a, for de tre validerte prof
 - **Blokkert:** NEDC/desimal-CO₂ (R-OTA-015), dag 29–31 i tvetydighetsvinduet (R-OTA-016/U-009), 20 år eller eldre, bensin/ikke-ladbar hybrid/annet drivstoff/ukjent undertype, bare registreringsår, varebil og andre grupper.
 
 ## Review-belegg
-Uavhengig review (Codex), oppgitt av Christian 2026-10-19: a42a30b — to P2-funn (referansevekt; datofølsomt punktbeløp), lukket i fcdb1a8; policy for `dealer_entered` besluttet og reviewet i cc738ef; godkjenningscommit fbf466c med validatorendring — reviewet uten nye funn; profilavgrensing 5967fc2 — siste P2-punkt lukket, ingen nye funn. (Review-rapportene er levert av Christian utenfor repoet og er ikke lagt inn her; belegget er hans oppgitte konklusjon per commit.)
+Uavhengig review (Codex), oppgitt av Christian 2026-10-19: a42a30b — to P2-funn (referansevekt; datofølsomt punktbeløp), lukket i fcdb1a8; policy for `dealer_entered` besluttet og reviewet i cc738ef; godkjenningscommit fbf466c med validatorendring — reviewet uten nye funn; profilavgrensing 5967fc2 — siste P2-punkt lukket, ingen nye funn. Rapporten for 5967fc2 er lagt inn uendret som `reviews/ECON-002-profilreview-5967fc2.md` (SHA-256 `efe76d28321141cb8de1cf58198835604e6de32a532be0fe1e4349dd74f3090a`): ingen nye feil; alle tre P2-funn er lukket (de to første i tidligere rettingsreview, profilavgrensningen i denne); 440 selvstendige kontroller mot motoren bestod. Reviewerens forbehold: hele Vitest-suiten, typecheck, lint, build, e2e og DB er ikke kjørt av reviewer (781 tester er utviklerens resultat); dette er en avgrenset rettingsreview, ikke en ny full juridisk eller applikasjonsreview. De tidligere review-rapportene er levert av Christian utenfor repoet og er ikke lagt inn her.
 
 ## Akseptkrav
 E1-kilder m/hash ✔ · godkjente parametere (sju) ✔ · EV-/PHEV-regler ✔ · marginal CO₂ og sluttavrunding innen omfang ✔ · U-002/U-005 lukket ✔ · tre gyldne caser som klasse 1 ✔ · U-003/U-008 uttrykkelig flyttet til ECON-004 ✔ · restomfang akseptert ✔ · uavhengig review uten åpne funn ✔ · kontroller grønne ✔ (nedenfor).
+
+## PHEV-avgrensning (fra reviewen)
+Modellen har én PB-PHEV (ikke separate bensin-/diesel-PHEV-profiler); R-OTA-005 er formulert ut fra stempeldrevet motor og ekstern lading. At én klasse 1-referanse (bensin-PHEV, `explicit_inputs`) dekker profilen betyr ikke at hver variant eller alle mulige input er individuelt testet; referansens faktiske omfang og inputantakelser (bl.a. «vektet kombinert» som motorantakelse) skal fortsatt fremgå, og fremtidige varianter med egne regler vurderes særskilt. Å splitte PB-PHEV etter drivstoff er ikke et krav her.
 
 ## Åpne restpunkter med tilhørighet (ingen er løst eller godkjent)
 | Punkt | Tilhørighet |
