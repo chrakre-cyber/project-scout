@@ -1,6 +1,6 @@
 # ECON-003 — gyldne økonomifixturer og aritmetikktester
 
-**Status: REVIEW.** Startpunkt: commit `57eee19fbe073a4ca62d70fcc12928782bed1abb` (ECON-002 DONE innen avtalt omfang; TAX-fundamentet REVIEW). Kun fixturer, teststruktur og aritmetikktester. Ikke implementert: landed-cost-kjerne (ECON-004), UI, DB, auth, providere. Ikke endret: avgiftsmotor, satser, omfang, klasse 1-definisjon, godkjenninger, blokkeringer. U-003, U-008 og U-013 er ikke løst.
+**Status: DONE som avgrenset fixture- og aritmetikkleveranse (godkjent av Christian 2026-10-19 ved commit `398710a`, etter uavhengig review uten blokkerende funn; se §7).** *(Levert til REVIEW tidligere samme dag.)* Startpunkt: commit `57eee19fbe073a4ca62d70fcc12928782bed1abb` (ECON-002 DONE innen avtalt omfang; TAX-fundamentet REVIEW). Kun fixturer, teststruktur og aritmetikktester. Ikke implementert: landed-cost-kjerne (ECON-004), UI, DB, auth, providere. Ikke endret: avgiftsmotor, satser, omfang, klasse 1-definisjon, godkjenninger, blokkeringer. U-003, U-008 og U-013 er ikke løst.
 
 ## 1. Gapvurdering (før implementering)
 **Backlogg-rad:** «Gyldne fixturer (3 caser: offisiell reproduksjon + Merovo-utvidelse med transport) og aritmetikktester»; avhengigheter: ECON-001, «D5/kurs bekreftet». **Spesifikasjon:** ECON-001 §4.2–4.3, §6, §7 (A/B), §12, §16 (D1–D8).
@@ -32,4 +32,12 @@
 ## 6. Blokkeringer
 Ingen som hindrer REVIEW. Åpent for ECON-004: U-013, U-003, U-008, R-IMP-VAT-003 (anvendelse), R-IMP-VAT-002/R-DED-001 (E1P).
 
-**Sluttstatus: REVIEW.** ECON-004 er ikke startet.
+## 7. Review-belegg, godkjenning og avslutning (2026-10-19)
+**Review:** `reviews/ECON-003-review-398710a.md` (lagt inn uendret; SHA-256 `88f47831fb0ff9d5bd3a636064f516739f62cbc8dfc7ac83015cb353c3b37853`): ingen blokkerende funn; alle seks kontrollpunkter bekreftet; 30 manifestoppføringer verifisert; de sju avgiftsmotorfilene er byte-identiske med 5967fc2; `repro/decimal-check.py` (43 sammenligninger) og 161 egne kontroller bestod. Reviewer har ikke kjørt Vitest, typecheck, lint, check-docs, build, e2e eller DB; de 801 testene er utviklerens resultat. Begrensning notert av reviewer: felles forfatterskap for literaler og orakel (proveniens); låsetestene er regresjonsvern, ikke primærkildebevis.
+**Godkjenning (Christian):** ECON-003 er godkjent som avgrenset fixture- og aritmetikkleveranse. Skillet mellom *observerte referanser* (OBSERVED_RUNS), *historisk oppgitte tall* (`stated_not_documented`) og *syntetiske Merovo-scenarier* (B, inkl. syntetisk tollkurs) er bevart. **Godkjenningen omfatter ikke produksjonsregler for MVA, valutakurs eller fradragsrett**; fixture-konvensjoner (half-up-avrunding, fritak, forsikring = 0, transport i tollverdien) er testforutsetninger, ikke vedtatte regler.
+**Akseptkrav:** gyldne fixturer for tre caser (A observert/oppgitt, B Merovo-scenario) ✔ · aritmetikktester (kurs, avrunding, mva., sum, kontantbehov, økonomisk kost, kurs-roller, `unknown`) ✔ · lås av oppgitte verdier ✔ · uavhengig review uten blokkerende funn ✔ · kontroller grønne (801 tester) ✔ · ingen endring i beregningskode ✔.
+**Videreført til ECON-004 (åpent, ikke løst):** U-013 (mva.-avrunding; half-up vs half-even er ikke avgjort, fravær av x,5 er ingen kilde for tie-policy); U-003 (MVA-kildenes årgang); U-008 (tollkurs); R-IMP-VAT-002 (grunnlag/forsikring, E1P); R-IMP-VAT-003 (elbilfritak, anvendelse og tilfeller omkring grensen); R-DED-001 (fradragsrett, E1P). Fra reviewen: negative beløp, generelle produksjonsgrenser og andre regelregimer er ikke verifisert; +10 000 i kontantbehov gjelder bare disse tre scenarioene og er ikke en universell regel for 8 000 i transport; ECON-004 skal ikke kopiere fixture-konvensjoner til produksjon eller omtale dem som vedtatte regler, og skal hente kildeavklaring før autoritativ produksjonsberegning. A-oppgitt blir ikke dokumentert offisiell referanse av at aritmetikken stemmer.
+**ECON-004** er ikke startet.
+
+**Sluttstatus: DONE (avgrenset fixture-/aritmetikkleveranse).**
+
