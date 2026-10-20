@@ -4,8 +4,6 @@ import type { CostLine, SearchSpec } from "@/domain/search-v2/types";
 import type { CostLineTreatment, LineScope } from "./types";
 
 const ORE_PER_NOK = 100n;
-/** Økonomikjernen avrunder til hele NOK; en kostnadslinje i øre kan avvike med inntil 99 øre fra komponenten den ble mappet til. */
-const ROUNDING_TOLERANCE_ORE = 99n;
 /** Komponenten kan ikke allerede inneholde linjens beløp (ukjent eller uttrykkelig 0) ⇒ ingen risiko for dobbelttelling. */
 const emptyComponent = (n: bigint | null): boolean => n === null || n === 0n;
 const isSplit = (s: LineScope): s is { split: { toBorderMinor: bigint; afterBorderMinor: bigint } } => typeof s === "object" && s !== null && "split" in s;
@@ -14,13 +12,24 @@ function line(c: CostLine, treatment: CostLineTreatment["treatment"], counted: b
   return { id: c.id, kind: c.kind, label: c.label, amountMinor: c.amountMinor, treatment, counted, reason };
 }
 
-/** Komponenten (i hele NOK) fra økonomikjernen er minst like stor som det mappede beløpet (innenfor avrundingstoleransen). */
-const covers = (componentNok: bigint | null, amountMinor: bigint): boolean => componentNok !== null && componentNok * ORE_PER_NOK + ROUNDING_TOLERANCE_ORE >= amountMinor;
+/**
+ * Hele-NOK-verdier en støttet nærmeste-krone-avrunding av `amountMinor` (øre) kan gi: under 50 øre ned, over 50 opp, eksakt 50 øre er
+ * uavklart/halvt og gir begge kandidater (half_up, half_even og uavklart policy faller alle innenfor dette settet). 0,99 NOK gir 1 NOK, aldri 0.
+ */
+const roundingCandidates = (amountMinor: bigint): bigint[] => {
+  const q = amountMinor / ORE_PER_NOK;
+  const r = amountMinor % ORE_PER_NOK;
+  return r === 0n ? [q] : r < 50n ? [q] : r > 50n ? [q + 1n] : [q, q + 1n];
+};
+
+/** Kjernens komponent (hele NOK) er nøyaktig linjens beløp avrundet etter en støttet nærmeste-krone-regel. Ingen toleranse; ukjent komponent dekker ikke. */
+const covers = (componentNok: bigint | null, amountMinor: bigint): boolean => componentNok !== null && amountMinor >= 0n && roundingCandidates(amountMinor).includes(componentNok);
 
 /**
  * Hver linje får nøyaktig én behandling. Regler:
  *  - ikke inkludert i budsjettet ⇒ `not_included` (synlig, ikke i total);
- *  - ukjent beløp ⇒ `unknown_amount` (ikke i total; totalen er nedre grense); valuta ≠ NOK eller ukjent mva.-grunnlag ⇒ `unsupported` (ikke omregnet, ikke antatt);
+ *  - ukjent beløp ⇒ `unknown_amount` (ikke i total; totalen er nedre grense); valuta ≠ NOK, ukjent mva.-grunnlag eller `excl` (brutto budsjettbeløp ukjent) ⇒ `unsupported` (ikke omregnet, ikke antatt, ikke i total);
+ *  - bekreftet omfang krever at kjernens komponent er nøyaktig linjens beløp avrundet til hele NOK (eksplisitt mapping, ingen toleranse); ellers `mapped_component_missing`;
  *  - `transport`/`insurance` med bekreftet omfang ⇒ `mapped_to_input` (allerede i økonomikjernens komponent; telles ikke på nytt); ubekreftet ⇒ `unmapped_unknown_scope`:
  *    telles som kostnad BARE når kjernens tilsvarende komponent(er) er ukjent eller uttrykkelig 0 (ellers kan beløpet allerede være med, og en nedre grense må ikke dobbelttelle);
  *  - øvrige kinder ⇒ `added_to_total` som valgt kostnad (DEC-030), aldri i tollverdi/mva.-grunnlag.
@@ -31,6 +40,8 @@ export function treatCostLines(spec: SearchSpec, result: EconomicsResult, scopes
     if (c.amountMinor === null) return line(c, "unknown_amount", false, "amount_unknown");
     if (c.currency !== "NOK") return line(c, "unsupported", false, "currency_not_nok");
     if (c.vatBasis === null) return line(c, "unsupported", false, "vat_basis_unknown");
+    // Eksklusiv mva.: det finnes ingen sats eller brutto sluttbeløp på linjen, og denne skiven innfører ingen mva.-regel for tillegg. Beløpet bevares, men linjen forblir uavklart.
+    if (c.vatBasis === "excl") return line(c, "unsupported", false, "vat_basis_excl_gross_unknown");
     const amount = c.amountMinor;
     if (c.kind === "transport") {
       const s = scopes[c.id] ?? "unconfirmed";

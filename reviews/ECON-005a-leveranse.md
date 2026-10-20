@@ -2,6 +2,8 @@
 
 **Status: REVIEW (005a). ECON-005b–d er ikke startet.** Omfang etter den gjennomgåtte planen (`docs/econ/ECON-005-implementeringsplan.md`, § 0b–0c, § 6): bare rene funksjoner. **Ingen** databaseendring, UI-integrasjon, providerendring, endring av økonomiflagg (alle `false`), `classifyBudget`, ECON-004-kjernen, avgiftsmotor, fixturer eller avrundingspolicy. E7 og E8 er utsatt; ingen ekstra funksjoner. Produktregel: estimater, nedre grenser, scenarier og ukjente kostnader gir aldri positive budsjettutfall, `isFullHit` eller varsler.
 
+> **Oppdatering:** to P2 fra uavhengig review av e1c6ad0 er rettet i `cost-lines.ts` (`excl` holdes uavklart; eksakt avrundingskontroll i stedet for 99-øre-toleranse) — se `reviews/ECON-005a-retting.md`. Beskrivelsen av «bekreftet omfang» nedenfor gjelder med denne presiseringen; testtall i denne rapporten er fra e1c6ad0.
+
 ## Hva er levert (alt nytt; ingen eksisterende fil endret)
 `src/domain/search-economics/` (ren domenekode; importerer bare `@/domain/*` og relative filer):
 - **`to-cost-assessment.ts`** — `toCostAssessment({ result, spec, candidate, now, profileRef, rightsLimit, sourceDataLimit, extraLimits?, lineScopes? })` → `MappingOutcome { class, assessment | null, lines, reasons, validUntil, bindingLimit }`; `computeValidUntil` (P3).
