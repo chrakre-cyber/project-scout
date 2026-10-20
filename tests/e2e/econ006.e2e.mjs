@@ -376,22 +376,31 @@ try {
 
   // simulert foreldelse (endring i testdatabasen — IKKE en brukerhandling): endrede rettigheter og ny annonserevisjon
   const row = (await dbInputs(firmA)).find((r) => r.candidate_id.includes(LISTINGS.phev.providerId));
-  await db.query("update public.dealer_economics_inputs set context = jsonb_set(context,'{rightsDigest}', to_jsonb(repeat('0',64))) where id=$1", [row.id]);
+  // Testdatabase-manipulasjon (ikke en brukerhandling). Oppdateringstriggeren setter confirmed_by := auth.uid() (NULL for superbruker) ved endret innhold, og en rad uten bekrefter leses som
+  // «ikke brukbar» (fail-lukket: se egen kontroll nedenfor). For å simulere ren rettighetsendring slås triggeren av akkurat mens raden endres.
+  const tamper = async (sql) => { await db.query("alter table public.dealer_economics_inputs disable trigger dealer_economics_inputs_before_update"); try { await db.query(sql, [row.id]); } finally { await db.query("alter table public.dealer_economics_inputs enable trigger dealer_economics_inputs_before_update"); } };
+  await tamper("update public.dealer_economics_inputs set context = jsonb_set(context,'{rightsDigest}', to_jsonb(repeat('0',64))) where id=$1");
   await pA.goto(urls(MAIN, S1, 2, D.phev).detail);
   e = await econ(pA);
-  check("J7 (simulert rettighetsendring i testdatabasen): «kildens rettigheter er endret» ⇒ må bekreftes på nytt, ingen estimat", e.status !== "estimate" && /kildens rettigheter er endret/.test(nb(await pA.locator('[data-testid="economics-dealer-input"]').innerText())), `${e.status} | ${nb(await pA.locator('[data-testid="economics-dealer-input"]').innerText())}`);
-  // Databasen forbyr å endre nøkkelen (trigger dealer_economics_inputs_before_update: «dealer_input_immutable») — det er et ønsket vern. For å SIMULERE en rad fra en eldre revisjon slår testen
-  // av akkurat den triggeren midlertidig i den isolerte testdatabasen (aldri i appen) og slår den på igjen umiddelbart.
-  await db.query("alter table public.dealer_economics_inputs disable trigger dealer_economics_inputs_before_update");
-  try { await db.query("update public.dealer_economics_inputs set candidate_version = 'gammel-revisjon-simulert' where id=$1", [row.id]); }
-  finally { await db.query("alter table public.dealer_economics_inputs enable trigger dealer_economics_inputs_before_update"); }
+  check("J7 (simulert rettighetsendring i testdatabasen): «kildens rettigheter er endret» ⇒ må bekreftes på nytt, ingen estimat", e.status !== "estimate" && /kildens rettigheter er endret/.test(nb(await pA.locator('[data-testid="economics-dealer-input"]').innerText())), `${e.status} | ${nb(await pA.locator('[data-testid="economics-dealer-input"]').innerText())} | rad: ${JSON.stringify((await db.query("select search_id, candidate_version, context from public.dealer_economics_inputs where id=$1", [row.id])).rows[0])} | S1=${S1}`);
+  // Databasen forbyr å endre nøkkelen (trigger: «dealer_input_immutable») — et ønsket vern. Simuleringen av en rad fra en eldre revisjon slår triggeren av midlertidig i testdatabasen.
+  await tamper("update public.dealer_economics_inputs set candidate_version = 'gammel-revisjon-simulert' where id=$1");
   const immut = await db.query("update public.dealer_economics_inputs set candidate_version = 'x' where id=$1", [row.id]).then(() => false, (er) => /immutable/.test(er.message));
+  // Fail-lukket: en bekreftelse uten bekrefter (confirmed_by NULL) leses ikke som tillit
+  {
+    const r2 = (await dbInputs(firmA)).find((r) => r.candidate_id.includes(LISTINGS.bev.providerId));
+    await db.query("alter table public.dealer_economics_inputs disable trigger dealer_economics_inputs_before_update");
+    try { await db.query("update public.dealer_economics_inputs set confirmed_by = null where id=$1", [r2.id]); } finally { await db.query("alter table public.dealer_economics_inputs enable trigger dealer_economics_inputs_before_update"); }
+    await pA.goto(urls(MAIN, S1, 2, D.bev).detail);
+    const eN = await econ(pA);
+    check("fail-lukket: en lagret bekreftelse uten bekrefter (confirmed_by NULL) brukes ikke — ingen tall fra den, ingen delvis tillit", eN.status !== "scenarios" && eN.status !== "estimate" && !eN.text.includes(nok(exB.cash)), `${eN.status}`);
+  }
   check("databasen forbyr å endre nøkkelen til en bekreftelse (kandidat/revisjon) — vern mot flytting av bekreftelser mellom revisjoner", immut);
   await pA.goto(urls(MAIN, S1, 2, D.phev).detail);
   e = await econ(pA);
   check("J7 (simulert ny annonserevisjon): bekreftelsen for gammel revisjon brukes ikke (ikke estimat)", e.status !== "estimate");
   await pA.goto(urls(MAIN, S1, 2, D.phev).form); await must(pA, '[data-testid="dealer-form"]');
-  check("J7 (simulert ny revisjon): skjemaet forhåndsutfylles fra tidligere revisjon med tydelig merknad og krever ny bekreftelse", (await pA.locator('[data-testid="dealer-form-prefill"]').getAttribute("data-prefill")) === "previous_revision" && (await pA.inputValue('[name="tw_kg"]')) === "2610" && (await pA.locator('[data-testid="confirm"]').isChecked()) === false);
+  check("J7 (simulert ny revisjon): skjemaet forhåndsutfylles fra tidligere revisjon med tydelig merknad og krever ny bekreftelse", (await pA.locator('[data-testid="dealer-form-prefill"]').getAttribute("data-prefill", { timeout: 5000 }).catch(() => null)) === "previous_revision" && (await pA.inputValue('[name="tw_kg"]')) === "2610" && (await pA.locator('[data-testid="confirm"]').isChecked()) === false);
   await shot(pA, "12-skjema-forrige-revisjon");
 
   // =============================================================== omfang og fordeling (S2: transport 12 000 kr)
