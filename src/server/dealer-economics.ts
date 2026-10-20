@@ -8,7 +8,7 @@
  *  - bekreftelseskonteksten (kostnadsgrunnlag, scenario, rettighetsavtrykk) beregnes av serveren fra gjeldende søk og rettigheter — aldri fra klienten;
  *  - bare forhandlerinput lagres. Avledede beregningsresultater lagres aldri (E9).
  */
-import { DEALER_INPUT_SCHEMA_VERSION, parseDealerInput, parseDealerProfile } from "@/domain/search-economics";
+import { DEALER_INPUT_SCHEMA_VERSION, parseDealerInput, parseDealerProfile, validateLineScopes } from "@/domain/search-economics";
 import type { ConfirmationContext, DealerInputV1, DealerProfileV1, InputIssue, StoredDealerInput } from "@/domain/search-economics";
 import type { ResolvedRights } from "@/domain/provider-rights";
 import type { SearchSpec } from "@/domain/search-v2/types";
@@ -52,7 +52,7 @@ export type ConfirmResult =
   | { ok: false; code: "invalid_search" | "invalid_input" | SaveError; issues?: InputIssue[] };
 
 /**
- * Bekrefter forhandlerinput for (søk, kandidat, revisjon). `raw` er ubetrodd klientinput. Linjeomfang må referere til eksisterende kostnadslinjer i søket.
+ * Bekrefter forhandlerinput for (søk, kandidat, revisjon). `raw` er ubetrodd klientinput. Linjeomfang valideres mot søkets kostnadslinjer (eksisterende linje, tillatt type, split = linjens beløp).
  * `dealershipId` brukes ikke til skriving (databasen utleder firma fra medlemskapet); den finnes for å kontrollere at lagret binding stemmer ved lesing.
  */
 export async function confirmDealerInput(store: DealerEconomicsStore, a: {
@@ -61,9 +61,9 @@ export async function confirmDealerInput(store: DealerEconomicsStore, a: {
   if (!isUuid(a.searchId)) return { ok: false, code: "invalid_search" };
   const parsed = parseDealerInput(a.raw);
   if (!parsed.ok) return { ok: false, code: "invalid_input", issues: parsed.issues };
-  const ids = new Set(a.spec.budget.costs.map((c) => c.id));
-  const unknownLines = Object.keys(parsed.value.lineScopes ?? {}).filter((id) => !ids.has(id));
-  if (unknownLines.length > 0) return { ok: false, code: "invalid_input", issues: unknownLines.map((id) => ({ path: `$.lineScopes.${id}`, code: "invalid_value" as const })) };
+  // Omfang/fordeling valideres mot AKTUELLE kostnadslinjer før lagring: linjen finnes, typen tillater omfanget, og en split summerer nøyaktig til linjens beløp.
+  const scopeIssues = validateLineScopes(parsed.value.lineScopes, a.spec.budget.costs);
+  if (scopeIssues.length > 0) return { ok: false, code: "invalid_input", issues: scopeIssues };
   const key: DealerInputKey = { searchId: a.searchId, candidateId: a.candidate.id, candidateVersion: a.candidate.version, inputSchemaVersion: DEALER_INPUT_SCHEMA_VERSION };
   const saved = await store.saveInput(key, parsed.value, confirmationContextFor(a.spec, a.rights));
   return saved.ok ? { ok: true } : { ok: false, code: saved.code };

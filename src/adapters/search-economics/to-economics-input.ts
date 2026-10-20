@@ -19,7 +19,7 @@ import type { EconomicsInput, FxQuote } from "@/domain/economics";
 import type { TaxInput } from "@/domain/tax";
 import type { NormalizedListing } from "@/domain/types";
 import type { EconomicsFieldKey } from "@/domain/provider-rights";
-import { toLineScopes } from "@/domain/search-economics";
+import { toLineScopes, validateLineScopes } from "@/domain/search-economics";
 import type { DealerCharge, DealerFx, DealerInputV1, DealerProfileV1, LineScope } from "@/domain/search-economics";
 import type { CostLine, SearchSpec } from "@/domain/search-v2/types";
 
@@ -107,15 +107,18 @@ export function toEconomicsInput(a: AdapterInput): AdapterResult {
     if (!used.includes("specs")) used.push("specs");
   } else co2 = { gramsPerKm: null, method: "unspecified" };
 
-  let firstRegistration: TaxInput["firstRegistration"];
-  const fr = a.listing.specs.firstRegistration;
+  // Registreringsfeltet leses BARE når beregningsrett er gitt og forhandleren ikke har oppgitt egen verdi (rettighetskontroll før lesing).
+  let firstRegistration: TaxInput["firstRegistration"] = { precision: "unknown", value: null };
   if (d?.firstRegistration) firstRegistration = { precision: d.firstRegistration.precision, value: d.firstRegistration.value };
-  else if (a.allowedFields.has("registration") && fr !== null) {
-    const p2 = (n: number) => String(n).padStart(2, "0");
-    firstRegistration = fr.precision === "date" ? { precision: "day", value: `${fr.year}-${p2(fr.month)}-${p2(fr.day)}` }
-      : fr.precision === "month" ? { precision: "month", value: `${fr.year}-${p2(fr.month)}` } : { precision: "year", value: String(fr.year) };
-    used.push("registration");
-  } else firstRegistration = { precision: "unknown", value: null };
+  else if (a.allowedFields.has("registration")) {
+    const fr = a.listing.specs.firstRegistration;
+    if (fr !== null) {
+      const p2 = (n: number) => String(n).padStart(2, "0");
+      firstRegistration = fr.precision === "date" ? { precision: "day", value: `${fr.year}-${p2(fr.month)}-${p2(fr.day)}` }
+        : fr.precision === "month" ? { precision: "month", value: `${fr.year}-${p2(fr.month)}` } : { precision: "year", value: String(fr.year) };
+      used.push("registration");
+    }
+  }
 
   const asOf = a.now.slice(0, 10);
   const norwegianRegistration: TaxInput["norwegianRegistration"] = d?.norwegianRegistration
@@ -129,6 +132,8 @@ export function toEconomicsInput(a: AdapterInput): AdapterResult {
   let insurance: EconomicsInput["insurance"] = d?.insurance ? { amount: d.insurance.amount, basis: "dealer_entered" } : undefined;
   for (const c of a.spec.budget.costs) {
     if (!mappable(c)) continue;
+    // Bare omfang som er gyldig mot DENNE linjen (type, og for split: sum = linjens beløp) kan gi økonomiinput; ugyldig omfang går videre til mapperen (uavklart) men aldri til kjernen.
+    if (d?.lineScopes?.[c.id] !== undefined && validateLineScopes({ [c.id]: d.lineScopes[c.id]! }, [c]).length > 0) { notes.push("line_scope_invalid_not_used"); continue; }
     const s = scopes[c.id];
     if (c.kind === "transport" && s !== undefined && s !== "unconfirmed") {
       if (s === "to_border" && transportToBorder === undefined) transportToBorder = { amount: minorToNokString(c.amountMinor), basis: "dealer_entered" };

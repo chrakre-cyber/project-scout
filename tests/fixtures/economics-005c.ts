@@ -4,7 +4,9 @@ import type { CandidateV2, CostLine, SearchSpec } from "@/domain/search-v2/types
 import type { NormalizedListing } from "@/domain/types";
 import type { DealerInputV1, StoredDealerInput } from "@/domain/search-economics";
 import { bindingFor, confirmationContextFor } from "@/server/search-economics";
+import { REGISTERED_PROFILES, matchingRights, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
 import type { ResolvedRights } from "@/domain/provider-rights";
+import { assessListing } from "@/server/search-preview";
 
 export const NOW = new Date("2026-10-20T10:00:00Z");
 export const FIRM_A = "00000000-0000-4000-a000-00000000000a";
@@ -24,11 +26,18 @@ export const listing = (over: Partial<NormalizedListing> = {}): NormalizedListin
   ...over,
 });
 
-export const candidate = (over: Partial<CandidateV2> = {}): CandidateV2 => ({
-  id: "13:synthetic-demo/ad-1", version: "rev1:" + "a".repeat(64), brandKey: null, modelKey: null, variant: null, modelYear: null, firstRegistration: null, mileageKm: null, seats: null,
-  bodyType: null, fuel: null, transmission: null, driveTrain: null, exteriorColor: null, interiorColor: null, interiorMaterial: null, equipment: null, packages: null, currentCategory: null,
-  ...over,
-});
+/**
+ * KANONISK kandidatidentitet: id og revisjon utledes av den ekte pipelinefunksjonen (`assessListing`: matchingretten via `restrictForMatching`, deretter kandidatadapteren med
+ * den registrerte mappingen) fra annonsen. Håndskrevne id-er (`13:synthetic-demo/…` — source.length er 14) og revisjoner er ikke gyldige par og avvises av `assessEconomics`.
+ */
+export function candidateFor(l: NormalizedListing): CandidateV2 {
+  const prepare = (x: NormalizedListing) => restrictForMatching(x, matchingRights(rightsForSource(x.source, NOW, REGISTERED_PROFILES))).listing;
+  const item = assessListing(emptySpec(), l, () => NOW, prepare);
+  if (item === null) throw new Error("annonsen kan ikke gjøres om til kandidat");
+  return item.candidate;
+}
+/** Kandidaten for `listing()` (eller for en annen annonse) — med mulighet for bevisst avvikende felt i tester som ikke skal ha et gyldig par. */
+export const candidate = (over: Partial<CandidateV2> = {}, l: NormalizedListing = listing()): CandidateV2 => ({ ...candidateFor(l), ...over });
 
 export const line = (id: string, kind: CostLine["kind"], amountMinor: bigint | null, over: Partial<CostLine> = {}): CostLine =>
   ({ id, kind, label: `linje ${id}`, currency: "NOK", amountMinor, vatBasis: "incl", includedInBudget: true, ...over });

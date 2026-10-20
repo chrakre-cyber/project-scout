@@ -8,7 +8,7 @@ import { REGISTERED_PROFILES, rightsForSource } from "@/domain/provider-rights";
 import type { ConfirmationContext, DealerInputV1 } from "@/domain/search-economics";
 import { assessEconomics } from "@/server/search-economics";
 import { confirmDealerInput, loadDealerProfile, loadStoredInput, saveDealerProfile, type DealerEconomicsStore, type DealerInputKey, type DealerInputRow } from "@/server/dealer-economics";
-import { FIRM_A, FIRM_B, NOW, SEARCH_1, SEARCH_2, candidate, dealerInput, line, listing, specOf } from "./fixtures/economics-005c";
+import { FIRM_A, FIRM_B, NOW, SEARCH_1, SEARCH_2, candidate, candidateFor, dealerInput, line, listing, specOf } from "./fixtures/economics-005c";
 
 const demo = rightsForSource("synthetic-demo", NOW, REGISTERED_PROFILES);
 
@@ -34,11 +34,11 @@ class MemStore implements DealerEconomicsStore {
 const spec = specOf([line("transport", "transport", 800_000n)]);
 const confirm = (store: DealerEconomicsStore, raw: unknown, over: Partial<Parameters<typeof confirmDealerInput>[1]> = {}) =>
   confirmDealerInput(store, { searchId: SEARCH_1, candidate: candidate(), spec, rights: demo, raw, ...over });
-const assess = async (store: MemStore, over: { spec?: typeof spec; cand?: ReturnType<typeof candidate>; firm?: string } = {}) => {
-  const cand = over.cand ?? candidate(), sp = over.spec ?? spec, firm = over.firm ?? store.firm;
+const assess = async (store: MemStore, over: { spec?: typeof spec; listing?: ReturnType<typeof listing>; firm?: string } = {}) => {
+  const l = over.listing ?? listing(), cand = candidateFor(l), sp = over.spec ?? spec, firm = over.firm ?? store.firm;
   const st = await loadStoredInput(store, { dealershipId: firm, searchId: SEARCH_1, candidate: cand });
   const profile = await loadDealerProfile(store, firm);
-  return assessEconomics({ dealershipId: firm, searchId: SEARCH_1, listing: listing(), candidate: cand, spec: sp, stored: st, profile, now: NOW });
+  return assessEconomics({ dealershipId: firm, searchId: SEARCH_1, candidate: cand, spec: sp, stored: st, profile, now: NOW, listing: l });
 };
 
 describe("bekreftelse: servervalidering før lagring", () => {
@@ -138,7 +138,10 @@ describe("hele flyten: bekreft → les → vurder (ingen lagring av resultater)"
     // vurderingen skriver ingenting
     expect(s.writes).toBe(writesAfterConfirm);
     // ny revisjon
-    const b = await assess(s, { cand: candidate({ version: "rev1:" + "9".repeat(64) }) });
+    const changed = listing({ price: { ...listing().price!, stated: { amount: "100001", currency: "NOK" }, amount: { amountMinor: 10_000_100, currency: "NOK" } } }); // annonsen er endret ⇒ ny kanonisk revisjon
+    expect(candidateFor(changed).id).toBe(candidate().id);
+    expect(candidateFor(changed).version).not.toBe(candidate().version);
+    const b = await assess(s, { listing: changed });
     expect(b.kind === "assessed" && b.dealerInput.status).toBe("none"); // ingen rad for den nye revisjonen: må bekreftes på nytt
     // endret kostnadsgrunnlag på samme revisjon
     const c = await assess(s, { spec: specOf([line("transport", "transport", 999_000n)]) });

@@ -300,7 +300,9 @@ export interface ConfirmationContext {
 export interface StoredDealerInput { binding: DealerInputBinding; input: DealerInputV1; context: ConfirmationContext; confirmedBy: string; confirmedAt: string }
 
 export type StaleReason =
-  | "schema_version_changed" | "candidate_version_changed" | "cost_basis_changed" | "scenario_changed" | "rights_changed" | "fx_expired";
+  | "schema_version_changed" | "candidate_version_changed" | "cost_basis_changed" | "scenario_changed" | "rights_changed" | "fx_expired"
+  /** Bekreftet omfang/fordeling stemmer ikke med søkets nåværende kostnadslinjer (type eller beløp). */
+  | "line_scopes_invalid";
 export type InputStatus =
   | { status: "none" }
   /** Hører til et annet firma/søk/kandidat: brukes aldri og påvirker ingenting (ingen antydning av innholdet). */
@@ -345,4 +347,30 @@ export function evaluateDealerInput(stored: StoredDealerInput | null, current: {
   for (const l of limits) if (l.untilExclusive === null || nowMs === null || parseUtcInstant(l.untilExclusive)! <= nowMs) { reasons.push("fx_expired"); break; }
   if (reasons.length > 0) return { status: "stale_needs_reconfirmation", reasons };
   return { status: "fresh", expiryLimits: limits };
+}
+
+// ---------------------------------------------------------------- omfang mot aktuell kostnadslinje (plan P1)
+/**
+ * Kontrollerer bekreftet omfang mot AKTUELLE søkekostnadslinjer (kalles før lagring og før bruk av lagret input).
+ *  - linjen må finnes;
+ *  - `transport`: unconfirmed | to_border | after_border | split; `insurance`: unconfirmed | to_border | other; øvrige typer: bare unconfirmed;
+ *  - split bare for transport, delbeløpene ikke-negative (sikres av parseren) og summen er nøyaktig linjens beløp (ukjent beløp ⇒ ugyldig).
+ * Ugyldig omfang må ikke nå økonomikjernen. Ikke-inkluderte linjer og linjer i annen valuta er formelt gyldige (de mappes uansett ikke).
+ */
+export function validateLineScopes(scopes: DealerInputV1["lineScopes"], costs: ReadonlyArray<{ id: string; kind: string; amountMinor: bigint | null }>): InputIssue[] {
+  const issues: InputIssue[] = [];
+  const byId = new Map(costs.map((c) => [c.id, c]));
+  for (const [id, scope] of Object.entries(scopes ?? {})) {
+    const path = `$.lineScopes.${id}`;
+    const line = byId.get(id);
+    if (!line) { issues.push({ path, code: "invalid_value" }); continue; }
+    if (scope === "unconfirmed") continue;
+    const kindOk = line.kind === "transport" ? scope === "to_border" || scope === "after_border" || typeof scope === "object"
+      : line.kind === "insurance" ? scope === "to_border" || scope === "other" : false;
+    if (!kindOk) { issues.push({ path, code: "invalid_value" }); continue; }
+    if (typeof scope === "object") {
+      if (line.amountMinor === null || BigInt(scope.split.toBorderMinor) + BigInt(scope.split.afterBorderMinor) !== line.amountMinor) issues.push({ path: `${path}.split`, code: "invalid_value" });
+    }
+  }
+  return issues;
 }

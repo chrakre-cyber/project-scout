@@ -7,15 +7,19 @@ import { describe, expect, it } from "vitest";
 import { combineAssessment } from "@/domain/search-v2/budget";
 import { REGISTERED_PROFILES, SYNTHETIC_RIGHTS_PROFILE, rightsForSource, type ProviderRightsProfile } from "@/domain/provider-rights";
 import { assessEconomics, bindingFor, confirmationContextFor, derivedRightsDigest, type EconomicsRequest } from "@/server/search-economics";
-import { FIRM_A, FIRM_B, NOW, SEARCH_1, SEARCH_2, candidate, dealerInput, line, listing, specOf, stored } from "./fixtures/economics-005c";
+import { FIRM_A, FIRM_B, NOW, SEARCH_1, SEARCH_2, candidate, candidateFor, dealerInput, line, listing, specOf, stored } from "./fixtures/economics-005c";
 import { MOBILE_SANDBOX_EXAMPLE, profile } from "./fixtures/rights-profiles";
 
 const demo = rightsForSource("synthetic-demo", NOW, REGISTERED_PROFILES);
 const prof = (de: { price?: boolean; registration?: boolean; specs?: boolean; display?: boolean }, over: Parameters<typeof profile>[0] = {}): ProviderRightsProfile =>
   profile({ derivedEconomics: { allow: { price: de.price ?? false, registration: de.registration ?? false, specs: de.specs ?? false }, display: de.display ?? false }, ...over });
+/** Kandidaten utledes (kanonisk) fra den annonsen som faktisk brukes; stored-standarden er bekreftelsen for samme annonse. */
 const req = (over: Partial<EconomicsRequest> = {}): EconomicsRequest => {
   const spec = over.spec ?? specOf();
-  return { dealershipId: FIRM_A, searchId: SEARCH_1, listing: listing(), candidate: candidate(), spec, stored: stored({ rights: demo, spec }), profile: null, now: NOW, ...over };
+  const l = over.listing ?? listing();
+  // Kilder uten registrert mapping (sandbox-eksempel, ukjent) kan ikke gi kanonisk kandidat; de avvises uansett før paringen (ingen beregningsrett/profil).
+  const cand = over.candidate ?? (() => { try { return candidateFor(l); } catch { return candidate(); } })();
+  return { dealershipId: FIRM_A, searchId: SEARCH_1, spec, stored: stored({ rights: demo, spec, cand }), profile: null, now: NOW, ...over, listing: l, candidate: cand };
 };
 const assessed = (a: ReturnType<typeof assessEconomics>) => { if (a.kind !== "assessed") throw new Error(a.kind + ":" + ("reason" in a ? a.reason : "")); return a; };
 
@@ -138,7 +142,9 @@ describe("forhandlerinput: firma, søk, kandidat og revisjon; ny bekreftelse", (
   });
   it("ny kandidatrevisjon ⇒ stale_needs_reconfirmation og input brukes ikke", () => {
     const spec = specOf();
-    const s = stored({ rights: demo, spec, cand: candidate({ version: "rev1:" + "f".repeat(64) }) });
+    const older = candidateFor(listing({ price: { ...listing().price!, stated: { amount: "99999", currency: "NOK" }, amount: { amountMinor: 9_999_900, currency: "NOK" } } })); // samme annonse-id, tidligere innhold
+    expect(older.id).toBe(candidate().id); expect(older.version).not.toBe(candidate().version);
+    const s = stored({ rights: demo, spec, cand: older });
     const a = assessed(assessEconomics(req({ stored: s })));
     expect(a.dealerInput).toEqual({ status: "stale_needs_reconfirmation", reasons: ["candidate_version_changed"] });
     expect(a.detail!.result.status).not.toBe("estimate");
@@ -161,11 +167,11 @@ describe("forhandlerinput: firma, søk, kandidat og revisjon; ny bekreftelse", (
     const eur = listing({ price: { ...listing().price!, stated: { amount: "10000", currency: "EUR" }, amount: { amountMinor: 1_000_000, currency: "EUR" } } });
     const spec = specOf();
     const fx = (validUntil: string) => dealerInput({ fx: { acquisition: { pair: "EUR/NOK", rate: "11.50", sourceLabel: "Bank X", effectiveAt: "2026-10-19", quotedAt: "2026-10-19", validUntil }, customs: { pair: "EUR/NOK", rate: "11.60", sourceLabel: "Tolletaten", quotedAt: "2026-10-16", validFrom: "2026-10-16", validTo: "2026-10-31" } } });
-    const ok = assessed(assessEconomics(req({ listing: eur, stored: stored({ rights: demo, spec, input: fx("2026-10-20") }) })));
+    const ok = assessed(assessEconomics(req({ listing: eur, stored: stored({ rights: demo, spec, input: fx("2026-10-20"), cand: candidateFor(eur) }) })));
     expect(ok.dealerInput.status).toBe("fresh");
     expect(ok.detail!.outcome.validUntil).toBe("2026-10-21T00:00:00.000Z");
     expect(ok.detail!.outcome.bindingLimit).toBe("dealer_acquisition_fx_validUntil");
-    const expired = assessed(assessEconomics(req({ listing: eur, stored: stored({ rights: demo, spec, input: fx("2026-10-19") }) })));
+    const expired = assessed(assessEconomics(req({ listing: eur, stored: stored({ rights: demo, spec, input: fx("2026-10-19"), cand: candidateFor(eur) }) })));
     expect(expired.dealerInput).toEqual({ status: "stale_needs_reconfirmation", reasons: ["fx_expired"] });
   });
   it("firmaprofil: mva.-håndtering/fradrag fra profilen gjelder når kandidaten ikke oppgir; bekreftet kandidatoverstyring endres ikke av profilen", () => {
@@ -191,7 +197,7 @@ describe("forhandlerinput: firma, søk, kandidat og revisjon; ny bekreftelse", (
 describe("ingen positive budsjettutfall eller varsler fra estimat, nedre grense eller scenarier", () => {
   const variants: Array<[string, Partial<EconomicsRequest>]> = [
     ["fullt estimat", {}], ["uten forhandlerinput", { stored: null }],
-    ["lav pris, høyt budsjett", { listing: listing({ price: { ...listing().price!, stated: { amount: "1000", currency: "NOK" } } }) }],
+    ["lav pris, høyt budsjett", { listing: listing({ price: { ...listing().price!, stated: { amount: "1000", currency: "NOK" }, amount: { amountMinor: 100_000, currency: "NOK" } } }) }],
     ["bare pris tillatt", { profiles: [prof({ price: true, display: true })] }],
     ["uten visningsrett", { profiles: [prof({ price: true, registration: true, specs: true })] }],
     ["linje med omfang", { spec: specOf([line("transport", "transport", 800_000n)]), stored: stored({ rights: demo, spec: specOf([line("transport", "transport", 800_000n)]), input: dealerInput({ lineScopes: { transport: "to_border" } }) }) }],
@@ -199,7 +205,7 @@ describe("ingen positive budsjettutfall eller varsler fra estimat, nedre grense 
     ["budsjett 0-nær", { spec: specOf([], "passenger", 1n) }],
     ["uten budsjett", { spec: specOf([], "passenger", null) }],
     ["ikke-NOK uten kurs", { listing: listing({ price: { ...listing().price!, stated: { amount: "10000", currency: "EUR" }, amount: { amountMinor: 1_000_000, currency: "EUR" } } }) }],
-    ["brutto uten belegg", { listing: listing({ price: { ...listing().price!, basis: "gross", basisEvidence: null } }) }],
+    ["prisgrunnlag ukjent (uten belegg)", { listing: listing({ price: { ...listing().price!, basis: "unknown", basisEvidence: null } }) }],
   ];
   it.each(variants)("%s: aldri within_budget/within_deviation, isFullHit false, positiveBudgetEligible false, ingen validated", (_n, over) => {
     const r = req(over);

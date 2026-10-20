@@ -4,10 +4,13 @@
  *
  * Rekkefølge (rettighetskontroll FØR kildefelt brukes):
  *   1. rettigheter for kilden (005b): beregningsrett per felt, separat visningsrett — matching-/visningsrett for øvrig gir ikke beregningsrett og omvendt;
- *   2. uten beregningsrett for pris: `unavailable(rights_not_granted)` — ingen annonsefelt leses; for registrering/specs: feltet leses ikke og forblir ukjent;
- *   3. forhandlerinput: bare input bundet til DETTE firmaet (fra validert sesjon, aldri klient), søket, kandidaten og revisjonen, og som ikke er foreldet (P2);
- *   4. ren adapter → `EconomicsInput` → økonomikjernen (ECON-004) med REGISTERPROFILEN (alle økonomiflagg `false`) → 005a-mapper → `classifyBudget` (uendret);
- *   5. visning bare med visningsrett (og beregningsrett for brukte felt, og visningsrett for avslørt pris). Uten visningsrett returneres ingen tall.
+ *   2. uten beregningsrett for pris: `unavailable(rights_not_granted)` — ingen annonsefelt leses; for registrering/specs: feltet leses ikke og forblir ukjent
+ *      (forhandlerens egne verdier gjelder fortsatt);
+ *   3. kontrollert kobling annonse ↔ kandidat: id og revisjon utledes på nytt fra DENNE annonsen (`candidate-pairing.ts`); avvik ⇒ `candidate_listing_mismatch`, ingenting bundet til kandidaten brukes;
+ *   4. forhandlerinput: bare input bundet til DETTE firmaet (fra validert sesjon, aldri klient), søket, kandidaten og revisjonen, ikke foreldet (P2), og med omfang/fordeling som stemmer med de AKTUELLE kostnadslinjene;
+ *   5. kildeobservasjonen (`lastSeenAt`) må være et gyldig UTC-tidspunkt og ikke senere enn nåtid (ellers `source_observation_invalid`/`_in_future`, ingen vurdering);
+ *   6. ren adapter → `EconomicsInput` → økonomikjernen (ECON-004) med REGISTERPROFILEN (alle økonomiflagg `false`) → 005a-mapper → `classifyBudget` (uendret);
+ *   7. visning bare med visningsrett (og beregningsrett for brukte felt, og visningsrett for avslørt pris). Uten visningsrett returneres ingen tall.
  * Estimat, nedre grense, scenarier og ukjent gir aldri positiv budsjettstatus, `isFullHit` eller varsel: konfigurasjonen kan ikke overstyres av kalleren.
  */
 import { createHash } from "node:crypto";
@@ -19,11 +22,13 @@ import {
   ECONOMICS_FIELD_KEYS, REGISTERED_PROFILES, canDeriveEconomics, economicsDecision, retentionExpiresAt, rightsForSource,
 } from "@/domain/provider-rights";
 import type { EconomicsDenialReason, EconomicsFieldKey, ProviderRightsProfile, ResolvedRights } from "@/domain/provider-rights";
-import { DEALER_INPUT_SCHEMA_VERSION, evaluateDealerInput, toCostAssessment, toEconomicsDisplayStatus } from "@/domain/search-economics";
+import { DEALER_INPUT_SCHEMA_VERSION, evaluateDealerInput, toCostAssessment, toEconomicsDisplayStatus, validateLineScopes } from "@/domain/search-economics";
 import type { ConfirmationContext, DealerInputBinding, DealerProfileV1, EconomicsDisplayStatus, InputStatus, MappingOutcome, StoredDealerInput } from "@/domain/search-economics";
 import { classifyBudget, costBasisOf, parseUtcInstant } from "@/domain/search-v2/budget";
 import type { BudgetClassification, CandidateV2, SearchSpec } from "@/domain/search-v2/types";
 import type { NormalizedListing } from "@/domain/types";
+import type { CandidateAdapter } from "@/adapters/search-candidate/candidate";
+import { verifyCandidatePair } from "./candidate-pairing";
 
 const TRANSIENT_FRESH_MS = 5 * 60 * 1000; // samme som proveniens: uten lagringsrett er kildedata ferske i fem minutter
 
@@ -43,7 +48,12 @@ export interface EconomicsRequest {
   profile: DealerProfileV1 | null;
   profiles?: readonly ProviderRightsProfile[];
   now: Date;
+  /** Kandidatadapter for å verifisere paret annonse/kandidat. Standard: den registrerte (syntetiske) kilden; andre kilder avvises. */
+  candidateAdapter?: CandidateAdapter | null;
 }
+
+/** Hvorfor det ikke finnes noen brukbar vurdering selv om rettighetene er i orden. */
+export type NotCalculatedReason = AdapterRefusal | "candidate_listing_mismatch" | "source_observation_invalid" | "source_observation_in_future";
 
 export interface RightsOutcome {
   /** Beregningsrett for feltene som faktisk ble brukt. */
@@ -57,7 +67,7 @@ export interface RightsOutcome {
 
 export type EconomicsAssessment =
   | { kind: "unavailable"; reason: "rights_not_granted"; rights: RightsOutcome; budget: BudgetClassification }
-  | { kind: "not_calculated"; reason: AdapterRefusal; rights: RightsOutcome; dealerInput: InputStatus; budget: BudgetClassification }
+  | { kind: "not_calculated"; reason: NotCalculatedReason; rights: RightsOutcome; dealerInput: InputStatus; budget: BudgetClassification }
   | {
       kind: "assessed";
       display: EconomicsDisplayStatus;
@@ -100,21 +110,32 @@ export function assessEconomics(req: EconomicsRequest): EconomicsAssessment {
     return { kind: "unavailable", reason: "rights_not_granted", rights: none(d.reason ?? "field_not_granted"), budget: failBudget(req.spec, req.candidate, nowIso) };
   }
 
-  // 3. Forhandlerinput bundet til firma (fra sesjonen) + søk + kandidat + revisjon, ikke foreldet.
+  // 3. Kontrollert kobling annonse ↔ kandidat (id og revisjon utledet på nytt fra DENNE annonsen) før noe bundet til kandidaten brukes.
+  const pair = verifyCandidatePair({ listing: req.listing, candidate: req.candidate, rights, adapter: req.candidateAdapter });
+  if (!pair.ok) return { kind: "not_calculated", reason: "candidate_listing_mismatch", rights: none(null), dealerInput: { status: "foreign" }, budget: failBudget(req.spec, req.candidate, nowIso) };
+
+  // 4. Forhandlerinput bundet til firma (fra sesjonen) + søk + kandidat + revisjon, ikke foreldet, og omfanget stemmer med DE AKTUELLE kostnadslinjene.
   const binding = bindingFor(req.dealershipId, req.searchId, req.candidate);
   const context = confirmationContextFor(req.spec, rights);
-  const inputStatus = evaluateDealerInput(req.stored, { binding, context, now: nowIso });
+  let inputStatus = evaluateDealerInput(req.stored, { binding, context, now: nowIso });
+  if (inputStatus.status === "fresh" && req.stored && validateLineScopes(req.stored.input.lineScopes, req.spec.budget.costs).length > 0) {
+    inputStatus = { status: "stale_needs_reconfirmation", reasons: ["line_scopes_invalid"] };
+  }
   const dealer = inputStatus.status === "fresh" && req.stored ? { input: req.stored.input, confirmedBy: req.stored.confirmedBy, confirmedAt: req.stored.confirmedAt } : null;
 
-  // 4. Ren adapter → kjerne → mapper → classifyBudget (uendret).
+  // 5. Kildeobservasjonen må være et gyldig UTC-tidspunkt og ikke senere enn nåtid (som proveniensen): ellers ingen brukbar vurdering.
+  const retrievedMs = parseUtcInstant(req.listing.lastSeenAt);
+  if (retrievedMs === null) return { kind: "not_calculated", reason: "source_observation_invalid", rights: none(null), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
+  if (retrievedMs > req.now.getTime()) return { kind: "not_calculated", reason: "source_observation_in_future", rights: none(null), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
+
+  // 6. Ren adapter → kjerne → mapper → classifyBudget (uendret).
   const adapted = toEconomicsInput({ listing: req.listing, spec: req.spec, dealer, profile: req.profile, allowedFields: new Set(allowed), now: nowIso });
   if (!adapted.ok) return { kind: "not_calculated", reason: adapted.reason, rights: none(null), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
 
   const result = calculateEconomics(adapted.input, ECONOMICS_CONFIG);
   const profile = rights.inForce ? rights.profile : null; // price tillatt ⇒ profilen er i kraft
-  const retrievedMs = parseUtcInstant(req.listing.lastSeenAt);
-  const retention = profile && retrievedMs !== null ? retentionExpiresAt(profile, new Date(retrievedMs)) : null;
-  const sourceUntil = retrievedMs === null ? nowIso : (retention ?? new Date(retrievedMs + TRANSIENT_FRESH_MS)).toISOString();
+  const retention = profile ? retentionExpiresAt(profile, new Date(retrievedMs)) : null;
+  const sourceUntil = (retention ?? new Date(retrievedMs + TRANSIENT_FRESH_MS)).toISOString();
   const outcome = toCostAssessment({
     result, spec: req.spec, candidate: { id: req.candidate.id, version: req.candidate.version }, now: nowIso,
     profileRef: `${result.tax.vehicleProfile ?? "no-vehicle-profile"}@economics-registry`,
@@ -125,7 +146,7 @@ export function assessEconomics(req: EconomicsRequest): EconomicsAssessment {
   });
   const budget = classifyBudget(req.spec, req.candidate, outcome.assessment, nowIso);
 
-  // 5. Visning: egen rett; avslører prisen ⇒ krever visningsrett for pris. Ingen tall uten visningsrett.
+  // 7. Visning: egen rett; avslører prisen ⇒ krever visningsrett for pris. Ingen tall uten visningsrett.
   const decision = economicsDecision(rights, adapted.usedListingFields, ["price"]);
   const display = toEconomicsDisplayStatus({ result, outcome, rights: { canDerive: decision.derive, canDisplay: decision.display } });
   const rightsOutcome: RightsOutcome = { derive: decision.derive, display: decision.display, reason: decision.reason, allowedFields: [...allowed], deniedFields: [...denied], usedFields: adapted.usedListingFields };
