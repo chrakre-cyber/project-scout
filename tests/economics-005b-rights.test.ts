@@ -7,7 +7,10 @@ import {
   ECONOMICS_FIELD_KEYS, REGISTERED_PROFILES, SYNTHETIC_RIGHTS_PROFILE, canDeriveEconomics, canDisplayEconomics, economicsDecision, noEconomicsRights, resolveRights, validateProfile,
   type EconomicsFieldKey, type ProviderRightsProfile,
 } from "@/domain/provider-rights";
-import { canonicalPermissions } from "@/domain/provenance";
+import { buildProvenance, canonicalPermissions, evaluateProvenance } from "@/domain/provenance";
+import { createHash } from "node:crypto";
+import { profileDigest } from "@/server/public-ids";
+import { sentinelListing } from "./fixtures/display-sentinel";
 import { MOBILE_SANDBOX_EXAMPLE, profile } from "./fixtures/rights-profiles";
 
 const NOW = new Date("2026-10-20T12:00:00Z");
@@ -135,6 +138,8 @@ describe("profilgyldighet: manglende, ugyldig, utløpt, tilbakekalt ⇒ avslag",
     ["manglende derivedEconomics", undefined],
     ["ekstra nøkkel", { allow: { ...ALL, mileage: true }, display: true }],
     ["manglende nøkkel", { allow: { price: true, registration: true }, display: true }],
+    ["tomt kart, visning false", { allow: {}, display: false }],
+    ["tomt kart, visning true", { allow: {}, display: true }],
     ["ikke-boolsk felt", { allow: { ...ALL, price: "ja" }, display: true }],
     ["ikke-boolsk visning", { allow: ALL, display: "ja" }],
     ["visning uten noe tillatt felt", { allow: noEconomicsRights(), display: true }],
@@ -173,5 +178,22 @@ describe("avtrykk og validering", () => {
       expect(validateProfile(withEcon(obj, false))).toEqual([]);
       expect(validateProfile(withEcon(obj, true)).includes("derivedEconomics")).toBe(granted.length === 0);
     }
+  });
+});
+
+describe("canonicalPermissions-format: nytt felt endrer avtrykket (bevisst; eldre proveniens skrives ikke om)", () => {
+  const p = profile({ version: 3, validUntil: "2026-12-01T00:00:00Z", storage: { ...profile().storage, retentionSeconds: 3600 } });
+  const prov = (digest: string) => buildProvenance({ listing: sentinelListing(), publicId: "m1_AAAAAAAAAAAAAAAAAAAAAAAA", profile: p, profileDigest: digest, retrievedAt: new Date("2026-10-20T11:30:00Z"), schemaVersion: "synthetic-demo@1" });
+  const ev = (digest: string) => evaluateProvenance(prov(digest), { profiles: [p], now: NOW, digestOf: profileDigest });
+  it("avtrykk beregnet i det gamle formatet (uten `derivedEconomics`) gir `rights_changed`, selv om rettighetene i praksis er uendret; nytt format gir `valid`", () => {
+    const oldFormat = JSON.stringify((() => { const o = JSON.parse(canonicalPermissions(p)) as Record<string, unknown>; delete o.derivedEconomics; return o; })());
+    expect(oldFormat).not.toBe(canonicalPermissions(p));
+    const oldDigest = createHash("sha256").update(oldFormat).digest("hex");
+    expect(oldDigest).not.toBe(profileDigest(p));
+    expect(ev(oldDigest)).toBe("rights_changed");
+    expect(ev(profileDigest(p))).toBe("valid");
+  });
+  it("det nye feltet er med i det kanoniske formatet, nøkkelrekkefølge-uavhengig", () => {
+    expect(JSON.parse(canonicalPermissions(p)).derivedEconomics).toEqual({ allow: { price: false, registration: false, specs: false }, display: false });
   });
 });

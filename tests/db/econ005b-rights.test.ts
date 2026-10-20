@@ -83,6 +83,36 @@ describe("ECON-005b: migrasjon, default og backfill", () => {
       if (!r.ok) expect(r.code).toBe("23514");
     });
   });
+  it("validatoren er total: returnerer nøyaktig true/false (aldri NULL) for tomt, ugyldig og gyldig kart", async () => {
+    const cases: Array<[string, boolean]> = [
+      ["{}", false], ["null", false], ["[]", false], ["[true,true,true]", false], ['"x"', false], ["5", false], ["true", false],
+      ['{"price":true}', false], ['{"price":true,"registration":true}', false], ['{"price":true,"registration":true,"specs":true,"mileage":true}', false],
+      ['{"price":"ja","registration":false,"specs":false}', false], ['{"price":null,"registration":false,"specs":false}', false], ['{"price":1,"registration":0,"specs":0}', false],
+      ['{"price":false,"registration":false,"specs":false}', true], ['{"price":true,"registration":false,"specs":true}', true], ['{"price":true,"registration":true,"specs":true}', true],
+    ];
+    for (const [j, want] of cases) expect((await db.query("select private.economics_rights_map_valid($1::jsonb) v", [j])).rows[0]!.v, j).toBe(want);
+    expect((await db.query("select private.economics_rights_map_valid(null) v")).rows[0]!.v).toBe(false);
+  });
+  it.each([false, true])("tomt kart `{}` avvises av databasen med visning=%s (23514), og kolonnen forblir uten tomt kart", async (display) => {
+    await tx(async () => {
+      const r = await insertRaw({ allow_derived_economics: "{}", display_derived_economics: display });
+      expect(r.ok).toBe(false);
+      if (!r.ok) expect(r.code).toBe("23514");
+      // også med uttrykkelig verifisert profil og ellers gyldige felt
+      const v = await insertRaw({ ...verified, allow_derived_economics: "{}", display_derived_economics: display });
+      expect(v.ok).toBe(false);
+      if (!v.ok) expect(v.code).toBe("23514");
+      expect((await db.query("select count(*)::int n from private.provider_rights_profiles where allow_derived_economics = '{}'::jsonb")).rows[0]!.n).toBe(0);
+    });
+  });
+  it("UPDATE til tomt kart avvises også (constraint, ikke bare insert)", async () => {
+    await tx(async () => {
+      const i = await insertRaw({});
+      if (!i.ok) throw new Error(i.message);
+      const r = await attempt("update private.provider_rights_profiles set allow_derived_economics = '{}'::jsonb where provider = 'example-sandbox'");
+      expect(r.ok).toBe(false);
+    });
+  });
   it("visning uten noe tillatt felt avvises; med ett tillatt felt godtas", async () => {
     await tx(async () => {
       const bad = await insertRaw({ display_derived_economics: true });
@@ -247,6 +277,28 @@ describe("ECON-005b: samsvar TypeScript ↔ SQL (differensialtest)", () => {
         expect((await db.query("select private.can_derive_economics('diff-kilde', $1::timestamptz, array['price']) r", [t])).rows[0]!.r, t).toBe(canDeriveEconomics(r, ["price"]));
       }
     });
+  });
+  it("gyldighet av kartet: SQL-validatoren og TypeScript (`validateProfile`) er enige for tomt og ugyldig kart, med visning false og true", async () => {
+    const maps: unknown[] = [
+      {}, { price: true }, { price: true, registration: true }, { price: true, registration: true, specs: true, mileage: true }, { price: "ja", registration: false, specs: false },
+      { price: null, registration: false, specs: false }, [], null, "x", 5,
+      { price: false, registration: false, specs: false }, { price: true, registration: false, specs: false }, { price: true, registration: true, specs: true },
+    ];
+    for (const m of maps) {
+      const sqlValid = (await db.query("select private.economics_rights_map_valid($1::jsonb) v", [JSON.stringify(m)])).rows[0]!.v as boolean;
+      for (const display of [false, true]) {
+        const tsInvalid = validateProfile({ ...profile(), derivedEconomics: { allow: m, display } } as unknown as ProviderRightsProfile).includes("derivedEconomics");
+        // TS krever i tillegg koherens (visning ⇒ minst ett tillatt felt) – samme som tabellens egen constraint; kartgyldighet alene er sant for begge når SQL sier ugyldig
+        if (!sqlValid) expect(tsInvalid, `${JSON.stringify(m)} display=${display}`).toBe(true);
+        const coherent = !display || (sqlValid && Object.values(m as Record<string, boolean>).some((v) => v === true));
+        expect(tsInvalid, `${JSON.stringify(m)} display=${display}`).toBe(!(sqlValid && coherent));
+        // og databasen: lagring lykkes nøyaktig når TS regner profilen som gyldig på dette punktet
+        await tx(async () => {
+          const r = await insertRaw({ allow_derived_economics: JSON.stringify(m), display_derived_economics: display });
+          expect(r.ok, `${JSON.stringify(m)} display=${display}`).toBe(!tsInvalid);
+        });
+      }
+    }
   });
   it("TS og SQL bruker samme feltnøkler og samme standard (kilde til sannhet: konstantene)", async () => {
     expect([...ECONOMICS_FIELD_KEYS]).toEqual(["price", "registration", "specs"]);

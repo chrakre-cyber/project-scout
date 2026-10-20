@@ -7,14 +7,18 @@
 -- DEC-028-synlighetsregelen). Etter denne migrasjonen er de nye kolonnene uforanderlige på samme måte som de øvrige rettighetskolonnene.
 -- Avledede tall lagres ikke (ECON-005 E9); denne migrasjonen lagrer bare rettigheter. Kildene for økonomiparametere og økonomiflagg berøres ikke.
 
--- 1. Validering av feltkart: nøyaktig disse nøklene, alle boolske.
+-- 1. Validering av feltkart: nøyaktig disse nøklene, alle boolske. Funksjonen er TOTAL og returnerer alltid true/false, aldri NULL
+--    (en CHECK godtar NULL: `array_agg` over et tomt objekt gir NULL, og NULL = array[...] gir NULL). CASE sikrer at nøkkelfunksjonen
+--    bare kalles på objekter; tomt nøkkelsett sammenlignes som tom liste. Constrainten under bruker i tillegg `is true`.
 create function private.economics_rights_map_valid(j jsonb) returns boolean
 language sql immutable set search_path = ''
 as $$
-  select j is not null
-    and jsonb_typeof(j) = 'object'
-    and (select array_agg(k order by k) from jsonb_object_keys(j) k) = array['price','registration','specs']
-    and not exists (select 1 from jsonb_each(j) e where jsonb_typeof(e.value) <> 'boolean')
+  select coalesce(
+    case when j is null or jsonb_typeof(j) <> 'object' then false
+         else coalesce((select array_agg(k order by k) from jsonb_object_keys(j) k), array[]::text[]) = array['price','registration','specs']
+              and not exists (select 1 from jsonb_each(j) e where jsonb_typeof(e.value) <> 'boolean')
+    end,
+    false)
 $$;
 revoke execute on function private.economics_rights_map_valid(jsonb) from public, anon, authenticated, service_role;
 
@@ -30,7 +34,7 @@ set allow_derived_economics = '{"price":true,"registration":true,"specs":true}':
 where provider = 'synthetic-demo' and version = 1 and environment = 'synthetic';
 
 alter table private.provider_rights_profiles
-  add constraint provider_rights_profiles_economics_valid check (private.economics_rights_map_valid(allow_derived_economics)),
+  add constraint provider_rights_profiles_economics_valid check (private.economics_rights_map_valid(allow_derived_economics) is true),
   -- Visning av avledet økonomi uten at noe felt kan brukes til beregning er meningsløst og avvises (fail-closed).
   add constraint provider_rights_profiles_economics_display_check check (
     not display_derived_economics or allow_derived_economics <> '{"price":false,"registration":false,"specs":false}'::jsonb);
