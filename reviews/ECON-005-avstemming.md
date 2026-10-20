@@ -66,3 +66,6 @@ Inntil (a) er oppfylt gjelder: ingen partnerdemo med landed cost som beslutnings
 1. **ECON-005 forblir REVIEW (ikke DONE).** Akseptkravene som mangler er: brukerflate for forhandleropplysninger (plan 005c-UI), planens test 8 (e2e/tre profiler), samt en uttrykkelig beslutning om E8/E7 i raden.
 2. Foreslått fordeling (til Christians beslutning): (i) E8 og E7 → egne, merkede backlog-elementer (utsatt, ikke feil); (ii) forhandleropplysnings-flaten og e2e flyttes inn som uttrykkelig delmål i ECON-006 (se planen § 2B/§ 6) — eller som «ECON-005e» hvis ECON-006 skal holdes til ren forklaring; (iii) integrasjonskontroller (Supabase/PostgREST, nettleser, hosted migrasjoner) samles i et eget kontrollpunkt før noen partnerdemo.
 3. ECON-005 kan settes til «DONE innen avgrenset omfang (backend- og visningsgrense)» først når Christian uttrykkelig aksepterer at brukerflate for forhandlerinput og e2e ligger i ECON-006, og raden er omformulert (E8). Inntil da: REVIEW.
+
+---
+**Tillegg 20.10.2026 (etter Christians beslutninger B1–B7, `DECISIONS.md` runde 53):** raden gjelder «v1 uten EconomicTarget»; E8 er åpent, utsatt arbeid; E7 er utsatt; forhandlerskjema/firmaprofil er videreført restarbeid som leveres i ECON-006/006b. ECON-005 forblir REVIEW (ikke DONE) til de øvrige akseptkravene er oppfylt. Avstemmingen ellers uendret.

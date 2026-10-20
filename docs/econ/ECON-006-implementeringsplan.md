@@ -1,6 +1,8 @@
 # ECON-006 — implementeringsplan: forklaring av beløp og usikkerhet, forhandleropplysninger og brukerforløp (20.10.2026)
 
-> **Status: plan, ikke implementering. ECON-006 er ikke startet og starter ikke før Christian har besvart beslutningene i § 8.** Ingen kode, migrasjon eller runtime er endret av dette dokumentet. Utgangspunkt: ECON-005a–d er DONE innen avgrenset omfang; ECON-005 som helhet er ikke DONE (`reviews/ECON-005-avstemming.md`). Økonomiflaggene er `false` og forblir det; ingen ny juridisk regel, ingen godkjenning, ingen hosted migrasjon, ingen deploy, ingen LLM, ingen lagring av avledede tall.
+> **Oppdatering 20.10.2026: beslutningene B1–B7 er besvart (`DECISIONS.md` runde 53; se § 8a). Kun 006a er startet; 006b og 006c er ikke startet.** Nedenfor står den opprinnelige planen; der § 1C, § 8 og § 8a avviker, gjelder § 8a.
+>
+> **Opprinnelig status: plan, ikke implementering.** Ingen kode, migrasjon eller runtime er endret av dette dokumentet. Utgangspunkt: ECON-005a–d er DONE innen avgrenset omfang; ECON-005 som helhet er ikke DONE (`reviews/ECON-005-avstemming.md`). Økonomiflaggene er `false` og forblir det; ingen ny juridisk regel, ingen godkjenning, ingen hosted migrasjon, ingen deploy, ingen LLM, ingen lagring av avledede tall.
 
 ## 0. Rammer som ikke kan brytes
 1. Alt UI ser går via `DisplayItem.economics` (visningsmodellen bak rettighetsgrensen fra 005d). Utvidelser skjer i `EconomicsView` og projeksjonen — aldri ved at UI får `EconomicsResult`, forhandlerinput eller annonseverdier.
@@ -130,6 +132,19 @@ Hver skive leveres med rapport, diff, manifest og tester og **stopper for uavhen
 | **B5** | Godkjenner du ordlyden «Estimat — ikke validert. Ikke rådgivning.» og at «To summer» alltid vises (kontantbehov + økonomisk kost/scenarier)? | Ja |
 | **B6** | Er nettleser-e2e med emulator (ikke ekte Supabase) akseptabelt som brukerforløpstest i denne omgangen, med ekte Supabase som separat kontrollpunkt hos deg? | Ja |
 | **B7** | Skal dagens demodatasett brukes for e2e (diesel, elektrisk, ladbar hybrid, EUR finnes), eller ønsker du egne golden-baserte testannonser? | Bruk demodata + golden-baserte referanseverdier for forventede beløp |
+
+## 8a. Besvarte beslutninger (Christian, 20.10.2026) — gjelder foran § 1C og § 8
+| # | Beslutning | Konsekvens |
+|---|---|---|
+| **B1** | Forhandlerskjema og firmaprofil legges i ECON-006 (006b) som tydelig videreført restarbeid fra ECON-005. | Skilles fra opprinnelig ECON-006-omfang i rapporter og backlog. |
+| **B2** | E7 utsettes. | Ikke del av ECON-006. |
+| **B3** | ECON-005 presiseres «v1 uten EconomicTarget»; E8 beholdes som åpent, utsatt arbeid; ECON-005 forblir REVIEW til øvrige akseptkrav er oppfylt. | Backlograden oppdatert. |
+| **B4** | Faste, forståelige grunnlagsetiketter uten tillitsscore. En eventuell teller viser bare konkret dokumentasjonsdekning, aldri statistisk sikkerhet eller juridisk godkjenning. | § 1C revidert: ingen «tillit»-begrep; 006a viser «N av M kjente kostnadsposter har dokumentbasert grunnlag» med forbehold. Annonsepåstand teller aldri som dokumentasjon. |
+| **B5** | «Estimat — ikke validert» som hovedmerking med konkret forklaring av hva som er usikkert; «Ikke rådgivning» erstatter ikke dette. Brutto utlegg og økonomisk kostnad vises når de kan beregnes; ellers «Ikke beregnet», nedre grense eller merkede scenarier. Brutto utlegg er ikke nødvendigvis kontantbetaling ved grensen. | Fast forklaringstekst i etikettene; testet. |
+| **B6** | Emulator godtas for automatiserte integrasjons- og nettlesertester. Ekte Supabase/PostgREST er fortsatt et eget, nødvendig kontrollpunkt før pilot; emulatorresultater omtales ikke som bekreftet Supabase-integrasjon. | Gjelder 006b/006c; 006a har ingen DB- eller nettleserkontroll. |
+| **B7** | Demodata for diesel, BEV og PHEV med forventninger fra eksisterende fixtures; skillet offisielle observasjoner / historisk oppgitte tall / syntetiske scenarioer bevares; fixturekonvensjoner er ikke produksjonsregler. | 006a-testene merker alle forventninger «B-Merovo-scenario / fixturekonvensjon». |
+
+**Funn i 006a som påvirker 006c:** BEV (CASE-002) når ikke et punktestimat gjennom 005c-pipelinen, fordi EV-kvalifisering (`ev_qualification`) ikke samles inn i forhandlerinput; den vises som to merkede scenarier (485 077 / 410 077) med mangel «kan ikke registreres i dag». Punktestimat for BEV krever et eget scope-vedtak (nytt innsamlingsfelt) og er ikke gjort.
 
 ## 9. Risiko
 - **Usikkerhet mistolkes som tilbud/budsjettutfall** → faste etiketter, felles «ikke en budsjettvurdering», ingen grønn/positiv stil, tekstskann.

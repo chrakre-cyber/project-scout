@@ -27,7 +27,7 @@ export function toDisplayEconomics(a: EconomicsAssessment, policy: DisplayPolicy
     if (a.rights.display !== true) return UNAVAILABLE_VIEW;
     return notCalculatedView([a.reason], dealerInputView(a.dealerInput));
   }
-  return toEconomicsView(a.display, dealerInputView(a.dealerInput), a.notes);
+  return toEconomicsView(a.display, dealerInputView(a.dealerInput), a.notes, a.detail);
 }
 
 /**

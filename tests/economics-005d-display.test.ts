@@ -99,8 +99,8 @@ describe("statuser: estimat, nedre grense, scenarier, ikke beregnet — med fast
   });
   it("modellen er JSON-trygg (ingen bigint) og bærer bare kjente nøkler per status — ingen kjerneinterne felt", async () => {
     const KEYS: Record<string, string[]> = {
-      estimate: ["cash", "dealerInput", "estimateReasons", "incompleteReasons", "labelKey", "landed", "lines", "notes", "positiveBudgetEligible", "status"],
-      not_calculated: ["dealerInput", "labelKey", "positiveBudgetEligible", "reasons", "status"],
+      estimate: ["cash", "dealerInput", "estimateReasons", "explanation", "incompleteReasons", "labelKey", "landed", "lines", "notes", "positiveBudgetEligible", "status"],
+      not_calculated: ["dealerInput", "explanation", "labelKey", "positiveBudgetEligible", "reasons", "status"],
       unavailable: ["labelKey", "positiveBudgetEligible", "status"],
     };
     KEYS.lower_bound = KEYS.estimate!; KEYS.scenarios = KEYS.estimate!; KEYS.validated = KEYS.estimate!;
@@ -267,7 +267,7 @@ describe("faste etiketter og markup", () => {
     expect(html).toContain(ECONOMICS_HEADING);
     expect(html).toContain(`data-testid="economics-cash"`);
     expect(html).toContain(`data-testid="economics-landed"`);
-    expect(html).toContain(`data-testid="economics-estimate-reasons"`);
+    expect(html).toContain(`data-testid="economics-uncertainty"`); // ECON-006a: forutsetninger/forbehold er nå gruppert under «Hva som er usikkert»
     expect(html).toContain(`data-testid="economics-lines"`);
     expect(html).toContain(LINE_TREATMENT_TEXT.mapped_to_input);
     expect(html).toContain(LINE_TREATMENT_TEXT.added_to_total);
@@ -281,10 +281,10 @@ describe("faste etiketter og markup", () => {
     expect(nc).not.toMatch(/propulsion_unknown|tax_blocked|no_dealer_context|_unknown\b/);
     const lb = renderToStaticMarkup(createElement(EconomicsNote, { economics: (await run({ transportAfterBorder: { state: "unknown" } })).economics }));
     expect(lb).toContain("Minst");
-    expect(lb).toContain(`data-testid="economics-missing"`);
+    expect(lb).toContain(`data-testid="economics-missing-fields"`); // ECON-006a: mangler vises som inputfelt
   });
   it("forhandlerinput som må bekreftes på nytt forklares med årsak", async () => {
-    const html = renderToStaticMarkup(createElement(EconomicsNote, { economics: { status: "not_calculated", labelKey: "not_calculated", reasons: ["tax_blocked"], dealerInput: { state: "needs_reconfirmation", reasons: ["candidate_version_changed", "fx_expired"] }, positiveBudgetEligible: false } }));
+    const html = renderToStaticMarkup(createElement(EconomicsNote, { economics: { status: "not_calculated", labelKey: "not_calculated", reasons: ["tax_blocked"], dealerInput: { state: "needs_reconfirmation", reasons: ["candidate_version_changed", "fx_expired"] }, explanation: null, positiveBudgetEligible: false } }));
     expect(html).toContain("annonsen er endret");
     expect(html).toContain("oppgitt kurs er utløpt");
   });

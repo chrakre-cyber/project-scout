@@ -233,3 +233,62 @@ export const LINE_TREATMENT_TEXT = {
   mapped_to_input: "inngår i beregningen (telles én gang)", added_to_total: "lagt til som valgt kostnad", unmapped_unknown_scope: "omfang ikke bekreftet",
   unknown_amount: "beløp ukjent", unsupported: "støttes ikke (ikke regnet med)", not_included: "ikke inkludert i budsjettet",
 } as const;
+
+// ---------------------------------------------------------------- ECON-006a: forklaring av beløp og usikkerhet (faste tekster)
+import type { BasisKey, BasisSummaryKey, FormFieldKey, RowId, RowState, UncertaintyCategory } from "@/domain/search-economics";
+
+/** Hovedmerkingen er «Estimat — ikke validert» (ECONOMICS_LABELS). «Ikke rådgivning» er et tillegg og erstatter ikke forklaringen av hva som er usikkert. */
+export const ECONOMICS_NOT_ADVICE = "Ikke rådgivning.";
+export const ECONOMICS_UNCERTAINTY_INTRO = "Hva som er usikkert i dette tallet:";
+export const GROSS_OUTLAY_TITLE = "Brutto utlegg";
+export const GROSS_OUTLAY_EXPLAIN =
+  "Samlet utlegg for kjøpesum, transport, forsikring, mva. og registreringsavgifter, uavhengig av hvem som betaler når. Det er ikke nødvendigvis kontantbetaling ved grensen: kjøpesum, transport, mva. og avgifter forfaller til ulike tidspunkter, og mva.-registrerte rapporterer import-mva. i mva-meldingen.";
+export const ECONOMIC_COST_TITLE = "Økonomisk kostnad";
+export const ECONOMIC_COST_EXPLAIN = "Brutto utlegg justert for fradrag av import-mva. Er fradragsstatus ukjent, vises to scenarier i stedet for ett tall.";
+export const BREAKDOWN_TITLE = "Slik er beløpet bygget opp";
+export const BREAKDOWN_CAPTION = "Poster i brutto utlegg, med tilstand og grunnlag";
+export const BREAKDOWN_BASIS_NOTE = "Beregningsgrunnlag (summeres ikke)";
+export const ASSUMPTIONS_TITLE = "Forutsetninger";
+export const RULES_NOT_APPROVED = "Reglene for mva., avrunding, tollkurs og fradrag er ikke godkjent for validering. Alle tall er derfor estimater.";
+export const SEARCH_COSTS_TITLE = "Dine valgte tillegg fra søket";
+export const SEARCH_COSTS_NOTE = "Tilleggene du la inn i søket er informasjon om hva som er regnet med eller ikke. De er ikke en budsjettvurdering.";
+export const MISSING_TITLE = "Dette må oppgis for å beregne mer";
+export const DEALER_FORM_NOT_AVAILABLE = "Skjema for forhandleropplysninger er ikke tilgjengelig i appen ennå.";
+export const NOT_COLLECTABLE_TEXT = "kan ikke registreres ennå";
+export const COVERAGE_DISCLAIMER = "Dette sier ikke at tallene er riktige, sikre eller godkjente.";
+
+export const ROW_LABEL: Record<RowId, string> = {
+  purchase: "Kjøpesum", transport_to_border: "Transport til innførselsstedet", transport_after_border: "Transport etter innførselsstedet", insurance: "Forsikring",
+  loading_handling: "Lasting og håndtering", import_vat: "Import-mva.", one_off_tax: "Engangsavgift", scrappage_deposit: "Vrakpant", other_known: "Øvrige poster (differanse til brutto utlegg)",
+  customs_value: "Tollverdi", customs_duty: "Tollavgift", import_vat_base: "Mva.-grunnlag",
+};
+export const STATE_LABEL: Record<RowState, string> = { known: "oppgitt eller beregnet", assumed: "antakelse", unknown: "ukjent", lower_bound: "nedre grense", not_applicable: "ikke relevant" };
+export const BASIS_LABEL: Record<BasisKey, string> = {
+  listing_claim: "Annonsepåstand — ikke dokumentasjon", dealer_entered: "Oppgitt av forhandler", document: "Tilbud eller dokument", assumed: "Antakelse (standardverdi eller scenario)",
+  stated_input: "Oppgitt i beregningen", engine_estimate: "Regelmotor — estimat (regler ikke godkjent)", computed: "Beregnet av regelmotoren", ordinary_rate_unapproved: "Ordinær sats fra tolltariffen (ikke godkjent)", unresolved: "Ikke løst",
+};
+export const BASIS_SUMMARY_LABEL: Record<BasisSummaryKey, string> = {
+  listing_claim_only: "Beløpene bygger på annonsepåstander.", dealer_stated: "Beløpene bygger på forhandleroppgitte opplysninger.", partly_documented: "Noen kostnadsposter bygger på tilbud eller dokumenter.",
+};
+export const coverageText = (documented: number, known: number): string =>
+  `Dokumentasjonsdekning: ${documented} av ${known} kjente kostnadsposter har tilbud eller dokument som grunnlag.`;
+export const UNCERTAINTY_GROUP_TITLE: Record<UncertaintyCategory, string> = {
+  rule: "Regler som ikke er godkjent for validering", input_basis: "Opplysninger som er påstander eller forhandleroppgitt", assumption: "Antakelser",
+  missing: "Mangler (gir nedre grense eller ikke beregnet)", not_collected: "Ikke innsamlet i appen ennå", other: "Annet",
+};
+export const FIELD_LABEL: Record<FormFieldKey, string> = {
+  propulsion: "Drivlinje (med dokumentert grunnlag)", tax_weight: "Avgiftsvekt", co2: "CO₂ og målemetode", first_registration: "Første registrering", norwegian_registration: "Norsk registreringsdato",
+  customs_date: "Akseptdato for tolldeklarasjon", foreign_vat: "Utenlandsk mva. (dokumentert utelatt)", fx_acquisition: "Kurs for kjøpesum", fx_customs: "Tollkurs",
+  transport_to_border: "Transport til innførselsstedet", transport_after_border: "Transport etter innførselsstedet", insurance: "Forsikring", loading_handling: "Lasting og håndtering",
+  deduction: "Fradragsstatus for import-mva.", vat_handling: "Mva.-håndtering", listing_price_basis: "Dokumentert prisgrunnlag (brutto/netto) — mangler i annonsen",
+  ev_qualification: "Kvalifikasjon for elbilfritak", commission: "Provisjon", payment_costs: "Betalingskostnader", import_levies: "Andre avgifter ved innførsel",
+};
+export const FX_ROLE_LABEL = { acquisition: "Kurs for kjøpesum", customs: "Tollkurs" } as const;
+export const FX_SOURCE_LABEL = {
+  official_customs: "Tolletatens kurs", bank: "Bankkurs", dealer_entered: "Forhandleroppgitt kurs — estimat", fixture: "Testkurs — ikke en offisiell kurs", none: "Kilde ikke oppgitt",
+} as const;
+export const CUSTOMS_DATE_KIND_LABEL = { actual_acceptance: "faktisk akseptdato", expected_scenario: "forventet akseptdato (scenario)", unknown: "ukjent" } as const;
+export const REGISTRATION_DATE_KIND_LABEL: Record<string, string> = { expected: "forventet", actual: "faktisk" };
+export const VAT_RECOVERABILITY_LABEL = { recoverable: "fradrag oppgitt", non_recoverable: "ikke fradrag oppgitt", unknown: "ukjent (to scenarier)" } as const;
+export const VAT_HANDLING_LABEL = { registered_reports_in_vat_return: "registrert: rapporteres i mva-meldingen", not_registered_pays_at_import: "ikke registrert: betales ved innførsel", unknown: "ukjent" } as const;
+export const ASSUMPTION_SOURCE_LABEL: Record<string, string> = { dealer_entered: "oppgitt av forhandler", dealer_profile: "firmaets standard" };

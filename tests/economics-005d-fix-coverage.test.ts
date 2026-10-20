@@ -80,7 +80,7 @@ describe("den reviewer-rapporterte forskjellen: reproduksjon gjennom visningsgre
   it("rettighetsavslag skjuler både årsaken og at bekreftelsen er i bruk; samme sak med visningsrett viser begge", async () => {
     const l = listing({ lastSeenAt: "2026-10-21T10:00:00Z" });
     expect(await view(l, specOf(), { p: prof({ display: false }) })).toEqual(UNAVAILABLE);
-    expect(await view(l, specOf())).toEqual({ status: "not_calculated", labelKey: "not_calculated", reasons: ["source_observation_in_future"], dealerInput: { state: "in_use" }, positiveBudgetEligible: false });
+    expect(await view(l, specOf())).toEqual({ status: "not_calculated", labelKey: "not_calculated", reasons: ["source_observation_in_future"], dealerInput: { state: "in_use" }, explanation: null, positiveBudgetEligible: false });
   });
   it("detaljvisningen følger samme grense", async () => {
     const l = listing({ lastSeenAt: "2026-10-21T10:00:00Z" });
@@ -104,7 +104,7 @@ describe("manglende økonomikontekst omgår ikke visningsgrensen", () => {
     expect(await view(l, specOf(), { ctx: false, policyFor: () => policyAllowing(SYNTHETIC_DISPLAY_POLICY, []) })).toEqual(UNAVAILABLE);
   });
   it("uten kontekst med full rett ⇒ «Ikke beregnet» med årsaken «ingen forhandlerkontekst»", async () => {
-    expect(await view(l, specOf(), { ctx: false })).toEqual({ status: "not_calculated", labelKey: "not_calculated", reasons: ["no_dealer_context"], dealerInput: { state: "none" }, positiveBudgetEligible: false });
+    expect(await view(l, specOf(), { ctx: false })).toEqual({ status: "not_calculated", labelKey: "not_calculated", reasons: ["no_dealer_context"], dealerInput: { state: "none" }, explanation: null, positiveBudgetEligible: false });
   });
   it("direkte: toDisplayEconomicsWithoutContext følger samme tre porter", () => {
     const pol = SYNTHETIC_DISPLAY_POLICY;
