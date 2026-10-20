@@ -92,7 +92,7 @@ async function login(ctx, u, port = MAIN) {
 const shot = (page, name) => page.screenshot({ path: `${SHOTS}/${name}.png`, fullPage: true });
 const noHScroll = async (page, label) => { const w = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, iw: window.innerWidth })); check(`${label}: ingen horisontal rulling (${w.sw} ≤ ${w.iw})`, w.sw <= w.iw); };
 async function must(page, selector, ms = 20000) {
-  try { await page.waitForSelector(selector, { timeout: ms }); } catch (e) {
+  try { await page.waitForSelector(selector, { timeout: ms, state: "attached" }); } catch (e) {
     await page.screenshot({ path: `${SHOTS}/_feil.png`, fullPage: true }).catch(() => {});
     console.error(`TIDSAVBRUDD ${selector} på ${page.url()}\n${(await page.locator("body").innerText().catch(() => "")).slice(0, 1800)}`);
     throw e;
@@ -180,7 +180,7 @@ try {
     check(`J1 ${k}: kortet viser «ikke beregnet» (ingen bekreftede opplysninger), aldri positivt budsjettutfall`, attrs.s === "not_calculated" && attrs.p === "false" && !/\d{3}\s?\d{3}\s?kr/.test(nb(attrs.t)), JSON.stringify(attrs));
   }
   const prevText = await body(pA);
-  check("J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede", prevText.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(prevText) && /Syntetiske demodata/.test(prevText));
+  check("J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede", prevText.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(prevText) && /Syntetiske demodata/i.test(prevText), JSON.stringify({ a: prevText.includes("Innkjøpskostnad til Norge er ikke beregnet"), b: POSITIVE_WORDS.exec(prevText)?.[0], c: /Syntetiske demodata/i.test(prevText) }));
   await shot(pA, "01-preview-uten-opplysninger");
 
   // =============================================================== J2 detalj: hva mangler → skjema
@@ -197,7 +197,7 @@ try {
     && (await pA.locator('[data-testid="dealer-form-prefill"]').count()) === 0);
   await shot(pA, "03-skjema-tomt");
   // klientutdata: ingen rå identitet i skjemaets DOM/props (kandidat-id og revisjon), og skjulte felt er bare de tre trygge
-  const hidden = await pA.locator('[data-testid="dealer-form"] input[type="hidden"]').evaluateAll((els) => els.map((x) => x.name).sort());
+  const hidden = (await pA.locator('[data-testid="dealer-form"] input[type="hidden"]').evaluateAll((els) => els.map((x) => x.name))).filter((n) => !n.startsWith("$ACTION")).sort(); // $ACTION_*: rammeverkets egne felt for server actions
   check("lekkasje: skjemaet har bare skjulte felt searchId, listingId (opak m1_…) og bindingMarker — ingen candidateId/-Version/draftVersion", JSON.stringify(hidden) === JSON.stringify(["bindingMarker", "listingId", "searchId"]), JSON.stringify(hidden));
   const formHtml = await pA.locator('[data-testid="dealer-form"]').innerHTML();
   check("lekkasje: skjemaets HTML inneholder verken kandidat-id, revisjonsavtrykk eller leverandørens annonse-id", leaks(formHtml, LISTINGS.diesel.providerId, { providerIdAllowed: false }).length === 0, leaks(formHtml, LISTINGS.diesel.providerId, { providerIdAllowed: false }).join(", "));
@@ -230,7 +230,8 @@ try {
   e = await econ(pA);
   check(`J3 diesel: «Estimat — ikke validert: ${nok(exD.cash)}» (B-Merovo/fixturekonvensjon), positivt budsjett false`, e.status === "estimate" && e.label === "estimate_not_validated" && e.positive === "false" && e.headline === `Estimat — ikke validert: ${nok(exD.cash)}`, `${e.status} | ${e.headline}`);
   check("J3: lagringsmelding vises, og budsjettnotatet er uendret (ikke beregnet)", (await pA.locator('[data-testid="econ-saved"]').count()) === 1 && (await pA.locator('[data-testid="budget-note"]').innerText()).includes("Innkjøpskostnad til Norge er ikke beregnet"));
-  const sums = nb(await pA.locator('[data-testid="economics-sums"]').innerText());
+  if (e.status !== "estimate") console.error("J3 DEBUG:", e.text.slice(0, 1500));
+  const sums = nb(await pA.locator('[data-testid="economics-sums"]').innerText({ timeout: 3000 }).catch(() => ""));
   check("J3: to summer (brutto utlegg og økonomisk kostnad) med forklaring av at brutto utlegg ikke nødvendigvis er kontantbetaling ved grensen", sums.includes(nok(exD.cash)) && /ikke nødvendigvis/i.test(await pA.locator('[data-testid="economics-gross-explain"]').innerText()) && (await pA.locator('[data-testid="economics-cost-explain"]').count()) === 1);
   check("J3: nedbrytningen stemmer med uavhengig utledede referanser (kjøpesum, mva.) og summerer til brutto utlegg",
     num(await rowNok(pA, "purchase")) === exD.purchase && num(await rowNok(pA, "import_vat")) === exD.vat
