@@ -385,7 +385,18 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     if (!cm || typeof cm !== "object" || !COMMISSION_ROLES.includes(cm.role) || ![true, false, null].includes(cm.paidSeparatelyFromPrice as boolean | null) || ![undefined, true, false, null].includes(cond as boolean | null | undefined)) { block(c, "invalid_classification", `${f}: ugyldig rolle, betalingsmåte eller vilkår`, f); continue; }
     const raw = amountInput(c, `${f}.amount`, cm.amount);
     if (!raw) continue;
-    if (cm.paidSeparatelyFromPrice === null) { c.incomplete.push("commission_price_inclusion_unknown"); customsExtra.push("provisjon: ukjent om betalt i tillegg til prisen"); missing.push(f); continue; }
+    if (cm.paidSeparatelyFromPrice === null) {
+      c.incomplete.push("commission_price_inclusion_unknown"); customsExtra.push("provisjon: ukjent om betalt i tillegg til prisen"); missing.push(f);
+      // Ukjent betalingsmåte: en støttet fullføring er at provisjonen allerede ligger i kjøpesummen og, hvis det er en innkjøpsprovisjon (rolle ikke salgsprovisjon, vilkår ikke oppgitt
+      // som ikke oppfylt), kan skilles ut av tollverdien (§ 6-11 (1) e). Kostnaden ligger da ikke i tillegg til prisen, så den utelates fra nedre grense (ingen dobbelttelling og
+      // ingen bekreftet inkludering), men den laveste mulige tollverdien (alt skilt ut, høyeste avrundingskandidat) må bevares for mva. og totaler.
+      if (cm.role !== "sales_or_brokerage_commission" && cond !== false) {
+        const d = wholeDeduction(`provisjon ${f}`, raw);
+        deductionsLow = add(deductionsLow, d.low);
+        commissionDeductPossible = add(commissionDeductPossible, d.high);
+      }
+      continue;
+    }
     if (cm.paidSeparatelyFromPrice === false) {
       // Allerede i prisen: anskaffelseskostnaden er uendret (ingen dobbelttelling). Innkjøpsprovisjon pålagt kjøperen og inkludert i prisen KAN trekkes ut av tollverdien (§ 6-11 (1) e, T88).
       if (cm.role === "sales_or_brokerage_commission") continue; // salgs-/meglerprovisjon i prisen er prisen (§ 6-3); ikke fradragsberettiget

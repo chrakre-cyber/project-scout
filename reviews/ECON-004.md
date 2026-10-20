@@ -91,3 +91,5 @@ FIX2-review (`reviews/ECON-004-r34-FIX2-review-7378368.md`) registrert: P2 lukke
 Se `reviews/ECON-004-avslutning-estimatmotor.md` (20.10.2026): akseptkrav, gjenstående endringer B1–B3, rettelse av «±1 kr» og port-analyse for ECON-005; plan: `docs/econ/ECON-005-implementeringsplan.md`.
 
 B1 (gyldighetsvakt) levert: `reviews/ECON-004-B1-gyldighetsvakt.md`.
+
+FIX3 (konsolidert review av dc97f04, ett P2): `reviews/ECON-004-r34-FIX3-retting.md`.
