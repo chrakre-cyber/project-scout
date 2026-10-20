@@ -328,7 +328,7 @@ describe.skipIf(!process.env.SCOUT_DB_ISOLATED)("ECON-005b: oppgradering — eks
       const dir = process.env.MIGRATIONS_DIR ?? "supabase/migrations"; // MIGRATIONS_DIR: endret kopi ved mutasjonskontroll
       const files = readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
       const mine = files.find((f) => f.includes("econ005b"))!;
-      for (const f of files) if (f !== mine && !f.includes("search005")) await c.query(readFileSync(`${dir}/${f}`, "utf8"));
+      for (const f of files) if (f !== mine && !f.includes("search005") && !f.includes("econ005c")) await c.query(readFileSync(`${dir}/${f}`, "utf8"));
       await c.query(readFileSync("supabase/seed.sql", "utf8"));
       // legacy: en verifisert live-profil med alle visnings-/matchingsrettigheter og lagring, og en verifisert sandbox-profil, før ECON-005b
       const all = fieldMap(Object.fromEntries(RIGHTS_FIELD_KEYS.map((k) => [k, true])));

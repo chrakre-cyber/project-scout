@@ -131,7 +131,7 @@ describe.skipIf(!process.env.SCOUT_DB_ISOLATED)("DATA-002D: oppgradering fra eld
       const dir = process.env.MIGRATIONS_DIR ?? "supabase/migrations";
       const files = readdirSync(dir).filter((f) => f.endsWith(".sql")).sort();
       const mine = files.find((f) => f.includes("data002d"));
-      for (const f of files) if (f !== mine && !f.includes("search005")) await c.query(readFileSync(`${dir}/${f}`, "utf8"));
+      for (const f of files) if (f !== mine && !f.includes("search005") && !f.includes("econ005c")) await c.query(readFileSync(`${dir}/${f}`, "utf8"));
       await c.query(readFileSync("supabase/seed.sql", "utf8"));
       return await fn(c, async () => { if (!mine) throw new Error("migrasjon DATA-002D finnes ikke i MIGRATIONS_DIR"); await c.query(readFileSync(`${dir}/${mine}`, "utf8")); });
     } finally { await c.end(); await db.query(`drop database ${name}`); }

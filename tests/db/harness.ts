@@ -76,6 +76,8 @@ export function anonClient(): SupabaseClient {
 }
 
 export async function cleanup(db: Client, firmIds: string[], users: TestUser[]) {
+  await db.query("delete from public.dealer_economics_inputs where dealership_id = any($1::uuid[])", [firmIds]);
+  await db.query("delete from public.dealer_economics_profiles where dealership_id = any($1::uuid[])", [firmIds]);
   await db.query("delete from public.search_drafts where dealership_id = any($1::uuid[])", [firmIds]);
   await db.query("delete from public.search_run_results where dealership_id = any($1::uuid[])", [firmIds]);
   await db.query("delete from public.search_runs where dealership_id = any($1::uuid[])", [firmIds]);

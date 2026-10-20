@@ -26,6 +26,8 @@ const EXPECTED_TABLE_PRIVS: Record<string, string[]> = {
   dealership_members: ["SELECT"],
   search_agents: ["SELECT"],
   search_drafts: ["SELECT"],
+  dealer_economics_inputs: ["SELECT"],
+  dealer_economics_profiles: ["SELECT"],
   search_runs: ["SELECT"],
   search_run_results: ["SELECT"],
 };
@@ -40,6 +42,12 @@ const EXPECTED_COLUMN_PRIVS: Record<string, { insert: string[]; update: string[]
     insert: ["name", "spec"],
     update: ["base_version", "name", "spec"],
   },
+  // ECON-005c: forhandlerinput. Klienten oppgir nøkkel (søk, kandidat, revisjon, schemaversjon) og innhold; firma, bruker og tidspunkt settes av databasen. Nøkkelen kan ikke endres.
+  dealer_economics_inputs: {
+    insert: ["candidate_id", "candidate_version", "context", "input_schema_version", "payload", "search_id"],
+    update: ["context", "payload"],
+  },
+  dealer_economics_profiles: { insert: ["payload"], update: ["payload"] },
   // DEV-005: klienten oppgir bare hva som ikke kan utledes. Firma, agentversjon, kriterier, rettighetsprofil og tidspunkt
   // settes av databasen. DEV-005B0: brukere kan IKKE avslutte kjøringer (update: []) og har ingen skriverett på resultater
   // (ingen oppføring) — det gjøres av den betrodde skriveveien (scout_ingest).
@@ -53,7 +61,7 @@ describe("tabeller i public", () => {
   it("alle tabeller har RLS aktivert (vakt for fremtidige migrasjoner)", async () => {
     const rows = await q<{ relname: string; relrowsecurity: boolean }>(
       "select relname, relrowsecurity from pg_class where relnamespace = 'public'::regnamespace and relkind in ('r','p')");
-    expect(rows.map((r) => r.relname).sort()).toEqual(["dealership_members", "dealerships", "search_agents", "search_drafts", "search_run_results", "search_runs"]);
+    expect(rows.map((r) => r.relname).sort()).toEqual(["dealer_economics_inputs", "dealer_economics_profiles", "dealership_members", "dealerships", "search_agents", "search_drafts", "search_run_results", "search_runs"]);
     for (const r of rows) expect(r.relrowsecurity, r.relname).toBe(true);
   });
 
@@ -100,7 +108,7 @@ describe("policies", () => {
   it("bare authenticated-policyer, ingen åpne (true), ingen bruk av JWT-metadata", async () => {
     const pol = await q<{ tablename: string; policyname: string; roles: string[]; cmd: string; qual: string | null; with_check: string | null }>(
       "select tablename::text, policyname::text, roles::text[], cmd::text, qual, with_check from pg_policies where schemaname = 'public'");
-    expect(pol.length).toBe(11);
+    expect(pol.length).toBe(17);
     for (const p of pol) {
       expect(p.roles, p.policyname).toEqual(["authenticated"]);
       const text = `${p.qual ?? ""} ${p.with_check ?? ""}`;
@@ -108,6 +116,8 @@ describe("policies", () => {
       expect(text, p.policyname).not.toMatch(/jwt|metadata|\btrue\b/i);
     }
     expect(pol.map((p) => `${p.tablename}:${p.cmd}`).sort()).toEqual([
+      "dealer_economics_inputs:INSERT", "dealer_economics_inputs:SELECT", "dealer_economics_inputs:UPDATE",
+      "dealer_economics_profiles:INSERT", "dealer_economics_profiles:SELECT", "dealer_economics_profiles:UPDATE",
       "dealership_members:SELECT", "dealerships:SELECT", "search_agents:INSERT", "search_agents:SELECT", "search_agents:UPDATE",
       "search_drafts:INSERT", "search_drafts:SELECT", "search_drafts:UPDATE",
       "search_run_results:SELECT", "search_runs:INSERT", "search_runs:SELECT",
@@ -159,7 +169,10 @@ describe("funksjoner i private", () => {
     const rows = await q<{ proname: string }>(
       `select proname::text from pg_proc where pronamespace = 'private'::regnamespace and has_function_privilege('authenticated', oid, 'EXECUTE') order by 1`);
     expect(rows.map((r) => r.proname)).toEqual([
-      "agent_assumptions_valid", "agent_filters_valid", "agent_ready", "is_money_json", "is_money_json_allow_zero", "jnull",
+      "agent_assumptions_valid", "agent_filters_valid", "agent_ready",
+      // ECON-005c: rene strukturvalidatorer for forhandlerinput/-profil
+      "dealer_input_context_valid", "dealer_input_payload_valid", "dealer_profile_payload_valid",
+      "is_money_json", "is_money_json_allow_zero", "jnull",
       // SEARCH-005: rene strukturvalidatorer for søkeutkast
       "jsonb_enum_list", "jsonb_exact_keys", "jsonb_int_range", "jsonb_is_int", "jsonb_is_key", "jsonb_is_minor", "jsonb_is_text",
       "jsonb_prioritized_list",
