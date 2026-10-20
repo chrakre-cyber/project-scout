@@ -20,6 +20,7 @@ class MemStore implements DealerEconomicsStore {
   constructor(public firm: string, private searches: Record<string, string> = { [SEARCH_1]: FIRM_A, [SEARCH_2]: FIRM_B }) {}
   private match = (r: DealerInputRow, k: DealerInputKey) => r.dealershipId === this.firm && r.searchId === k.searchId && r.candidateId === k.candidateId && r.candidateVersion === k.candidateVersion && r.inputSchemaVersion === k.inputSchemaVersion;
   async getInput(k: DealerInputKey) { return this.rows.find((r) => this.match(r, k)) ?? null; }
+  async listInputs(searchId: string) { return this.rows.filter((r) => r.dealershipId === this.firm && r.searchId === searchId); }
   async saveInput(k: DealerInputKey, payload: DealerInputV1, context: ConfirmationContext) {
     if (this.searches[k.searchId] !== this.firm) return { ok: false as const, code: "search_not_found" as const };
     this.writes++;

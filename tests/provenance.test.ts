@@ -147,7 +147,7 @@ describe("DATA-002C: proveniens (server-internt)", () => {
   it("proveniens og avtrykk når aldri UI: DisplayItem har bare listing/assessment/unknowns og ingen proveniensnøkler", async () => {
     const out = await previewForDisplay(spec(), { provider: providerAt(NOW), now: () => NOW });
     if (!out.ok) throw new Error("kilden feilet");
-    for (const i of out.items) expect(Object.keys(i).sort()).toEqual(["assessment", "listing", "unknowns"]);
+    for (const i of out.items) expect(Object.keys(i).sort()).toEqual(["assessment", "economics", "listing", "unknowns"]); // ECON-005d: + økonomi som ferdig visningsmodell
     const text = json(out.items.slice(0, 30));
     for (const k of ["rightsProfile", "digest", "correlationId", "retrievedAt", "schemaVersion", "sourceExpiresAt", "sourceUrlRef"]) expect(text, k).not.toContain(`"${k}"`);
   });

@@ -102,7 +102,7 @@ describe("DATA-002A: forbudte felt når aldri UI-modellen eller markup", () => {
     const out = await previewForDisplay(spec(), { provider: providerOf([l]), now: NOW }); // alt tillatt
     if (!out.ok) throw new Error("kilden feilet");
     const item = out.items[0]!;
-    expect(Object.keys(item).sort()).toEqual(["assessment", "listing", "unknowns"]);
+    expect(Object.keys(item).sort()).toEqual(["assessment", "economics", "listing", "unknowns"]); // ECON-005d: + økonomi som ferdig visningsmodell
     expect(json(item.unknowns)).not.toContain("SENTINEL-UMAPPET");
     expect(json(item)).not.toContain("SENTINEL-PROVENANS");
     for (const u of item.unknowns) expect(Object.keys(u).sort()).toEqual(["code", "field"]);

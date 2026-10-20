@@ -38,6 +38,12 @@ export function createDealerEconomicsStore(ctx: Member): DealerEconomicsStore {
       const r = data as Row;
       return { dealershipId: r.dealership_id, searchId: r.search_id, candidateId: r.candidate_id, candidateVersion: r.candidate_version, inputSchemaVersion: r.input_schema_version, payload: r.payload, context: r.context, confirmedBy: r.confirmed_by, confirmedAt: r.confirmed_at };
     },
+    async listInputs(searchId: string): Promise<DealerInputRow[]> {
+      const supabase = await client();
+      const { data, error } = await supabase.from("dealer_economics_inputs").select(COLUMNS).eq("dealership_id", ctx.dealership.id).eq("search_id", searchId).limit(2000);
+      if (error) throw new Error(`Kunne ikke hente forhandlerinput (${error.code})`);
+      return (data as Row[]).map((r) => ({ dealershipId: r.dealership_id, searchId: r.search_id, candidateId: r.candidate_id, candidateVersion: r.candidate_version, inputSchemaVersion: r.input_schema_version, payload: r.payload, context: r.context, confirmedBy: r.confirmed_by, confirmedAt: r.confirmed_at }));
+    },
     async saveInput(key, payload, context) {
       const supabase = await client();
       // Firma settes av databasen. Finnes nøkkelen fra før (23505), er dette en ny bekreftelse: oppdater innholdet.

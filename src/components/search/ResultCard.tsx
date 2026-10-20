@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { StatusBadge, SyntheticChip } from "@/components/merovo/StatusBadge";
+import { EconomicsNote } from "@/components/search/EconomicsNote";
 import { Explanation } from "@/components/search/Explanation";
 import { BODY_LABEL, FUEL_LABEL, TRANSMISSION_LABEL, formatFirstRegistration, formatListingPrice, formatMileage, formatPriceBasis } from "@/lib/format";
 import { fieldText, fieldValue } from "@/lib/display-text";
@@ -50,6 +51,7 @@ export function ResultCard({ item, draftId, version, expanded = false }: { item:
               ? (() => { const price = formatListingPrice(l.price.value); return (<><p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span><strong className="text-base">{price.text}</strong>{price.note && <span className="text-muted"> ({price.note})</span>}</p><p className="text-xs text-muted">{formatPriceBasis(l.price.value)}</p></>); })()
               : <p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span>{fieldText(l.price, () => "")}</p>}
             <p className="mt-1 text-xs" data-testid="budget-note">{BUDGET_NOT_CALCULATED}</p>
+            <EconomicsNote economics={item.economics} compact />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <SyntheticChip text={l.attribution} />

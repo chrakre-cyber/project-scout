@@ -124,7 +124,7 @@ describe("P2-2: omfang og split valideres mot aktuell kostnadslinje (før lagrin
   ])("ugyldig: %s", (_n, scopes) => { expect(issues(scopes as DealerInputV1["lineScopes"]).length).toBeGreaterThan(0); });
 
   const spec = specOf([line("t", "transport", 800_000n), line("i", "insurance", 50_000n)]);
-  const memStore = () => { const w: unknown[] = []; const s: DealerEconomicsStore = { getInput: async () => null, saveInput: async (...a) => { w.push(a); return { ok: true }; }, getProfile: async () => null, saveProfile: async () => ({ ok: true }) }; return { s, w }; };
+  const memStore = () => { const w: unknown[] = []; const s: DealerEconomicsStore = { getInput: async () => null, listInputs: async () => [], saveInput: async (...a) => { w.push(a); return { ok: true }; }, getProfile: async () => null, saveProfile: async () => ({ ok: true }) }; return { s, w }; };
   it.each([
     ["split over linjen", { t: { split: { toBorderMinor: "10000000", afterBorderMinor: "0" } } }],
     ["split på forsikring", { i: { split: { toBorderMinor: "25000", afterBorderMinor: "25000" } } }],

@@ -6,3 +6,5 @@ export type { DisplayRights } from "./display-status";
 export type * from "./types";
 export { parseDealerInput, parseDealerProfile, toLineScopes, evaluateDealerInput, validateLineScopes, dayAfterIso, DEALER_INPUT_SCHEMA_VERSION, MAX_DEALER_INPUT_BYTES } from "./dealer-input";
 export type * from "./dealer-input";
+export { toEconomicsView, notCalculatedView, dealerInputView, UNAVAILABLE_VIEW } from "./view";
+export type * from "./view";

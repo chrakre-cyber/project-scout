@@ -31,6 +31,8 @@ export type SaveError = "search_not_found" | "rejected" | "unavailable";
 /** Lagringsgrensesnitt. Implementasjonen kjører som innlogget bruker under RLS (aldri service-role). */
 export interface DealerEconomicsStore {
   getInput(key: DealerInputKey): Promise<DealerInputRow | null>;
+  /** Alle bekreftelser for ett søk (firmaavgrenset av RLS), til visning av mange kandidater uten ett oppslag per kandidat. */
+  listInputs(searchId: string): Promise<DealerInputRow[]>;
   /** Oppretter eller erstatter bekreftelsen for nøkkelen. Firma, bruker og tidspunkt settes av databasen. */
   saveInput(key: DealerInputKey, payload: DealerInputV1, context: ConfirmationContext): Promise<{ ok: true } | { ok: false; code: SaveError }>;
   getProfile(): Promise<{ dealershipId: string; payload: unknown } | null>;
@@ -98,4 +100,31 @@ export async function saveDealerProfile(store: DealerEconomicsStore, raw: unknow
   if (!parsed.ok) return { ok: false, code: "invalid_input", issues: parsed.issues };
   const saved = await store.saveProfile(parsed.value);
   return saved.ok ? { ok: true } : { ok: false, code: saved.code };
+}
+
+/** Nøkkel for oppslag av lagret input per kandidat (id + revisjon). */
+export const storedKey = (candidateId: string, candidateVersion: string): string => `${candidateId.length}:${candidateId}|${candidateVersion}`;
+
+const toStored = (row: DealerInputRow): StoredDealerInput | null => {
+  const parsed = parseDealerInput(row.payload);
+  if (!parsed.ok || !isContext(row.context) || row.confirmedBy === null) return null;
+  return {
+    binding: bindingFor(row.dealershipId, row.searchId, { id: row.candidateId, version: row.candidateVersion }),
+    input: parsed.value, context: row.context, confirmedBy: row.confirmedBy, confirmedAt: row.confirmedAt,
+  };
+};
+
+/**
+ * Lagrede bekreftelser for søket, validert på nytt og indeksert per (kandidat-id, revisjon). Rader som tilhører et annet firma/søk eller ikke kan leses trygt utelates
+ * (aldri delvis tillit). Bruker samme validering som `loadStoredInput`.
+ */
+export async function loadStoredInputsForSearch(store: DealerEconomicsStore, a: { dealershipId: string; searchId: string }): Promise<Map<string, StoredDealerInput>> {
+  const out = new Map<string, StoredDealerInput>();
+  if (!isUuid(a.searchId)) return out;
+  for (const row of await store.listInputs(a.searchId)) {
+    if (row.dealershipId !== a.dealershipId || row.searchId !== a.searchId || row.inputSchemaVersion !== DEALER_INPUT_SCHEMA_VERSION) continue;
+    const st = toStored(row);
+    if (st) out.set(storedKey(row.candidateId, row.candidateVersion), st);
+  }
+  return out;
 }

@@ -10,6 +10,7 @@ import { orderForPresentation } from "@/lib/search-explain";
 import { BUDGET_NOT_CALCULATED, criterionLabel, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { equipmentLabel } from "@/lib/search-summary";
 import { getDraft } from "@/server/search-drafts";
+import { loadEconomicsContext } from "@/server/dealer-economics-context";
 import { previewForDisplay } from "@/server/search-display";
 import { getSessionContext } from "@/server/session";
 
@@ -42,7 +43,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
     );
   }
 
-  const outcome = await previewForDisplay(draft.spec);
+  const outcome = await previewForDisplay(draft.spec, { economics: await loadEconomicsContext(ctx, draft.id) });
   const equip = (k: string) => equipmentLabel(k);
   return (
     <div className="space-y-5">
