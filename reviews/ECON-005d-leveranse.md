@@ -1,6 +1,6 @@
 # ECON-005d — økonomivisning gjennom rettighetsgrensen med faste statusetiketter (leveranse til review)
 
-**Status: REVIEW (005d). ECON-006 er ikke startet. Ingen migrasjon (ingen DB-endring), ingen hosted migrasjon, ingen deploy.** Uendret: økonomiflagg (alle `false`), økonomikjernen, avgiftsmotor, avrundingspolicy, `classifyBudget`/`src/domain/search-v2`, `src/domain/provider-rights.ts`, 005a/b/c-logikken, providere, migrasjoner. Forrige skive: 005c DONE (`reviews/ECON-005c-avslutning.md`).
+**Status: REVIEW (005d; ett P2 fra review av 47fb78a er rettet — se `reviews/ECON-005d-retting.md`; beskrivelsen under gjelder 47fb78a, bortsett fra at økonomiens visningsrett nå også gjelder tidlige avslag og manglende kontekst). ECON-006 er ikke startet. Ingen migrasjon (ingen DB-endring), ingen hosted migrasjon, ingen deploy.** Uendret: økonomiflagg (alle `false`), økonomikjernen, avgiftsmotor, avrundingspolicy, `classifyBudget`/`src/domain/search-v2`, `src/domain/provider-rights.ts`, 005a/b/c-logikken, providere, migrasjoner. Forrige skive: 005c DONE (`reviews/ECON-005c-avslutning.md`).
 
 ## Hva er levert
 | Lag | Fil | Innhold |

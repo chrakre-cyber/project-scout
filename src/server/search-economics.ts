@@ -104,6 +104,11 @@ export function assessEconomics(req: EconomicsRequest): EconomicsAssessment {
   const denied = ECONOMICS_FIELD_KEYS.filter((f) => !allowed.includes(f));
   const none = (reason: EconomicsDenialReason | null, used: EconomicsFieldKey[] = []): RightsOutcome => ({ derive: false, display: false, reason, allowedFields: [...allowed], deniedFields: [...denied], usedFields: used });
 
+  // Rettighetsbeslutningen for økonomiens MINSTEKRAV (pris): bærer vurderingens ekte beregnings-/visningsrett også på tidlige avslag, slik at visningsgrensen kan skille et reelt
+  // rettighetsavslag («unavailable») fra at beregningen stoppet tidlig for en bruker som har visningsrett («ikke beregnet» med årsaker).
+  const base = economicsDecision(rights, ["price"], ["price"]);
+  const early = (): RightsOutcome => ({ derive: base.derive, display: base.display, reason: base.reason, allowedFields: [...allowed], deniedFields: [...denied], usedFields: [] });
+
   // 1–2. Uten beregningsrett for pris leses ingen annonsefelt.
   if (!allowed.includes("price")) {
     const d = economicsDecision(rights, ["price"], ["price"]);
@@ -112,7 +117,7 @@ export function assessEconomics(req: EconomicsRequest): EconomicsAssessment {
 
   // 3. Kontrollert kobling annonse ↔ kandidat (id og revisjon utledet på nytt fra DENNE annonsen) før noe bundet til kandidaten brukes.
   const pair = verifyCandidatePair({ listing: req.listing, candidate: req.candidate, rights, adapter: req.candidateAdapter });
-  if (!pair.ok) return { kind: "not_calculated", reason: "candidate_listing_mismatch", rights: none(null), dealerInput: { status: "foreign" }, budget: failBudget(req.spec, req.candidate, nowIso) };
+  if (!pair.ok) return { kind: "not_calculated", reason: "candidate_listing_mismatch", rights: early(), dealerInput: { status: "foreign" }, budget: failBudget(req.spec, req.candidate, nowIso) };
 
   // 4. Forhandlerinput bundet til firma (fra sesjonen) + søk + kandidat + revisjon, ikke foreldet, og omfanget stemmer med DE AKTUELLE kostnadslinjene.
   const binding = bindingFor(req.dealershipId, req.searchId, req.candidate);
@@ -125,12 +130,12 @@ export function assessEconomics(req: EconomicsRequest): EconomicsAssessment {
 
   // 5. Kildeobservasjonen må være et gyldig UTC-tidspunkt og ikke senere enn nåtid (som proveniensen): ellers ingen brukbar vurdering.
   const retrievedMs = parseUtcInstant(req.listing.lastSeenAt);
-  if (retrievedMs === null) return { kind: "not_calculated", reason: "source_observation_invalid", rights: none(null), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
-  if (retrievedMs > req.now.getTime()) return { kind: "not_calculated", reason: "source_observation_in_future", rights: none(null), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
+  if (retrievedMs === null) return { kind: "not_calculated", reason: "source_observation_invalid", rights: early(), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
+  if (retrievedMs > req.now.getTime()) return { kind: "not_calculated", reason: "source_observation_in_future", rights: early(), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
 
   // 6. Ren adapter → kjerne → mapper → classifyBudget (uendret).
   const adapted = toEconomicsInput({ listing: req.listing, spec: req.spec, dealer, profile: req.profile, allowedFields: new Set(allowed), now: nowIso });
-  if (!adapted.ok) return { kind: "not_calculated", reason: adapted.reason, rights: none(null), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
+  if (!adapted.ok) return { kind: "not_calculated", reason: adapted.reason, rights: early(), dealerInput: inputStatus, budget: failBudget(req.spec, req.candidate, nowIso) };
 
   const result = calculateEconomics(adapted.input, ECONOMICS_CONFIG);
   const profile = rights.inForce ? rights.profile : null; // price tillatt ⇒ profilen er i kraft

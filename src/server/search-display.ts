@@ -16,7 +16,7 @@ import type { NormalizedListing } from "@/domain/types";
 import { EMPTY_QUERY, MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
 import type { MarketplaceProvider } from "@/providers/marketplace";
 import { storedKey } from "./dealer-economics";
-import { NO_CONTEXT_VIEW, toDisplayEconomics } from "./economics-view";
+import { toDisplayEconomics, toDisplayEconomicsWithoutContext } from "./economics-view";
 import { PublicIdKeyMissingError, profileDigest, publicIdFor } from "./public-ids";
 import { assessEconomics } from "./search-economics";
 import { assessListing, previewSearch } from "./search-preview";
@@ -78,7 +78,7 @@ function matchingPrepare(profiles: readonly ProviderRightsProfile[], now: () => 
 }
 
 /** Projiserer en rå, vurdert annonse til en visningstrygg modell. Eksportert for tester. */
-export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Date, publicId: string, economics: EconomicsView = NO_CONTEXT_VIEW): DisplayItem {
+export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Date, publicId: string, economics: EconomicsView): DisplayItem {
   return {
     economics,
     listing: applyDisplayPolicy(item.listing, policy, now, { publicId }),
@@ -107,7 +107,7 @@ function internalItem(item: PreviewItem, o: Required<Pick<DisplayOptions, "profi
   const policy = (o.policyFor ?? ((s: string, at: Date) => policyForSource(s, at, o.profiles)))(source, now);
   // ECON-005d: økonomi vurderes først ETTER at rettigheter og proveniens er gyldige, og vises bare gjennom rettighets- og feltvisningsgrensen.
   const ec = o.economics;
-  const economics = ec === undefined ? NO_CONTEXT_VIEW : toDisplayEconomics(assessEconomics({
+  const economics = ec === undefined ? toDisplayEconomicsWithoutContext(rights, policy) : toDisplayEconomics(assessEconomics({
     dealershipId: ec.dealershipId, searchId: ec.searchId, listing: item.listing, candidate: item.candidate, spec,
     stored: ec.storedInputs.get(storedKey(item.candidate.id, item.candidate.version)) ?? null, profile: ec.profile, profiles: o.profiles, now,
   }), policy);
