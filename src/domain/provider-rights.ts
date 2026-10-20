@@ -18,6 +18,15 @@ export const RIGHTS_FIELD_KEYS = [
 export type RightsFieldKey = (typeof RIGHTS_FIELD_KEYS)[number];
 export type FieldRights = Readonly<Record<RightsFieldKey, boolean>>;
 
+/**
+ * Kildefelt som kan inngå i avledet økonomiberegning (ECON-005b). Egen rett, adskilt fra visning og matching: price (innkjøpspris), registration
+ * (første registrering) og specs (drivstoff/CO₂/vekt m.m.). Øvrige felt (tittel, km, tekst, selger, bilder …) brukes ikke i økonomiberegningen.
+ */
+export const ECONOMICS_FIELD_KEYS = ["price", "registration", "specs"] as const;
+export type EconomicsFieldKey = (typeof ECONOMICS_FIELD_KEYS)[number];
+export type EconomicsFieldRights = Readonly<Record<EconomicsFieldKey, boolean>>;
+export const noEconomicsRights = (): EconomicsFieldRights => Object.fromEntries(ECONOMICS_FIELD_KEYS.map((k) => [k, false])) as Record<EconomicsFieldKey, boolean>;
+
 export type ProviderEnvironment = "synthetic" | "sandbox" | "live"; // ingen live-leverandør er registrert eller koblet til
 export type ProfileStatus = "draft" | "verified" | "revoked";
 
@@ -59,6 +68,11 @@ export interface ProviderRightsProfile {
   attribution: { required: boolean; text: string | null };
   deepLinkRequired: boolean;
   onRevocation: "hide_and_purge" | "hide_only";
+  /**
+   * Avledet økonomi (ECON-005b): `allow` = hvilke kildefelt som kan brukes som input til beregning (landed cost); `display` = separat rett til å
+   * VISE det avledede resultatet. Begge default nei. `display` krever at minst ett felt er tillatt. Lagres ikke i v1 (beregnes ved visning).
+   */
+  derivedEconomics: { allow: EconomicsFieldRights; display: boolean };
 }
 
 export const noRights = (): FieldRights => Object.fromEntries(RIGHTS_FIELD_KEYS.map((k) => [k, false])) as Record<RightsFieldKey, boolean>;
@@ -85,6 +99,9 @@ export function validateProfile(p: ProviderRightsProfile): string[] {
     const keys = Object.keys(m).sort();
     if (keys.join() !== [...RIGHTS_FIELD_KEYS].sort().join() || Object.values(m).some((v) => typeof v !== "boolean")) issues.push(name);
   }
+  const de = p.derivedEconomics as ProviderRightsProfile["derivedEconomics"] | undefined;
+  if (!de || typeof de.display !== "boolean" || !de.allow || Object.keys(de.allow).sort().join() !== [...ECONOMICS_FIELD_KEYS].sort().join()
+      || Object.values(de.allow).some((v) => typeof v !== "boolean") || (de.display && !Object.values(de.allow).some((v) => v === true))) issues.push("derivedEconomics");
   if (p.geography.unrestricted && p.geography.countries.length > 0) issues.push("geography");
   if (p.geography.countries.some((c) => !ISO2.test(c))) issues.push("countries");
   if (p.status === "verified") {
@@ -123,6 +140,29 @@ export function resolveRights(providerId: string, profiles: readonly ProviderRig
 
 export const canDisplay = (r: ResolvedRights, key: RightsFieldKey): boolean => r.inForce && r.profile.display[key] === true;
 export const canMatch = (r: ResolvedRights, key: RightsFieldKey): boolean => r.inForce && r.profile.matching[key] === true;
+/** Kan de oppgitte kildefeltene brukes som input til avledet økonomiberegning? Tom liste, ukjent felt, ett felt uten rett eller profil ikke i kraft ⇒ nei. */
+export const canDeriveEconomics = (r: ResolvedRights, fields: readonly string[]): boolean =>
+  r.inForce && fields.length > 0 && fields.every((f) => (ECONOMICS_FIELD_KEYS as readonly string[]).includes(f) && r.profile.derivedEconomics.allow[f as EconomicsFieldKey] === true);
+
+/**
+ * Kan det avledede resultatet VISES? Krever (1) beregningsrett for alle brukte felt, (2) egen visningsrett for avledet økonomi og (3) gjeldende
+ * visningsrett (`display`) for hvert rå kildefelt visningen avslører (`reveals`, f.eks. `price` når annonseprisen kan leses ut av resultatet).
+ */
+export const canDisplayEconomics = (r: ResolvedRights, fields: readonly string[], reveals: readonly string[] = []): boolean =>
+  canDeriveEconomics(r, fields) && r.inForce && r.profile.derivedEconomics.display === true
+  && reveals.every((k) => (RIGHTS_FIELD_KEYS as readonly string[]).includes(k) && r.profile.display[k as RightsFieldKey] === true);
+
+export type EconomicsDenialReason = RightsDenialReason | "no_fields" | "field_not_granted" | "display_not_granted" | "reveal_not_granted";
+/** Samlet beslutning med årsak (første avslag). `reason: null` ⇒ både beregning og visning er tillatt. */
+export function economicsDecision(r: ResolvedRights, fields: readonly string[], reveals: readonly string[] = []): { derive: boolean; display: boolean; reason: EconomicsDenialReason | null } {
+  if (!r.inForce) return { derive: false, display: false, reason: r.reason };
+  if (fields.length === 0) return { derive: false, display: false, reason: "no_fields" };
+  if (!canDeriveEconomics(r, fields)) return { derive: false, display: false, reason: "field_not_granted" };
+  if (!r.profile.derivedEconomics.display) return { derive: true, display: false, reason: "display_not_granted" };
+  if (!canDisplayEconomics(r, fields, reveals)) return { derive: true, display: false, reason: "reveal_not_granted" };
+  return { derive: true, display: true, reason: null };
+}
+
 export const matchingRights = (r: ResolvedRights): FieldRights => (r.inForce ? r.profile.matching : noRights());
 
 /** Profil → visningspolicy (DATA-002A-grensen). Ikke i kraft ⇒ deny-all med profilversjonen (0 om ingen profil). */
@@ -220,6 +260,8 @@ export const SYNTHETIC_RIGHTS_PROFILE: ProviderRightsProfile = Object.freeze({
   attribution: Object.freeze({ required: true, text: SYNTHETIC_ATTRIBUTION }),
   deepLinkRequired: false,
   onRevocation: "hide_and_purge",
+  // ECON-005b: eksplisitt tillatelse bare for den syntetiske demoen (speiler DB-raden). Ingen sandbox-/live-profil får dette automatisk.
+  derivedEconomics: Object.freeze({ allow: Object.freeze({ price: true, registration: true, specs: true }), display: true }),
 }) as ProviderRightsProfile;
 
 /** Profilene som er registrert i kjøretiden i dag: bare den syntetiske. Ekte profiler lastes først når en leverandør er godkjent og verifisert. */

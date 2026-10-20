@@ -1,4 +1,4 @@
-import { RIGHTS_FIELD_KEYS, allRights, noRights, type ProviderRightsProfile, type RightsFieldKey } from "@/domain/provider-rights";
+import { RIGHTS_FIELD_KEYS, allRights, noEconomicsRights, noRights, type ProviderRightsProfile, type RightsFieldKey } from "@/domain/provider-rights";
 
 /** Byggeklosser for rettighetsprofiler i tester. Alt er HYPOTETISK testdata; ingen leverandør har gitt noen av disse rettighetene. */
 export function profile(over: Omit<Partial<ProviderRightsProfile>, "display" | "matching"> & { display?: Partial<Record<RightsFieldKey, boolean>>; matching?: Partial<Record<RightsFieldKey, boolean>> } = {}): ProviderRightsProfile {
@@ -21,6 +21,7 @@ export function profile(over: Omit<Partial<ProviderRightsProfile>, "display" | "
     attribution: { required: true, text: "Testattribusjon" },
     deepLinkRequired: false,
     onRevocation: "hide_and_purge",
+    derivedEconomics: { allow: noEconomicsRights(), display: false }, // default nei (ECON-005b)
     ...rest,
   };
 }
@@ -48,6 +49,7 @@ export const MOBILE_SANDBOX_EXAMPLE: ProviderRightsProfile = Object.freeze({
   attribution: Object.freeze({ required: true, text: null }),
   deepLinkRequired: false,
   onRevocation: "hide_and_purge",
+  derivedEconomics: Object.freeze({ allow: Object.freeze(noEconomicsRights()), display: false }),
 }) as ProviderRightsProfile;
 
 export { RIGHTS_FIELD_KEYS };

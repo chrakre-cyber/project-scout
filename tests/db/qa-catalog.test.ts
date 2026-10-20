@@ -137,7 +137,7 @@ describe("funksjoner i private", () => {
   it("SECURITY DEFINER er begrenset til kjente funksjoner", async () => {
     const rows = await q<{ proname: string }>("select proname::text from pg_proc where prosecdef and pronamespace in ('private'::regnamespace, 'public'::regnamespace) order by 1");
     expect(rows.map((r) => r.proname)).toEqual([
-      "enforce_active_agent_limit", "my_dealership_ids", "purge_expired_search_runs", "rights_profile_active", "rights_profile_in_force", "rights_profiles_guard", "rights_profiles_no_delete",
+      "can_derive_economics", "can_display_economics", "enforce_active_agent_limit", "my_dealership_ids", "purge_expired_search_runs", "rights_profile_active", "rights_profile_in_force", "rights_profiles_guard", "rights_profiles_no_delete",
       "search_run_results_before_insert", "search_runs_before_insert", "search_runs_before_update",
       "trusted_complete_run", "trusted_fail_run", "trusted_run_policy", "trusted_store_results",
     ]);
@@ -147,7 +147,8 @@ describe("funksjoner i private", () => {
     for (const fn of ["private.admin_create_dealership(text)", "private.admin_add_member(text, uuid)",
       "private.enforce_active_agent_limit()", "private.search_agents_before_write()",
       "private.search_runs_before_insert()", "private.search_runs_before_update()", "private.search_run_results_before_insert()",
-      "private.rights_profiles_guard()", "private.rights_profiles_no_delete()", "private.rights_profile_in_force(text, timestamptz)"]) {
+      "private.rights_profiles_guard()", "private.rights_profiles_no_delete()", "private.rights_profile_in_force(text, timestamptz)",
+      "private.can_derive_economics(text, timestamptz, text[])", "private.can_display_economics(text, timestamptz, text[], text[])", "private.economics_rights_map_valid(jsonb)"]) {
       for (const role of ["anon", "authenticated", "service_role", "public"]) {
         expect((await q<{ ok: boolean }>("select has_function_privilege($1, $2, 'EXECUTE') ok", [role, fn]))[0]!.ok, `${role} ${fn}`).toBe(false);
       }
