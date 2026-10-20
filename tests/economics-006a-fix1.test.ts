@@ -118,9 +118,9 @@ describe("P2-2: kjente kostnadsposter bevares uavhengig av totalens art", () => 
     if (r.importCashRequirement.kind === "value") expect(sumExact(grossRows(e).map((x) => x.amountNok!))).toBe(r.importCashRequirement.valueNok.toString());
     else throw new Error("forventet verdi");
   });
-  it("ukjent post rekonstrueres ikke: ukjent gebyr gir ingen rad og ingen differanse, og transport/forsikring forblir ukjente", () => {
+  it("ukjent post rekonstrueres ikke: ukjent gebyr er en ukjent rad (null) uten differanse, og transport/forsikring forblir ukjente", () => {
     const e = explain({ transportToBorder: undefined, insurance: undefined, charges: { climateGas: EXCL, customsDuty: EXCL, registrationFee: { state: "unknown" } } });
-    expect(e.breakdown.some((x) => x.id === "registration_fee")).toBe(false);
+    expect(e.breakdown.find((x) => x.id === "registration_fee")).toMatchObject({ state: "unknown", amountNok: null });
     expect(e.breakdown.some((x) => x.id === "other_rounding")).toBe(false);
     for (const id of ["transport_to_border", "insurance"]) expect(e.breakdown.find((x) => x.id === id)).toMatchObject({ state: "unknown", amountNok: null });
   });
@@ -169,5 +169,52 @@ describe("kjernen er uendret i verdi: metadata endrer ingen total", () => {
     const base = calc();
     expect(r.importCashRequirement.kind === "value" && base.importCashRequirement.kind === "value" ? r.importCashRequirement.valueNok - base.importCashRequirement.valueNok : null).toBe(1000n);
     expect(r.costMeta.othersNok).toBe(1000n);
+  });
+});
+
+describe("FIX2 (re-review av 853c1d8): scenarioekskludering, ikke relevant, ukjent og oppgitt 0 holdes adskilt for klimagassavgift og registreringsgebyr", () => {
+  const COST = new Set(["purchase", "transport_to_border", "transport_after_border", "insurance", "loading_handling", "climate_gas", "registration_fee", "import_levy", "other_known", "commission_separate", "payment_cost", "customs_duty"]);
+  const cases = [
+    ["excluded_by_scenario", EXCL, { state: "excluded_by_scenario", amountNok: "0", basis: "assumed" }],
+    ["not_applicable", NA, { state: "not_applicable", amountNok: "0", basis: "stated_input" }],
+    ["unknown", { state: "unknown" } as const, { state: "unknown", amountNok: null, basis: "unresolved" }],
+    ["oppgitt beløp 0", { amount: "0", basis: "dealer_entered" } as const, { state: "known", amountNok: "0", basis: "dealer_entered" }],
+    ["dokumentert beløp 0", { amount: "0", basis: "quoted" } as const, { state: "known", amountNok: "0", basis: "document" }],
+  ] as const;
+  for (const id of ["climate_gas", "registration_fee"] as const) {
+    for (const [name, charge, expected] of cases) {
+      it(`${id} ${name}: rad og teller`, () => {
+        const charges = id === "climate_gas" ? { climateGas: charge, registrationFee: EXCL, customsDuty: EXCL } : { climateGas: EXCL, registrationFee: charge, customsDuty: EXCL };
+        const r = calc({ charges });
+        const e = explainEconomics({ result: r, outcome: null, notes: [] });
+        const rows = e.breakdown.filter((x) => x.id === id);
+        expect(rows).toHaveLength(1);
+        expect(rows[0]).toMatchObject({ ...expected, inGrossOutlay: true });
+        // telleren: bare faktisk oppgitte/beregnede poster er «kjente kostnadsposter»; ekskludert/ikke relevant/ukjent er det ikke
+        const known = e.breakdown.filter((x) => COST.has(x.id) && x.state === "known");
+        expect(e.coverage.knownCostItems).toBe(known.length);
+        expect(known.some((x) => x.id === id)).toBe(expected.state === "known");
+        expect(e.coverage.documented).toBe(known.filter((x) => x.basis === "document").length);
+        // beregningsbeløp er uendret av metadataene: 0 for alle fire (ukjent gir nedre grense)
+        const base = calc();
+        if (expected.state !== "unknown" && r.importCashRequirement.kind === "value" && base.importCashRequirement.kind === "value") expect(r.importCashRequirement.valueNok).toBe(base.importCashRequirement.valueNok);
+      });
+    }
+  }
+  it("standardoppsettet (begge scenarioekskludert) har ingen kjente tilleggsposter og teller dem ikke", () => {
+    const e = explain();
+    for (const id of ["climate_gas", "registration_fee"]) expect(e.breakdown.find((x) => x.id === id)).toMatchObject({ state: "excluded_by_scenario", basis: "assumed" });
+    expect(e.breakdown.filter((x) => x.state === "known" && x.basis === "stated_input" && x.amountNok === "0")).toEqual([]);
+    expect(e.coverage.knownCostItems).toBe(e.breakdown.filter((x) => COST.has(x.id) && x.state === "known").length);
+  });
+  it("tollavgift: scenarioekskludert vises som utelatt etter scenario (memo), ikke som oppgitt; ikke relevant forblir ikke relevant", () => {
+    const ex = explain().breakdown.find((x) => x.id === "customs_duty");
+    expect(ex).toMatchObject({ state: "excluded_by_scenario", basis: "assumed", inGrossOutlay: false });
+    const na = explain({ charges: { climateGas: EXCL, registrationFee: EXCL, customsDuty: NA } }).breakdown.find((x) => x.id === "customs_duty");
+    expect(na).toMatchObject({ state: "not_applicable", inGrossOutlay: false });
+  });
+  it("tollavgift oppgitt som beløp 0 er en kjent kostnadsrad", () => {
+    const e = explain({ charges: { climateGas: EXCL, registrationFee: EXCL, customsDuty: { amount: "0", basis: "dealer_entered" } } });
+    expect(e.breakdown.find((x) => x.id === "customs_duty")).toMatchObject({ state: "known", amountNok: "0", basis: "dealer_entered", inGrossOutlay: true });
   });
 });

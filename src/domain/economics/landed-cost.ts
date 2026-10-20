@@ -367,9 +367,9 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   };
   const climateRaw = chargeAmount(c, "charges.climateGas", ch.climateGas, missing);
   const climate = climateRaw ? whole("klimagassavgift", climateRaw) : null;
-  if (climate) { applyBase(classify("charges.climateGasVatBase", "klimagassavgift", ch.climateGasVatBase), climate, "klimagassavgift"); addOther("climate_gas", null, climate, (ch.climateGas as AmountInput).basis); }
+  if (climate) { applyBase(classify("charges.climateGasVatBase", "klimagassavgift", ch.climateGasVatBase), climate, "klimagassavgift"); if (ch.climateGas && !("state" in ch.climateGas)) addOther("climate_gas", null, climate, ch.climateGas.basis); else others = add(others, climate); }
   const regFee = chargeAmount(c, "charges.registrationFee", ch.registrationFee, missing);
-  if (regFee) addOther("registration_fee", null, regFee, (ch.registrationFee as AmountInput).basis); // Statens vegvesens gebyr: ikke importavgift, aldri i grunnlaget
+  if (regFee) { if (ch.registrationFee && !("state" in ch.registrationFee)) addOther("registration_fee", null, regFee, ch.registrationFee.basis); else others = add(others, regFee); } // Statens vegvesens gebyr: ikke importavgift, aldri i grunnlaget
   for (const [i, lv] of (ch.importLevies ?? []).entries()) {
     const raw = amountInput(c, `charges.importLevies[${i}]`, lv);
     const tr = classify(`charges.importLevies[${i}].vatBase`, lv?.label ?? "importavgift", lv?.vatBase);
@@ -519,7 +519,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
       customsDuty: { nok: null, basis: "unknown" }, importVatBaseNok: null,
       importVat: { status: "not_calculated", valueNok: null, scenarios: [], ev: { qualification: qual, thresholdBasis: null, engineClassification: engine }, reasons },
       importVatSettlement: { status: "not_calculated", handling: { value: handling, accepted: hAccepted, source: h?.source ?? null }, rows: [], excludedScenarios: [] },
-      tax: taxL, costMeta: { transportAfterBorder: { kind: "unknown" }, insurance: { kind: "unknown" }, loadingHandling: { kind: "unknown" }, otherItems: [], othersNok: null }, importCashRequirement: notCalculated(reasons), estimatedLandedCost: notCalculated(reasons),
+      tax: taxL, costMeta: { transportAfterBorder: { kind: "unknown" }, insurance: { kind: "unknown" }, loadingHandling: { kind: "unknown" }, climateGas: { kind: "unknown" }, registrationFee: { kind: "unknown" }, customsDuty: null, otherItems: [], othersNok: null }, importCashRequirement: notCalculated(reasons), estimatedLandedCost: notCalculated(reasons),
       vatRecoverability: { value: "unknown", accepted: false, source: null }, estimateReasons: [...c.estimate], incompleteReasons: [...new Set(c.incomplete)], warnings: c.warnings, roundingTies: [],
     };
   }
@@ -666,7 +666,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     commissionInCustomsValueNok: customsValueRat ? wholeNok(commissionInCustomsValue) : null,
     customsDuty: { nok: dutyRat ? wholeNok(dutyRat) : null, basis: dutyBasis }, importVatBaseNok: vatBaseRat && !outOfPeriod ? wholeNok(vatBaseRat) : null,
     importVat, importVatSettlement, tax: taxL,
-    costMeta: { transportAfterBorder: metaOf(input.transportAfterBorder), insurance: metaOf(input.insurance), loadingHandling: metaOf(input.loadingHandling), otherItems, othersNok },
+    costMeta: { transportAfterBorder: metaOf(input.transportAfterBorder), insurance: metaOf(input.insurance), loadingHandling: metaOf(input.loadingHandling), climateGas: metaOf(ch.climateGas), registrationFee: metaOf(ch.registrationFee), customsDuty: ch.customsDuty === undefined ? null : metaOf(ch.customsDuty), otherItems, othersNok },
     importCashRequirement: cash, estimatedLandedCost: landed,
     vatRecoverability: { value: recov, accepted: dedAccepted, source: d?.source ?? null },
     estimateReasons: [...c.estimate], incompleteReasons: [...new Set(c.incomplete)], warnings: c.warnings, roundingTies: c.ties,

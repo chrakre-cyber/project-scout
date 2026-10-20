@@ -176,6 +176,10 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   metaRow("transport_after_border", r.costMeta.transportAfterBorder, r.transportAfterBorderNok);
   metaRow("insurance", r.costMeta.insurance, r.insuranceNok);
   metaRow("loading_handling", r.costMeta.loadingHandling, r.loadingHandlingNok);
+  // klimagassavgift og registreringsgebyr: beløp kommer som egne rader fra komponentlisten under; scenarioekskludering, ikke relevant og ukjent får egen tilstand (aldri «kjent»)
+  for (const [id, m] of [["climate_gas", r.costMeta.climateGas], ["registration_fee", r.costMeta.registrationFee]] as const) {
+    if (m.kind !== "amount") metaRow(id, m, m.kind === "unknown" ? null : 0n);
+  }
   // mva.
   const iv = r.importVat;
   row("import_vat", iv.status === "calculated" ? "known" : iv.status === "lower_bound" ? "lower_bound" : "unknown", iv.valueNok, iv.valueNok === null ? "unresolved" : "computed", true);
@@ -201,7 +205,8 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   row("customs_value", r.customsValueNok === null ? "unknown" : "known", r.customsValueNok, r.customsValueNok === null ? "unresolved" : "computed", false);
   const cd = r.customsDuty;
   if (!itemised.some((i) => i.id === "customs_duty")) {
-    row("customs_duty", cd.basis === "unknown" ? "unknown" : cd.basis === "stated_not_applicable" ? "not_applicable" : "known", cd.nok, cd.basis === "ordinary_rate_tariff_2026" ? "ordinary_rate_unapproved" : cd.basis === "unknown" ? "unresolved" : "stated_input", false);
+    const dm = r.costMeta.customsDuty;
+    row("customs_duty", dm?.kind === "excluded_by_scenario" ? "excluded_by_scenario" : cd.basis === "unknown" ? "unknown" : cd.basis === "stated_not_applicable" ? "not_applicable" : "known", cd.nok, dm?.kind === "excluded_by_scenario" ? "assumed" : cd.basis === "ordinary_rate_tariff_2026" ? "ordinary_rate_unapproved" : cd.basis === "unknown" ? "unresolved" : "stated_input", false);
   }
   row("import_vat_base", r.importVatBaseNok === null ? "unknown" : iv.status === "lower_bound" ? "lower_bound" : "known", r.importVatBaseNok, r.importVatBaseNok === null ? "unresolved" : "computed", false);
 

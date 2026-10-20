@@ -268,6 +268,8 @@ export interface OtherCostItem {
 }
 export interface CostMeta {
   transportAfterBorder: AmountMeta; insurance: AmountMeta; loadingHandling: AmountMeta;
+  /** Hvordan klimagassavgift, registreringsgebyr og tollavgift ble oppgitt (beløp / scenarioekskludert / ikke relevant / ukjent). `customsDuty` er null når ikke oppgitt (ordinær sats). */
+  climateGas: AmountMeta; registrationFee: AmountMeta; customsDuty: AmountMeta | null;
   /** Kjente poster som inngår i øvrige kostnader. */
   otherItems: OtherCostItem[];
   /** Øvrige kostnader slik de inngår i totalene (avrundet én gang etter eksisterende policy); null når ikke beregnet. */
