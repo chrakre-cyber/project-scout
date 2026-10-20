@@ -53,7 +53,7 @@ Produksjonskoden har ingen mulighet til å endre rettighetsprofilen. Skriptet by
 - **Ekte Supabase/PostgREST/GoTrue** (JWT-nøkler, PostgREST-feilkoder, Auth-flyt). Emulatorresultater må ikke omtales som bekreftet Supabase-integrasjon.
 - Rettighetsvarianter utover (a) visning av økonomi nektet og (b) `listing_id` nektet: prisvisning nektet, ingen beregningsrett for registrering/spesifikasjoner, trukket/utløpt profil — dekket bare i vitest (006b side-/action-tester, statisk rendring), ikke i nettleser. Forfalsket **server-action-POST på protokollnivå** mot en app med nektet rett er ikke prøvd (kun via vitest-action-testene).
 - Andre nettlesere enn Chromium, ekte mobil, skjermleser; visuell/språklig vurdering av tekstene av en uavhengig leser.
-- Datoer er relative til kjøredato (23 dager-vinduer for kurs; norsk registreringsdato +10 dager): kjøring etter utløpet av 2026-regelperioden vil gi andre resultater.
+- Datoer er relative til kjøredato (kursgyldighet til +20 dager, norsk registreringsdato +10 dager): kjøring etter utløpet av 2026-regelperioden vil gi andre resultater.
 - DB-suiten (Supabase-avhengige filer), hosted migrasjon, deploy, mobile.de.
 
 ## Neste oppgave
