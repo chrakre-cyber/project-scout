@@ -6,6 +6,7 @@
 //   * Auth/PostgREST er en EMULATOR (tests/e2e/support/mini-supabase.mjs) som videresender app-kallene til en ISOLERT PostgreSQL som rolle `authenticated`: RLS, constraints og triggere er
 //     PostgreSQLs egne. Dette er IKKE bekreftet Supabase/PostgREST/GoTrue-integrasjon (B6) — det er et eget kontrollpunkt hos eier før pilot;
 //   * rettighetsavslag testes mot MIDLERTIDIGE KOPIER av appen med endret rettighetsprofil (produksjonskoden røres ikke); hva som ikke kan verifiseres i nettleser er listet i rapporten;
+//   * demoens faste observasjonsdatoer er for gamle for økonomiberegning (funn): hovedløpet bruker en kopi med friske observasjonstidspunkt; den uendrede appen brukes til å vise at beregningen da feiler lukket;
 //   * annonsene er syntetiske demoannonser (ikke mobile.de). Forventede beløp = B-Merovo-scenario / fixturekonvensjon (se support/econ006-reference.mjs), ikke produksjonsregler;
 //   * «foreldet» ved endret annonse-revisjon og endrede rettigheter simuleres ved å endre lagret rad i testdatabasen (annonsene i demoen endres ikke under kjøringen); dette er merket i sjekkene.
 import { spawn, execFileSync } from "node:child_process";
@@ -22,7 +23,7 @@ const { Client } = require(process.env.PG);
 const DB = process.env.SUPABASE_TEST_DB_URL;
 const SHOTS = process.env.SHOTS || "reviews/ECON-006c/screenshots";
 mkdirSync(SHOTS, { recursive: true });
-const EMU_PORT = 54399, MAIN = 3100, FAILP = 3101, DENY_ECON = 3102, DENY_LID = 3103;
+const EMU_PORT = 54399, MAIN = 3100, FAILP = 3101, DENY_ECON = 3102, DENY_LID = 3103, STALE = 3104;
 const base = (p) => `http://localhost:${p}`;
 const results = [];
 const check = (name, ok, extra = "") => { results.push(`${ok ? "OK  " : "FEIL"} ${name}${ok || !extra ? "" : ` — ${extra}`}`); if (!ok) console.error(`FEIL ${name} — ${extra}`); };
@@ -31,6 +32,7 @@ const iso = (d) => d.toISOString().slice(0, 10);
 const addDays = (n) => iso(new Date(Date.now() + n * 864e5));
 const PEPPER = "merovo-public-id-pepper-v1/ikke-hemmelig/kun-syntetiske-kilder"; // samme som den ikke-hemmelige syntetiske pepperen i public-ids.ts (kun syntetiske kilder)
 const pidOf = (providerListingId) => `m1_${createHmac("sha256", PEPPER).update(`m1|${"synthetic-demo".length}:synthetic-demo|${providerListingId}`).digest().subarray(0, 18).toString("base64url")}`;
+const scrub = (t) => t.replace(/Dette er ikke en budsjettvurdering\.[^\n]*/g, ""); // standardforbeholdet nevner «innenfor budsjett» bare for å nekte det
 const POSITIVE_WORDS = /innenfor budsjett|innenfor avvik|under budsjett|budsjettreff|fullt treff|godkjent kjøp|anbefalt kjøp|lønnsomt|trygt å kjøpe/i;
 
 const db = new Client({ connectionString: DB });
@@ -56,7 +58,8 @@ const cleanups = [];
 const servers = [];
 // Aldri la servere eller midlertidige kopier bli igjen hvis oppsettet feiler før hovedløkken (ellers blir portene opptatt for neste kjøring).
 process.on("exit", () => { for (const s of servers) { try { s.kill("SIGKILL"); } catch { /* allerede stoppet */ } } for (const c of cleanups) { try { c(); } catch { /* ignorer */ } } });
-console.log("bygger hovedappen mot testemulatoren …");
+// 1) uendret app (repoets egen kode): kildefeil og FORELDET kildedata (demoens faste observasjonsdatoer er eldre enn oppbevaringstiden) — viser at beregningen feiler lukket
+console.log("bygger uendret app mot testemulatoren …");
 execFileSync("npm", ["run", "build"], { env, stdio: ["ignore", "ignore", "inherit"] });
 async function startIn(cwd, port, extra = {}) {
   const p = spawn(`${cwd}/node_modules/.bin/next`, ["start", "-p", String(port)], { cwd, env: { ...env, ...extra }, stdio: ["ignore", "ignore", "inherit"] });
@@ -64,13 +67,17 @@ async function startIn(cwd, port, extra = {}) {
   for (let i = 0; i < 80; i++) { try { const r = await fetch(`${base(port)}/login`); if (r.status < 500) return; } catch { /* venter */ } await new Promise((r) => setTimeout(r, 500)); }
   throw new Error(`appen på ${port} startet ikke`);
 }
-await startIn(process.cwd(), MAIN);
 await startIn(process.cwd(), FAILP, { SCOUT_SYNTHETIC_FAILURE: "unavailable" });
+await startIn(process.cwd(), STALE);
+// 2) kopier med friske observasjonstidspunkt (hovedløpet) og med endret rettighetsprofil
+console.log("bygger hovedløpet (kopi med friske observasjonstidspunkt) …");
+const copyMain = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations"], env }); cleanups.push(copyMain.cleanup);
+await startIn(copyMain.dir, MAIN);
 console.log("bygger kopi med nektet økonomivisning …");
-const copyEcon = buildPatchedCopy({ root: process.cwd(), name: "deny_economics_display", env }); cleanups.push(copyEcon.cleanup);
+const copyEcon = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations", "deny_economics_display"], env }); cleanups.push(copyEcon.cleanup);
 await startIn(copyEcon.dir, DENY_ECON);
 console.log("bygger kopi med nektet visning av leverandørens annonse-id …");
-const copyLid = buildPatchedCopy({ root: process.cwd(), name: "deny_listing_id", env }); cleanups.push(copyLid.cleanup);
+const copyLid = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations", "deny_listing_id"], env }); cleanups.push(copyLid.cleanup);
 await startIn(copyLid.dir, DENY_LID);
 
 const browser = await chromium.launch();
@@ -171,6 +178,17 @@ try {
 
   const D = { diesel: pidOf(LISTINGS.diesel.providerId), phev: pidOf(LISTINGS.phev.providerId), bev: pidOf(LISTINGS.bev.providerId), diesel2: pidOf(LISTINGS.diesel2.providerId), diesel3: pidOf(LISTINGS.diesel3.providerId), missing: pidOf(LISTINGS.missing.providerId) };
 
+  // =============================================================== foreldet kildedata i den uendrede appen: feiler lukket
+  {
+    const ctxS = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+    const pS = await login(ctxS, A, STALE);
+    await pS.goto(`${base(STALE)}/searches/${S1}/preview/${pidOf(LISTINGS.diesel.providerId)}?v=1`);
+    const eS = await econ(pS);
+    check("foreldet kildedata (uendret app; demoens observasjonsdatoer er eldre enn oppbevaringstiden): økonomien er «Ikke beregnet» med forklaring — ingen tall, ingen positivt utfall", eS.status === "not_calculated" && eS.positive === "false" && /kildedataene er for gamle/.test(eS.text) && !/\d{3}\s?\d{3}\s?kr/.test(eS.text));
+    await shot(pS, "00-foreldet-kildedata");
+    await ctxS.close();
+  }
+
   // =============================================================== J1 forhåndsvisning: ingen økonomi uten bekreftede opplysninger
   await pA.goto(urls(MAIN, S1, 1, D.diesel).preview);
   await must(pA, `li[data-listing="${D.diesel}"]`);
@@ -180,7 +198,7 @@ try {
     check(`J1 ${k}: kortet viser «ikke beregnet» (ingen bekreftede opplysninger), aldri positivt budsjettutfall`, attrs.s === "not_calculated" && attrs.p === "false" && !/\d{3}\s?\d{3}\s?kr/.test(nb(attrs.t)), JSON.stringify(attrs));
   }
   const prevText = await body(pA);
-  check("J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede", prevText.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(prevText) && /Syntetiske demodata/i.test(prevText), JSON.stringify({ a: prevText.includes("Innkjøpskostnad til Norge er ikke beregnet"), b: POSITIVE_WORDS.exec(prevText)?.[0], c: /Syntetiske demodata/i.test(prevText) }));
+  check("J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede", prevText.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(scrub(prevText)) && /Syntetiske demodata/i.test(prevText), JSON.stringify({ a: prevText.includes("Innkjøpskostnad til Norge er ikke beregnet"), b: POSITIVE_WORDS.exec(scrub(prevText))?.[0], c: /Syntetiske demodata/i.test(prevText) }));
   await shot(pA, "01-preview-uten-opplysninger");
 
   // =============================================================== J2 detalj: hva mangler → skjema
@@ -244,7 +262,7 @@ try {
     ass.includes("E2E-testkilde") && /ikke godkjent/i.test(await pA.locator('[data-testid="economics-assumptions"]').innerText()) && (await pA.locator('[data-testid="economics-uncertainty"]').count()) === 1 && (await pA.locator('[data-testid="economics-not-advice"]').count()) === 1);
   check("J3: dokumentasjonsdekning er en konkret teller uten score, og annonsepåstand/forhandleroppgitt teller ikke som dokumentert", /0 av \d+/.test(nb(await pA.locator('[data-testid="economics-coverage"]').innerText())) && !/\d\s?%/.test(nb(await pA.locator('[data-testid="economics-basis-summary"]').innerText())));
   const dText = await body(pA);
-  check("J3: ingen positivt budsjettspråk i estimatet", !POSITIVE_WORDS.test(dText));
+  check("J3: ingen positivt budsjettspråk i estimatet", !POSITIVE_WORDS.test(scrub(dText)));
   await shot(pA, "05-detalj-diesel-estimat");
   const rows1 = await dbInputs(firmA);
   const r1 = rows1[0];
@@ -288,7 +306,7 @@ try {
   const dieselCard = nb(await pA.locator(`li[data-listing="${D.diesel}"]`).innerText());
   check("preview: kortene viser estimat/scenarier/ikke beregnet — ingen med positivt budsjettutfall; diesel-kortet viser estimatet merket «ikke validert»", cardStates.length >= 100 && cardStates.every((c) => c.p === "false") && cardStates.some((c) => c.s === "estimate") && cardStates.some((c) => c.s === "scenarios") && dieselCard.includes(`Estimat — ikke validert: ${nok(exD.cash)}`));
   const prev2 = await body(pA);
-  check("preview: budsjettvurderingen er fortsatt «ikke beregnet» og uten positivt språk/varsel", prev2.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(prev2));
+  check("preview: budsjettvurderingen er fortsatt «ikke beregnet» og uten positivt språk/varsel", prev2.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(scrub(prev2)));
   await shot(pA, "09-preview-med-estimater");
 
   // =============================================================== manglende opplysninger (diesel3): delvis lagring → ikke estimat; hva mangler lenker til felt
