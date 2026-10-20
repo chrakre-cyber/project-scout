@@ -17,7 +17,7 @@ import * as L from "@/lib/search-labels";
 import { dealerInput } from "./fixtures/economics-005c";
 
 const props = (over: Partial<DealerInputFormProps> = {}): DealerInputFormProps => ({
-  searchId: "11111111-1111-4111-8111-111111111111", listingId: "m1_abcdefghijklmnopqrstuvwx", draftVersion: 4, candidate: { id: "14:synthetic-demo/ad-1", version: "v-abc" },
+  searchId: "11111111-1111-4111-8111-111111111111", listingId: "m1_abcdefghijklmnopqrstuvwx", bindingMarker: "b1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
   initial: {}, prefill: "none", lines: [{ id: "freight", kind: "transport", label: "Frakt", amountText: "12 000 kr", hasAmount: true }, { id: "ins", kind: "insurance", label: "Forsikring", amountText: "3 000 kr", hasAmount: true }],
   profile: { vatHandling: "ikke satt", deduction: "ikke satt" }, staleReasons: [], backHref: "/searches/x/preview/y?v=4", ...over,
 });
@@ -34,9 +34,10 @@ describe("skjemastruktur og tilgjengelighet", () => {
     for (const id of controls) expect(FORM, id).toMatch(new RegExp(`<label[^>]*for="${id}"`));
     expect(new Set(controls).size).toBe(controls.length);
   });
-  it("skjulte felt bærer bare versjonskontroll: ingen firma-id, ingen verdier fra annonsen", () => {
+  it("skjulte felt: bare søk, offentlig (opak) annonse-id og opak konfliktmarkør — ingen kandidat-id, revisjon, versjonstall eller firma-id", () => {
     const hidden = [...FORM.matchAll(/<input type="hidden" name="([^"]+)"/g)].map((m) => m[1]!).sort();
-    expect(hidden).toEqual(["candidateId", "candidateVersion", "draftVersion", "listingId", "searchId"]);
+    expect(hidden).toEqual(["bindingMarker", "listingId", "searchId"]);
+    expect(FORM).not.toMatch(/candidateId|candidateVersion|draftVersion/);
     expect(FORM).not.toMatch(/name="(?:dealership|firm)/i);
   });
   it("bekreftelsen er en avkrysning som ALDRI er forhåndsvalgt (heller ikke ved forhåndsutfylling fra tidligere bekreftelse)", () => {
@@ -132,7 +133,7 @@ describe("tekster", () => {
   it("alle skjemafeil har norsk tekst, og alle feltetiketter finnes", () => {
     const codes: FormErrorCode[] = ["required", "invalid_value", "invalid_amount", "invalid_integer", "invalid_date", "invalid_rate", "too_long", "split_mismatch", "choose_one", "must_be_empty"];
     for (const c of codes) expect(L.DF_FIELD_ERROR[c], c).toMatch(/\S/);
-    const names = [...FORM.matchAll(/<(?:input|select)\b[^>]*\bname="([^"]+)"/g)].map((m) => m[1]!).filter((n) => !/^(searchId|listingId|draftVersion|candidateId|candidateVersion|confirm|scope|evidence)/.test(n));
+    const names = [...FORM.matchAll(/<(?:input|select)\b[^>]*\bname="([^"]+)"/g)].map((m) => m[1]!).filter((n) => !/^(searchId|listingId|bindingMarker|confirm|scope|evidence)/.test(n));
     for (const n of names) expect(L.DF_FIELD[n] ?? L.DF_CHARGE_AMOUNT, n).toBeTruthy();
   });
   it("ingen positivt budsjettspråk, ingen løfte om riktighet/godkjenning i nye skjematekster", () => {

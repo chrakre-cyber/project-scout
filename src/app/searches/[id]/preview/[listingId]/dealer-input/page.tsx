@@ -8,7 +8,7 @@ import type { FormValues } from "@/domain/search-economics";
 import { formatNokExact } from "@/lib/search-labels";
 import { BLOCKED_TEXT, DF_CLAIMS_TITLE, DF_OPTION, DF_PROFILE_NOT_SET, DF_TITLE, DF_UNAVAILABLE } from "@/lib/search-labels";
 import { loadEconomicsContext } from "@/server/dealer-economics-context";
-import { selectPrefill } from "@/server/dealer-input-flow";
+import { issueBindingMarker, selectPrefill } from "@/server/dealer-input-flow";
 import { getDraft } from "@/server/search-drafts";
 import { resolveDealerTarget } from "@/server/search-display";
 import { getSessionContext } from "@/server/session";
@@ -34,6 +34,7 @@ export default async function DealerInputPage({ params, searchParams }: { params
   if (target.kind === "source_error") return <p role="alert" className="rounded-lg bg-[#fbeae5] p-3 text-danger">Kilden kunne ikke leses. <Link className="underline" href={back}>Tilbake</Link></p>;
   if (target.kind === "not_found" || target.kind === "not_assessable") notFound();
   if (target.kind === "blocked") return <p role="alert" data-testid="blocked" className="rounded-lg border border-sand bg-sand-soft p-3">{BLOCKED_TEXT[target.reason]} <Link className="underline" href={back}>Tilbake</Link></p>;
+  if (!target.rights.inForce) notFound(); // feiler lukket (kan ikke skje etter resolveDealerTarget)
   const e = target.item.economics;
   if (e.status === "unavailable") {
     return (
@@ -44,6 +45,7 @@ export default async function DealerInputPage({ params, searchParams }: { params
       </div>
     );
   }
+  const marker = issueBindingMarker({ rights: target.rights, searchId: draft.id, publicId: listingId, draftVersion: draft.version, candidate: target.candidate });
   const prefill = selectPrefill(economics.storedInputs, target.candidate);
   const lines: DealerFormLine[] = draft.spec.budget.costs
     .filter((c): c is typeof c & { kind: "transport" | "insurance" } => c.kind === "transport" || c.kind === "insurance")
@@ -60,7 +62,7 @@ export default async function DealerInputPage({ params, searchParams }: { params
         <h2 id="claims" className="mb-2 text-lg font-bold">{DF_CLAIMS_TITLE}</h2>
         <ListingFacts listing={target.item.listing} />
       </section>
-      <DealerInputForm key={`${target.candidate.id}-${target.candidate.version}-${draft.version}`} searchId={draft.id} listingId={listingId} draftVersion={draft.version} candidate={target.candidate}
+      <DealerInputForm key={marker} searchId={draft.id} listingId={listingId} bindingMarker={marker}
         initial={initial} prefill={prefill.source} lines={lines} profile={profileText} staleReasons={staleReasons} backHref={back} />
     </div>
   );

@@ -13,7 +13,7 @@ import { EMPTY_DEALER_FORM_STATE, type DealerFormState } from "./state";
 
 /**
  * Bekrefter forhandleropplysninger for (søk, annonse, revisjon). Firma leses ALDRI fra skjemaet: det kommer fra den validerte sesjonen og avgjøres av databasen (RLS). Søk, kandidat
- * og revisjon utledes av serveren på nytt fra utkastet og annonsen; skjemaets versjonsfelt brukes bare som konfliktkontroll. Ingenting lagres ved feil eller manglende bekreftelse.
+ * og revisjon utledes av serveren på nytt fra utkastet og annonsen; skjemaets opake konfliktmarkør verifiseres mot den serverutledede bindingen (klienten får aldri rå kandidat-id). Ingenting lagres ved feil eller manglende bekreftelse.
  */
 export async function confirmDealerInputAction(_prev: DealerFormState, form: FormData): Promise<DealerFormState> {
   const fail = (key: keyof typeof DF_OUTCOME_TEXT, extra: Partial<DealerFormState> = {}): DealerFormState => ({ ...EMPTY_DEALER_FORM_STATE, message: DF_OUTCOME_TEXT[key], ...extra });
@@ -22,6 +22,7 @@ export async function confirmDealerInputAction(_prev: DealerFormState, form: For
   const values = formValuesOf(form);
   const echo = { ...values };
   delete echo.confirm;
+  delete echo.bindingMarker; // markøren gjelder bare siden den ble utstedt for; ny side ⇒ ny markør
   const listingId = values.listingId ?? "";
   if (!PUBLIC_ID_PATTERN.test(listingId)) return fail("not_found");
   let draft;
@@ -33,7 +34,7 @@ export async function confirmDealerInputAction(_prev: DealerFormState, form: For
   let out;
   try {
     out = await submitDealerInputForm({
-      store: createDealerEconomicsStore(ctx), searchId: draft.id, spec: draft.spec, draftVersion: draft.version,
+      store: createDealerEconomicsStore(ctx), searchId: draft.id, spec: draft.spec, draftVersion: draft.version, publicId: listingId,
       target: { candidate: target.candidate, rights: target.rights, economicsStatus: target.item.economics.status }, form: values,
     });
   } catch { return fail("unavailable", { values: echo }); }

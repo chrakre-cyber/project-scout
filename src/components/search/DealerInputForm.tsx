@@ -13,7 +13,9 @@ import { ErrorSummary, Group, Select, Text, entries, errorText, fieldLabel } fro
 
 export interface DealerFormLine { id: string; kind: "transport" | "insurance"; label: string; amountText: string; hasAmount: boolean }
 export interface DealerInputFormProps {
-  searchId: string; listingId: string; draftVersion: number; candidate: { id: string; version: string };
+  searchId: string; listingId: string;
+  /** Opak, integritetsbeskyttet konfliktmarkør (serverutstedt). Klienten får aldri rå kandidat-id, leverandørens annonse-id eller revisjon. */
+  bindingMarker: string;
   initial: FormValues; prefill: "current" | "previous_revision" | "none"; lines: DealerFormLine[];
   /** Firmaprofilens standarder som tekst (til informasjon; forhåndsvelger ingenting). */
   profile: { vatHandling: string; deduction: string };
@@ -39,9 +41,7 @@ export function DealerInputForm(p: DealerInputFormProps) {
     <form action={action} onSubmit={(e) => { e.preventDefault(); const fd = new FormData(e.currentTarget); startTransition(() => action(fd)); }} className="space-y-5" noValidate data-testid="dealer-form">
       <input type="hidden" name="searchId" value={p.searchId} />
       <input type="hidden" name="listingId" value={p.listingId} />
-      <input type="hidden" name="draftVersion" value={p.draftVersion} />
-      <input type="hidden" name="candidateId" value={p.candidate.id} />
-      <input type="hidden" name="candidateVersion" value={p.candidate.version} />
+      <input type="hidden" name="bindingMarker" value={p.bindingMarker} />
 
       <p className="text-sm" data-testid="dealer-form-intro">{DF_INTRO}</p>
       <p className="text-sm text-muted">{DF_NOT_VALIDATED}</p>

@@ -10,8 +10,9 @@ import type { NormalizedListing } from "@/domain/types";
 import { loadDealerProfile, loadStoredInputsForSearch, storedKey, type DealerEconomicsStore, type DealerInputKey, type DealerInputRow, type SaveError } from "@/server/dealer-economics";
 import { formValuesOf, selectPrefill, submitDealerInputForm, submitDealerProfileForm, profileToFormValues } from "@/server/dealer-input-flow";
 import { previewForDisplay, type EconomicsContext } from "@/server/search-display";
+import { makeBindingMarker } from "@/server/public-ids";
 import { confirmationContextFor } from "@/server/search-economics";
-import { FIRM_A, NOW, SEARCH_1, candidateFor, dealerInput, line, listing, specOf } from "./fixtures/economics-005c";
+import { FIRM_A, NOW, SEARCH_1, SEARCH_2, candidateFor, dealerInput, line, listing, specOf } from "./fixtures/economics-005c";
 
 const rights = rightsForSource("synthetic-demo", NOW, REGISTERED_PROFILES);
 
@@ -45,10 +46,13 @@ const l0 = listing();
 const cand = candidateFor(l0);
 const spec = specOf([line("freight", "transport", 1_200_000n), line("ins", "insurance", 300_000n)]);
 const target = { candidate: { id: cand.id, version: cand.version }, rights, economicsStatus: "not_calculated" };
-const hidden = (over: FormValues = {}): FormValues => ({ searchId: SEARCH_1, listingId: "x", draftVersion: "3", candidateId: cand.id, candidateVersion: cand.version, ...over });
+const PUBLIC = "m1_abcdefghijklmnopqrstuvwx";
+/** Konfliktmarkør slik serveren utsteder den for (søk, annonse, søkeversjon, kandidat+revisjon). */
+const markerFor = (c: { id: string; version: string } = cand, draftVersion = 3, publicId = PUBLIC) => makeBindingMarker({ environment: "synthetic", searchId: SEARCH_1, publicId, draftVersion, candidate: c });
+const hidden = (over: FormValues = {}, c: { id: string; version: string } = cand): FormValues => ({ searchId: SEARCH_1, listingId: PUBLIC, bindingMarker: markerFor(c), ...over });
 const goodForm = (over: FormValues = {}): FormValues => ({ ...hidden(), ...dealerInputToFormValues(dealerInput()), confirm: "yes", ...over });
 const submit = (m: ReturnType<typeof memoryStore>, form: FormValues, over: Partial<Parameters<typeof submitDealerInputForm>[0]> = {}) =>
-  submitDealerInputForm({ store: m.store, searchId: SEARCH_1, spec, draftVersion: 3, target, form, ...over });
+  submitDealerInputForm({ store: m.store, searchId: SEARCH_1, spec, draftVersion: 3, publicId: PUBLIC, target, form, ...over });
 
 describe("bekreftelse: uttrykkelig, bundet og uten skriving ved feil", () => {
   it("vellykket: lagrer kun forhandlerinput + serverberegnet kontekst under serverutledet nøkkel; ingen avledede tall", async () => {
@@ -76,9 +80,38 @@ describe("bekreftelse: uttrykkelig, bundet og uten skriving ved feil", () => {
     expect(JSON.stringify(m.calls[0]!.payload)).not.toContain("1111");
     expect([...m.rows.values()].every((r) => r.dealershipId === FIRM_A)).toBe(true);
   });
-  it.each([["draftVersion", "2"], ["draftVersion", ""], ["candidateVersion", "annen"], ["candidateId", "annen-kandidat"]])("utdatert side (%s=%s) ⇒ stale_page, ingenting lagres", async (k, v) => {
+  it.each([
+    ["søket endret etter at siden ble åpnet", () => goodForm({ bindingMarker: markerFor(cand, 2) })],
+    ["annonsen har ny revisjon", () => goodForm({ bindingMarker: markerFor({ id: cand.id, version: "annen-revisjon" }) })],
+    ["markør for annen kandidat", () => goodForm({ bindingMarker: markerFor({ id: "annen-kandidat", version: cand.version }) })],
+    ["markør for annen offentlig annonse-id", () => goodForm({ bindingMarker: markerFor(cand, 3, "m1_zzzzzzzzzzzzzzzzzzzzzzzz") })],
+    ["manipulert markør (ett tegn endret)", () => goodForm({ bindingMarker: markerFor().replace(/.$/, (c) => (c === "A" ? "B" : "A")) })],
+    ["markør uten b1-prefiks", () => goodForm({ bindingMarker: markerFor().replace("b1_", "m1_") })],
+    ["markør mangler", () => { const f = goodForm(); delete f.bindingMarker; return f; }],
+    ["tom markør", () => goodForm({ bindingMarker: "" })],
+    ["gammelt kontrakt: rå kandidatfelt uten markør", () => { const f = goodForm({ candidateId: cand.id, candidateVersion: cand.version }); delete f.bindingMarker; return f; }],
+  ])("utdatert eller manipulert binding (%s) ⇒ stale_page, ingenting lagres", async (_n, mk) => {
     const m = memoryStore();
-    expect(await submit(m, goodForm({ [k]: v }))).toEqual({ ok: false, code: "stale_page" });
+    expect(await submit(m, mk())).toEqual({ ok: false, code: "stale_page" });
+    expect(m.calls).toHaveLength(0);
+  });
+  it("markøren er knyttet til søket og siden: den kan ikke gjenbrukes for et annet søk eller en annen offentlig id", async () => {
+    const m = memoryStore();
+    expect(await submit(m, goodForm(), { searchId: SEARCH_2 })).toEqual({ ok: false, code: "stale_page" });
+    expect(await submit(m, goodForm(), { publicId: "m1_zzzzzzzzzzzzzzzzzzzzzzzz" })).toEqual({ ok: false, code: "stale_page" });
+    expect(m.calls).toHaveLength(0);
+  });
+  it("markøren røper ikke kandidat, leverandør, annonse-id eller revisjon, og feilresponsen inneholder dem heller ikke", async () => {
+    const mk = markerFor();
+    expect(mk).toMatch(/^b1_[A-Za-z0-9_-]{32}$/);
+    for (const raw of [cand.id, cand.version, "synthetic-demo", "ad-1", Buffer.from(cand.id).toString("base64"), Buffer.from(cand.id).toString("base64url")]) expect(mk).not.toContain(raw);
+    const m = memoryStore();
+    const r = await submit(m, goodForm({ bindingMarker: markerFor({ id: cand.id, version: "annen" }) }));
+    expect(JSON.stringify(r)).not.toMatch(/synthetic-demo|ad-1|14:/);
+  });
+  it("markøren avhenger av nøkkelen (feil nøkkel avvises)", async () => {
+    const m = memoryStore();
+    expect(await submit(m, goodForm(), { markerKey: "en-helt-annen-nokkel-1234567890" })).toEqual({ ok: false, code: "stale_page" });
     expect(m.calls).toHaveLength(0);
   });
   it("manglende visnings-/beregningsrett (unavailable) ⇒ ingen registrering", async () => {
@@ -171,7 +204,7 @@ describe("gjennom visningsgrensen: bekreftelse endrer vurderingen, foreldelse kr
     expect(pre.values.tb_amount).toBe("8000");
     expect(pre.values.confirm).toBeUndefined();
     // ny aktiv bekreftelse for den nye revisjonen er nødvendig for å få estimat igjen
-    const again = await submitDealerInputForm({ store: m.store, searchId: SEARCH_1, spec, draftVersion: 3, target: { candidate: { id: c2.id, version: c2.version }, rights, economicsStatus: "not_calculated" }, form: { ...goodForm(), candidateVersion: c2.version } });
+    const again = await submitDealerInputForm({ store: m.store, searchId: SEARCH_1, spec, draftVersion: 3, publicId: PUBLIC, target: { candidate: { id: c2.id, version: c2.version }, rights, economicsStatus: "not_calculated" }, form: { ...goodForm(), bindingMarker: markerFor(c2) } });
     expect(again).toEqual({ ok: true });
     expect(m.rows.size).toBe(2);
     expect((await view(m, { l: changed })).e.status).toBe("estimate");
@@ -209,9 +242,9 @@ describe("forhåndsutfylling", () => {
   it("gjeldende revisjon går foran; ellers nyeste fra tidligere revisjon; andre kandidater ignoreres", async () => {
     let t = 0;
     const m = memoryStore({ confirmedAt: () => `2026-10-20T09:${String(10 + ++t).padStart(2, "0")}:00Z` });
-    await submit(m, goodForm({ tb_amount: "1" }), { target: { ...target, candidate: { id: cand.id, version: "gammel-a" } }, form: goodForm({ tb_amount: "1", candidateVersion: "gammel-a" }) });
-    await submit(m, goodForm({ tb_amount: "2" }), { target: { ...target, candidate: { id: cand.id, version: "gammel-b" } }, form: goodForm({ tb_amount: "2", candidateVersion: "gammel-b" }) });
-    await submit(m, goodForm({ tb_amount: "9" }), { target: { ...target, candidate: { id: "annen-id", version: "x" } }, form: goodForm({ tb_amount: "9", candidateId: "annen-id", candidateVersion: "x" }) });
+    await submit(m, goodForm(), { target: { ...target, candidate: { id: cand.id, version: "gammel-a" } }, form: goodForm({ tb_amount: "1", bindingMarker: markerFor({ id: cand.id, version: "gammel-a" }) }) });
+    await submit(m, goodForm(), { target: { ...target, candidate: { id: cand.id, version: "gammel-b" } }, form: goodForm({ tb_amount: "2", bindingMarker: markerFor({ id: cand.id, version: "gammel-b" }) }) });
+    await submit(m, goodForm(), { target: { ...target, candidate: { id: "annen-id", version: "x" } }, form: goodForm({ tb_amount: "9", bindingMarker: markerFor({ id: "annen-id", version: "x" }) }) });
     const st = await rowAt(m);
     expect(selectPrefill(st, target.candidate)).toMatchObject({ source: "previous_revision", values: { tb_amount: "2" } });
     await submit(m, goodForm({ tb_amount: "5" }));

@@ -13,7 +13,7 @@
 
 ## Binding og sikkerhet
 - Firma kommer fra den validerte sesjonen (`getSessionContext`) via lagringen; databasen avgjør (RLS/trigger). Skjemaet kan ikke oppgi firma (ukjente nøkler avvises av parseren; skjemaets ekstra felt ignoreres; testet).
-- Søk, kandidat og revisjon utledes av serveren på nytt (`getDraft` + `resolveDealerTarget`, som går gjennom samme rettighets- og proveniensgrense som visningen). Skjemaets skjulte felt (`draftVersion`, `candidateId`, `candidateVersion`) er bare konfliktkontroll: avvik ⇒ «Annonsen eller søket er endret…», ingenting lagres.
+- Søk, kandidat og revisjon utledes av serveren på nytt (`getDraft` + `resolveDealerTarget`, som går gjennom samme rettighets- og proveniensgrense som visningen). **(Rettet i `reviews/ECON-006b-retting.md`: skjemaet bærer nå bare en opak konfliktmarkør, ikke rå kandidat-id/revisjon.)** Skjemaets skjulte felt er bare konfliktkontroll: avvik ⇒ «Annonsen eller søket er endret…», ingenting lagres.
 - Manglende visningsrett (`unavailable`) ⇒ ingen skjema og ingen registrering.
 - Omfang valideres mot AKTUELLE kostnadslinjer både i skjemaet og av `confirmDealerInput` (reserve).
 

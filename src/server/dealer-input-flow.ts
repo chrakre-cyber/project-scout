@@ -2,8 +2,9 @@
  * ECON-006b — forhandlerskjema: innsending, forhåndsutfylling og firmaprofil (server-modul uten I/O; lagringen er injisert via `DealerEconomicsStore`).
  *
  * Regler:
- *  - firma kommer fra den validerte sesjonen via lagringen (RLS); skjemaverdier kan aldri bære firma, søk, kandidat eller revisjon som autoritet. Skjemaet bærer bare
- *    versjonene det ble åpnet mot (konfliktkontroll) — serveren utleder kandidat og revisjon på nytt fra annonsen og avviser ved avvik (ingenting lagres);
+ *  - firma kommer fra den validerte sesjonen via lagringen (RLS); skjemaverdier kan aldri bære firma, søk, kandidat eller revisjon som autoritet. Skjemaet bærer bare en OPAK,
+ *    integritetsbeskyttet konfliktmarkør (aldri rå kandidat-id/leverandør-id eller revisjon) — serveren utleder kandidat og revisjon på nytt fra annonsen, regner ut markøren og avviser
+ *    ved avvik (ingenting lagres);
  *  - uttrykkelig bekreftelse (`confirm` = «yes») kreves; forhåndsutfylling fra en tidligere bekreftelse bekrefter ingenting;
  *  - ingen visningsrett/beregningsrett for økonomi ⇒ ingen registrering (samme rettighetsgrense som visningen);
  *  - mangler er alltid utelatt (ukjent), aldri 0 eller dokumentert grunnlag; hele dokumentet går gjennom `parseDealerInput` og omfangskontroll mot AKTUELLE kostnadslinjer;
@@ -15,6 +16,7 @@ import type { ResolvedRights } from "@/domain/provider-rights";
 import type { SearchSpec } from "@/domain/search-v2/types";
 import { confirmDealerInput, saveDealerProfile, storedKey } from "./dealer-economics";
 import type { DealerEconomicsStore } from "./dealer-economics";
+import { makeBindingMarker, verifyBindingMarker } from "./public-ids";
 
 export type SubmitFailure =
   | { ok: false; code: "field_errors"; errors: FieldErrors; general: string[] }
@@ -26,6 +28,14 @@ export interface DealerTargetForSubmit {
   rights: ResolvedRights;
   /** Visningsmodellens status for annonsen (samme rettighetsgrense som visningen). `unavailable` ⇒ ingen registrering. */
   economicsStatus: string;
+}
+
+/**
+ * Utsteder den opake konfliktmarkøren for en side (bruk i server-komponenten; sidene importerer ikke id-modulen selv — arkitekturregel DATA-002C). Feiler lukket uten gjeldende rettigheter.
+ */
+export function issueBindingMarker(a: { rights: ResolvedRights; searchId: string; publicId: string; draftVersion: number; candidate: { id: string; version: string } }): string {
+  if (!a.rights.inForce) throw new Error("rettigheter ikke i kraft");
+  return makeBindingMarker({ environment: a.rights.profile.environment, searchId: a.searchId, publicId: a.publicId, draftVersion: a.draftVersion, candidate: a.candidate });
 }
 
 /** Skjemaverdier fra FormData: bare strenger (filer og andre verdier ignoreres), siste verdi per nøkkel. */
@@ -40,10 +50,16 @@ export function formValuesOf(form: FormData): FormValues {
  * Rekkefølge: konflikt (side åpnet mot annen søkeversjon/annonserevisjon) → rettigheter → uttrykkelig bekreftelse + skjemavalidering → streng parsing + omfang → lagring.
  */
 export async function submitDealerInputForm(a: {
-  store: DealerEconomicsStore; searchId: string; spec: SearchSpec; draftVersion: number; target: DealerTargetForSubmit; form: FormValues;
+  store: DealerEconomicsStore; searchId: string; spec: SearchSpec; draftVersion: number;
+  /** Den offentlige (opake) annonse-id-en annonsen ble løst fra. */
+  publicId: string; target: DealerTargetForSubmit; form: FormValues;
+  /** Injiserbar nøkkel (tester); standard er SCOUT_PUBLIC_ID_KEY / syntetisk pepper. */
+  markerKey?: string;
 }): Promise<SubmitOutcome> {
   const f = a.form;
-  if (f.draftVersion !== String(a.draftVersion) || f.candidateVersion !== a.target.candidate.version || f.candidateId !== a.target.candidate.id) return { ok: false, code: "stale_page" };
+  if (!a.target.rights.inForce) return { ok: false, code: "rights_unavailable" };
+  const parts = { environment: a.target.rights.profile.environment, searchId: a.searchId, publicId: a.publicId, draftVersion: a.draftVersion, candidate: a.target.candidate };
+  if (!verifyBindingMarker(f.bindingMarker, parts, a.markerKey)) return { ok: false, code: "stale_page" };
   if (a.target.economicsStatus === "unavailable") return { ok: false, code: "rights_unavailable" };
   const { raw, errors } = buildDealerInputFromForm(f, a.spec.budget.costs);
   if (f.confirm !== "yes") errors.confirm = "required";

@@ -6,7 +6,7 @@
  * (server-only, valgfri). Uten nøkkel brukes en innebygd, IKKE-hemmelig pepper — kun for syntetiske kilder; for sandbox/live uten nøkkel
  * feiler id-generering LUKKET.
  */
-import { createHash, createHmac } from "node:crypto";
+import { createHash, createHmac, timingSafeEqual } from "node:crypto";
 import { canonicalPermissions } from "@/domain/provenance";
 import type { ProviderEnvironment, ProviderRightsProfile } from "@/domain/provider-rights";
 
@@ -34,3 +34,23 @@ export function publicIdFor(providerId: string, providerListingId: string, envir
 
 /** SHA-256 (hex) av profilens semantiske rettigheter. */
 export const profileDigest = (p: ProviderRightsProfile): string => createHash("sha256").update(canonicalPermissions(p)).digest("hex");
+
+/**
+ * Konfliktmarkør for forhandlerskjemaet (ECON-006b-FIX1): opak og integritetsbeskyttet. HMAC-SHA256 (egen domeneseparasjon «b1», ikke samme rom som offentlige id-er) over søk, offentlig
+ * annonse-id, lagret søkeversjon og kandidatens id + revisjon. Klienten får bare markøren — verken kandidat-id (som koder leverandør og leverandørens annonse-id) eller revisjon.
+ * Serveren utleder bindingen på nytt ved innsending og sammenligner; endret revisjon, søkeversjon, annonse eller manipulert markør gir avvik. Markøren er ikke autorisasjon:
+ * firma og skriving avgjøres av sesjonen og databasen.
+ */
+export interface BindingMarkerParts { environment: ProviderEnvironment; searchId: string; publicId: string; draftVersion: number; candidate: { id: string; version: string } }
+
+export function makeBindingMarker(a: BindingMarkerParts, configured?: string): string {
+  const msg = `b1|${a.searchId}|${a.publicId}|${a.draftVersion}|${a.candidate.id.length}:${a.candidate.id}|${a.candidate.version.length}:${a.candidate.version}`;
+  return `b1_${createHmac("sha256", publicIdKey(a.environment, configured)).update(msg).digest().subarray(0, 24).toString("base64url")}`;
+}
+
+export function verifyBindingMarker(marker: unknown, a: BindingMarkerParts, configured?: string): boolean {
+  if (typeof marker !== "string" || marker.length !== 35 || !marker.startsWith("b1_")) return false;
+  const expected = Buffer.from(makeBindingMarker(a, configured));
+  const given = Buffer.from(marker);
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}

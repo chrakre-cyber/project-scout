@@ -1,0 +1,21 @@
+# ECON-006b — retting etter uavhengig review av 8a42bc5 (ett P2)
+
+**Status:** ECON-006b forblir REVIEW; 006c ikke startet. Økonomiflagg `false`; beregningsregler, avgiftsmotor, avrunding, `classifyBudget` og lagringsskjema uendret; ingen migrasjon, hosted migrasjon eller deploy. Reviewens regresjonstest er tatt inn som `tests/economics-006b-independent-regressions.test.ts`, med props tilpasset den nye kontrakten (kravet om at rå id ikke finnes i klientutdata er uendret; assertionen er utvidet til også å dekke revisjonen).
+
+## Funn
+Siden sendte `target.candidate` (`${source.length}:${source}/${sourceListingId}` + revisjon) som prop til klientkomponenten og la dem i HTML som skjulte felt `candidateId`/`candidateVersion`. Det gjeninnfører leverandørens annonse-id utenfor feltvisningsretten (`listing_id`, DATA-002C) og bryter kontrakten i `resolveDealerTarget` (serverintern).
+
+## Retting
+- **Klienten får ingen kandidatidentitet.** `DealerInputForm` har ikke lenger propene `candidate`/`draftVersion` og ingen felt `candidateId`/`candidateVersion`/`draftVersion`. Skjulte felt: `searchId` (firmaets eget søk), `listingId` (den eksisterende opake `m1_…`-id-en) og `bindingMarker`. React-nøkkelen på skjemaet er markøren (ikke kandidat-id, som ellers serialiseres i RSC-nyttelasten).
+- **Opak, integritetsbeskyttet konfliktmarkør** (`makeBindingMarker`/`verifyBindingMarker`, `src/server/public-ids.ts`): `b1_` + 24 byte base64url av HMAC-SHA256 (nøkkel som for offentlige id-er: `SCOUT_PUBLIC_ID_KEY`, syntetisk pepper bare for syntetiske kilder; mangler nøkkel for sandbox/live feiler det lukket) over søk, offentlig annonse-id, lagret søkeversjon, kandidat-id og revisjon, med lengdeprefiks og egen domeneseparasjon (`b1|`, ikke `m1|`). Sammenligning med `timingSafeEqual`. Ikke klartekst-base64 og ikke reversibel.
+- **Uendret serverutledning:** action henter sesjon, firmabundet søk og kandidat/revisjon på nytt (`resolveDealerTarget`), regner ut markøren og avviser ved avvik (`stale_page`, ingen skriving). Revisjonskontrollen er altså beholdt — den er flyttet fra klartekstfelt til markørverifisering. Firma fra sesjonen, uttrykkelig bekreftelse, rettighetsgrense og omfangsvalidering uendret. Markøren fjernes fra ekkoet av brukerens verdier ved feil (ny side ⇒ ny markør).
+
+## Kontroller faktisk kjørt
+- **Faktisk side:** `tests/economics-006b-page-identity.test.ts` kjører server-komponenten med ekte `resolveDealerTarget`, en egen profil som NEKTER `listing_id`, og sjekker klientprops (nøyaktig nøkkelsett), React-nøkkel, rendret HTML og action-svar for leverandørens annonse-id, kandidat-id (`14:synthetic-demo…`) og revisjonsavtrykk. Også med `listing_id` tillatt vises ikke kandidat-id i skjemaets felt.
+- **Sløyfen side → markør → action:** gyldig innsending lagres under serverutledet nøkkel og omdirigerer; ny annonserevisjon, endret søkeversjon, feil offentlig identitet og manipulert/avkortet/«base64 av id»/rå markør avvises uten skriving; svar røper ingen identitet; uten avkrysning lagres ingenting; forfalsket firma/kandidatfelt har ingen virkning. Flyt-, action- og komponenttester oppdatert (de låste `candidateId` som skjult felt).
+- **Før/etter:** reviewens test og de nye sidetestene mot 8a42bc5: **6 av 11 feilet**; etter: alle grønne.
+- `npx vitest run`: 69 filer / **1 625 tester grønne** (1 606 før; 19 nye/endrede i 006b-settet). `tsc`, `eslint .` og `check-docs.mjs` rene/OK; `next build` vellykket (rutene registrert); `qa:secrets`: ingen funn. Arkitekturregelen om at sidene ikke importerer id-modulen er overholdt: markøren utstedes via `issueBindingMarker` i `dealer-input-flow.ts`.
+- **Mutasjoner** (alle fanget): verifisering alltid sann (16 feiler), markør uten revisjon (2), uten offentlig id (2), uten søkeversjon (3), React-nøkkel lekker kandidat-id (1), markør = base64 av id (23). Fjernet rettighetssjekk i flyten fanges av typesystemet (kompileringsfeil).
+
+## Begrensninger
+Statisk server-rendring og mockede avhengigheter (sesjon, utkast, lagring) — ikke nettleser (006c) og ikke Supabase/PostgREST (eget kontrollpunkt, B6). Markøren er ikke autorisasjon. En utdatert side må åpnes på nytt (bevisst). DB-suiten ikke kjørt (ingen DB-endring); hosted migrasjon/deploy ikke gjort.

@@ -5,6 +5,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { REGISTERED_PROFILES, rightsForSource } from "@/domain/provider-rights";
 import { dealerInputToFormValues } from "@/domain/search-economics";
+import { makeBindingMarker } from "@/server/public-ids";
 import { FIRM_A, NOW, SEARCH_1, candidateFor, dealerInput, listing, specOf } from "./fixtures/economics-005c";
 
 const m = vi.hoisted(() => ({
@@ -27,7 +28,8 @@ const l0 = listing(), cand = candidateFor(l0), spec = specOf();
 const rights = rightsForSource("synthetic-demo", NOW, REGISTERED_PROFILES);
 const PUBLIC = "m1_abcdefghijklmnopqrstuvwx";
 const fd = (o: Record<string, string>) => { const f = new FormData(); for (const [k, v] of Object.entries(o)) f.set(k, v); return f; };
-const form = (over: Record<string, string> = {}) => ({ searchId: SEARCH_1, listingId: PUBLIC, draftVersion: "4", candidateId: cand.id, candidateVersion: cand.version, ...dealerInputToFormValues(dealerInput()), confirm: "yes", ...over });
+const marker = (c = { id: cand.id, version: cand.version }, draftVersion = 4) => makeBindingMarker({ environment: "synthetic", searchId: SEARCH_1, publicId: PUBLIC, draftVersion, candidate: c });
+const form = (over: Record<string, string> = {}) => ({ searchId: SEARCH_1, listingId: PUBLIC, bindingMarker: marker(), ...dealerInputToFormValues(dealerInput()), confirm: "yes", ...over });
 const run = async (f: FormData) => { try { return { state: await confirmDealerInputAction(EMPTY_DEALER_FORM_STATE, f), redirectedTo: null as string | null }; } catch (e) { const to = (e as { to?: string }).to; if (!to) throw e; return { state: null, redirectedTo: to }; } };
 
 beforeEach(() => {
@@ -75,11 +77,12 @@ describe("confirmDealerInputAction", () => {
     expect(m.saveInput).not.toHaveBeenCalled();
   });
   it("utdatert søkeversjon eller revisjon ⇒ stale med lenke-flagg; brukerens verdier beholdes UTEN bekreftelse; ingen skriving", async () => {
-    const r = await run(fd(form({ draftVersion: "3", tb_amount: "7777" })));
+    const r = await run(fd(form({ bindingMarker: marker(undefined, 3), tb_amount: "7777" })));
     expect(r.state).toMatchObject({ stale: true });
     expect(r.state?.message).toMatch(/endret/);
     expect(r.state?.values?.tb_amount).toBe("7777");
     expect(r.state?.values?.confirm).toBeUndefined();
+    expect(r.state?.values?.bindingMarker).toBeUndefined();
     expect(m.saveInput).not.toHaveBeenCalled();
   });
   it("manglende bekreftelse ⇒ feltfeil på bekreftelsen, verdiene beholdes, ingen skriving", async () => {
