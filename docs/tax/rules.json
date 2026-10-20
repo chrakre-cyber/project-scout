@@ -4079,7 +4079,7 @@
    "id": "U-008",
    "claim": "Tollkursens syklus (annenhver tirsdag/to uker mot ukentlig).",
    "status": "uavklart kildekonflikt (E2)",
-   "note": "T23/T24 ikke lest. Runde 32: prinsipputtalelsen fra 2018 (T84) bruker gammel tolllov og ukentlig kurs og overstyrer ikke 2026-reglene (T65/T67/T69). «Fri rådighet»-spenningen er avgjort av lovkjeden (aksept); suspensjonspublisering er ikke verifisert.",
+   "note": "T23/T24 ikke lest. Runde 32: prinsipputtalelsen fra 2018 (T84) bruker gammel tolllov og ukentlig kurs og overstyrer ikke 2026-reglene (T65/T67/T69). «Fri rådighet»-spenningen er avgjort av lovkjeden (aksept); suspensjonspublisering er ikke verifisert. B1 (2026-10-20): kjernen har en gyldighetsvakt for akseptdato (2026); den godkjenner IKKE kursregimet før 3.9.2026. Dette er et eget, åpent restpunkt: regimet før 3.9.2026 er bare lest i veiledning (T53); kjernen varsler (warnings) for akseptdato før 2026-09-03 med valuta ≠ NOK.",
    "affects": [
     "R-IMP-FX-001"
    ],

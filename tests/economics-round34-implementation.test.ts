@@ -72,7 +72,7 @@ describe("2. ordinær tollsats 0 bare der klassifisering og tariffgyldighet dekk
   });
   it.each([
     ["akseptdato ukjent", { customsDate: undefined }],
-    ["akseptdato utenfor tariffutgaven (2027)", { customsDate: { date: "2027-01-05", kind: "actual_acceptance" as const } }],
+    // akseptdato utenfor 2026 er flyttet til B1-vakten (tests/economics-b1-validity-guard.test.ts): da er mva. og totaler `not_calculated`, ikke nedre grenser
     ["kjøretøyklasse ikke personbil", { taxInput: { ...DIESEL, vehicleClass: "van_n1" } }],
     ["drivlinje ukjent", { taxInput: { ...DIESEL, propulsion: { ...DIESEL.propulsion, pistonCombustionEngine: null, externallyChargeable: null } } }],
   ] as Array<[string, Partial<EconomicsInput>]>)("ikke dekket: %s ⇒ tollavgift ukjent (aldri 0), mva.-grunnlaget og totalene er nedre grenser", (_l, over) => {

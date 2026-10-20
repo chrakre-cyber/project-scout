@@ -6,6 +6,7 @@
  */
 import { calculateNorwegianVehicleTax, classifyPowertrain, type TaxPowertrain, type TaxResult } from "@/domain/tax";
 import { ordinaryDutyCoverage } from "./customs-tariff";
+import { CUSTOMS_FX_REGIME_FROM_ISO, DOCUMENTED_RULE_PERIOD, isWithinDocumentedPeriod } from "./validity";
 import {
   MAX_AMOUNT, MAX_RATE, MIN_RATE, add, cmp, fromInt, isZero, mul, norm, parseDecimal, parsePublishedDecimal, roundToWhole, subFloor0, toDecimalString, toExactDecimalString,
   type Rat, type RoundingPolicy,
@@ -277,6 +278,11 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   // Akseptdatoens status gjelder tidfestingen av tollavgiftssats, mva.-regler og kurs (tollavgiftsloven § 2-2, mval. § 3-29 (2)) og er uavhengig av valuta og kursgren.
   if (accept.kind === "unknown" || !accept.date) c.incomplete.push("customs_acceptance_date_unknown");
   else if (accept.kind === "expected_scenario") c.estimate.add("customs_acceptance_date_expected");
+  // Gyldighetsvakt (B1): akseptdato utenfor den dokumenterte perioden (2026) ⇒ incomplete uavhengig av valuta, kursfallback og eksplisitt toll. Beløp som avhenger av 2026-reglene
+  // (mva., elbilgrense, tollsats) beregnes ikke — hverken som estimat eller som nedre grense for det aktuelle året.
+  const outOfPeriod = accept.kind !== "unknown" && accept.date !== null && !isWithinDocumentedPeriod(accept.date);
+  const periodReason = `akseptdato ${accept.date} er utenfor den dokumenterte perioden ${DOCUMENTED_RULE_PERIOD.label} (${DOCUMENTED_RULE_PERIOD.fromIso}–${DOCUMENTED_RULE_PERIOD.toIso}): mva.-sats, elbilgrense og tollsats er ikke dokumentert for denne datoen, så avhengige beløp er ikke beregnet`;
+  if (outOfPeriod) c.incomplete.push("customs_acceptance_date_outside_documented_period");
 
   // --- Kurser: to separate roller ---
   const nok = currency === "NOK";
@@ -307,6 +313,10 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
       c.estimate.add("customs_fx_fallback_acquisition_rate");
     } else c.incomplete.push("customs_fx_missing");
     if (!profile.customsFxRuleApproved) c.estimate.add("customs_fx_rule_unconfirmed");
+    // Eget, uttrykkelig restpunkt: kursregimet før 3.9.2026 er bare lest i veiledning (T53). Gyldighetsvakten (2026) godkjenner ikke dette.
+    if (accept.kind !== "unknown" && accept.date !== null && !outOfPeriod && accept.date < CUSTOMS_FX_REGIME_FROM_ISO) {
+      c.warnings.push(`tollkurs: akseptdato ${accept.date} er før ${CUSTOMS_FX_REGIME_FROM_ISO}; kursregimet før dette er bare lest i veiledning (T53) og er ikke godkjent eller kildebelagt som regel (restpunkt U-008)`);
+    }
   }
 
   // --- Transport (til/etter innførselsstedet), forsikring, lasting/håndtering: hver post telles én gang ---
@@ -528,7 +538,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     if (customsValueRat && ((loadingNok ?? 0n) > 0n || !isZero(commissionInCustomsValue))) c.estimate.add("ev_threshold_components_unconfirmed");
     c.warnings.push("elbilgrensen: målegrunnlaget (tollverdi) er hentet fra Tolletatens veiledning for privatpersoner, sammenstilt med mval. § 4-11 for registrert importør; lasting/håndtering og salgsprovisjon i målt beløp er ikke avgjort ordrett");
   }
-  const vatScenarios = customsValueRat && vatBaseRat
+  const vatScenarios = customsValueRat && vatBaseRat && !outOfPeriod
     ? options.map((id) => {
         const exempt = id === "with_exemption__basis_customs_value" ? (cmp(customsValueRat, EV_EXEMPTION_THRESHOLD) < 0 ? customsValueRat : EV_EXEMPTION_THRESHOLD) : fromInt(0n);
         const raw = mul(VAT_RATE, subFloor0(vatBaseRat, exempt));
@@ -537,6 +547,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     : [];
   const vatExact = customsValueRat !== null && customsComplete && baseComplete && basisDocumented && !c.tieHit;
   const vatReasons: string[] = [];
+  if (outOfPeriod) vatReasons.push(periodReason);
   if (!customsValueRat) vatReasons.push("tollverdi kan ikke beregnes (kjøpesum/tollkurs/transport til innførselsstedet mangler)");
   if (insuranceNok === null || loadingNok === null) vatReasons.push("forsikring eller lasting/håndtering ukjent: mva.-grunnlaget er en nedre grense");
   for (const r of customsExtra) vatReasons.push(`${r}: mva.-grunnlaget er en nedre grense`);
@@ -617,6 +628,8 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     }
     landed = landedScenarios.length === 1 ? { kind: "value", valueNok: landedScenarios[0]!.valueNok } : { kind: "scenarios", valueNok: null, scenarios: landedScenarios };
   }
+  // B1: utenfor dokumentert periode er totalene som avhenger av mva. ikke beregnet (eksisterende `not_calculated`-kontrakt), ikke et estimat og ikke en nedre grense.
+  if (outOfPeriod) { cash = notCalculated([periodReason]); landed = notCalculated([periodReason]); }
   if (c.tieHit) c.incomplete.push("rounding_tie_unresolved");
   if (!exact && !c.incomplete.length) c.incomplete.push("components_missing");
 
@@ -632,7 +645,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     fx: { acquisition: acqFx, customs: custFx },
     transportToBorderNok: toBorderNok, transportToBorderBasis: toBorderBasis, transportAfterBorderNok: afterBorderNok, insuranceNok, loadingHandlingNok: loadingNok, customsValueNok,
     commissionInCustomsValueNok: customsValueRat ? wholeNok(commissionInCustomsValue) : null,
-    customsDuty: { nok: dutyRat ? wholeNok(dutyRat) : null, basis: dutyBasis }, importVatBaseNok: vatBaseRat ? wholeNok(vatBaseRat) : null,
+    customsDuty: { nok: dutyRat ? wholeNok(dutyRat) : null, basis: dutyBasis }, importVatBaseNok: vatBaseRat && !outOfPeriod ? wholeNok(vatBaseRat) : null,
     importVat, importVatSettlement, tax: taxL,
     importCashRequirement: cash, estimatedLandedCost: landed,
     vatRecoverability: { value: recov, accepted: dedAccepted, source: d?.source ?? null },
