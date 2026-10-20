@@ -1,5 +1,7 @@
 # ECON-006 — implementeringsplan: forklaring av beløp og usikkerhet, forhandleropplysninger og brukerforløp (20.10.2026)
 
+> **Oppdatering 20.10.2026 (006b):** 006a er DONE innen levert omfang; 006b (forhandlerskjema og firmaprofil) er levert til uavhengig review (`reviews/ECON-006b-leveranse.md`) uten ny migrasjon; 006c ikke startet. Avvik fra § 2B: profilen ligger på `/searches/economics-profile` (ikke `/settings/economics`); forhåndsutfylling fra tidligere revisjon er nytt (bekrefter aldri).
+>
 > **Oppdatering 20.10.2026: beslutningene B1–B7 er besvart (`DECISIONS.md` runde 53; se § 8a). Kun 006a er startet; 006b og 006c er ikke startet.** Nedenfor står den opprinnelige planen; der § 1C, § 8 og § 8a avviker, gjelder § 8a.
 >
 > **Opprinnelig status: plan, ikke implementering.** Ingen kode, migrasjon eller runtime er endret av dette dokumentet. Utgangspunkt: ECON-005a–d er DONE innen avgrenset omfang; ECON-005 som helhet er ikke DONE (`reviews/ECON-005-avstemming.md`). Økonomiflaggene er `false` og forblir det; ingen ny juridisk regel, ingen godkjenning, ingen hosted migrasjon, ingen deploy, ingen LLM, ingen lagring av avledede tall.

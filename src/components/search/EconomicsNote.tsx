@@ -1,13 +1,14 @@
 import type { EconomicsView } from "@/domain/search-economics";
 import { EconomicsExplanation } from "@/components/search/EconomicsExplanation";
-import { DEALER_INPUT_TEXT, ECONOMICS_HEADING, ECONOMICS_NOT_BUDGET, ECONOMICS_RIGHTS_TEXT, economicsHeadline, economicsReasonText, staleReasonText } from "@/lib/search-labels";
+import { DEALER_INPUT_TEXT, DF_OPEN_LINK, ECONOMICS_HEADING, ECONOMICS_NOT_BUDGET, ECONOMICS_RIGHTS_TEXT, economicsHeadline, economicsReasonText, staleReasonText } from "@/lib/search-labels";
 
 /**
  * Økonomivisning (ECON-005d): ferdig visningsmodell → faste etiketter. Tall vises bare når modellen har dem (rettighetsgrensen er passert); `unavailable` viser ingen tall.
  * Aldri budsjettspråk: ingen «innenfor budsjett», «treff» eller grønn bekreftelse — alle statuser unntatt `validated` er nøytrale, og `validated` er uoppnåelig med registerprofilen.
  * `compact`: kort linje i resultatkortet. Ellers: full forklaring (detaljsiden).
  */
-export function EconomicsNote({ economics: e, compact = false }: { economics: EconomicsView; compact?: boolean }) {
+/** `dealerFormHref`: lenke til forhandlerskjemaet for denne annonsen (bare detaljsiden; bare når økonomien kan vises). */
+export function EconomicsNote({ economics: e, compact = false, dealerFormHref }: { economics: EconomicsView; compact?: boolean; dealerFormHref?: string }) {
   const headline = economicsHeadline(e);
   const attrs = { "data-testid": "economics", "data-economics-status": e.status, "data-economics-label": e.labelKey, "data-positive-budget": String(e.positiveBudgetEligible) } as const;
   if (e.status === "unavailable") {
@@ -25,13 +26,14 @@ export function EconomicsNote({ economics: e, compact = false }: { economics: Ec
         ? (
           <>
             <ul className="list-disc pl-5" data-testid="economics-reasons">{e.reasons.map((r) => <li key={r}>{economicsReasonText(r)}</li>)}</ul>
-            {e.explanation && <EconomicsExplanation e={e} />}
+            {e.explanation && <EconomicsExplanation e={e} formHref={dealerFormHref} />}
           </>
         )
-        : <EconomicsExplanation e={e} />}
+        : <EconomicsExplanation e={e} formHref={dealerFormHref} />}
       <p className="text-xs" data-testid="economics-dealer-input">
         {e.dealerInput.state === "none" ? DEALER_INPUT_TEXT.none : e.dealerInput.state === "in_use" ? DEALER_INPUT_TEXT.in_use : `${DEALER_INPUT_TEXT.needs_reconfirmation} (${e.dealerInput.reasons.map(staleReasonText).join("; ")}).`}
       </p>
+      {dealerFormHref && <p className="text-sm"><a className="font-semibold text-rust underline" href={dealerFormHref} data-testid="dealer-form-link">{DF_OPEN_LINK}</a></p>}
     </div>
   );
 }

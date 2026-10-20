@@ -1,7 +1,7 @@
 import type { Explanation, EconomicsView, ViewAmount } from "@/domain/search-economics";
 import {
   ASSUMPTIONS_TITLE, ASSUMPTION_SOURCE_LABEL, BASIS_LABEL, BASIS_SUMMARY_LABEL, BREAKDOWN_BASIS_NOTE, BREAKDOWN_CAPTION, BREAKDOWN_TITLE, COVERAGE_DISCLAIMER, CUSTOMS_DATE_KIND_LABEL,
-  DEALER_FORM_NOT_AVAILABLE, ECONOMIC_COST_EXPLAIN, ECONOMIC_COST_TITLE, ECONOMICS_NOT_ADVICE, ECONOMICS_UNCERTAINTY_INTRO, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, GROSS_OUTLAY_EXPLAIN, GROSS_OUTLAY_TITLE,
+  DEALER_FORM_NOT_AVAILABLE, DF_FIX_LINK, FIELD_ANCHOR, ECONOMIC_COST_EXPLAIN, ECONOMIC_COST_TITLE, ECONOMICS_NOT_ADVICE, ECONOMICS_UNCERTAINTY_INTRO, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, GROSS_OUTLAY_EXPLAIN, GROSS_OUTLAY_TITLE,
   LINE_TREATMENT_TEXT, MISSING_TITLE, NOT_COLLECTABLE_TEXT, REGISTRATION_DATE_KIND_LABEL, ROW_LABEL, RULES_NOT_APPROVED, SEARCH_COSTS_NOTE, SEARCH_COSTS_TITLE, STATE_LABEL, UNCERTAINTY_GROUP_TITLE,
   VAT_HANDLING_LABEL, VAT_RECOVERABILITY_LABEL, coverageText, economicsNoteText, economicsReasonText, formatNokExact, formatNokString,
 } from "@/lib/search-labels";
@@ -98,19 +98,22 @@ function Uncertainty({ x }: { x: Explanation }) {
   );
 }
 
-function Missing({ x }: { x: Explanation }) {
+function Missing({ x, formHref }: { x: Explanation; formHref?: string }) {
   if (x.missing.length === 0) return null;
   return (
     <section aria-label={MISSING_TITLE} data-testid="economics-missing-fields">
       <h3 className="font-bold">{MISSING_TITLE}</h3>
-      <ul className="list-disc pl-5">{x.missing.map((m) => <li key={m.field} data-field={m.field}>{FIELD_LABEL[m.field]}{m.collectable ? "" : ` — ${NOT_COLLECTABLE_TEXT}`}</li>)}</ul>
-      {x.missing.some((m) => m.collectable) && <p className="text-xs text-muted" data-testid="economics-form-unavailable">{DEALER_FORM_NOT_AVAILABLE}</p>}
+      <ul className="list-disc pl-5">{x.missing.map((m) => <li key={m.field} data-field={m.field}>
+        {FIELD_LABEL[m.field]}
+        {!m.collectable ? ` — ${NOT_COLLECTABLE_TEXT}` : formHref ? <> — <a className="font-semibold text-rust underline" href={`${formHref}#f-${FIELD_ANCHOR[m.field]}`} data-testid="economics-missing-link">{DF_FIX_LINK}</a></> : ""}
+      </li>)}</ul>
+      {!formHref && x.missing.some((m) => m.collectable) && <p className="text-xs text-muted" data-testid="economics-form-unavailable">{DEALER_FORM_NOT_AVAILABLE}</p>}
     </section>
   );
 }
 
 /** Skrivebeskyttet forklaring av beløp og usikkerhet (ECON-006a). Tar bare visningsmodellen (bak rettighetsgrensen). */
-export function EconomicsExplanation({ e }: { e: Exclude<EconomicsView, { status: "unavailable" }> }) {
+export function EconomicsExplanation({ e, formHref }: { e: Exclude<EconomicsView, { status: "unavailable" }>; formHref?: string }) {
   const x = e.explanation;
   return (
     <div className="space-y-3">
@@ -130,7 +133,7 @@ export function EconomicsExplanation({ e }: { e: Exclude<EconomicsView, { status
             <p className="text-xs text-muted">{SEARCH_COSTS_NOTE}</p>
           </section>
           <Uncertainty x={x} />
-          <Missing x={x} />
+          <Missing x={x} formHref={formHref} />
         </>
       )}
       <p className="text-xs text-muted" data-testid="economics-not-advice">{ECONOMICS_NOT_ADVICE}</p>

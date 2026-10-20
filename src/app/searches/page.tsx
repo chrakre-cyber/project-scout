@@ -1,3 +1,4 @@
+import { DP_LINK } from "@/lib/search-labels";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FlowStrip } from "@/components/merovo/FlowStrip";
@@ -38,6 +39,7 @@ export default async function SearchesPage({ searchParams }: { searchParams: Pro
         </div>
         <Link href="/searches/new" className="inline-flex min-h-11 items-center rounded-lg bg-forest px-5 py-2 font-semibold text-cream hover:bg-ink" data-testid="new-search">Nytt søk</Link>
       </div>
+      <p className="text-sm"><Link href="/searches/economics-profile" className="font-semibold text-rust underline" data-testid="economics-profile-link">{DP_LINK}</Link></p>
       {success && <p role="status" className="rounded-lg border border-ok/40 bg-[#e5f0e8] p-3 text-sm text-ok">{success}</p>}
 
       <section aria-labelledby="examples" className="rounded-2xl border border-sand bg-paper p-4">

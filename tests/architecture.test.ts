@@ -72,7 +72,7 @@ describe("Supabase og hemmeligheter", () => {
 
   it("klientkomponenter importerer ikke servermoduler, Supabase eller server-only (type-importer er ok)", () => {
     const clients = ALL.filter((f) => f.client);
-    expect(clients.map((f) => f.rel).sort()).toEqual(["src/components/AgentForm.tsx", "src/components/AppChrome.tsx", "src/components/RunButton.tsx", "src/components/SiteNav.tsx", "src/components/merovo/MerovoNav.tsx", "src/components/search/SearchForm.tsx"]); // DEV-006D: AppChrome og MerovoNav er ren navigasjon (usePathname), uten server-/Supabase-import
+    expect(clients.map((f) => f.rel).sort()).toEqual(["src/components/AgentForm.tsx", "src/components/AppChrome.tsx", "src/components/RunButton.tsx", "src/components/SiteNav.tsx", "src/components/merovo/MerovoNav.tsx", "src/components/search/DealerInputForm.tsx", "src/components/search/DealerProfileForm.tsx", "src/components/search/SearchForm.tsx"]); // DEV-006D: AppChrome og MerovoNav er ren navigasjon (usePathname), uten server-/Supabase-import
     for (const f of clients) {
       for (const i of f.imports.filter((x) => !x.typeOnly)) {
         expect(i.spec, `${f.rel} → ${i.spec}`).not.toMatch(/^@\/server|^@\/lib\/supabase|^@supabase|^server-only|^next\/headers|^pg$/);

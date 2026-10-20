@@ -9,7 +9,7 @@ import { ListingFacts } from "@/components/search/ListingFacts";
 import { PUBLIC_ID_PATTERN } from "@/domain/display-policy";
 import { fieldValue } from "@/lib/display-text";
 import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
-import { BLOCKED_TEXT, BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { BLOCKED_TEXT, DF_SAVED, BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { getDraft } from "@/server/search-drafts";
 import { loadEconomicsContext } from "@/server/dealer-economics-context";
 import { detailForDisplay } from "@/server/search-display";
@@ -18,7 +18,7 @@ import { getSessionContext } from "@/server/session";
 export const metadata: Metadata = { title: "Detaljer — Merovo demo" };
 export const dynamic = "force-dynamic";
 
-export default async function ListingDetailPage({ params, searchParams }: { params: Promise<{ id: string; listingId: string }>; searchParams: Promise<{ v?: string }> }) {
+export default async function ListingDetailPage({ params, searchParams }: { params: Promise<{ id: string; listingId: string }>; searchParams: Promise<{ v?: string; msg?: string }> }) {
   const ctx = await getSessionContext();
   if (ctx.status !== "member") redirect("/searches");
   const { id, listingId: raw } = await params;
@@ -27,7 +27,8 @@ export default async function ListingDetailPage({ params, searchParams }: { para
   if (!draft || !PUBLIC_ID_PATTERN.test(listingId)) notFound();
   const back = <Link className="font-semibold text-rust underline" href={`/searches/${id}/preview?v=${draft.version}`}>Tilbake til resultatet</Link>;
   if (!draft.readable) notFound();
-  const requested = Number((await searchParams).v);
+  const sp = await searchParams;
+  const requested = Number(sp.v);
   if (requested !== draft.version) {
     return <div className="space-y-3" data-testid="stale-version"><p role="alert" className="rounded-lg border border-sand bg-sand-soft p-3">Søket er endret siden resultatet ble vist (gjeldende lagrede versjon er {draft.version}). {back}</p></div>;
   }
@@ -68,7 +69,8 @@ export default async function ListingDetailPage({ params, searchParams }: { para
           <p className="rounded-lg bg-sand-soft px-3 py-2 text-sm" data-testid="budget-note">{BUDGET_NOT_CALCULATED}</p>
         </div>
       </div>
-      <section aria-label="Anslått innkjøpskostnad til Norge"><EconomicsNote economics={economics} /></section>
+      {sp.msg === "econ_saved" && <p role="status" className="rounded-lg border border-ok/40 bg-[#e5f0e8] p-3 text-sm text-ok" data-testid="econ-saved">{DF_SAVED}</p>}
+      <section aria-label="Anslått innkjøpskostnad til Norge"><EconomicsNote economics={economics} dealerFormHref={economics.status === "unavailable" ? undefined : `/searches/${draft.id}/preview/${encodeURIComponent(listingId)}/dealer-input?v=${draft.version}`} /></section>
       <section className="rounded-2xl border border-sand bg-paper p-4 sm:p-5" aria-labelledby="facts">
         <h2 id="facts" className="mb-2 text-lg font-bold">Opplysninger fra annonsen</h2>
         <ListingFacts listing={listing} />

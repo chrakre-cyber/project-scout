@@ -10,3 +10,5 @@ export { toEconomicsView, notCalculatedView, dealerInputView, UNAVAILABLE_VIEW }
 export type * from "./view";
 export { explainEconomics, uncertaintyCategory, fieldOfCode } from "./explain";
 export type * from "./explain";
+export { buildDealerInputFromForm, dealerInputToFormValues, fieldForIssuePath, normalizeDecimal, nokToMinor } from "./dealer-form";
+export type * from "./dealer-form";

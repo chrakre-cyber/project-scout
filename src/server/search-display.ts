@@ -9,7 +9,7 @@ import { applyDisplayPolicy } from "@/domain/display-policy";
 import { buildProvenance, evaluateProvenance } from "@/domain/provenance";
 import type { InternalProvenance, ProvenanceStatus } from "@/domain/provenance";
 import { REGISTERED_PROFILES, matchingRights, policyForSource, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
-import type { ProviderRightsProfile } from "@/domain/provider-rights";
+import type { ProviderRightsProfile, ResolvedRights } from "@/domain/provider-rights";
 import type { DealerProfileV1, EconomicsView, StoredDealerInput } from "@/domain/search-economics";
 import type { CandidateAssessment, SearchSpec } from "@/domain/search-v2/types";
 import type { NormalizedListing } from "@/domain/types";
@@ -173,7 +173,12 @@ async function resolvePublicId(provider: MarketplaceProvider, publicId: string, 
   return null;
 }
 
-export async function detailForDisplay(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DisplayDetailOutcome> {
+/** Server-internt: som `detailForDisplay`, men med kandidatidentiteten og de gjeldende rettighetene (bare til forhandlerinput-flyten; UI får aldri disse). */
+export type DealerTarget =
+  | { kind: "ok"; item: DisplayItem; candidate: { id: string; version: string }; rights: ResolvedRights }
+  | Exclude<DisplayDetailOutcome, { kind: "ok" }>;
+
+export async function resolveDealerTarget(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DealerTarget> {
   const now = opts.now ?? (() => new Date());
   const profiles = opts.profiles ?? REGISTERED_PROFILES;
   const o = { ...opts, profiles };
@@ -190,5 +195,10 @@ export async function detailForDisplay(spec: SearchSpec, publicId: string, opts:
   if (!item) return { kind: "not_assessable" };
   const r = internalItem(item, o, now(), spec);
   if (!r.ok) return { kind: "blocked", reason: r.reason };
-  return { kind: "ok", item: r.value.display };
+  return { kind: "ok", item: r.value.display, candidate: { id: item.candidate.id, version: item.candidate.version }, rights };
+}
+
+export async function detailForDisplay(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DisplayDetailOutcome> {
+  const t = await resolveDealerTarget(spec, publicId, opts);
+  return t.kind === "ok" ? { kind: "ok", item: t.item } : t;
 }

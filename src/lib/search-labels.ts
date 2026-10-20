@@ -305,3 +305,106 @@ export const REGISTRATION_DATE_KIND_LABEL: Record<string, string> = { expected: 
 export const VAT_RECOVERABILITY_LABEL = { recoverable: "fradrag oppgitt", non_recoverable: "ikke fradrag oppgitt", unknown: "ukjent (to scenarier)" } as const;
 export const VAT_HANDLING_LABEL = { registered_reports_in_vat_return: "registrert: rapporteres i mva-meldingen", not_registered_pays_at_import: "ikke registrert: betales ved innførsel", unknown: "ukjent" } as const;
 export const ASSUMPTION_SOURCE_LABEL: Record<string, string> = { dealer_entered: "oppgitt av forhandler", dealer_profile: "firmaets standard" };
+
+// ---------------------------------------------------------------- ECON-006b: forhandlerskjema og firmaprofil
+export const DF_TITLE = "Forhandleropplysninger";
+export const DF_INTRO = "Opplysningene er dine egne og gjelder bare denne annonserevisjonen i dette søket. Tomt felt betyr «ikke oppgitt» (ukjent) — aldri 0 og aldri dokumentert. Annonsens egne påstander fylles ikke ut for deg og er ikke dokumentasjon.";
+export const DF_NOT_VALIDATED = "Selv med bekreftede opplysninger er resultatet et estimat — ikke validert. Skjemaet godkjenner ingen regel og gir ingen budsjettvurdering.";
+export const DF_CLAIMS_TITLE = "Annonsens påstander (ikke dokumentasjon)";
+export const DF_CONFIRM_LABEL = "Jeg bekrefter at opplysningene over er mine egne, og at de gjelder denne annonserevisjonen i dette søket.";
+export const DF_SUBMIT = "Bekreft og lagre";
+export const DF_CANCEL = "Tilbake til detaljene";
+export const DF_OPEN_LINK = "Registrer eller endre forhandleropplysninger";
+export const DF_FIX_LINK = "Registrer";
+export const DF_UNAVAILABLE = "Økonomi kan ikke vises for denne kilden, så det registreres ingen forhandleropplysninger her.";
+export const DF_PREFILL: Record<"current" | "previous_revision" | "none", string | null> = {
+  current: "Skjemaet er fylt ut fra din forrige bekreftelse for denne annonserevisjonen. Gjennomgå og bekreft på nytt for å lagre.",
+  previous_revision: "Annonsen er endret siden forrige bekreftelse. Skjemaet er forhåndsutfylt fra den tidligere bekreftelsen, men den er ikke brukt i beregningen. Gjennomgå hver opplysning og bekreft på nytt.",
+  none: null,
+};
+export const DF_SAVED = "Forhandleropplysningene er bekreftet. Vurderingen er beregnet på nytt (ingenting av resultatet er lagret).";
+export const DF_OUTCOME_TEXT: Record<"stale_page" | "rights_unavailable" | "search_not_found" | "rejected" | "unavailable" | "not_logged_in" | "not_found", string> = {
+  stale_page: "Annonsen eller søket er endret siden du åpnet skjemaet. Ingenting er lagret. Åpne skjemaet på nytt, gjennomgå opplysningene og bekreft på nytt.",
+  rights_unavailable: DF_UNAVAILABLE,
+  search_not_found: "Fant ikke søket i ditt firma. Ingenting er lagret.",
+  rejected: "Databasen avviste opplysningene. Ingenting er lagret.",
+  unavailable: "Lagringen feilet. Ingenting er lagret. Prøv igjen.",
+  not_logged_in: "Du må være innlogget og knyttet til et firma for å registrere opplysninger.",
+  not_found: "Fant ikke annonsen eller søket. Ingenting er lagret.",
+};
+export const DF_ERROR_SUMMARY = "Opplysningene ble ikke lagret. Rett feltene som er merket.";
+export const DF_GENERAL_ERROR = "Opplysningene kunne ikke godkjennes av valideringen. Ingenting er lagret.";
+export const DF_FIELD_ERROR: Record<string, string> = {
+  required: "Må fylles ut.", invalid_value: "Ugyldig valg.", invalid_amount: "Oppgi et beløp i hele kroner eller med inntil to desimaler (for eksempel 8000 eller 8000,50).",
+  invalid_integer: "Oppgi et helt tall.", invalid_date: "Oppgi en gyldig dato i formatet ÅÅÅÅ-MM-DD (år-måned: ÅÅÅÅ-MM, år: ÅÅÅÅ) som passer til valgt presisjon.", invalid_rate: "Oppgi en kurs større enn 0 (for eksempel 10,6709).",
+  too_long: "Teksten er tom, for lang eller har ugyldige tegn.", split_mismatch: "Fordelingen må summere nøyaktig til linjens beløp.", choose_one: "Velg først hva som oppgis (beløp eller ikke relevant).",
+  must_be_empty: "Skal være tomt for dette valget.",
+};
+
+export const DF_GROUP = {
+  propulsion: "Drivlinje", taxWeight: "Avgiftsvekt", co2: "CO₂-utslipp", firstReg: "Første registrering", noReg: "Norsk registrering", customs: "Tolldeklarasjon", foreignVat: "Utenlandsk mva. i prisen",
+  fxAcq: "Kurs: kjøpesum", fxCust: "Kurs: tollverdi", costs: "Kostnader", scopes: "Kostnadslinjer i søket", vat: "Mva. og fradrag", evidence: "Henvisning", confirm: "Bekreftelse",
+} as const;
+export const DF_GROUP_HELP: Partial<Record<keyof typeof DF_GROUP, string>> = {
+  propulsion: "Annonsens drivstoff er en påstand og er ikke fylt ut. Velg «Ukjent» der du ikke vet, og oppgi grunnlaget for det du vet.",
+  taxWeight: "Forhandler uten dokumentasjon gir et estimat.",
+  firstReg: "Presisjonen må stemme med verdien. Det oppdiktes ingen måned eller dag.",
+  noReg: "Tomt = beregningsdatoen brukes som standard og merkes slik.",
+  customs: "Dato for tolldeklarasjonen. Forventet dato er en antakelse.",
+  foreignVat: "Utenlandsk mva. må være dokumentert utelatt fra prisen for at prisen skal regnes som netto. Annonsepåstand er ikke et valg.",
+  fxAcq: "Gjelder bare annonser i annen valuta enn NOK. Kursen er forhandleroppgitt og merkes som estimat. Kilde og dato er påkrevd.",
+  fxCust: "Kursen som brukes til tollverdien. Kilde og dato er påkrevd.",
+  costs: "Tomt = ikke oppgitt (ukjent). Skriv 0 bare hvis kostnaden faktisk er 0.",
+  scopes: "Si hva hver transport- og forsikringslinje i søket dekker, slik at ingenting telles to ganger. Ubekreftet = linjen telles ikke som del av innkjøpskostnaden.",
+  vat: "Tomt = ikke satt for denne annonsen; firmaprofilen kan gjelde. «Ukjent» er et uttrykkelig valg som overstyrer profilen.",
+};
+export const DF_FIELD: Record<string, string> = {
+  prop_piston: "Stempelmotor", prop_chargeable: "Ladbar utenfra", prop_fuel: "Drivstoff for forbrenningsmotor", prop_hybrid: "Hybridisering", prop_basis: "Grunnlag for drivlinjen",
+  tw_kg: "Avgiftsvekt (kg)", tw_basis: "Grunnlag for vekten", co2_g: "CO₂ (g/km)", co2_method: "Målemetode",
+  fr_precision: "Presisjon", fr_value: "Verdi (ÅÅÅÅ-MM-DD, ÅÅÅÅ-MM eller ÅÅÅÅ)", fr_basis: "Grunnlag",
+  nr_date: "Norsk registreringsdato", nr_kind: "Er datoen forventet eller faktisk?", cd_kind: "Type dato", cd_date: "Dato for tolldeklarasjon",
+  fv_treatment: "Utenlandsk mva.", fv_evidence: "Dokumentasjon",
+  fxA_pair: "Valutapar", fxA_rate: "Kurs (NOK per enhet)", fxA_source: "Kilde (hvor kursen er hentet)", fxA_quotedAt: "Dato kursen ble notert", fxA_effectiveAt: "Gjelder fra (valgfri)", fxA_validUntil: "Gyldig til og med (valgfri)",
+  fxC_pair: "Valutapar", fxC_rate: "Kurs (NOK per enhet)", fxC_source: "Kilde (hvor kursen er hentet)", fxC_quotedAt: "Dato kursen ble notert", fxC_effectiveAt: "Gjelder fra (valgfri)", fxC_validFrom: "Gyldig fra (valgfri)", fxC_validTo: "Gyldig til og med (valgfri)",
+  tb_amount: "Transport til innførselsstedet (kr)", ins_amount: "Forsikring til innførselsstedet (kr)",
+  ta_mode: "Transport etter innførselsstedet", lh_mode: "Lasting og håndtering", cg_mode: "Klimagassavgift", rf_mode: "Registreringsgebyr",
+  deduction: "Fradragsstatus for import-mva.", vatHandling: "Mva.-håndtering ved import", evidenceRef: "Henvisning til dokumentasjon (valgfri)", confirm: "Bekreftelse",
+};
+export const DF_OPTION = {
+  unset: "Ikke oppgitt", unknown: "Ukjent", yes: "Ja", no: "Nei",
+  fuel: { diesel: "Diesel", petrol: "Bensin", other: "Annet" },
+  hybrid: { none: "Ingen", non_chargeable_hybrid: "Ikke-ladbar hybrid" },
+  basis: { dealer_entered: "Oppgitt av meg (ingen dokumentasjon)", vehicle_register: "Kjøretøyregister", type_approval: "Typegodkjenning" },
+  weightBasis: { eu_type_approval_minimum_mass: "EU-typegodkjenning (minimumsmasse)", vehicle_register: "Kjøretøyregister", dealer_entered: "Oppgitt av meg (ingen dokumentasjon)" },
+  co2: { wltp_combined: "WLTP kombinert", wltp_weighted_combined: "WLTP vektet kombinert (ladbar hybrid)", epa_nrcan: "EPA/NRCan", nedc: "NEDC", not_wltp_or_nedc_approved: "Verken WLTP eller NEDC", unspecified: "Metode ikke oppgitt" },
+  precision: { day: "Dag", month: "Måned", year: "År", unknown: "Ukjent", none: "Ingen (ikke registrert)" },
+  regKind: { expected: "Forventet", actual: "Faktisk" },
+  customsKind: { expected_scenario: "Forventet (antakelse)", actual_acceptance: "Faktisk akseptdato", unknown: "Ukjent" },
+  foreignVat: { excluded_documented: "Dokumentert utelatt fra prisen", unconfirmed: "Ikke bekreftet" },
+  foreignVatEvidence: { invoice_or_contract: "Faktura eller avtale", dealer_entered: "Oppgitt av meg (ingen dokumentasjon)" },
+  chargeMode: { amount: "Beløp", not_applicable: "Ikke relevant (begrunn)" },
+  scope: { unconfirmed: "Ikke bekreftet", to_border: "Frem til innførselsstedet", after_border: "Etter innførselsstedet", other: "Annet (ikke del av innførselen)", split: "Fordelt" },
+  deduction: { recoverable: "Fradragsberettiget", non_recoverable: "Ikke fradragsberettiget", unknown: "Ukjent" },
+  vatHandling: { registered_reports_in_vat_return: "Mva.-registrert: rapporteres i mva.-melding", not_registered_pays_at_import: "Ikke mva.-registrert: betales ved innførsel", unknown: "Ukjent" },
+} as const;
+export const DF_CHARGE_NOTE = "Begrunnelse (kort)";
+export const DF_CHARGE_AMOUNT = "Beløp (kr)";
+export const DF_SPLIT_TO = "Til innførselsstedet (kr)";
+export const DF_SPLIT_AFTER = "Etter innførselsstedet (kr)";
+export const DF_LINE_AMOUNT = "Beløp i søket";
+export const DF_NO_SCOPE_LINES = "Søket har ingen transport- eller forsikringslinjer.";
+export const DF_PROFILE_NOW = "Firmaprofilens standard";
+export const DF_PROFILE_NOT_SET = "ikke satt";
+
+export const DP_TITLE = "Firmaprofil for økonomi";
+export const DP_INTRO = "Standardverdier for hele firmaet. De brukes bare der en annonse ikke har sin egen bekreftede verdi — en bekreftet verdi for en annonse overstyres aldri av profilen. Tomt = ingen standard (ukjent). Profilen gjør ikke noe tall dokumentert eller validert.";
+export const DP_SAVED = "Firmaprofilen er lagret.";
+export const DP_SUBMIT = "Lagre firmaprofil";
+export const DP_LINK = "Firmaprofil for økonomi";
+
+/** Mangelfelt (forklaringen) → anker i forhandlerskjemaet. */
+export const FIELD_ANCHOR: Record<FormFieldKey, string> = {
+  propulsion: "propulsion", tax_weight: "taxWeight", co2: "co2", first_registration: "firstReg", norwegian_registration: "noReg", customs_date: "customs", foreign_vat: "foreignVat",
+  fx_acquisition: "fxAcq", fx_customs: "fxCust", transport_to_border: "tb_amount", transport_after_border: "transportAfterBorder", insurance: "ins_amount", loading_handling: "loadingHandling",
+  deduction: "vat", vat_handling: "vat", listing_price_basis: "costs", ev_qualification: "costs", commission: "costs", payment_costs: "costs", import_levies: "costs",
+};
