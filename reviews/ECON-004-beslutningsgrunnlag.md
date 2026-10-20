@@ -1,5 +1,7 @@
 # ECON-004 — samlet beslutningsgrunnlag for avslutning (19.10.2026)
 
+> **Korrigert 20.10.2026:** den opprinnelige formuleringen «estimat ±1 kr» (rad «Kan avgrenses?» under `roundingApproved`) er fjernet. Det er ikke dokumentert at avvik fra en fremtidig avrundingsregel holder seg innenfor ±1 kr; se avslutningsdokumentet § 2.
+
 **Status: beslutningsgrunnlag. Ingen kodeendring, ingen nye kilder, ingen godkjenning.** ECON-004 står på REVIEW; alle fire flagg er `false`; ECON-005 er ikke startet. FIX2-reviewen (`ECON-004-r34-FIX2-review-7378368.md`, registrert): P2 fra FIX1-reviewen er **lukket**, ingen nye blokkerende funn i den avgrensede rettingsreviewen (ikke en full review eller juridisk godkjenning).
 
 **Hva «godkjent» krever i registeret** (`rules.json` → `approvalRequirements`): regelen på E1 (ikke E1P) med kontrolldato; alle kilder E1 med hash; gyldighet og styrende hendelse begrunnet; minst én uavhengig klasse 1-referanse (offisiell kalkulator/vedtak) eller dokumentert klasse 2-håndregning; og `parameterApproval` satt av deg (eller delegert), aldri av utvikler. Alle ECON-004-regler er i dag E1P. Uten godkjenning gir kjernen alltid `estimate`/`incomplete` (aldri `validated`) — det er bevisst og er ikke en feil.
@@ -19,7 +21,7 @@
 |---|---|
 | **Kildene dekker** | A (samlet avgiftskrav): tekstlig støtte for nedrunding til hele krone (skattebetalingsforskriften § 10-4-4 + § 10-4-1 (1) b, T46/T50/T49), enhet uavklart for registrert importør. C (rapportering): XSD v1.0 godtar desimaltall (T79) — ingen metode. |
 | **Hindrer godkjenning** | B: ingen regel for hver importberegning (tollverdi, omregning, mva. per deklarasjon/vare); A-enhet (deklarasjon vs periodesum) og C-metode mangler; valideringstoleranse i FAQ er ikke en regel; fixture-half-up er en ubekreftet konvensjon (ville gitt 1 kr avvik i 4 tilfeller ved floor). Ingen kilde i pakkene omtaler avrunding av importberegning. |
-| **Kan avgrenses?** | **Ja, uten godkjenning:** kjernen viser allerede nedre grense og kandidater ved likhet og gir aldri `validated`. Resultatet er et «estimat ±1 kr» i hele kroner. |
+| **Kan avgrenses?** | **Ja, uten godkjenning:** kjernen viser allerede nedre grense og kandidater ved likhet og gir aldri `validated`. Resultatet er et estimat/nedre grense i hele kroner; **det er ikke dokumentert noen universell feilgrense** (se `reviews/ECON-004-avslutning-estimatmotor.md` § 2). |
 | **Beslutning fra deg** | **D6** Velg: (a) la `roundingApproved` stå `false` og akseptere at ingen beregning blir `validated` (anbefalt standard inntil videre); (b) innføre en eksplisitt **produktkonvensjon** (merket som ikke-rettslig) — da må du velge policy selv; (c) be om én presis avklaring av B + A-enhet (konkret restspørsmål, ikke bred henvendelse). Jeg velger ingen av dem. |
 
 ## 3. `customsFxRuleApproved` (R-IMP-FX-001, U-008)
