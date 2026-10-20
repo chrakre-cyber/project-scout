@@ -5,7 +5,7 @@
  * begge fradragsstatuser og begge uttrykkelige avrundingspolicyer. Ingen policy er godkjent; «approved»-konfigurasjonene er syntetiske sammenligninger. Literaler er håndregnet.
  */
 import { describe, expect, it } from "vitest";
-import { calculateEconomics, UNCONFIRMED_HALF_UP, type EconomicsConfig, type EconomicsInput, type EconomicsResult, type Total } from "@/domain/economics";
+import { calculateEconomics, UNCONFIRMED_HALF_UP, type EconomicsConfig, type EconomicsInput, type Total } from "@/domain/economics";
 import { ECON_CASES } from "./fixtures/econ-golden";
 
 const FV = { treatment: "excluded_documented", evidence: "invoice_or_contract" } as const;

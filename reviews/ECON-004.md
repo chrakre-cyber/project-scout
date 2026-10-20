@@ -93,3 +93,5 @@ Se `reviews/ECON-004-avslutning-estimatmotor.md` (20.10.2026): akseptkrav, gjens
 B1 (gyldighetsvakt) levert: `reviews/ECON-004-B1-gyldighetsvakt.md`.
 
 FIX3 (konsolidert review av dc97f04, ett P2): `reviews/ECON-004-r34-FIX3-retting.md`.
+
+**20.10.2026: ECON-004 DONE innen avgrenset omfang** (estimat-/scenariomotor; ikke parametergodkjenning; flagg false). Samlet belegg: `reviews/ECON-004-konsolidert-review-dc97f04.md` + `reviews/ECON-004-FIX3-review-d2e57e1.md`; se avslutningsseksjonen i `reviews/ECON-004-avslutning-estimatmotor.md`.
