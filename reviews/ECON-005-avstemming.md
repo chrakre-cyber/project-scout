@@ -69,3 +69,6 @@ Inntil (a) er oppfylt gjelder: ingen partnerdemo med landed cost som beslutnings
 
 ---
 **Tillegg 20.10.2026 (etter Christians beslutninger B1–B7, `DECISIONS.md` runde 53):** raden gjelder «v1 uten EconomicTarget»; E8 er åpent, utsatt arbeid; E7 er utsatt; forhandlerskjema/firmaprofil er videreført restarbeid som leveres i ECON-006/006b. ECON-005 forblir REVIEW (ikke DONE) til de øvrige akseptkravene er oppfylt. Avstemmingen ellers uendret.
+
+---
+**Oppdatert 20.10.2026:** se `reviews/ECON-005-006-avstemming-2.md` (etter 006a–c). Denne rapporten beskriver tilstanden før ECON-006.
