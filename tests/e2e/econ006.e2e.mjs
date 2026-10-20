@@ -32,7 +32,7 @@ const iso = (d) => d.toISOString().slice(0, 10);
 const addDays = (n) => iso(new Date(Date.now() + n * 864e5));
 const PEPPER = "merovo-public-id-pepper-v1/ikke-hemmelig/kun-syntetiske-kilder"; // samme som den ikke-hemmelige syntetiske pepperen i public-ids.ts (kun syntetiske kilder)
 const pidOf = (providerListingId) => `m1_${createHmac("sha256", PEPPER).update(`m1|${"synthetic-demo".length}:synthetic-demo|${providerListingId}`).digest().subarray(0, 18).toString("base64url")}`;
-const scrub = (t) => t.replace(/Dette er ikke en budsjettvurdering\.[^\n]*/g, ""); // standardforbeholdet nevner «innenfor budsjett» bare for å nekte det
+const scrub = (t) => t.replace(/Dette er ikke en budsjettvurdering\.[^\n]*/g, "").replace(/Innkjøpskostnad til Norge er ikke beregnet\.[^\n]*/g, ""); // standardforbeholdene nevner «innenfor budsjett» bare for å nekte det 
 const POSITIVE_WORDS = /innenfor budsjett|innenfor avvik|under budsjett|budsjettreff|fullt treff|godkjent kjøp|anbefalt kjøp|lønnsomt|trygt å kjøpe/i;
 
 const db = new Client({ connectionString: DB });
@@ -195,7 +195,7 @@ try {
   for (const k of ["diesel", "phev", "bev"]) {
     const card = pA.locator(`li[data-listing="${D[k]}"] [data-testid="economics"]`).first();
     const attrs = await card.evaluate((e) => ({ s: e.getAttribute("data-economics-status"), p: e.getAttribute("data-positive-budget"), t: e.innerText }));
-    check(`J1 ${k}: kortet viser «ikke beregnet» (ingen bekreftede opplysninger), aldri positivt budsjettutfall`, attrs.s === "not_calculated" && attrs.p === "false" && !/\d{3}\s?\d{3}\s?kr/.test(nb(attrs.t)), JSON.stringify(attrs));
+    check(`J1 ${k}: uten bekreftede opplysninger er kortet «ikke beregnet» eller «Minst … (ufullstendig)» (nedre grense), aldri estimat eller positivt budsjettutfall`, attrs.p === "false" && (attrs.s === "not_calculated" || (attrs.s === "lower_bound" && /Minst .* \(ufullstendig\)/.test(nb(attrs.t)))), JSON.stringify(attrs));
   }
   const prevText = await body(pA);
   check("J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede", prevText.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(scrub(prevText)) && /Syntetiske demodata/i.test(prevText), JSON.stringify({ a: prevText.includes("Innkjøpskostnad til Norge er ikke beregnet"), b: POSITIVE_WORDS.exec(scrub(prevText))?.[0], c: /Syntetiske demodata/i.test(prevText) }));
@@ -204,7 +204,7 @@ try {
   // =============================================================== J2 detalj: hva mangler → skjema
   await pA.goto(urls(MAIN, S1, 1, D.diesel).detail);
   let e = await econ(pA);
-  check("J2 diesel: detaljen sier «Ikke beregnet» og tilbyr skjema", e.status === "not_calculated" && e.positive === "false" && (await pA.locator('[data-testid="dealer-form-link"]').count()) === 1, JSON.stringify({ s: e.status }));
+  check("J2 diesel: uten opplysninger er detaljen «Ikke beregnet» eller «Minst …» (nedre grense), aldri estimat; den tilbyr skjema og viser hva som mangler", ["not_calculated", "lower_bound"].includes(e.status) && e.positive === "false" && (await pA.locator('[data-testid="economics-missing-link"]').count()) >= 1 && (await pA.locator('[data-testid="dealer-form-link"]').count()) === 1, JSON.stringify({ s: e.status }));
   await shot(pA, "02-detalj-diesel-uten-opplysninger");
   await Promise.all([pA.waitForURL(/dealer-input/), pA.click('[data-testid="dealer-form-link"]')]);
   await must(pA, '[data-testid="dealer-form"]');
@@ -358,6 +358,7 @@ try {
   await pA.goto(`${base(MAIN)}/searches/${S1}`);
   await pA.fill('input[name="custom.0.label"]', "Vask og klargjøring");
   await pA.fill('input[name="custom.0.amount"]', "500");
+  await pA.check('input[name="custom.0.included"]');
   await pA.selectOption('select[name="custom.0.vat"]', "incl");
   await Promise.all([pA.waitForURL(/\?msg=saved/, { timeout: 30000 }), pA.click('[data-testid="search-form"] button[type="submit"]')]);
   check("J7: søket endret via skjemaet (versjon 2)", (await specOf(S1)).version === 2);
