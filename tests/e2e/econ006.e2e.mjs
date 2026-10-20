@@ -194,7 +194,7 @@ try {
   await must(pA, `li[data-listing="${D.diesel}"]`);
   for (const k of ["diesel", "phev", "bev"]) {
     const card = pA.locator(`li[data-listing="${D[k]}"] [data-testid="economics"]`).first();
-    const attrs = await card.evaluate((e) => ({ s: e.getAttribute("data-economics-status"), p: e.getAttribute("data-positive-budget"), t: e.innerText }));
+    const attrs = await card.evaluate((e) => ({ s: e.getAttribute("data-economics-status"), p: e.getAttribute("data-positive-budget"), t: e.textContent ?? "" })); // textContent: kortene kan ligge i en sammenfoldet gruppe (skjult)
     check(`J1 ${k}: uten bekreftede opplysninger er kortet «ikke beregnet» eller «Minst … (ufullstendig)» (nedre grense), aldri estimat eller positivt budsjettutfall`, attrs.p === "false" && (attrs.s === "not_calculated" || (attrs.s === "lower_bound" && /Minst .* \(ufullstendig\)/.test(nb(attrs.t)))), JSON.stringify(attrs));
   }
   const prevText = await body(pA);
@@ -303,7 +303,7 @@ try {
   // =============================================================== forhåndsvisning etter lagring: alle kort uten positive utfall
   await pA.goto(urls(MAIN, S1, 1, D.diesel).preview); await must(pA, `li[data-listing="${D.diesel}"]`);
   const cardStates = await pA.locator("li[data-listing] [data-testid='economics']").evaluateAll((els) => els.map((x) => ({ s: x.getAttribute("data-economics-status"), p: x.getAttribute("data-positive-budget") })));
-  const dieselCard = nb(await pA.locator(`li[data-listing="${D.diesel}"]`).innerText());
+  const dieselCard = nb(await pA.locator(`li[data-listing="${D.diesel}"]`).evaluate((x) => x.textContent ?? ""));
   check("preview: kortene viser estimat/scenarier/ikke beregnet — ingen med positivt budsjettutfall; diesel-kortet viser estimatet merket «ikke validert»", cardStates.length >= 100 && cardStates.every((c) => c.p === "false") && cardStates.some((c) => c.s === "estimate") && cardStates.some((c) => c.s === "scenarios") && dieselCard.includes(`Estimat — ikke validert: ${nok(exD.cash)}`));
   const prev2 = await body(pA);
   check("preview: budsjettvurderingen er fortsatt «ikke beregnet» og uten positivt språk/varsel", prev2.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(scrub(prev2)));
@@ -379,8 +379,14 @@ try {
   await db.query("update public.dealer_economics_inputs set context = jsonb_set(context,'{rightsDigest}', to_jsonb(repeat('0',64))) where id=$1", [row.id]);
   await pA.goto(urls(MAIN, S1, 2, D.phev).detail);
   e = await econ(pA);
-  check("J7 (simulert rettighetsendring i testdatabasen): «kildens rettigheter er endret» ⇒ må bekreftes på nytt, ingen estimat", e.status !== "estimate" && /kildens rettigheter er endret/.test(nb(await pA.locator('[data-testid="economics-dealer-input"]').innerText())), `${e.status}`);
-  await db.query("update public.dealer_economics_inputs set candidate_version = 'gammel-revisjon-simulert' where id=$1", [row.id]);
+  check("J7 (simulert rettighetsendring i testdatabasen): «kildens rettigheter er endret» ⇒ må bekreftes på nytt, ingen estimat", e.status !== "estimate" && /kildens rettigheter er endret/.test(nb(await pA.locator('[data-testid="economics-dealer-input"]').innerText())), `${e.status} | ${nb(await pA.locator('[data-testid="economics-dealer-input"]').innerText())}`);
+  // Databasen forbyr å endre nøkkelen (trigger dealer_economics_inputs_before_update: «dealer_input_immutable») — det er et ønsket vern. For å SIMULERE en rad fra en eldre revisjon slår testen
+  // av akkurat den triggeren midlertidig i den isolerte testdatabasen (aldri i appen) og slår den på igjen umiddelbart.
+  await db.query("alter table public.dealer_economics_inputs disable trigger dealer_economics_inputs_before_update");
+  try { await db.query("update public.dealer_economics_inputs set candidate_version = 'gammel-revisjon-simulert' where id=$1", [row.id]); }
+  finally { await db.query("alter table public.dealer_economics_inputs enable trigger dealer_economics_inputs_before_update"); }
+  const immut = await db.query("update public.dealer_economics_inputs set candidate_version = 'x' where id=$1", [row.id]).then(() => false, (er) => /immutable/.test(er.message));
+  check("databasen forbyr å endre nøkkelen til en bekreftelse (kandidat/revisjon) — vern mot flytting av bekreftelser mellom revisjoner", immut);
   await pA.goto(urls(MAIN, S1, 2, D.phev).detail);
   e = await econ(pA);
   check("J7 (simulert ny annonserevisjon): bekreftelsen for gammel revisjon brukes ikke (ikke estimat)", e.status !== "estimate");
