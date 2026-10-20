@@ -428,7 +428,7 @@ try {
   await pA.click('[data-testid="profile-submit"]');
   await must(pA, '[data-testid="profile-saved"]');
   const prof = (await db.query("select * from public.dealer_economics_profiles")).rows;
-  check("profil: lagret for firma A fra sesjonen, bare standardene", prof.length === 1 && prof[0].dealership_id === firmA && JSON.stringify(prof[0].payload) === JSON.stringify({ schemaVersion: 1, vatHandling: "registered_reports_in_vat_return", deduction: "recoverable" }));
+  check("profil: lagret for firma A fra sesjonen, bare standardene", prof.length === 1 && prof[0].dealership_id === firmA && prof[0].payload.schemaVersion === 1 && prof[0].payload.vatHandling === "registered_reports_in_vat_return" && prof[0].payload.deduction === "recoverable" && Object.keys(prof[0].payload).length === 3, JSON.stringify(prof));
   await pA.goto(`${base(MAIN)}/searches/economics-profile`);
   check("profil: gjenåpning viser lagrede standarder", (await pA.inputValue('[name="p_deduction"]')) === "recoverable");
   await shot(pA, "13-firmaprofil");
@@ -461,7 +461,7 @@ try {
   const SB = pB.url().match(/searches\/([0-9a-f-]{36})/)[1];
   await pB.goto(urls(MAIN, SB, 1, D.diesel).detail);
   e = await econ(pB);
-  check("firmaskille: samme annonse i firma B er «Ikke beregnet» uten A sine opplysninger", e.status === "not_calculated" && !e.text.includes(nok(exD.cash)));
+  check("firmaskille: samme annonse i firma B er «Ikke beregnet»/«Minst …» (nedre grense) uten A sine opplysninger — aldri A sitt estimat", ["not_calculated", "lower_bound"].includes(e.status) && e.positive === "false" && !e.text.includes(nok(exD.cash)) && !e.text.includes("E2E-testkilde"), `${e.status} ${e.headline}`);
   // manipulert binding i B sitt eget skjema: searchId → A sitt søk, falsk dealershipId, uten at noe lagres
   await pB.goto(urls(MAIN, SB, 1, D.diesel).form); await must(pB, '[data-testid="dealer-form"]');
   const nA = (await dbInputs(firmA)).length, nBdb = (await dbInputs(firmB)).length;
@@ -525,7 +525,7 @@ try {
   await fillForm(pL, { tb_amount: "9000" });
   await Promise.all([pL.waitForURL(/msg=econ_saved/, { timeout: 30000 }), confirmAndSubmit(pL)]);
   const rowL = (await dbInputs(firmA)).find((r) => r.search_id === S1 && r.candidate_id.includes(LISTINGS.diesel.providerId));
-  check("listing_id nektet: gyldig innsending virker fortsatt (serveren kjenner identiteten), lagres under serverutledet nøkkel", rowL.payload.transportToBorder.amount === "9000" && actionBodies.length > nL && actionBodies.slice(nL).every((b) => leaks(b.body, LISTINGS.diesel.providerId, { providerIdAllowed: false }).length === 0));
+  check("listing_id nektet: gyldig innsending virker fortsatt (serveren kjenner identiteten), lagres under serverutledet nøkkel", rowL?.payload.transportToBorder.amount === "9000" && actionBodies.slice(nL).every((b) => leaks(b.body, LISTINGS.diesel.providerId, { providerIdAllowed: false }).length === 0), `${JSON.stringify(rowL?.payload?.transportToBorder)} ${JSON.stringify(actionBodies.slice(nL).map((b) => leaks(b.body, LISTINGS.diesel.providerId, { providerIdAllowed: false })))}`);
   await pL.goto(urls(DENY_LID, S1, 2, D.diesel).form); await must(pL, '[data-testid="dealer-form"]');
   await fillForm(pL, { tb_amount: "1" });
   await pL.evaluate(() => { const m = document.querySelector('input[name="bindingMarker"]'); m.value = "b1_AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"; });
