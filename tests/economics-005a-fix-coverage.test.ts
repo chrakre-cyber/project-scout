@@ -138,3 +138,48 @@ describe("P2-1: vatBasis=excl er uavklart uten brutto budsjettbeløp", () => {
     expect(map(base(), cfgs.half_up!, s, {}).class).toBe("complete_validated");
   });
 });
+
+describe("tie-kandidater etter paritet (re-review av 651f309)", () => {
+  // Håndregnet: halvkroner ⇒ half_up alltid q+1; half_even partall. Oddetalls-q ⇒ {q+1}; partalls-q ⇒ {q, q+1}.
+  const TIES: Array<[string, bigint, bigint[]]> = [
+    ["0.50", 50n, [0n, 1n]], ["1.50", 150n, [2n]], ["2.50", 250n, [2n, 3n]], ["3.50", 350n, [4n]], ["8001.50", 800_150n, [8002n]],
+  ];
+  for (const [nok, ore, ok] of TIES) {
+    const q0 = ore / 100n;
+    const all = [q0 - 1n, q0, q0 + 1n, q0 + 2n].filter((n) => n >= 0n);
+    it(`${nok} NOK: kjernen gir bare kandidater i settet {${ok.join(",")}} under alle policyer`, () => {
+      for (const cfg of Object.values(cfgs)) {
+        expect(ok).toContain(calculateEconomics(base({ transportToBorder: q(nok) }), cfg).transportToBorderNok);
+        expect(ok).toContain(calculateEconomics(base({ insurance: q(nok) }), cfg).insuranceNok);
+      }
+    });
+    for (const n of all) {
+      const covered = ok.includes(n);
+      it(`${nok} NOK mot komponent ${n}: transport/forsikring ${covered ? "dekket" : "uavklart"}`, () => {
+        const rT = calculateEconomics(base({ transportToBorder: q(String(n)) }), cfgs.half_up!);
+        const rI = calculateEconomics(base({ insurance: q(String(n)) }), cfgs.half_up!);
+        expect(rT.transportToBorderNok).toBe(n);
+        const want = covered ? { treatment: "mapped_to_input" } : { treatment: "unsupported", reason: "mapped_component_missing" };
+        expect(treatCostLines(specOf([line("t", "transport", ore)]), rT, { t: "to_border" })[0]).toMatchObject(want);
+        expect(treatCostLines(specOf([line("i", "insurance", ore)]), rI, { i: "to_border" })[0]).toMatchObject(want);
+      });
+      it(`${nok} NOK som del av split mot komponent ${n}: ${covered ? "dekket" : "uavklart"} (begge deler)`, () => {
+        // til grensen = tie-beløpet, etter grensen = 1,00 NOK (komponent 1); og omvendt rekkefølge
+        const A = ore, B = 100n;
+        const r1 = calculateEconomics(base({ transportToBorder: q(String(n)), transportAfterBorder: q("1") }), cfgs.half_up!);
+        const s = specOf([line("t", "transport", A + B)]);
+        const want = covered ? { treatment: "mapped_to_input" } : { treatment: "unsupported", reason: "mapped_component_missing" };
+        expect(treatCostLines(s, r1, { t: { split: { toBorderMinor: A, afterBorderMinor: B } } })[0]).toMatchObject(want);
+        const r2 = calculateEconomics(base({ transportToBorder: q("1"), transportAfterBorder: q(String(n)) }), cfgs.half_up!);
+        expect(treatCostLines(s, r2, { t: { split: { toBorderMinor: B, afterBorderMinor: A } } })[0]).toMatchObject(want);
+      });
+    }
+  }
+  it("1,50 NOK mot 1 NOK: complete_validated er utelukket ende-til-ende; 2 NOK gir complete_validated", () => {
+    const s = specOf([line("t", "transport", 150n)]);
+    const bad = map(base({ transportToBorder: q("1") }), cfgs.half_up!, s, { t: "to_border" });
+    expect(bad.class).toBe("incomplete");
+    expect(classifyBudget(s, CAND, bad.assessment, NOW).status).toBe("not_calculated");
+    expect(map(base({ transportToBorder: q("2") }), cfgs.half_up!, s, { t: "to_border" }).class).toBe("complete_validated");
+  });
+});

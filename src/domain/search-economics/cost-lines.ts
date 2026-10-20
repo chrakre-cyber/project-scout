@@ -13,13 +13,16 @@ function line(c: CostLine, treatment: CostLineTreatment["treatment"], counted: b
 }
 
 /**
- * Hele-NOK-verdier en støttet nærmeste-krone-avrunding av `amountMinor` (øre) kan gi: under 50 øre ned, over 50 opp, eksakt 50 øre er
- * uavklart/halvt og gir begge kandidater (half_up, half_even og uavklart policy faller alle innenfor dette settet). 0,99 NOK gir 1 NOK, aldri 0.
+ * Hele-NOK-verdier de støttede nærmeste-krone-policyene (half_up, half_even; uavklart policy viser en av dem) kan gi for `amountMinor` (øre):
+ * under 50 øre ned, over 50 opp. Eksakt 50 øre: half_up gir alltid q+1; half_even gir partall, dvs. q+1 når q er oddetall og q når q er partall.
+ * Kandidatsettet er derfor {q+1} for oddetalls-q og {q, q+1} for partalls-q (1,50 ⇒ bare 2; 2,50 ⇒ 2 eller 3). 0,99 NOK gir 1 NOK, aldri 0.
  */
 const roundingCandidates = (amountMinor: bigint): bigint[] => {
   const q = amountMinor / ORE_PER_NOK;
   const r = amountMinor % ORE_PER_NOK;
-  return r === 0n ? [q] : r < 50n ? [q] : r > 50n ? [q + 1n] : [q, q + 1n];
+  if (r === 0n || r < 50n) return [q];
+  if (r > 50n) return [q + 1n];
+  return q % 2n === 1n ? [q + 1n] : [q, q + 1n];
 };
 
 /** Kjernens komponent (hele NOK) er nøyaktig linjens beløp avrundet etter en støttet nærmeste-krone-regel. Ingen toleranse; ukjent komponent dekker ikke. */
