@@ -53,7 +53,7 @@ describe("avstemming: nedbrytningen summerer til brutto utlegg (B-Merovo-scenari
         expect(BigInt(nok(e, "one_off_tax")!) + BigInt(nok(e, "scrappage_deposit")!)).toBe(BigInt(x.totalRegistrationTaxesNok));
         const gross = e.breakdown.filter((r) => r.inGrossOutlay).reduce((t, r) => t + BigInt(r.amountNok!), 0n);
         expect(gross).toBe(BigInt(x.importCashRequirementNok));
-        expect(e.breakdown.some((r) => r.id === "other_known")).toBe(false);
+        expect(e.breakdown.some((r) => r.id === "other_rounding")).toBe(false);
         expect(rowOf(e, "transport_to_border")).toMatchObject({ state: "assumed", basis: "assumed", amountNok: "8000" });
         // beregningsgrunnlag summeres ikke inn i brutto utlegg
         for (const id of ["customs_value", "customs_duty", "import_vat_base"]) expect(rowOf(e, id).inGrossOutlay).toBe(false);
@@ -83,12 +83,12 @@ describe("avstemming: nedbrytningen summerer til brutto utlegg (B-Merovo-scenari
     expect(L.FX_SOURCE_LABEL.fixture).toBe("Testkurs — ikke en offisiell kurs");
     expect(e.assumptions.rulesApprovedForValidation).toBe(false);
   });
-  it("«øvrige poster» er ren differanse og vises bare når den ikke er 0", () => {
+  it("kjent registreringsgebyr er en egen rad (ikke en rekonstruert differanse)", () => {
     const e = explainCore(2, { charges: { climateGas: EXCL, registrationFee: { amount: "1000", basis: "quoted" }, customsDuty: EXCL } });
     const gross = e.breakdown.filter((r) => r.inGrossOutlay).reduce((t, r) => t + BigInt(r.amountNok!), 0n);
     const base = explainCore(2).breakdown.filter((r) => r.inGrossOutlay).reduce((t, r) => t + BigInt(r.amountNok!), 0n);
     expect(gross - base).toBe(1000n);
-    expect(rowOf(e, "other_known")).toMatchObject({ state: "known", amountNok: "1000", basis: "computed" });
+    expect(rowOf(e, "registration_fee")).toMatchObject({ state: "known", amountNok: "1000", basis: "document", inGrossOutlay: true });
   });
   it("ukjent post blir null/unknown — aldri 0", () => {
     const e = explainCore(2, { transportToBorder: undefined, insurance: undefined });

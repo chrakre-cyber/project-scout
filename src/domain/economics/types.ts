@@ -257,6 +257,23 @@ export interface FxRoleResult {
 
 export type VatScenarioId = "single" | "no_exemption" | "with_exemption__basis_customs_value";
 
+/** Forklaringsmetadata (ECON-006a-FIX1): hvordan en post ble oppgitt. Ingen regel; samme verdier som kjernen allerede brukte. */
+export type AmountMeta = { kind: "amount"; basis: AmountBasis } | { kind: "not_applicable" } | { kind: "excluded_by_scenario" } | { kind: "unknown" };
+export interface OtherCostItem {
+  id: "climate_gas" | "registration_fee" | "import_levy" | "other_known" | "commission_separate" | "payment_cost" | "customs_duty";
+  label: string | null;
+  /** Eksakt desimalstreng slik kjernen la den til øvrige kostnader (ikke avrundet). */
+  amount: string;
+  basis: AmountBasis;
+}
+export interface CostMeta {
+  transportAfterBorder: AmountMeta; insurance: AmountMeta; loadingHandling: AmountMeta;
+  /** Kjente poster som inngår i øvrige kostnader. */
+  otherItems: OtherCostItem[];
+  /** Øvrige kostnader slik de inngår i totalene (avrundet én gang etter eksisterende policy); null når ikke beregnet. */
+  othersNok: bigint | null;
+}
+
 export interface EconomicsResult {
   /** `validated` er bare mulig når alle grunnlag er godkjent (ikke tilfelle i registeret). `estimate` = alt kan regnes, men ikke validert. `incomplete` = delsummer. `blocked` = ugyldig input. */
   status: "blocked" | "incomplete" | "estimate" | "validated";
@@ -316,6 +333,7 @@ export interface EconomicsResult {
     }>;
   };
   tax: TaxLine;
+  costMeta: CostMeta;
   /**
    * BRUTTO utlegg: kjøpesum + transport + forsikring + lasting/håndtering + import-mva. + registreringsavgifter + øvrige kjente poster, uavhengig av fradragsrett,
    * betalingskanal og betalingstidspunkt. Er IKKE «kontant ved grensen» og ikke et betalingsprogram: kjøpesum, transport, mva. og registreringsavgifter har ulike

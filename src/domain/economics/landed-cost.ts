@@ -13,8 +13,8 @@ import {
 } from "./rational";
 import {
   REGISTRY_ECONOMICS_PROFILE,
-  type AmountBasis, type AmountInput, type ChargeState, type CustomsAcceptanceDate, type DeductionStatus, type EconBlocker, type EconomicsConfig, type EconomicsInput,
-  type EconomicsResult, type EstimateReason, type EvThresholdBasis, type FxQuote, type FxRoleResult, type TaxLine, type Total, type VatBaseTreatment, type VatHandling,
+  type AmountBasis, type AmountInput, type AmountMeta, type ChargeState, type CustomsAcceptanceDate, type DeductionStatus, type EconBlocker, type EconomicsConfig, type EconomicsInput,
+  type EconomicsResult, type EstimateReason, type EvThresholdBasis, type FxQuote, type FxRoleResult, type OtherCostItem, type TaxLine, type Total, type VatBaseTreatment, type VatHandling,
   type VatRecoverability, type VatScenarioId,
 } from "./types";
 
@@ -331,6 +331,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
       c.estimate.add("transport_default_assumed");
     } else { toBorderBasis = "unknown"; c.incomplete.push("transport_unknown"); }
   } else { toBorder = amountInput(c, "transportToBorder", input.transportToBorder); toBorderBasis = input.transportToBorder.basis; }
+  const metaOf = (s: ChargeState | "unknown" | undefined): AmountMeta => !s || s === "unknown" || ("state" in s && s.state === "unknown") ? { kind: "unknown" } : "state" in s ? { kind: s.state } : { kind: "amount", basis: s.basis };
   const afterBorder = chargeAmount(c, "transportAfterBorder", input.transportAfterBorder, missing);
   if (afterBorder === null && !c.blockers.length) c.incomplete.push("transport_after_border_unknown");
   let insurance: Rat | null = null;
@@ -345,6 +346,12 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   // importavgifter klassifiseres som «i grunnlaget», «utenfor» eller ukjent. Registreringsgebyr (Statens vegvesen) er ikke en importavgift.
   const ch = input.charges ?? {};
   let others = fromInt(0n);
+  // Forklaringsmetadata (ECON-006a-FIX1): hvilke kjente poster «øvrige kostnader» består av. Samme tall som legges til `others`; ingen regel eller avrunding her.
+  const otherItems: OtherCostItem[] = [];
+  const addOther = (id: OtherCostItem["id"], label: string | null, a: Rat, basis: AmountBasis) => {
+    others = add(others, a);
+    otherItems.push({ id, label, amount: toExactDecimalString(a) ?? toDecimalString(a, 12), basis });
+  };
   let baseExtra = fromInt(0n);
   let baseComplete = true;
   const classify = (field: string, label: string, v: unknown): VatBaseTreatment => {
@@ -360,17 +367,17 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   };
   const climateRaw = chargeAmount(c, "charges.climateGas", ch.climateGas, missing);
   const climate = climateRaw ? whole("klimagassavgift", climateRaw) : null;
-  if (climate) { applyBase(classify("charges.climateGasVatBase", "klimagassavgift", ch.climateGasVatBase), climate, "klimagassavgift"); others = add(others, climate); }
+  if (climate) { applyBase(classify("charges.climateGasVatBase", "klimagassavgift", ch.climateGasVatBase), climate, "klimagassavgift"); addOther("climate_gas", null, climate, (ch.climateGas as AmountInput).basis); }
   const regFee = chargeAmount(c, "charges.registrationFee", ch.registrationFee, missing);
-  if (regFee) others = add(others, regFee); // Statens vegvesens gebyr: ikke importavgift, aldri i grunnlaget
+  if (regFee) addOther("registration_fee", null, regFee, (ch.registrationFee as AmountInput).basis); // Statens vegvesens gebyr: ikke importavgift, aldri i grunnlaget
   for (const [i, lv] of (ch.importLevies ?? []).entries()) {
     const raw = amountInput(c, `charges.importLevies[${i}]`, lv);
     const tr = classify(`charges.importLevies[${i}].vatBase`, lv?.label ?? "importavgift", lv?.vatBase);
-    if (raw) { const a = whole(`importavgift ${String(lv?.label ?? i)}`, raw); applyBase(tr, a, String(lv?.label ?? "importavgift")); others = add(others, a); }
+    if (raw) { const a = whole(`importavgift ${String(lv?.label ?? i)}`, raw); applyBase(tr, a, String(lv?.label ?? "importavgift")); addOther("import_levy", String(lv?.label ?? ""), a, lv.basis); }
   }
   for (const [i, o] of (ch.otherKnown ?? []).entries()) {
     const a = amountInput(c, `charges.otherKnown[${i}]`, o);
-    if (a) others = add(others, a);
+    if (a) addOther("other_known", String(o?.label ?? ""), a, o.basis);
   }
 
   // --- Provisjon til mellommann: innkjøpsprovisjon og salgs-/meglerprovisjon behandles ulikt; ukjent rolle forblir ukjent (T87/T88) ---
@@ -414,7 +421,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
       continue;
     }
     const a = whole(`provisjon ${f}`, raw); // tillegg/kostnad: laveste kandidat er en trygg nedre grense
-    others = add(others, a); // betalt i tillegg: kostnad, én gang
+    addOther("commission_separate", null, a, cm.amount.basis); // betalt i tillegg: kostnad, én gang
     if (cm.role === "sales_or_brokerage_commission") commissionInCustomsValue = add(commissionInCustomsValue, a); // legges til tollverdien (§ 6-10 (1) a nr. 1)
     else if (cm.role === "unknown") { c.incomplete.push("commission_role_unknown"); customsExtra.push("provisjon: rolle ukjent (innkjøps- eller salgsprovisjon)"); }
     // purchase_commission: kostnad, ikke i tollverdien
@@ -435,7 +442,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     const rawPc = amountInput(c, `${f}.amount`, pc.amount);
     if (!rawPc) continue;
     const a = whole(`betalingskostnad ${f}`, rawPc);
-    if (pc.nature === "separate_payment_cost") others = add(others, a); // selvstendig kostnad: utenfor tollverdi (§ 6-10 (2): tilleggene er uttømmende)
+    if (pc.nature === "separate_payment_cost") addOther("payment_cost", String(pc.label ?? ""), a, pc.amount.basis); // selvstendig kostnad: utenfor tollverdi (§ 6-10 (2): tilleggene er uttømmende)
     else if (pc.nature === "included_in_goods_price") c.warnings.push(`${f} (${String(pc.label)}): inngår i vederlaget til selger og er allerede i prisen; legges ikke til en gang til`);
     else { c.incomplete.push("payment_cost_nature_unknown"); customsExtra.push(`betalingskostnad «${String(pc.label)}»: ukjent om selvstendig kostnad eller del av vareprisen`); missing.push(f); }
   }
@@ -495,7 +502,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     if (a !== null) {
       dutyRat = a;
       dutyBasis = "state" in ch.customsDuty ? "stated_not_applicable" : "explicit";
-      others = add(others, a);
+      if ("state" in ch.customsDuty) others = add(others, a); else addOther("customs_duty", null, a, ch.customsDuty.basis);
       if (!isZero(a) && coverage.covered) c.warnings.push("oppgitt tollavgift > 0 avviker fra ordinær sats 0 i Tolltariffen 2026 (kan skyldes særtiltak); oppgitt beløp brukes og inngår i mva.-grunnlaget");
     }
   }
@@ -512,7 +519,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
       customsDuty: { nok: null, basis: "unknown" }, importVatBaseNok: null,
       importVat: { status: "not_calculated", valueNok: null, scenarios: [], ev: { qualification: qual, thresholdBasis: null, engineClassification: engine }, reasons },
       importVatSettlement: { status: "not_calculated", handling: { value: handling, accepted: hAccepted, source: h?.source ?? null }, rows: [], excludedScenarios: [] },
-      tax: taxL, importCashRequirement: notCalculated(reasons), estimatedLandedCost: notCalculated(reasons),
+      tax: taxL, costMeta: { transportAfterBorder: { kind: "unknown" }, insurance: { kind: "unknown" }, loadingHandling: { kind: "unknown" }, otherItems: [], othersNok: null }, importCashRequirement: notCalculated(reasons), estimatedLandedCost: notCalculated(reasons),
       vatRecoverability: { value: "unknown", accepted: false, source: null }, estimateReasons: [...c.estimate], incompleteReasons: [...new Set(c.incomplete)], warnings: c.warnings, roundingTies: [],
     };
   }
@@ -611,7 +618,8 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
   if (vatScenarios.length && !basisDocumented) missing.push("ev_threshold_basis_not_documented");
   if (customsExtra.length) missing.push("customs_value_components");
   if (taxL.totalRegistrationTaxesNok === null) missing.push("total_registration_taxes");
-  const baseKnown = (acqNok ?? ZERO) + (toBorderNok ?? ZERO) + (afterBorderNok ?? ZERO) + (insuranceNok ?? ZERO) + (loadingNok ?? ZERO) + (taxL.totalRegistrationTaxesNok ?? ZERO) + round(c, "øvrige kostnader", others);
+  const othersNok = round(c, "øvrige kostnader", others);
+  const baseKnown = (acqNok ?? ZERO) + (toBorderNok ?? ZERO) + (afterBorderNok ?? ZERO) + (insuranceNok ?? ZERO) + (loadingNok ?? ZERO) + (taxL.totalRegistrationTaxesNok ?? ZERO) + othersNok;
   // Avrundingslikhet i øvrige kostnader oppdages først her: totalene skal da ikke være entydige.
   if (c.tieHit && vatExact) missing.push("rounding_tie_unresolved");
   const exact = missing.length === 0 && vatExact && !c.tieHit;
@@ -658,6 +666,7 @@ export function calculateEconomics(input: EconomicsInput, config: EconomicsConfi
     commissionInCustomsValueNok: customsValueRat ? wholeNok(commissionInCustomsValue) : null,
     customsDuty: { nok: dutyRat ? wholeNok(dutyRat) : null, basis: dutyBasis }, importVatBaseNok: vatBaseRat && !outOfPeriod ? wholeNok(vatBaseRat) : null,
     importVat, importVatSettlement, tax: taxL,
+    costMeta: { transportAfterBorder: metaOf(input.transportAfterBorder), insurance: metaOf(input.insurance), loadingHandling: metaOf(input.loadingHandling), otherItems, othersNok },
     importCashRequirement: cash, estimatedLandedCost: landed,
     vatRecoverability: { value: recov, accepted: dedAccepted, source: d?.source ?? null },
     estimateReasons: [...c.estimate], incompleteReasons: [...new Set(c.incomplete)], warnings: c.warnings, roundingTies: c.ties,

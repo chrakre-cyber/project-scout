@@ -117,6 +117,17 @@ export function formatNokString(nok: string): string {
   return `${nok.replace(/\B(?=(\d{3})+(?!\d))/g, " ")} kr`;
 }
 
+/**
+ * Eksakt visning av NOK-streng med inntil flere desimaler (øre fra søkelinjer og forhandleroppgitte poster): ingen flyttall og ingen avrunding; minst to desimaler vises
+ * når det finnes en brøkdel («1,50 kr»). Hele kroner fra kjernen vises som før. Alt annet er «ukjent beløp».
+ */
+export function formatNokExact(nok: string): string {
+  const m = /^(-?)(\d+)(?:\.(\d+))?$/.exec(nok);
+  if (!m) return "ukjent beløp";
+  const [, sign, whole, frac] = m;
+  return `${sign}${whole!.replace(/\B(?=(\d{3})+(?!\d))/g, " ")}${frac ? `,${frac.length < 2 ? frac.padEnd(2, "0") : frac}` : ""} kr`;
+}
+
 export const ECONOMICS_HEADING = "Anslått innkjøpskostnad til Norge";
 export const ECONOMICS_LABELS = {
   estimate_not_validated: "Estimat — ikke validert",
@@ -259,10 +270,12 @@ export const COVERAGE_DISCLAIMER = "Dette sier ikke at tallene er riktige, sikre
 
 export const ROW_LABEL: Record<RowId, string> = {
   purchase: "Kjøpesum", transport_to_border: "Transport til innførselsstedet", transport_after_border: "Transport etter innførselsstedet", insurance: "Forsikring",
-  loading_handling: "Lasting og håndtering", import_vat: "Import-mva.", one_off_tax: "Engangsavgift", scrappage_deposit: "Vrakpant", other_known: "Øvrige poster (differanse til brutto utlegg)",
+  loading_handling: "Lasting og håndtering", import_vat: "Import-mva.", one_off_tax: "Engangsavgift", scrappage_deposit: "Vrakpant",
+  climate_gas: "Klimagassavgift", registration_fee: "Registreringsgebyr", import_levy: "Importavgift", other_known: "Annen kjent kostnad", commission_separate: "Provisjon (betalt i tillegg)",
+  payment_cost: "Betalingskostnad", other_rounding: "Avrundingsdifferanse (øvrige kostnader)",
   customs_value: "Tollverdi", customs_duty: "Tollavgift", import_vat_base: "Mva.-grunnlag",
 };
-export const STATE_LABEL: Record<RowState, string> = { known: "oppgitt eller beregnet", assumed: "antakelse", unknown: "ukjent", lower_bound: "nedre grense", not_applicable: "ikke relevant" };
+export const STATE_LABEL: Record<RowState, string> = { known: "oppgitt eller beregnet", assumed: "antakelse", unknown: "ukjent", lower_bound: "nedre grense", not_applicable: "ikke relevant", excluded_by_scenario: "utelatt etter scenarioantakelse (regnet som 0)" };
 export const BASIS_LABEL: Record<BasisKey, string> = {
   listing_claim: "Annonsepåstand — ikke dokumentasjon", dealer_entered: "Oppgitt av forhandler", document: "Tilbud eller dokument", assumed: "Antakelse (standardverdi eller scenario)",
   stated_input: "Oppgitt i beregningen", engine_estimate: "Regelmotor — estimat (regler ikke godkjent)", computed: "Beregnet av regelmotoren", ordinary_rate_unapproved: "Ordinær sats fra tolltariffen (ikke godkjent)", unresolved: "Ikke løst",

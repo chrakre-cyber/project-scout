@@ -9,21 +9,24 @@
  *  - ingen nye regler: modellen speiler kjernens felt; differansen «øvrige poster» er ren aritmetikk (brutto utlegg minus itemiserte poster);
  *  - kun desimalstrenger i NOK (ingen bigint/flyttall i utdata).
  */
-import type { EconomicsResult } from "@/domain/economics";
+import type { CostMeta, EconomicsResult } from "@/domain/economics";
 import type { CostLineTreatment, MappingOutcome } from "./types";
 
 export type RowId =
-  | "purchase" | "transport_to_border" | "transport_after_border" | "insurance" | "loading_handling" | "import_vat" | "one_off_tax" | "scrappage_deposit" | "other_known"
+  | "purchase" | "transport_to_border" | "transport_after_border" | "insurance" | "loading_handling" | "import_vat" | "one_off_tax" | "scrappage_deposit"
+  | "climate_gas" | "registration_fee" | "import_levy" | "other_known" | "commission_separate" | "payment_cost" | "other_rounding"
   | "customs_value" | "customs_duty" | "import_vat_base";
-export type RowState = "known" | "assumed" | "unknown" | "lower_bound" | "not_applicable";
+export type RowState = "known" | "assumed" | "unknown" | "lower_bound" | "not_applicable" | "excluded_by_scenario";
 export type BasisKey =
   | "listing_claim" | "dealer_entered" | "document" | "assumed" | "stated_input" | "engine_estimate" | "computed" | "ordinary_rate_unapproved" | "unresolved";
 
 export interface BreakdownRow {
   id: RowId;
   state: RowState;
-  /** Hele NOK som desimalstreng; null = ukjent (aldri 0). */
+  /** NOK som eksakt desimalstreng (hele kroner fra kjernen; poster fra forhandler kan ha øre); null = ukjent (aldri 0). `excluded_by_scenario` = regnet som 0 i totalene etter uttrykkelig scenarioantakelse. */
   amountNok: string | null;
+  /** Forhandlerens egen betegnelse (data, ikke instruks) for poster med fritekst. */
+  label?: string;
   basis: BasisKey;
   /** true: raden inngår i brutto utlegg. false: beregningsgrunnlag/mellomregning (vises adskilt, summeres ikke). */
   inGrossOutlay: boolean;
@@ -123,6 +126,17 @@ export const fieldOfCode = (code: string): FormFieldKey | null | undefined => (c
 
 // ---------------------------------------------------------------- bygging
 const s = (n: bigint | null): string | null => (n === null ? null : n.toString());
+/** hele NOK minus summen av eksakte desimalstrenger, som eksakt desimalstreng (bigint-aritmetikk på felles skala; ingen flyttall, ingen avrunding). */
+function minorDiff(whole: bigint, parts: readonly string[]): string | null {
+  const scale = Math.max(0, ...parts.map((p) => (p.includes(".") ? p.length - p.indexOf(".") - 1 : 0)));
+  if (scale > 12) return null;
+  const unit = 10n ** BigInt(scale);
+  const toUnits = (p: string): bigint => { const [i = "0", f = ""] = p.split("."); return BigInt(i) * unit + BigInt(f.padEnd(scale, "0") || "0"); };
+  const d = whole * unit - parts.reduce((t, p) => t + toUnits(p), 0n);
+  const neg = d < 0n, abs = neg ? -d : d;
+  const w = abs / unit, f = (abs % unit).toString().padStart(scale, "0").replace(/0+$/, "");
+  return `${neg ? "-" : ""}${w}${f ? `.${f}` : ""}`;
+}
 const minorToNok = (m: bigint): string => { const w = m / 100n, o = m % 100n; return o === 0n ? w.toString() : `${w}.${o.toString().padStart(2, "0")}`; };
 
 function basisOfAmount(b: string | null | undefined): { basis: BasisKey; assumed: boolean } {
@@ -149,12 +163,19 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   const resolved = r.acquisition.purchaseBasisResolved && r.acquisition.acquisitionUsedNok !== null;
   row("purchase", resolved ? "known" : "unknown", resolved ? r.acquisition.acquisitionUsedNok : null, resolved ? purchaseBasis : "unresolved", true,
     u.currency !== "NOK" && u.amount !== null ? { amount: u.amount, currency: u.currency } : undefined);
-  // transport og tillegg
+  // transport og tillegg: tilstand og grunnlag følger hvordan posten faktisk ble oppgitt (kjernens metadata), aldri gjettet av at et beløp finnes
   const tb = basisOfAmount(r.transportToBorderBasis);
   row("transport_to_border", r.transportToBorderNok === null ? "unknown" : tb.assumed ? "assumed" : "known", r.transportToBorderNok, r.transportToBorderNok === null ? "unresolved" : tb.basis, true);
-  for (const [id, n] of [["transport_after_border", r.transportAfterBorderNok], ["insurance", r.insuranceNok], ["loading_handling", r.loadingHandlingNok]] as const) {
-    row(id, n === null ? "unknown" : "known", n, n === null ? "unresolved" : "stated_input", true);
-  }
+  const metaRow = (id: RowId, m: CostMeta["insurance"], n: bigint | null) => {
+    if (n === null || m.kind === "unknown") return row(id, "unknown", null, "unresolved", true);
+    if (m.kind === "excluded_by_scenario") return row(id, "excluded_by_scenario", n, "assumed", true);
+    if (m.kind === "not_applicable") return row(id, "not_applicable", n, "stated_input", true);
+    const b = basisOfAmount(m.basis);
+    return row(id, b.assumed ? "assumed" : "known", n, b.basis, true);
+  };
+  metaRow("transport_after_border", r.costMeta.transportAfterBorder, r.transportAfterBorderNok);
+  metaRow("insurance", r.costMeta.insurance, r.insuranceNok);
+  metaRow("loading_handling", r.costMeta.loadingHandling, r.loadingHandlingNok);
   // mva.
   const iv = r.importVat;
   row("import_vat", iv.status === "calculated" ? "known" : iv.status === "lower_bound" ? "lower_bound" : "unknown", iv.valueNok, iv.valueNok === null ? "unresolved" : "computed", true);
@@ -162,16 +183,26 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   const taxBasis: BasisKey = r.tax.status === "approved" ? "computed" : "engine_estimate";
   row("one_off_tax", r.tax.oneOffTaxNok === null ? "unknown" : "known", r.tax.oneOffTaxNok, r.tax.oneOffTaxNok === null ? "unresolved" : taxBasis, true);
   row("scrappage_deposit", r.tax.scrappageDepositNok === null ? "unknown" : "known", r.tax.scrappageDepositNok, r.tax.scrappageDepositNok === null ? "unresolved" : taxBasis, true);
-  // øvrige kjente poster = brutto utlegg − itemiserte poster (ren aritmetikk, bare når kontantbehovet er en eksakt verdi)
-  if (r.importCashRequirement.kind === "value") {
-    const itemised = rows.filter((x) => x.inGrossOutlay).reduce((t, x) => t + (x.amountNok === null ? 0n : BigInt(x.amountNok)), 0n);
-    const rest = r.importCashRequirement.valueNok - itemised;
-    if (rest !== 0n) row("other_known", "known", rest, "computed", true);
+  // øvrige kjente kostnader: egne rader fra kjernens komponentliste (uavhengig av om totalen er verdi, nedre grense eller scenarier). Ukjente poster rekonstrueres ikke.
+  const itemised = r.costMeta.otherItems;
+  for (const it of itemised) {
+    const b = basisOfAmount(it.basis);
+    const x: BreakdownRow = { id: it.id === "customs_duty" ? "customs_duty" : it.id, state: b.assumed ? "assumed" : "known", amountNok: it.amount, basis: b.basis, inGrossOutlay: true };
+    if (it.label) x.label = it.label;
+    rows.push(x);
   }
+  // Avrundingsdifferanse: kjernen avrunder summen av øvrige kostnader én gang; differansen mot de eksakte postene vises (ren aritmetikk, aldri en ny regel).
+  if (r.costMeta.othersNok !== null && itemised.length > 0) {
+    const diff = minorDiff(r.costMeta.othersNok, itemised.map((i) => i.amount));
+    if (diff !== null && diff !== "0") rows.push({ id: "other_rounding", state: "known", amountNok: diff, basis: "computed", inGrossOutlay: true });
+  }
+
   // beregningsgrunnlag (summeres ikke)
   row("customs_value", r.customsValueNok === null ? "unknown" : "known", r.customsValueNok, r.customsValueNok === null ? "unresolved" : "computed", false);
   const cd = r.customsDuty;
-  row("customs_duty", cd.basis === "unknown" ? "unknown" : cd.basis === "stated_not_applicable" ? "not_applicable" : "known", cd.nok, cd.basis === "ordinary_rate_tariff_2026" ? "ordinary_rate_unapproved" : cd.basis === "unknown" ? "unresolved" : "stated_input", false);
+  if (!itemised.some((i) => i.id === "customs_duty")) {
+    row("customs_duty", cd.basis === "unknown" ? "unknown" : cd.basis === "stated_not_applicable" ? "not_applicable" : "known", cd.nok, cd.basis === "ordinary_rate_tariff_2026" ? "ordinary_rate_unapproved" : cd.basis === "unknown" ? "unresolved" : "stated_input", false);
+  }
   row("import_vat_base", r.importVatBaseNok === null ? "unknown" : iv.status === "lower_bound" ? "lower_bound" : "known", r.importVatBaseNok, r.importVatBaseNok === null ? "unresolved" : "computed", false);
 
   // søkets kostnadslinjer (behandlet av 005a)
@@ -222,7 +253,7 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   if (!r.acquisition.purchaseBasisResolved) fields.set("listing_price_basis", { field: "listing_price_basis", collectable: false });
 
   // dokumentasjonsdekning (konkret telling; ingen vurdering av riktighet)
-  const COST_ITEMS = new Set<RowId>(["purchase", "transport_to_border", "transport_after_border", "insurance", "loading_handling"]);
+  const COST_ITEMS = new Set<RowId>(["purchase", "transport_to_border", "transport_after_border", "insurance", "loading_handling", "climate_gas", "registration_fee", "import_levy", "other_known", "commission_separate", "payment_cost", "customs_duty"]);
   const known = rows.filter((x) => COST_ITEMS.has(x.id) && x.state === "known");
   const documented = known.filter((x) => x.basis === "document").length;
   const basisSummary: BasisSummaryKey = documented > 0 ? "partly_documented" : known.some((x) => x.id === "purchase" && x.basis === "listing_claim") && !known.some((x) => x.basis === "dealer_entered") ? "listing_claim_only" : "dealer_stated";
