@@ -1,6 +1,6 @@
 # ECON-005b — rettigheter for avledet økonomiberegning (leveranse til review)
 
-**Status: REVIEW (005b; ett P2 rettet, se `reviews/ECON-005b-retting.md`). ECON-005c–d er ikke startet. Migrasjonen er IKKE anvendt i hostet miljø** (kun lokal/isolert PostgreSQL). Ingen UI-, server-, provider-endring; ingen endring av økonomiflagg, `classifyBudget`, avgiftsmotor (`src/domain/economics`, `src/domain/tax`) eller avrundingspolicy. Forrige skive: `reviews/ECON-005a-avslutning.md` (DONE innen levert omfang).
+**Status: DONE innen levert omfang (Christians aksept 20.10.2026, `reviews/ECON-005b-avslutning.md`); levert som REVIEW (005b; ett P2 rettet, se `reviews/ECON-005b-retting.md`). ECON-005c–d er ikke startet. Migrasjonen er IKKE anvendt i hostet miljø** (kun lokal/isolert PostgreSQL). Ingen UI-, server-, provider-endring; ingen endring av økonomiflagg, `classifyBudget`, avgiftsmotor (`src/domain/economics`, `src/domain/tax`) eller avrundingspolicy. Forrige skive: `reviews/ECON-005a-avslutning.md` (DONE innen levert omfang).
 
 ## Modell (plan § 3)
 To adskilte rettigheter i den eksisterende rettighetsprofilen, begge **default nei**:

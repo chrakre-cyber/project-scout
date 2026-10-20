@@ -96,6 +96,7 @@ export function validateProfile(p: ProviderRightsProfile): string[] {
   if (secs.some((s) => !Number.isSafeInteger(s) || s < 0 || s > MAX_SECONDS)) issues.push("seconds");
   if (p.storage.historyRetentionSeconds > p.storage.retentionSeconds) issues.push("history>retention");
   for (const [name, m] of [["display", p.display], ["matching", p.matching]] as const) {
+    if (m === null || typeof m !== "object" || Array.isArray(m)) { issues.push(name); continue; } // total: ikke-objekt (null, liste, primitiv) er ugyldig, ikke et unntak
     const keys = Object.keys(m).sort();
     if (keys.join() !== [...RIGHTS_FIELD_KEYS].sort().join() || Object.values(m).some((v) => typeof v !== "boolean")) issues.push(name);
   }

@@ -237,3 +237,14 @@ describe("DATA-002B: syntetisk regresjon og eksempelprofil", () => {
     for (const k of RIGHTS_FIELD_KEYS) { expect(canDisplay(rf, k)).toBe(false); expect(canMatch(rf, k)).toBe(false); }
   });
 });
+
+describe("DATA-002D: validateProfile er total for ugyldige feltkart", () => {
+  it.each([null, [], "x", 5, true, {}, { title: true }, { ...noRights(), vin: true }, { ...noRights(), price: "ja" }])("display/matching = %j gir et funn, ikke et unntak", (bad) => {
+    for (const key of ["display", "matching"] as const) {
+      const p = { ...profile(), [key]: bad } as unknown as ProviderRightsProfile;
+      expect(() => validateProfile(p)).not.toThrow();
+      expect(validateProfile(p)).toContain(key);
+      expect(resolveRights(p.providerId, [p], NOW)).toMatchObject({ inForce: false, reason: "invalid_profile" });
+    }
+  });
+});
