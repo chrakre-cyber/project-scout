@@ -19,6 +19,8 @@ import { launchBrowser } from "./support/browser.mjs";
 import { buildPatchedCopy } from "./support/patched-build.mjs";
 import { defaultEpoch, epochIso, expectationForDefault, expiredEpoch, freshEpoch, labelFor } from "./support/synthetic-epoch.mjs";
 import { FX_RATE, LISTINGS, TRANSPORT_NOK, expected, nok } from "./support/econ006-reference.mjs";
+import { preflightTargets } from "./support/preflight.mjs";
+preflightTargets(); // CI-001-FIX3: avvis manglende/ugyldig/ikke-lokal database og API FØR databaseklienten opprettes (null DB-kall før avslag)
 
 const require = createRequire(import.meta.url);
 const { Client } = require(process.env.PG ?? "pg");

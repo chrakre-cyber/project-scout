@@ -1,0 +1,3 @@
+FØR (skript fra 9de93c1, med den nye hjelperen og ny preflight-test): Tests  30 failed | 21 passed (51)
+  - reviewerens to regresjoner (ikke-lokal DB, ikke-lokal API) og ny dekning for alle tre skript feiler: Client opprettes og forbindelsen åpnes før avslag
+ETTER: 63 passed (63) i tre filer: ci-trinn2-independent-regressions, ci-e2e-preflight, ci-e2e-real

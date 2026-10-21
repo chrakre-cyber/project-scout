@@ -4,7 +4,7 @@
  */
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import path, { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { findChrome, NOT_RUN_EXIT } from "./e2e/support/browser.mjs";
 
@@ -22,8 +22,10 @@ describe("findChrome / launchBrowser: ingen automatisk installasjon", () => {
   it("uten CHROME_PATH: kjente stier, deretter PLAYWRIGHT_BROWSERS_PATH; ingenting funnet ⇒ null", () => {
     expect(findChrome({}, (p: string) => p === "/usr/bin/google-chrome")).toBe("/usr/bin/google-chrome");
     expect(findChrome({}, (p: string) => p === "/usr/bin/chromium")).toBe("/usr/bin/chromium");
-    const ex = (p: string) => p === "/pw" || p === "/pw/chromium-1194/chrome-linux/chrome";
-    expect(findChrome({ PLAYWRIGHT_BROWSERS_PATH: "/pw" }, ex, () => ["chromium-1100", "chromium-1194", "ffmpeg-1"] as never)).toBe("/pw/chromium-1194/chrome-linux/chrome");
+    // path.join i hjelperen gir plattformens skilletegn: forventning og falsk filsystemfunksjon bruker samme path.join (ikke hardkodet POSIX)
+    const chrome = path.join("/pw", "chromium-1194", "chrome-linux", "chrome");
+    const ex = (p: string) => p === "/pw" || p === chrome;
+    expect(findChrome({ PLAYWRIGHT_BROWSERS_PATH: "/pw" }, ex, () => ["chromium-1100", "chromium-1194", "ffmpeg-1"] as never)).toBe(chrome);
     expect(findChrome({}, none)).toBeNull();
   });
   it("manglende nettleser: prosessen avslutter med exit 3 og «IKKE KJØRT» (aldri 0), uten å laste ned noe", () => {
@@ -107,6 +109,8 @@ describe("skriptene: moduser, delvis dekning og avgrensning", () => {
     expect(sh).toMatch(/E2E_SUPABASE_MODE=real/);
     expect(sh).toMatch(/process\.exit\(NOT_RUN_EXIT\)/);
     expect(sh).toMatch(/unset PW/);
+    expect(sh).toMatch(/preflightTargets\(\{ mode: "real" \}\)[\s\S]*process\.exit\(2\)/); // felles forhåndsvalidering før noe startes
+    expect(sh.indexOf("preflightTargets")).toBeLessThan(sh.indexOf("node \"$script\""));
     expect(sh).toMatch(/SHOTS="\$\(mktemp -d\)"/);
     expect(sh).not.toMatch(/echo[^\n]*(PUBLISHABLE_KEY|DB_URL|SUPABASE_TEST_URL|\$status)|printf[^\n]*(PUBLISHABLE_KEY|DB_URL)|set -x/);
     expect(sh).not.toMatch(/\bapt(-get)?\b|\bsudo\b|playwright(-core)? install|npm\s+(i|install)\b|curl\s|wget\s/);

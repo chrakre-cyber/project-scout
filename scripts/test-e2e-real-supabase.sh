@@ -18,6 +18,8 @@ status="$(npx supabase status -o env 2>/dev/null)" || { echo "Lokal Supabase kj�
 get() { printf '%s\n' "$status" | sed -n "s/^$1=\"\{0,1\}\([^\"]*\)\"\{0,1\}$/\1/p"; }
 export SUPABASE_TEST_URL="$(get API_URL)" SUPABASE_TEST_PUBLISHABLE_KEY="$(get PUBLISHABLE_KEY)" SUPABASE_TEST_DB_URL="$(get DB_URL)"
 [ -n "$SUPABASE_TEST_URL" ] && [ -n "$SUPABASE_TEST_PUBLISHABLE_KEY" ] && [ -n "$SUPABASE_TEST_DB_URL" ] || { echo "Mangler lokal Supabase-konfigurasjon"; exit 2; }
+# Felles forhåndsvalidering (som skriptene gjør som første handling): manglende/ugyldig/ikke-lokal database eller API avvises før noe startes. Feilmeldingen røper ikke adresser med passord.
+E2E_SUPABASE_MODE=real node --input-type=module -e 'import { preflightTargets } from "./tests/e2e/support/preflight.mjs"; try { preflightTargets({ mode: "real" }); } catch (e) { console.log("AVVIST: " + e.message); process.exit(2); }' || exit 2
 unset PW
 export E2E_SUPABASE_MODE=real PG="${PG:-$PWD/node_modules/pg}"
 # Skjermbilder i ekte modus skrives til en midlertidig katalog (overskriver aldri innsjekkede belegg og lastes aldri opp).

@@ -8,6 +8,8 @@ import { randomBytes, randomUUID } from "node:crypto";
 import { connectBackend } from "./support/backend.mjs";
 import { launchBrowser } from "./support/browser.mjs";
 import { freshEpoch } from "./support/synthetic-epoch.mjs";
+import { preflightTargets } from "./support/preflight.mjs";
+preflightTargets(); // CI-001-FIX3: avvis manglende/ugyldig/ikke-lokal database og API FØR databaseklienten opprettes (null DB-kall før avslag)
 
 const require = createRequire(import.meta.url);
 const { Client } = require(process.env.PG ?? "pg");
