@@ -5,7 +5,7 @@
  * (SUPABASE_TEST_JWT_SECRET, kun lest fra den kortlevde lokale stakken) brukes BARE til å lage en utløpt token i testprosessen; den skrives aldri ut.
  * Dekker IKKE nettleserdelen (cookies via @supabase/ssr — trinn 2) og ikke hosted.
  */
-import { createHmac } from "node:crypto";
+import { createHmac, randomBytes } from "node:crypto";
 import type { Client } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { adminDb, assertTarget, cleanup, createFirmWithMember, createUser, env, signIn, type TestUser } from "./harness";
@@ -129,11 +129,14 @@ describe("L4 API: tokenvalidering i PostgREST", () => {
   });
 
   it("token signert med feil nøkkel avvises (kontroll mot samme claims signert riktig)", async () => {
-    const now = Math.floor(Date.now() / 1000);
-    const claims = { aud: "authenticated", role: "authenticated", sub: a.id, iat: now - 60, exp: now + 3600 };
-    expect((await http("GET", "/rest/v1/dealerships?select=id", { token: sign(claims) })).status).toBe(200);
-    const wrongKey = await http("GET", "/rest/v1/dealerships?select=id", { token: sign(claims, `${secret}-feil`) });
-    expect(wrongKey.status).toBe(401);
+    // HOST-001: trenger ikke prosjektets JWT-hemmelighet. Kontrolltokenet er et FAKTISK utstedt token (virker også med asymmetrisk signering); det forfalskede har samme claims, men er
+    // signert med en tilfeldig nøkkel. Intensjonen er uendret: bare signaturen skiller de to, og det som ikke er signert av prosjektet avvises.
+    const issued = asObj((await password(a.email, a.password)).json).access_token as string;
+    const claims = JSON.parse(Buffer.from(issued.split(".")[1]!, "base64url").toString()) as Record<string, unknown>;
+    expect((await http("GET", "/rest/v1/dealerships?select=id", { token: issued })).status).toBe(200);
+    const forged = await http("GET", "/rest/v1/dealerships?select=id", { token: sign(claims, randomBytes(32).toString("hex")) });
+    expect(forged.status).toBe(401);
+    expect(Array.isArray(forged.json) ? forged.json : []).toEqual([]);
   });
 });
 

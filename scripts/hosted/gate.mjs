@@ -26,6 +26,8 @@ export function checkGate({ stage, target, inspect, dryRun, repoHash, now = new 
     if (!dryRun || dryRun.kind !== "hosted-dry-run" || dryRun.status !== "PASS") reasons.push("mangler vellykket dry-run");
     else {
       if (dryRun.target?.fingerprint !== target.fingerprint) reasons.push("dry-run gjelder et annet prosjekt");
+      if (dryRun.mode !== target.mode) reasons.push("dry-run er tatt i en annen modus");
+      if (dryRun.inspectTakenAt !== inspect?.takenAt) reasons.push("dry-run hører til en annen inspeksjon");
       if (dryRun.repoHash !== repoHash) reasons.push("migrasjonene er endret siden dry-run");
       const age = now.getTime() - Date.parse(dryRun.takenAt);
       if (!Number.isFinite(age) || age < 0 || age > maxAgeMs) reasons.push("dry-run er for gammel");

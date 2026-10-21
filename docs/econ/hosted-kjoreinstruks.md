@@ -35,9 +35,10 @@ Eier oppretter prosjektet (H1) og lagrer verdiene i `.env.hosted.local` i repoet
 | `SCOUT_HOSTED_CONFIRM` | `TESTPROSJEKT:<ref>` — eier bekrefter at dette er et tomt testprosjekt uten pilot-/produksjonsdata |
 | `SCOUT_HOSTED_MODE` | `fresh` eller `upgrade` |
 | `SUPABASE_TEST_URL` | `https://<ref>.supabase.co` (nøyaktig) |
-| `SUPABASE_TEST_DB_URL` | direkte (`db.<ref>.supabase.co`, bruker `postgres`) eller pooler (`*.pooler.supabase.com`, bruker `postgres.<ref>`); TLS kreves; ingen `host/port/dbname/options`-parametere |
+| `SUPABASE_TEST_DB_URL` | direkte (`db.<ref>.supabase.co`, bruker `postgres`) eller pooler (`*.pooler.supabase.com`, bruker `postgres.<ref>`); **må ha nøyaktig én `?sslmode=verify-full`** (manglende, svakere eller duplisert sslmode og andre `ssl*`-parametere avvises); ingen `host/port/dbname/options`-parametere. Alle våre databaseklienter (CLI, H3-testharness, opprydding) bygges av eksplisitte felt (aldri `connectionString`) med sertifikatkontroll; Supabase CLI følger `sslmode` i adressen |
 | `SUPABASE_TEST_PUBLISHABLE_KEY` | prosjektets publishable key |
-| `SUPABASE_TEST_JWT_SECRET` | **valgfri**; uten den utelates utløpt-token-testen |
+| `SCOUT_HOSTED_DB_CA_FILE` | **valgfri** sti til offentlig CA-sertifikat (PEM; ikke hemmelig) for sertifikatkontrollen; uleselig fil ⇒ avvist, aldri svakere ssl |
+| `SUPABASE_TEST_JWT_SECRET` + `SCOUT_HOSTED_JWT_ALG=HS256` | **valgfrie, begge kreves sammen**; uten dem utelates ALLE hemmelighetsavhengige tester (i dag: utløpt-token-testen) og L4a rapporteres DELVIS. Eier må bekrefte HS256-signering; prosjekter med asymmetriske nøkler godtar ikke HS256-kontrolltokens. «Feil nøkkel»-testen bruker et faktisk utstedt token og trenger ikke hemmeligheten |
 | `SCOUT_HOSTED_STAGE` | settes **per kommando** til nøyaktig trinnet som er tillatt |
 | `SCOUT_HOSTED_BACKUP` | `bekreftet` (bare `upgrade` + anvendelse) |
 | `SCOUT_HOSTED_CLEANUP_CONFIRM` | `SLETT:<fingeravtrykk>` (bare sletting i H4) |
@@ -47,13 +48,13 @@ Alt valideres av `scripts/hosted/target.mjs`: samme prosjekt i alle adresser, in
 | # | Trinn / kommando | Krever tillatelse | Hva som skjer | Gate/stopp |
 |---|---|---|---|---|
 | 0 | `check-target` | nei (ingen forbindelse) | validerer oppsettet, viser fingeravtrykk (brukes i `SLETT:<fingeravtrykk>`) | avvist ved feil |
-| 1 | `SCOUT_HOSTED_STAGE=h2-inspect … inspect` | **ja: h2-inspect** | skrivebeskyttet (`begin read only`, bare SELECT, rollback): historikk, tabeller, tall, brukere, DATA-002D; lagrer `.hosted/inspect.json` | STOPP ved avvik fra valgt modus eller DATA-002D ≠ OK |
+| 1 | `SCOUT_HOSTED_STAGE=h2-inspect … inspect` | **ja: h2-inspect** | (forkaster tidligere dry-run/anvendelse) skrivebeskyttet (`begin read only`, bare SELECT, rollback): historikk, tabeller, tall, brukere, DATA-002D; lagrer `.hosted/inspect.json` | STOPP ved avvik fra valgt modus eller DATA-002D ≠ OK |
 | 2 | `SCOUT_HOSTED_STAGE=h2-dry-run … dry-run` | **ja: h2-dry-run** | gate (inspeksjon < 60 min, samme prosjekt/modus/repo-hash) → `supabase db push --dry-run`; listen må være **nøyaktig** de ventende migrasjonene | FEIL ved annen liste/CLI-feil |
 | 3 | `SCOUT_HOSTED_STAGE=h2-apply … apply` | **ja: h2-apply** | gate + vellykket nylig dry-run (+ sikkerhetskopi ved `upgrade`) → `supabase db push`; deretter kontroll at historikken = repoet | aldri uten inspeksjon + dry-run |
 | 4 | `SCOUT_HOSTED_STAGE=h3-api … h3-api` | **ja: h3-api** | krever historikk = repo; kjører L4a + L6 mot hosted (`SCOUT_HOSTED_TESTS=1`), bygger mot hosted URL og skanner (L7) | L4a DELVIS uten JWT-hemmelighet; nettleserdelene IKKE KJØRT |
 | 5 | `SCOUT_HOSTED_STAGE=h4-cleanup … cleanup` | **ja: h4-cleanup** | **tørrkjøring**: bare tall for hva som ville slettes | – |
-| 6 | `SCOUT_HOSTED_STAGE=h4-cleanup-execute SCOUT_HOSTED_CLEANUP_CONFIRM=SLETT:<fp> … cleanup --execute` | **ja: h4-cleanup-execute** | sletter bare testdata (`@example.test`-brukere og firma der alle medlemmer er slike) i én transaksjon, ruller tilbake hvis noe gjenstår; rører ikke blandede/andre firma eller skjema | tilbakerulling ved feil |
-| 7 | `report h2|h3|h4` | nei (ingen forbindelse) | lager sanert rapport fra `.hosted/*.json` | – |
+| 6 | `SCOUT_HOSTED_STAGE=h4-cleanup-execute SCOUT_HOSTED_CLEANUP_CONFIRM=SLETT:<fp> … cleanup --execute` | **ja: h4-cleanup-execute** (krever dessuten nylig, under 60 min, tørrkjøring for samme mål/modus/migrasjonsgrunnlag) | sletter bare testdata (`@example.test`-brukere og firma der alle medlemmer er slike) i én transaksjon, ruller tilbake hvis noe gjenstår; rører ikke blandede/andre firma eller skjema | tilbakerulling ved feil |
+| 7 | `report h2|h3|h4` | nei (ingen forbindelse) | lager sanert rapport fra `.hosted/*.json`. **Hvert belegg er bundet til mål, modus, migrasjonsgrunnlag (repo-hash) og tidspunkt (og kjeden inspeksjon → dry-run → anvendelse; for H4 tørrkjøring → sletting → kontroll).** Belegg som mangler binding, hører til et annet mål/en annen modus/et annet migrasjonsgrunnlag, er eldre enn 24 t eller ikke henger sammen **forkastes** og vises som «ikke verifisert» (aldri bestått); gjenværende belegg vises med faktisk tidspunkt | – |
 | 8 | eier sletter selve testprosjektet | **eier** | kan ikke gjøres eller måles herfra; rapporten viser «IKKE KJØRT» til eier bekrefter | – |
 Supabase CLI får databaseadressen som argument (`--db-url`); kjør derfor bare fra eierens egen maskin, og all CLI-utskrift fanges og saneres før den vises.
 

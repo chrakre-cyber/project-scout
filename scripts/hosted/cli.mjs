@@ -9,14 +9,20 @@ import { join } from "node:path";
 import { evaluateGroup } from "../ci/evaluate.mjs";
 import { hasLeak, sanitizeText } from "../ci/sanitize.mjs";
 import { executeCleanup, planCleanup } from "./cleanup.mjs";
+import { REPORT_MAX_AGE_MS, checkBinding, stamp } from "./binding.mjs";
 import { checkGate } from "./gate.mjs";
 import { inspectDatabase } from "./inspect.mjs";
 import { classifyMigrations, repoHash, repoMigrationList } from "./migrations.mjs";
 import { LABEL, formatReport, h2Items, h3Items, h4Items } from "./report.mjs";
-import { HostedTargetError, parseHostedTarget } from "./target.mjs";
+import { HostedTargetError, hostedDbConfig, parseHostedTarget } from "./target.mjs";
 
 const require = createRequire(import.meta.url);
 export const EXPIRED_TOKEN_TEST = "utløpt token avvises";
+/** ALLE tester som trenger prosjektets JWT-hemmelighet (HS256) for å signere kontrolltokens. Uten hemmelighet — eller uten at eier uttrykkelig bekrefter HS256-signering (SCOUT_HOSTED_JWT_ALG=HS256;
+ *  nyere prosjekter kan bruke asymmetriske nøkler som ikke godtar HS256-kontrolltokens) — utelates de og rapporteres som DELVIS. Fullstendigheten av listen er kontrollert av en statisk test. */
+export const SECRET_DEPENDENT_TESTS = [EXPIRED_TOKEN_TEST];
+export const secretTestsEnabled = (env) => typeof env.SUPABASE_TEST_JWT_SECRET === "string" && env.SUPABASE_TEST_JWT_SECRET.length > 10 && env.SCOUT_HOSTED_JWT_ALG === "HS256";
+const escapeRe = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 export const H3_TEST_FILES = ["tests/db/auth-gotrue.test.ts", "tests/db/rest-isolation.test.ts"];
 
 /** Kjente verdier som aldri skal nå utskrift: hele adressen, passordet, nøkkelen, ref og vertsnavn. */
@@ -34,7 +40,7 @@ export function hostedGroup(key, report, rc, { excluded = [] } = {}) {
   if (r.status !== "FAIL") return r;
   const problems = r.notes.slice(1);
   const onlyExcluded = problems.length > 0 && problems.every((p) => excluded.some((n) => p.includes(n)) && /^(MANGLER|IKKE KJØRT)/.test(p));
-  return onlyExcluded ? { status: "PARTIAL", notes: [...r.notes, "utelatt bevisst (krever hosted JWT-hemmelighet som ikke er oppgitt) — regnes ikke som bestått"] } : r;
+  return onlyExcluded ? { status: "PARTIAL", notes: [...r.notes, "utelatt bevisst (krever JWT-hemmelighet og bekreftet HS256-signering; ikke oppgitt) — regnes ikke som bestått"] } : r;
 }
 
 /** L7 for hosted: kjent lokal-stakk-SKIP er eneste tillatte unntak; build-artefakter må være skannet. */
@@ -58,7 +64,7 @@ function realDeps() {
     repoDir: "supabase/migrations",
     connect: async (env) => {
       const { Client } = require("pg");
-      const c = new Client({ connectionString: env.SUPABASE_TEST_DB_URL, ssl: { rejectUnauthorized: true }, connectionTimeoutMillis: 15000, statement_timeout: 30000, application_name: "scout-hosted-prep" });
+      const c = new Client(hostedDbConfig(env, { stage: env.SCOUT_HOSTED_STAGE }));   // eksplisitt konfigurasjon: alltid TLS med sertifikatkontroll
       await c.connect();
       return c;
     },
@@ -95,10 +101,26 @@ export async function main(argv, env, deps = realDeps()) {
 
   if (cmd === "report") {
     const stage = flags[0];
-    const insp = read(join(deps.dir, "inspect.json")), dry = read(join(deps.dir, "dry-run.json")), app = read(join(deps.dir, "apply.json")), h3 = read(join(deps.dir, "h3.json")), h4 = read(join(deps.dir, "h4.json"));
-    const items = stage === "h2" ? h2Items({ mode: target.mode, inspect: insp, dryRun: dry, apply: app?.apply, verify: app?.verify }) : stage === "h3" ? h3Items({ l4a: h3?.l4a, l6: h3?.l6, secrets: h3?.secrets }) : stage === "h4" ? h4Items(h4 ?? {}) : null;
+    const ctx = { target, repoHash: rh, now: deps.now(), maxAgeMs: REPORT_MAX_AGE_MS };
+    const lines = [], rejected = [];
+    const accept = (label, binding) => { const r = checkBinding(binding, ctx); if (r.ok) { lines.push(`Belegg «${label}» tatt ${binding.takenAt}`); return true; } rejected.push(`«${label}» ${r.reason}`); return false; };
+    const own = (rec, label, chain) => (rec && accept(label, rec.binding) && chain(rec.binding) ? rec : null);
+    const insp0 = read(join(deps.dir, "inspect.json"));
+    const insp = insp0 && accept("inspeksjon", { target: insp0.target, mode: insp0.mode, repoHash: insp0.repoHash, takenAt: insp0.takenAt }) ? insp0 : null;
+    const dry0 = read(join(deps.dir, "dry-run.json"));
+    const dry = insp && dry0 && accept("dry-run", dry0.binding) && dry0.binding?.inspectTakenAt === insp.takenAt ? dry0 : (dry0 && insp ? (rejected.push("«dry-run» hører til en annen inspeksjon"), null) : null);
+    const app0 = read(join(deps.dir, "apply.json"));
+    const chained = (b) => !!dry && b.dryRunTakenAt === dry.binding.takenAt;
+    const apply = own(app0?.apply, "anvendelse", chained), verify = own(app0?.verify, "kontroll etter anvendelse", chained);
+    const h3 = read(join(deps.dir, "h3.json")), h4 = read(join(deps.dir, "h4.json"));
+    const any = () => true;
+    const planOk = (b) => !!h4?.cleanupPlan && b.planTakenAt === h4.cleanupPlan.binding?.takenAt;
+    const items = stage === "h2" ? h2Items({ mode: target.mode, inspect: insp, dryRun: dry ? { status: dry.status, notes: dry.notes } : null, apply, verify })
+      : stage === "h3" ? h3Items({ l4a: own(h3?.l4a, "L4a", any), l6: own(h3?.l6, "L6", any), secrets: own(h3?.secrets, "L7", any) })
+      : stage === "h4" ? h4Items({ cleanupPlan: own(h4?.cleanupPlan, "opprydding: tørrkjøring", any), cleanupExecute: own(h4?.cleanupExecute, "opprydding: sletting", planOk), verify: own(h4?.verify, "kontroll etter opprydding", planOk) }) : null;
     if (!items) { say("rapport: bruk h2, h3 eller h4"); return 2; }
-    say(formatReport({ stage: stage.toUpperCase(), target, items, literals: lits }));
+    if (rejected.length) lines.push(`Belegg forkastet fordi det ikke er verifisert for dette målet, denne modusen og dette migrasjonsgrunnlaget (regnes aldri som bestått): ${rejected.join("; ")}`);
+    say(formatReport({ stage: stage.toUpperCase(), target, items, literals: lits, versions: lines }));
     return 0;
   }
 
@@ -107,6 +129,7 @@ export async function main(argv, env, deps = realDeps()) {
     if (cmd === "inspect") {
       client = await deps.connect(env);
       const rep = await inspectDatabase(client, { repoList, mode: target.mode, target, now: deps.now() });
+      for (const f of ["dry-run.json", "apply.json"]) rmSync(join(deps.dir, f), { force: true });   // ny inspeksjon = nytt utgangspunkt; eldre dry-run/anvendelse hører til en annen kjede
       save(deps.dir, "inspect.json", rep);
       say(`inspeksjon ${rep.verdict}: tilstand ${rep.state}, anvendt ${rep.migrations.appliedCount}/${rep.repoMigrations}, DATA-002D ${rep.data002d.status}${rep.stopReasons.length ? `\n- ${rep.stopReasons.join("\n- ")}` : ""}`);
       return rep.verdict === "OK" ? 0 : 1;
@@ -120,16 +143,18 @@ export async function main(argv, env, deps = realDeps()) {
       const listed = [...new Set([...r.out.matchAll(/\b(\d{14})_[a-z0-9_]+\.sql/g)].map((m) => m[1]))].sort();
       if (cmd === "dry-run") {
         const same = r.code === 0 && JSON.stringify(listed) === JSON.stringify([...insp.migrations.pending].sort());
-        const rec = { kind: "hosted-dry-run", status: same ? "PASS" : "FAIL", target: { fingerprint: target.fingerprint }, repoHash: rh, takenAt: deps.now().toISOString(), notes: [`CLI-avslutning ${r.code}`, `listet ${listed.length} av ${insp.migrations.pending.length} forventede migrasjoner`] };
+        const stampNow = stamp(target, rh, deps.now(), { inspectTakenAt: insp.takenAt });
+        const rec = { kind: "hosted-dry-run", status: same ? "PASS" : "FAIL", target: stampNow.target, mode: target.mode, repoHash: rh, takenAt: stampNow.takenAt, inspectTakenAt: insp.takenAt, binding: stampNow, notes: [`CLI-avslutning ${r.code}`, `listet ${listed.length} av ${insp.migrations.pending.length} forventede migrasjoner`] };
         save(deps.dir, "dry-run.json", rec);
         say(`dry-run ${rec.status}: ${rec.notes.join("; ")}`);
         return same ? 0 : 1;
       }
       client = await deps.connect(env);
       const after = classifyMigrations((await client.query("select version from supabase_migrations.schema_migrations order by version")).rows.map((x) => String(x.version)), repoList);
-      const apply = { status: r.code === 0 ? "PASS" : "FAIL", notes: [`CLI-avslutning ${r.code}`] };
-      const verify = { status: after.kind === "current" ? "PASS" : "FAIL", notes: [`historikk ${after.kind}, ${after.appliedCount}/${after.repoCount}`] };
-      save(deps.dir, "apply.json", { apply, verify, target: { fingerprint: target.fingerprint }, takenAt: deps.now().toISOString() });
+      const bind = stamp(target, rh, deps.now(), { dryRunTakenAt: read(join(deps.dir, "dry-run.json")).takenAt });
+      const apply = { status: r.code === 0 ? "PASS" : "FAIL", notes: [`CLI-avslutning ${r.code}`], binding: bind };
+      const verify = { status: after.kind === "current" ? "PASS" : "FAIL", notes: [`historikk ${after.kind}, ${after.appliedCount}/${after.repoCount}`], binding: bind };
+      save(deps.dir, "apply.json", { apply, verify });
       say(`anvendelse ${apply.status}; kontroll etter anvendelse ${verify.status} (${verify.notes[0]})`);
       return apply.status === "PASS" && verify.status === "PASS" ? 0 : 1;
     }
@@ -141,35 +166,42 @@ export async function main(argv, env, deps = realDeps()) {
       const tmp = mkdtempSync(join(tmpdir(), "scout-h3-"));
       try {
         const out = join(tmp, "vitest.json");
-        const withSecret = typeof env.SUPABASE_TEST_JWT_SECRET === "string" && env.SUPABASE_TEST_JWT_SECRET.length > 10;
-        const args = ["vitest", "run", "--config", "vitest.db.config.ts", ...H3_TEST_FILES, "--reporter=json", `--outputFile=${out}`, ...(withSecret ? [] : ["-t", `^(?!.*${EXPIRED_TOKEN_TEST}).*$`])];
+        const withSecret = secretTestsEnabled(env);
+        const excluded = withSecret ? [] : SECRET_DEPENDENT_TESTS;
+        const args = ["vitest", "run", "--config", "vitest.db.config.ts", ...H3_TEST_FILES, "--reporter=json", `--outputFile=${out}`, ...(withSecret ? [] : ["-t", `^(?!.*(?:${excluded.map(escapeRe).join("|")})).*$`])];
         const t = await deps.run("npx", args, { SCOUT_HOSTED_TESTS: "1" });
         const rep = existsSync(out) ? readFileSync(out, "utf8") : null;
-        const excluded = withSecret ? [] : [EXPIRED_TOKEN_TEST];
         const l4a = hostedGroup("L4a", rep, t.code, { excluded }), l6 = hostedGroup("L6", rep, t.code);
         const build = await deps.run("npm", ["run", "build"], { NEXT_PUBLIC_SUPABASE_URL: env.SUPABASE_TEST_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.SUPABASE_TEST_PUBLISHABLE_KEY });
         const scan = await deps.run("bash", ["scripts/qa-secret-scan.sh"], {});
         const secrets = hostedL7(scan.out, scan.code, build.code);
         if (hasLeak(`${build.out}\n${scan.out}`, lits)) secrets.notes.push("rå utskrift fra build/skann inneholdt noe som ville blitt sanert (vises ikke)");
-        save(deps.dir, "h3.json", { l4a: { status: l4a.status, notes: l4a.notes }, l6: { status: l6.status, notes: l6.notes }, secrets, target: { fingerprint: target.fingerprint }, takenAt: deps.now().toISOString() });
+        const b3 = stamp(target, rh, deps.now(), { migrationsVerified: "current" });
+        save(deps.dir, "h3.json", { l4a: { status: l4a.status, notes: l4a.notes, binding: b3 }, l6: { status: l6.status, notes: l6.notes, binding: b3 }, secrets: { ...secrets, binding: b3 } });
         say(`H3 (API-nivå): L4a ${LABEL[l4a.status]}, L6 ${LABEL[l6.status]}, L7 ${LABEL[secrets.status]}; nettleserdelene er IKKE forberedt og regnes som IKKE KJØRT`);
         return [l4a, l6, secrets].every((x) => x.status === "PASS") ? 0 : 1;
       } finally { rmSync(tmp, { recursive: true, force: true }); }
     }
     if (cmd === "cleanup") {
-      if (flags.includes("--execute") && env.SCOUT_HOSTED_CLEANUP_CONFIRM !== `SLETT:${target.fingerprint}`) { say("avvist: sletting krever SCOUT_HOSTED_CLEANUP_CONFIRM=SLETT:<fingeravtrykk>"); return 2; }
+      const execute = flags.includes("--execute");
+      if (execute && env.SCOUT_HOSTED_CLEANUP_CONFIRM !== `SLETT:${target.fingerprint}`) { say("avvist: sletting krever SCOUT_HOSTED_CLEANUP_CONFIRM=SLETT:<fingeravtrykk>"); return 2; }
+      const prev = read(join(deps.dir, "h4.json")) ?? {};
+      if (execute) {   // sletting krever en nylig, verifisert tørrkjøring for SAMME mål/modus/migrasjonsgrunnlag
+        const ok = prev.cleanupPlan && checkBinding(prev.cleanupPlan.binding, { target, repoHash: rh, now: deps.now(), maxAgeMs: 60 * 60 * 1000 }).ok;
+        if (!ok) { say("avvist: sletting krever en nylig (under 60 min) tørrkjøring for dette målet, denne modusen og dette migrasjonsgrunnlaget"); return 2; }
+      }
       client = await deps.connect(env);
-      if (!flags.includes("--execute")) {
+      if (!execute) {
         const { plan } = await planCleanup(client);
-        save(deps.dir, "h4.json", { cleanupPlan: { status: "PASS", notes: [JSON.stringify(plan)] } });
+        save(deps.dir, "h4.json", { cleanupPlan: { status: "PASS", notes: [JSON.stringify(plan)], binding: stamp(target, rh, deps.now()) } });   // ny tørrkjøring = nytt utgangspunkt (eldre sletting/kontroll forkastes)
         say(`opprydding (tørrkjøring, ingenting slettet): ${JSON.stringify(plan)}`);
         return 0;
       }
       const res = await executeCleanup(client);
-      const prev = read(join(deps.dir, "h4.json")) ?? {};
       const after = res.ok ? (await planCleanup(client)).plan : null;
       const clean = res.ok && after.testUsers === 0 && after.testFirms === 0;
-      save(deps.dir, "h4.json", { ...prev, cleanupExecute: { status: res.ok ? "PASS" : "FAIL", notes: [JSON.stringify(res.before ?? {}), res.note ?? ""] }, verify: { status: clean ? "PASS" : "FAIL", notes: [JSON.stringify(after ?? {})] } });
+      const b4 = stamp(target, rh, deps.now(), { planTakenAt: prev.cleanupPlan.binding.takenAt });
+      save(deps.dir, "h4.json", { cleanupPlan: prev.cleanupPlan, cleanupExecute: { status: res.ok ? "PASS" : "FAIL", notes: [JSON.stringify(res.before ?? {}), res.note ?? ""], binding: b4 }, verify: { status: clean ? "PASS" : "FAIL", notes: [JSON.stringify(after ?? {})], binding: b4 } });
       say(`opprydding ${res.ok ? "utført" : "FEILET (rullet tilbake)"}: før ${JSON.stringify(res.before ?? {})}, etter ${JSON.stringify(res.after ?? {})}`);
       return res.ok && clean ? 0 : 1;
     }

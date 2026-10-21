@@ -7,7 +7,7 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Client } from "pg";
-import { parseHostedTarget } from "../../scripts/hosted/target.mjs";
+import { hostedDbConfig, parseHostedTarget } from "../../scripts/hosted/target.mjs";
 
 export const env = {
   url: process.env.SUPABASE_TEST_URL ?? "",
@@ -35,7 +35,8 @@ export function assertTarget() {
 }
 
 export async function adminDb(): Promise<Client> {
-  const c = new Client({ connectionString: env.dbUrl });
+  // Hosted-modus (HOST-001): eksplisitt konfigurasjon fra den validerte adressen — alltid TLS med sertifikatkontroll, aldri bare connectionString. Lokalt er uendret.
+  const c = new Client(process.env.SCOUT_HOSTED_TESTS === "1" ? hostedDbConfig(process.env, { stage: "h3-api" }) : { connectionString: env.dbUrl });
   await c.connect();
   return c;
 }
@@ -122,6 +123,7 @@ export const READY = {
  * testen aktiverer innlogging med et tilfeldig engangspassord (som databaseeier) og slår den av igjen ved close().
  */
 export async function connectIngest(db: Client): Promise<{ ingest: Client; close: () => Promise<void> }> {
+  if (process.env.SCOUT_HOSTED_TESTS === "1") throw new Error("connectIngest er ikke støttet i hosted-modus.");
   const pw = randomBytes(18).toString("hex");
   await db.query(`alter role scout_ingest login password '${pw}'`);
   const u = new URL(env.dbUrl);

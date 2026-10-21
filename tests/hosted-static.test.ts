@@ -9,7 +9,7 @@ const code = (f: string) => read(f).split("\n").filter((l) => !/^\s*(\/\/|#)/.te
 const REF = "abcdefghij0123456789";
 const hostedEnv = (over: Record<string, string | undefined> = {}) => ({
   SCOUT_HOSTED_TESTS: "1", SCOUT_HOSTED_MODE: "fresh", SCOUT_HOSTED_PROJECT_REF: REF, SCOUT_HOSTED_CONFIRM: `TESTPROSJEKT:${REF}`, SCOUT_HOSTED_STAGE: "h3-api",
-  SUPABASE_TEST_URL: `https://${REF}.supabase.co`, SUPABASE_TEST_DB_URL: `${PGS}://postgres:${["p", "w", "SENT", "1234"].join("-")}@db.${REF}.supabase.co:5432/postgres`, SUPABASE_TEST_PUBLISHABLE_KEY: ["k", "SENT", "5678"].join("-"), ...over,
+  SUPABASE_TEST_URL: `https://${REF}.supabase.co`, SUPABASE_TEST_DB_URL: `${PGS}://postgres:${["p", "w", "SENT", "1234"].join("-")}@db.${REF}.supabase.co:5432/postgres?sslmode=verify-full`, SUPABASE_TEST_PUBLISHABLE_KEY: ["k", "SENT", "5678"].join("-"), ...over,
 });
 const LOCAL = { SUPABASE_TEST_URL: "http://127.0.0.1:54321", SUPABASE_TEST_PUBLISHABLE_KEY: "k-local-12345", SUPABASE_TEST_DB_URL: `${PGS}://postgres:postgres@127.0.0.1:54322/postgres` };
 const KEYS = ["SCOUT_HOSTED_TESTS", "SCOUT_HOSTED_MODE", "SCOUT_HOSTED_PROJECT_REF", "SCOUT_HOSTED_CONFIRM", "SCOUT_HOSTED_STAGE", "SUPABASE_TEST_URL", "SUPABASE_TEST_DB_URL", "SUPABASE_TEST_PUBLISHABLE_KEY"];
@@ -63,6 +63,39 @@ describe("localhost-sperrene er uendret; hosted er separat og uttrykkelig", () =
   });
 });
 
+describe("HOST-001-FIX1: TLS i alle hosted databaseklienter og dekning av hemmelighetsavhengige tester", () => {
+  it("H3-harnessen bygger hosted-klienten av hostedDbConfig (aldri bare connectionString), og connectIngest er stengt i hosted-modus", () => {
+    const h = read("tests/db/harness.ts");
+    expect(h).toContain('process.env.SCOUT_HOSTED_TESTS === "1" ? hostedDbConfig(process.env, { stage: "h3-api" }) : { connectionString: env.dbUrl }');
+    expect(h).toMatch(/connectIngest[\s\S]*?SCOUT_HOSTED_TESTS === "1"\) throw/);
+  });
+  /** Navnene på alle it(...)-blokker i en testfil hvis kropp trenger JWT-hemmeligheten: refererer `secret`/SUPABASE_TEST_JWT_SECRET eller kaller sign(...) med bare ett argument (standardnøkkel). */
+  function secretDependent(file: string): string[] {
+    const src = read(file), out: string[] = [];
+    for (const m of src.matchAll(/\n\s+it(?:\.each\([^)]*\))?\(\s*"([^"]+)"/g)) {
+      const i = src.indexOf("{", m.index! + m[0].length); let depth = 0, j = i;
+      for (; j < src.length; j++) { if (src[j] === "{") depth++; else if (src[j] === "}" && --depth === 0) break; }
+      const body = src.slice(i, j);
+      if (/\bsecret\b|SUPABASE_TEST_JWT_SECRET|\bsign\(\s*[^,()]*(?:\([^()]*\)[^,()]*)*\)/.test(body.replace(/sign\(claims, randomBytes\(32\)\.toString\("hex"\)\)/g, ""))) out.push(m[1]!);
+    }
+    return out;
+  }
+  it("alle hemmelighetsavhengige tester i de hosted-egnede filene er dekket av SECRET_DEPENDENT_TESTS (ingen kjører uten hemmelighet)", async () => {
+    const { SECRET_DEPENDENT_TESTS, H3_TEST_FILES } = await import("../scripts/hosted/cli.mjs");
+    const found = H3_TEST_FILES.flatMap((f: string) => secretDependent(f));
+    expect(found.length).toBeGreaterThan(0);
+    for (const name of found) expect(SECRET_DEPENDENT_TESTS.some((x: string) => name.includes(x)), `uten dekning: ${name}`).toBe(true);
+    for (const x of SECRET_DEPENDENT_TESTS as string[]) expect(found.some((n) => n.includes(x)), `utdatert oppføring: ${x}`).toBe(true);
+  });
+  it("«feil nøkkel»-testen bruker et faktisk utstedt token som kontroll og trenger ikke hemmeligheten", () => {
+    const src = read("tests/db/auth-gotrue.test.ts");
+    const i = src.indexOf('it("token signert med feil nøkkel avvises'), body = src.slice(i, src.indexOf("describe(", i));
+    expect(body).toContain("password(a.email, a.password)");
+    expect(body).not.toMatch(/\bsecret\b/);
+    expect(body).toContain("randomBytes(32)");
+  });
+});
+
 describe("skript: ingen utskrift av miljø/hemmeligheter, ingen sletting utenom opprydding, lokale belegg ignoreres", () => {
   it("run.sh og cli.mjs: ingen set -x, env/printenv, console, eller direkte process.stdout utenom print-avhengigheten", () => {
     const sh = code("scripts/hosted/run.sh"), cli = code("scripts/hosted/cli.mjs");
@@ -75,7 +108,8 @@ describe("skript: ingen utskrift av miljø/hemmeligheter, ingen sletting utenom 
     const cli = code("scripts/hosted/cli.mjs");
     expect(cli.indexOf("parseHostedTarget(env, { stage: STAGE_OF[cmd] })")).toBeGreaterThan(-1);
     expect(cli.indexOf("parseHostedTarget(env, { stage: STAGE_OF[cmd] })")).toBeLessThan(cli.indexOf("deps.connect(env)"));
-    expect(cli).toContain("ssl: { rejectUnauthorized: true }");
+    expect(cli).toContain("hostedDbConfig(env, { stage: env.SCOUT_HOSTED_STAGE })");   // ALLE hosted databaseklienter bygges av den validerte konfigurasjonen (TLS med sertifikatkontroll)
+    expect(cli).not.toMatch(/connectionString|new Client\(\{/);
     for (const f of ["inspect", "gate", "report", "target", "migrations"]) expect(code(`scripts/hosted/${f}.mjs`), f).not.toMatch(/\b(delete|drop|truncate|insert|update|alter)\s/i);
     expect(code("scripts/hosted/cleanup.mjs").match(/delete from/g)!.length).toBeGreaterThan(0);
   });

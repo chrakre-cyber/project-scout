@@ -1,0 +1,15 @@
+{
+  "p1_uten_sslmode_godtatt": false,
+  "p1_sslmode_require_godtatt": false,
+  "p1_duplisert_sslmode_godtatt": false,
+  "p1_verify_full_godtatt": true,
+  "p1_harness_klient_ssl_effektiv": "{\"rejectUnauthorized\":true}",
+  "p2_rapport_for_B_med_belegg_fra_A": "IKKE",
+  "p3_hemmelighetsavhengige_tester": [
+    "utløpt token avvises mens samme token me"
+  ],
+  "p3_utelatt_av_cli": [
+    "utløpt token avvises"
+  ],
+  "p3_alle_dekket": true
+}

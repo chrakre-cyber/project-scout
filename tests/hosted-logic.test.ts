@@ -35,7 +35,7 @@ const inspectOk = (over: Record<string, unknown> = {}) => ({
   kind: "hosted-inspect", schemaVersion: 1, takenAt: new Date("2026-10-22T10:00:00Z").toISOString(), mode: "fresh", target: { fingerprint: target.fingerprint }, repoHash: repoHash(repo),
   state: "tomt", verdict: "OK", nothingToApply: false, data002d: { status: "NOT_APPLICABLE" }, ...over,
 });
-const dryOk = (over: Record<string, unknown> = {}) => ({ kind: "hosted-dry-run", status: "PASS", target: { fingerprint: target.fingerprint }, repoHash: repoHash(repo), takenAt: new Date("2026-10-22T10:05:00Z").toISOString(), ...over });
+const dryOk = (over: Record<string, unknown> = {}) => ({ kind: "hosted-dry-run", status: "PASS", mode: "fresh", inspectTakenAt: new Date("2026-10-22T10:00:00Z").toISOString(), target: { fingerprint: target.fingerprint }, repoHash: repoHash(repo), takenAt: new Date("2026-10-22T10:05:00Z").toISOString(), ...over });
 const now = new Date("2026-10-22T10:20:00Z");
 const gate = (stage: "h2-dry-run" | "h2-apply", over: Record<string, unknown> = {}) => checkGate({ stage, target, inspect: inspectOk(), dryRun: dryOk(), repoHash: repoHash(repo), now, ...over } as Parameters<typeof checkGate>[0]);
 
@@ -61,8 +61,13 @@ describe("gate for dry-run og anvendelse", () => {
   it("oppgradering av eksisterende database krever bekreftet sikkerhetskopi for anvendelse (ikke for dry-run)", () => {
     const up = { ...target, mode: "upgrade" as const }, insp = inspectOk({ mode: "upgrade", state: "oppgradering", data002d: { status: "OK" } });
     expect(checkGate({ stage: "h2-dry-run", target: up, inspect: insp, repoHash: repoHash(repo), now }).allow).toBe(true);
-    expect(checkGate({ stage: "h2-apply", target: up, inspect: insp, dryRun: dryOk(), repoHash: repoHash(repo), now }).allow).toBe(false);
-    expect(checkGate({ stage: "h2-apply", target: up, inspect: insp, dryRun: dryOk(), repoHash: repoHash(repo), now, backupConfirmed: true }).allow).toBe(true);
+    expect(checkGate({ stage: "h2-apply", target: up, inspect: insp, dryRun: dryOk({ mode: "upgrade" }), repoHash: repoHash(repo), now }).allow).toBe(false);
+    expect(checkGate({ stage: "h2-apply", target: up, inspect: insp, dryRun: dryOk({ mode: "upgrade" }), repoHash: repoHash(repo), now, backupConfirmed: true }).allow).toBe(true);
+  });
+  it("dry-run må høre til samme modus og SAMME inspeksjon som anvendelsen (HOST-001-FIX1)", () => {
+    expect(gate("h2-apply", { dryRun: dryOk({ mode: "upgrade" }) }).allow).toBe(false);
+    expect(gate("h2-apply", { dryRun: dryOk({ inspectTakenAt: "2026-10-22T09:00:00.000Z" }) }).allow).toBe(false);
+    expect(gate("h2-apply", { dryRun: dryOk({ inspectTakenAt: undefined }) }).allow).toBe(false);
   });
   it("ukjent trinn avvises", () => { expect(gate("h3-api" as never).allow).toBe(false); });
 });
