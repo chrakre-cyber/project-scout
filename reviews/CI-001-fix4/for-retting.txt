@@ -1,0 +1,8 @@
+   × rejects a remote effective pg host despite a loopback URL hostname 8ms
+   × rejects an effective remote host before L4 constructs its database client 138ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+⎯⎯⎯⎯⎯⎯ Failed Tests 53 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  2 failed (2)
+      Tests  53 failed | 55 passed (108)

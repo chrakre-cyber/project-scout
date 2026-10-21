@@ -129,3 +129,105 @@ describe("connectBackend beholder kontrollen som ekstra vern", () => {
     expect(q).toEqual([]);
   });
 });
+
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+// CI-001-FIX4 (P2 i re-review av b346e62): query-parametere i databaseadressen kan overstyre vert/port i node-postgres. URL.hostname alene er ikke nok.
+// ---------------------------------------------------------------------------------------------------------------------------------------------------------
+describe("databaseadresse med parametere som kan overstyre vert/port (FIX4)", async () => {
+  const pg = (await import("pg")).default as unknown as { Client: new (o: { connectionString: string }) => { connectionParameters: { host: string; port: number } } };
+  const effective = (u: string) => new pg.Client({ connectionString: u }).connectionParameters;
+  const base = pgUrl("hemmelig-passord-123", "127.0.0.1:54322");
+  const withQuery = (q: string) => `${base}?${q}`;
+  const OVERRIDES: [string, string][] = [
+    ["host=db.example.invalid", "host-parameter (fjern vert)"],
+    ["%68ost=db.example.invalid", "URL-kodet parameternavn %68ost"],
+    ["%48OST=db.example.invalid", "URL-kodet versal %48OST"],
+    ["HOST=db.example.invalid", "versal HOST"],
+    ["host=db.example.invalid&host=127.0.0.1", "gjentatt host (første fjern)"],
+    ["host=127.0.0.1&host=db.example.invalid", "gjentatt host (siste fjern)"],
+    ["host=localhost", "host-parameter som peker lokalt (avvises likevel: parametere som overstyrer målet er ikke tillatt)"],
+    ["hostaddr=10.0.0.5", "hostaddr"],
+    ["port=5432", "port-parameter"],
+    ["dbname=annen", "dbname-parameter"],
+    ["database=annen", "database-parameter"],
+    ["service=prod", "service-parameter"],
+    ["%20host=db.example.invalid", "parameternavn med blank"],
+  ];
+  const real = (db: string) => ({ E2E_SUPABASE_MODE: "real", SUPABASE_TEST_DB_URL: db, SUPABASE_TEST_URL: LOCAL_API, SUPABASE_TEST_PUBLISHABLE_KEY: "test-key" });
+
+  it("grunnlag: driveren velger faktisk den fjerne verten selv om URL.hostname er lokal (det reviewer påviste)", () => {
+    expect(new URL(withQuery("host=db.example.invalid")).hostname).toBe("127.0.0.1");
+    expect(effective(withQuery("host=db.example.invalid")).host).toBe("db.example.invalid");
+    expect(effective(withQuery("%68ost=db.example.invalid")).host).toBe("db.example.invalid");
+    expect(effective(withQuery("port=5432")).port).toBe(5432);
+  });
+  it.each(OVERRIDES)("preflight avviser %s (%s) i begge moduser", (q) => {
+    for (const mode of ["real", "emulator"] as const) {
+      expect(() => preflightTargets({ mode, env: { ...real(withQuery(q)) } }), `${mode} ${q}`).toThrow(TargetError);
+    }
+  });
+  it("feilmeldingene nevner parameternavn eller vert, aldri passord, hel adresse eller verdien til parameteren", () => {
+    for (const [q] of OVERRIDES) {
+      let msg = "";
+      try { preflightTargets({ mode: "real", env: real(withQuery(q)) }); } catch (e) { msg = (e as Error).message; }
+      expect(msg, q).not.toMatch(/hemmelig|postgres:\/\/|\?|=db\.example/);
+    }
+  });
+  it("harmløse parametere (sslmode, application_name) godtas, og driverens effektive vert/port er da lokal og lik adressen", () => {
+    for (const q of ["sslmode=disable", "application_name=scout-e2e", "sslmode=disable&application_name=x"]) {
+      for (const mode of ["real", "emulator"] as const) expect(preflightTargets({ mode, env: real(withQuery(q)) }).dbUrl, `${mode} ${q}`).toBe(withQuery(q));
+      const e = effective(withQuery(q));
+      expect([e.host, e.port]).toEqual(["127.0.0.1", 54322]);
+    }
+  });
+  it("invariant: alt preflight godtar har lokal EFFEKTIV driververt og -port (kontrollert mot driveren, ikke mot URL.hostname)", () => {
+    const candidates = [base, ...OVERRIDES.map(([q]) => withQuery(q)), withQuery("sslmode=disable"), `${pgUrl("pw-123456", "localhost:5432")}?connect_timeout=5`, pgUrl("pw-123456", "db.example.invalid:5432")];
+    let accepted = 0;
+    for (const u of candidates) {
+      try { preflightTargets({ mode: "emulator", env: { SUPABASE_TEST_DB_URL: u } }); } catch { continue; }
+      accepted += 1;
+      const e = effective(u);
+      expect(["127.0.0.1", "localhost"], u.replace(/:[^:@/]+@/, ":***@")).toContain(e.host);
+    }
+    expect(accepted).toBeGreaterThanOrEqual(3);
+  });
+  it("connectBackend (ekstra vern) avviser parameter-overstyring uten noen spørring, i begge moduser", async () => {
+    for (const mode of ["real", "emulator"] as const) {
+      vi.resetModules();
+      vi.stubEnv("E2E_SUPABASE_MODE", mode === "real" ? "real" : "");
+      vi.stubEnv("SUPABASE_TEST_URL", LOCAL_API);
+      vi.stubEnv("SUPABASE_TEST_PUBLISHABLE_KEY", "k");
+      const { connectBackend } = await import("./e2e/support/backend.mjs");
+      const q: string[] = [];
+      const db = { query: async (s: string) => { q.push(s); return { rows: [] }; } };
+      await expect(connectBackend({ db, dbUrl: withQuery("%68ost=db.example.invalid"), users: [{ id: "u", email: "e@example.test" }], port: 1, pgModulePath: "pg" }), mode).rejects.toThrow(/overstyre/);
+      expect(q, mode).toEqual([]);
+    }
+  });
+});
+
+describe.each(SCRIPTS)("%s: databaseparametere som overstyrer målet gir avslag uten DB-kall (FIX4)", (script) => {
+  const base = pgUrl("hemmelig-passord-123", "127.0.0.1:54322");
+  const cases: [string, string][] = [["host=db.example.invalid", "host"], ["%68ost=db.example.invalid", "URL-kodet navn"], ["%48OST=db.example.invalid", "URL-kodet versal"], ["host=127.0.0.1&host=db.example.invalid", "gjentatt host"], ["port=5432", "port"], ["hostaddr=10.0.0.5", "hostaddr"]];
+  it.each(cases)("ekte modus, ?%s (%s) ⇒ avslag og null kall (ingen new Client, connect eller spørring)", async (q) => {
+    const r = await runStartup(script, withShots({ E2E_SUPABASE_MODE: "real", SUPABASE_TEST_DB_URL: `${base}?${q}`, SUPABASE_TEST_URL: LOCAL_API, SUPABASE_TEST_PUBLISHABLE_KEY: "test-key" }));
+    expect(r.error, "skal avvises").not.toBeNull();
+    expect(r.error!.message).toMatch(/overstyre|ikke-lokal|avviker/);
+    expect(r.error!.message).not.toMatch(/hemmelig|postgres:\/\//);
+    expect(r.calls, "ingen databasekontakt før avslag").toEqual([]);
+  });
+  it.each(cases)("emulatormodus, ?%s (%s) ⇒ avslag og null kall", async (q) => {
+    const r = await runStartup(script, withShots({ E2E_SUPABASE_MODE: "", SUPABASE_TEST_DB_URL: `${base}?${q}` }), { stubEmulator: true });
+    expect(r.error, "skal avvises").not.toBeNull();
+    expect(r.error!.message).toMatch(/overstyre|ikke-lokal|avviker/);
+    expect(r.calls).toEqual([]);
+  });
+  it("lokal positiv kontroll med harmløs parameter: passerer og oppsettet kjører (ekte og emulator)", async () => {
+    const okReal = await runStartup(script, withShots({ E2E_SUPABASE_MODE: "real", SUPABASE_TEST_DB_URL: `${base}?sslmode=disable`, SUPABASE_TEST_URL: LOCAL_API, SUPABASE_TEST_PUBLISHABLE_KEY: "test-key" }));
+    expect(okReal.error, okReal.error?.message).toBeNull();
+    expect(okReal.calls.slice(0, 2)).toEqual(["new Client", "connect"]);
+    const okEmu = await runStartup(script, withShots({ E2E_SUPABASE_MODE: "", SUPABASE_TEST_DB_URL: `${base}?application_name=scout` }), { stubEmulator: true });
+    expect(okEmu.error, okEmu.error?.message).toBeNull();
+    expect(okEmu.calls[0]).toBe("new Client");
+  });
+});
