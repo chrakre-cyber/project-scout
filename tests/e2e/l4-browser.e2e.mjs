@@ -129,7 +129,7 @@ try {
   await p3.goto(PROTECTED);
   const replayBlocked = await anonymousLanding(p3);
   if (backend.mode === "real") check("gjenbruk av gammel sesjon etter utlogging avvises av GoTrue (sesjonen er revokert server-side)", replayBlocked, path(p3));
-  else skip("gjenbruk av gammel sesjon etter utlogging avvises (server-side revokering)", "emulatoren validerer bare JWT-signatur/utløp og har ingen sesjonsrevokering; krever ekte GoTrue");
+  else skip("gjenbruk av gammel sesjon etter utlogging avvises av GoTrue (sesjonen er revokert server-side)", "emulatoren validerer bare JWT-signatur/utløp og har ingen sesjonsrevokering; krever ekte GoTrue");
   await ctx3.close();
 
   // ---- 7 bruker uten firma

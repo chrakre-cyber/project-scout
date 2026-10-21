@@ -30,7 +30,7 @@ describe("workflow: rammer", () => {
 
   it("tidsgrense, ingen parallelle dobbeltkjøringer, standard Ubuntu-runner", () => {
     expect(code).toMatch(/timeout-minutes:\s*(\d+)/);
-    expect(Number(/timeout-minutes:\s*(\d+)/.exec(code)![1])).toBeLessThanOrEqual(90);
+    expect(Number(/timeout-minutes:\s*(\d+)/.exec(code)![1])).toBeLessThanOrEqual(180);
     expect(code).toMatch(/concurrency:\n\s+group:\s*supabase-local\n\s+cancel-in-progress:\s*false/);
     expect(code.match(/runs-on:\s*(.+)/g)).toEqual(["runs-on: ubuntu-latest"]);
     expect(code).not.toMatch(/self-hosted|larger|ubuntu-\d+\.\d+-\d+-core|-xl|-large/i);

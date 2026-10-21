@@ -300,7 +300,7 @@ try {
     const writes = emu.log.filter((x) => (x.method === "POST" || x.method === "PATCH") && /dealer_economics/.test(x.path));
     check("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)", writes.length >= 1 && writes.every((x) => !(x.bodyKeys ?? []).includes("dealership_id")), JSON.stringify(writes.map((x) => x.bodyKeys)));
   } else {
-    skip("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput", "ekte modus har ingen forespørselslogg (bare emulatoren logger kall); kolonnerettighetene som avviser dealership_id er dekket av L6 (tests/db/rest-isolation.test.ts), ikke av dette nettleserløpet");
+    skip("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)", "ekte modus har ingen forespørselslogg (bare emulatoren logger kall); kolonnerettighetene som avviser dealership_id er dekket av L6 (tests/db/rest-isolation.test.ts), ikke av dette nettleserløpet");
   }
   check("J3: ingen rå identitet i detalj-HTML (kandidat-id/revisjon) eller i serverens action-svar", leaks(await pA.content(), LISTINGS.diesel.providerId, { providerIdAllowed: true }).length === 0 && actionBodies.every((b) => leaks(b.body, LISTINGS.diesel.providerId, { providerIdAllowed: false }).length === 0));
 

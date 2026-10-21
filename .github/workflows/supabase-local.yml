@@ -2,7 +2,8 @@
 # - Kun manuell start (workflow_dispatch). Ingen push-/PR-/schedule-triggere, ingen inndata.
 # - Ingen secrets, ingen hosted Supabase, ingen deploy, ingen betalte (larger) runnere, ingen tredjeparts-actions og ingen artefakter.
 # - Repoet er offentlig: logg og jobbsammendrag er offentlige. All utskrift går gjennom scripts/ci/sanitize.mjs (se scripts/ci-supabase-local.sh).
-# - L4–L6 (ekte GoTrue/PostgREST via appen, Playwright) og hosted Supabase (Trinn H) er IKKE del av dette workflowet og står åpne.
+# - Kjører også nettleserløp (Playwright + forhåndsinstallert Chrome, ingenting installeres) mot den lokale stakken: l4-browser, econ006, econ006d (modus: ekte). Ingen skjermbilder lagres eller lastes opp.
+# - Hosted Supabase (Trinn H) er IKKE del av dette workflowet og står åpent.
 name: Supabase lokal kontroll (L1–L3, L7)
 
 on:
@@ -19,7 +20,7 @@ jobs:
   local-supabase:
     name: L1–L3 og L7 mot lokal Supabase
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 180
     env:
       SUPABASE_TELEMETRY_DISABLED: "1"
       DO_NOT_TRACK: "1"

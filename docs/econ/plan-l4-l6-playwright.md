@@ -1,6 +1,6 @@
 # Plan: L4–L6 og Playwright mot lokal Supabase på GitHub-runner (kort, ikke implementert)
 
-**Status 21.10.2026 (oppdatert 2):** trinn 2 (nettleserdel av L4 + «ekte»-modus for L5-forløpene) er implementert og levert til review (`reviews/CI-001-TRINN2-leveranse.md`; **ikke kjørt mot ekte Supabase**, L5 ikke erklært bestått). Trinn 3 ikke startet.
+**Status 21.10.2026 (oppdatert 2):** trinn 2 (nettleserdel av L4 + «ekte»-modus for L5-forløpene) er implementert og levert til review (`reviews/CI-001-TRINN2-leveranse.md`; **ikke kjørt mot ekte Supabase**, L5 ikke erklært bestått). **Trinn 3 (oppdatert 3, 21.10.2026):** workflow-integrasjon implementert og levert til review (`reviews/CI-001-TRINN3-leveranse.md`), ikke aktivert og ikke kjørt; J3 holder L5 delvis i ekte modus.
 
 **Status 21.10.2026 (oppdatert):** trinn 1 (L6 + API-delen av L4) er implementert og levert til review (`reviews/CI-001-TRINN1-leveranse.md`; ikke kjørt mot ekte Supabase). Trinn 2–3 er ikke startet. Teksten under er den opprinnelige planen.
 

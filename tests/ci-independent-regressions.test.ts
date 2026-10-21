@@ -13,11 +13,12 @@ import { join } from "node:path";
 import { afterEach, describe } from "vitest";
 import { evaluateDir } from '../scripts/ci/evaluate.mjs';
 import { l3bPass, l46Rows, vitestJson as vj } from './ci/l3b-fixtures';
+import { e2eFiles } from './ci/e2e-fixtures';
 
 const okScan = "PASS scan (0 treff)\nSECRET-SKANN: INGEN FUNN\n";
 const l2Ok = "== 1\nPASS  a\n\nMIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT\n";
 const l3Ok = vj([{ file: "tests/db/rls.test.ts", fullName: "a", status: "passed" }, ...l46Rows()]);
-const base: Record<string, string> = { ...l3bPass(), "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": l3Ok, "l3.rc": "0", "l7.out": okScan, "l7.rc": "0", "build.rc": "0", literals: "" };
+const base: Record<string, string> = { ...l3bPass(), ...e2eFiles(), "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": l3Ok, "l3.rc": "0", "l7.out": okScan, "l7.rc": "0", "build.rc": "0", literals: "" };
 
 describe("L7 krever registrert, vellykket build", () => {
   const dirs: string[] = [];

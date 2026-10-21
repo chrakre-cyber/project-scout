@@ -6,9 +6,12 @@
 #   L3a scripts/test-db.sh (hele DB-suiten mot ekte Auth/PostgREST); hoppede tester regnes IKKE som bestått
 #   L3b de seks navngitte oppgraderingstestene i en SEPARAT midlertidig PostgreSQL-klynge (scripts/ci/run-l3b.sh; IKKE Supabase). Samlet L3 = PASS bare når L3a har ingen feil/uventede hopp og hver av de seks er faktisk bestått i L3b
 #   L7  npm run build + scripts/qa-secret-scan.sh (repo, historikk, build-artefakter, faktiske lokale nøkler)
+#   L4b/L5a/L5b  nettleserløp mot EKTE lokal Supabase (Playwright + forhåndsinstallert Chrome; modus: ekte): l4-browser, econ006, econ006d via scripts/test-e2e-real-supabase.sh.
+#        Kjøres ETTER L7 (løpene bygger appen på nytt og overskriver .next). Rapporteres hver for seg på sjekkidentitet; manglende nettleser ⇒ IKKE KJØRT; hoppet/delvis/feil ⇒ aldri PASS.
+#        Innloggingsgrensen (GoTrue sign_in_sign_ups) håndteres ved å vente, aldri ved å redusere testene (scripts/ci/login-budget.mjs). Ingen skjermbilder lagres eller lastes opp.
 # Utskrift: bare en SANERT rapport (scripts/ci/evaluate.mjs + sanitize.mjs). Rå utskrift fra underskript ligger i en privat midlertidig
 # katalog og skrives aldri til logg, jobbsammendrag eller artefakt. Aldri `set -x`, `env`, `supabase status` uten fil, `docker logs`/`inspect`.
-# Tidsgrenser per trinn summerer til 79 min inkl. L3b (jobbgrensen er 90 min), slik at rapporten alltid rekker å skrives.
+# Tidsgrenser per trinn summerer til 154 min inkl. L3b, nettleserløp og venting på innloggingsvindu (jobbgrensen er 180 min), slik at rapporten alltid rekker å skrives.
 # Exit 0 bare hvis L1, L2, L3 og L7 alle er BESTÅTT; feil, hoppede og ikke kjørte kontroller gir exit 1.
 set -uo pipefail
 cd "$(dirname "$0")/.."
@@ -18,6 +21,10 @@ stop_stack() { timeout 120 npx supabase stop --no-backup >/dev/null 2>&1 || true
 cleanup() { stop_stack; rm -rf "$W"; }
 trap cleanup EXIT
 SAN() { node scripts/ci/sanitize.mjs --literals "$W/literals"; }
+run2() { # som run, men stdout og stderr holdes adskilt (stderr kastes aldri ut; bare stdout tolkes av evaluate.mjs)
+  local n="$1" t="$2"; shift 2
+  timeout "$t" "$@" > "$W/$n.out" 2> "$W/$n.err"; echo $? > "$W/$n.rc"
+}
 run() { # navn tidsgrense(s) kommando… → $W/navn.out og $W/navn.rc (rå utskrift forlater aldri $W)
   local n="$1" t="$2"; shift 2
   timeout "$t" "$@" > "$W/$n.out" 2>&1; echo $? > "$W/$n.rc"
@@ -73,9 +80,24 @@ if [ "$(cat "$W/reset.rc" 2>/dev/null)" = "0" ]; then
   # --- L3 (qa:migrations avslutter med ren database fra alle migrasjoner)
   run l3cmd 720 bash scripts/test-db.sh --reporter=json --outputFile="$W/l3.json"
   mv "$W/l3cmd.rc" "$W/l3.rc"; rm -f "$W/l3cmd.out"
+  # DB-suiten logger inn mange ganger uten at antallet er kjent: regn med at hele innloggingsbudsjettet (30 per 5 min) er brukt ved slutten av L3a.
+  node scripts/ci/login-budget.mjs record "$W/logins" 30
   # --- L7: build (med lokal URL og publishable key, som en ekte build) og secret-skann
   NEXT_PUBLIC_SUPABASE_URL="$API_URL" NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$PUBLISHABLE_KEY" run build 480 npm run build
   run l7 300 bash scripts/qa-secret-scan.sh
+  # --- L4b / L5a / L5b: nettleserløp mot EKTE lokal Supabase (etter L7: løpene bygger appen på nytt). Nettleser finnes? (samme søk som løpene; ingen installasjon)
+  plan() { node -e 'const p = JSON.parse(require("fs").readFileSync("scripts/ci/e2e-plan.json", "utf8"))[process.argv[1]]; console.log(p[process.argv[2]]);' "$1" "$2"; }
+  have_chrome=0
+  node --input-type=module -e 'import { findChrome } from "./tests/e2e/support/browser.mjs"; process.exit(findChrome() ? 0 : 1);' && have_chrome=1
+  for step in l4 econ006d econ006; do
+    need="$(plan "$step" logins)"; tmo="$(plan "$step" timeoutSec)"
+    if [ "$have_chrome" = "1" ]; then
+      wait_s="$(node scripts/ci/login-budget.mjs wait "$W/logins" "$need" 2>/dev/null || echo 300)"
+      [ "${wait_s:-0}" -gt 0 ] && sleep "$wait_s"
+    fi
+    run2 "e2e-$step" "$tmo" bash scripts/test-e2e-real-supabase.sh "$step"   # uten nettleser avslutter wrapperen umiddelbart med exit 3 (IKKE KJØRT)
+    node scripts/ci/login-budget.mjs record "$W/logins" "$need"
+  done
 fi
 
 # --- L3b: de seks oppgraderingstestene i en SEPARAT midlertidig PostgreSQL-klynge (ikke Supabase). Uavhengig av stakken; manglende PostgreSQL-binærer ⇒ IKKE KJØRT (ingen installasjon).

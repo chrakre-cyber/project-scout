@@ -8,6 +8,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { evaluateDir, evaluateGroup } from "../scripts/ci/evaluate.mjs";
+import { e2eFiles } from "./ci/e2e-fixtures";
 import { L46, l3bPass, l46Rows, sixWith, vitestJson, type TestRow } from "./ci/l3b-fixtures";
 
 const rows = (over: (r: TestRow[]) => TestRow[] = (r) => r) => vitestJson(over(l46Rows()));
@@ -56,7 +57,7 @@ describe("evaluateDir: L4a og L6 inngår i samlet utfall og rapporteres separat"
   const make = (l3rows: TestRow[], over: Record<string, string> = {}) => {
     const d = mkdtempSync(join(tmpdir(), "scout-l46-"));
     dirs.push(d);
-    const files: Record<string, string> = { "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vitestJson(l3rows), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "", ...l3bPass(), ...over };
+    const files: Record<string, string> = { "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vitestJson(l3rows), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "", ...l3bPass(), ...e2eFiles(), ...over };
     for (const [k, v] of Object.entries(files)) writeFileSync(join(d, k), v);
     return d;
   };
@@ -67,7 +68,7 @@ describe("evaluateDir: L4a og L6 inngår i samlet utfall og rapporteres separat"
     expect(r.verdict).toBe("PASS");
     expect(r.report).toMatch(/## L4a innlogging mot ekte GoTrue.*: BESTÅTT/);
     expect(r.report).toMatch(/## L6 firmaskille via ekte PostgREST.*: BESTÅTT/);
-    expect(r.report).toMatch(/L4 nettleserdel.*ÅPEN/);
+    expect(r.report).toMatch(/Hosted Supabase.*ÅPEN/);
   });
   it("L6-test feiler (resten bestått) ⇒ L6 FAIL, L3a FAIL og samlet ikke PASS", () => {
     const l = l46Rows().map((t, i) => (i === 15 ? { ...t, status: "failed" } : t));

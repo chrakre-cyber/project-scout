@@ -101,7 +101,7 @@ describe("skriptene: moduser, delvis dekning og avgrensning", () => {
     const c = read("tests/e2e/l4-browser.e2e.mjs");
     for (const needle of ["anonym:", "feil passord og ukjent bruker", "riktig passord:", "sesjonen overlever reload", "utløpt tid i sesjonen", "ødelagt sesjonscookie", "utlogging:", "etter utlogging", "bruker uten firma:", "ingen JavaScript-feil"]) expect(c, needle).toContain(needle);
     expect(c).toMatch(/if \(backend\.mode === "real"\) check\("gjenbruk av gammel sesjon etter utlogging avvises av GoTrue/);
-    expect(c).toMatch(/else skip\("gjenbruk av gammel sesjon etter utlogging avvises/);
+    expect(c).toMatch(/else skip\("gjenbruk av gammel sesjon etter utlogging avvises av GoTrue/);
     expect(c).not.toMatch(/console\.log\([^)]*(cookie|password|token)/i);
   });
   it("wrapperen for ekte modus: IKKE KJØRT uten nettleser, exit-koder, nøkler skrives ikke ut, skjermbilder til temp, ingen installasjon, emulatorskriptene urørt", () => {

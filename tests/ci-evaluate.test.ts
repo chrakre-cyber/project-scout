@@ -7,6 +7,7 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Result } from "../scripts/ci/evaluate.mjs";
 import { l3bPass, l46Rows, vitestJson as vj } from "./ci/l3b-fixtures";
+import { e2eFiles } from "./ci/e2e-fixtures";
 import { buildReport, evaluateDir, evaluateL1, evaluateL2, evaluateL3a, evaluateL7, overall } from "../scripts/ci/evaluate.mjs";
 
 const l2Ok = "== 1. Ren oppbygging\nPASS  a\nPASS  b\n\nMIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT\n";
@@ -80,7 +81,7 @@ describe("L1", () => {
 
 describe("samlet", () => {
   const P: Result = { status: "PASS", notes: [] };
-  const KEYS = ["L1", "L2", "L3", "L4a", "L6", "L7"] as const;
+  const KEYS = ["L1", "L2", "L3", "L4a", "L4b", "L5", "L6", "L7"] as const;
   const allP = () => Object.fromEntries(KEYS.map((k) => [k, P])) as Record<(typeof KEYS)[number], Result>;
   it("PASS bare når alle fire er PASS", () => {
     expect(overall(allP())).toBe("PASS");
@@ -88,9 +89,8 @@ describe("samlet", () => {
   });
   it("rapporten fører L4–L6, Playwright og hosted som ÅPNE, også når alt er bestått", () => {
     const r = buildReport(allP());
-    expect(r).toMatch(/L4 nettleserdel.*ÅPEN/);
-    expect(r).toMatch(/L5 lagring.*ÅPEN/);
-    expect(r).toMatch(/Playwright-integrasjon: ÅPEN/);
+    expect(r).toMatch(/Hosted Supabase.*ÅPEN/);
+    expect(r).toMatch(/L3c .*utsatt/);
     expect(r).toMatch(/Hosted Supabase.*ÅPEN/);
     expect(r).toMatch(/Samlet: PASS/);
   });
@@ -108,7 +108,7 @@ describe("evaluateDir: ende-til-ende med falske hemmeligheter", () => {
     for (const [n, c] of Object.entries(files)) writeFileSync(join(d, n), c);
     return d;
   }
-  const base = { ...l3bPass(), "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vj([{ file: "tests/db/rls.test.ts", fullName: "a", status: "passed" }, ...l46Rows()]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "plain-odd-secret\n" };
+  const base = { ...l3bPass(), ...e2eFiles(), "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vj([{ file: "tests/db/rls.test.ts", fullName: "a", status: "passed" }, ...l46Rows()]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "plain-odd-secret\n" };
 
   it("alt bestått ⇒ PASS", () => expect(evaluateDir(make(base)).verdict).toBe("PASS"));
   it("manglende steg ⇒ NOT_RUN og IKKE FULLT BESTÅTT", () => {
