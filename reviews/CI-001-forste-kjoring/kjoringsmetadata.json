@@ -1,0 +1,17 @@
+{
+  "workflow": "Supabase lokal kontroll (L1–L3, L7)",
+  "workflow_fil": ".github/workflows/supabase-local.yml",
+  "workflow_fil_pa_main": { "commit": "a778c97986287097e96d3f664fb44b3b22872ce1", "pr": "https://github.com/chrakre-cyber/project-scout/pull/4", "git_blob": "83fa4fd269048d330aecdb3e5b792a614084e7a2", "sha256": "3d3d2a1754033bc608c4a9aa2c5af34041f3f0b59373900b094a58c2c7767a93" },
+  "kjoring": { "url": "https://github.com/chrakre-cyber/project-scout/actions/runs/39578387230", "run_id": 39578387230, "run_number": 1, "run_attempt": 1, "event": "workflow_dispatch", "utlost_av": "chrakre-cyber" },
+  "kjort_commit": "7ff3bbdef470fcb23d9eb6c148f9bf30da189523",
+  "gren": "claude/wonderful-bardeen-yussx3",
+  "kode_mot_reviewet_215bc2c": "identisk i .github/, scripts/, tests/, supabase/, src/, package.json og package-lock.json; avviker kun i DECISIONS.md, MVP_BACKLOG.md, docs/econ/forste-actions-kjoring.md og reviews/CI-001-FIX2-review-215bc2c.md",
+  "status": "completed",
+  "konklusjon": "success",
+  "sammendrag_i_loggen": "Samlet: PASS (L1, L2, L3 samlet, L7 bestått; L3a hoppet over 6 navngitte tester; L3b 6 av 6 i separat PostgreSQL-klynge, ikke Supabase)",
+  "tidspunkter_utc": { "run_opprettet": "2026-10-21T09:37:22Z", "jobb_startet": "2026-10-21T09:37:28Z", "orkestreringssteg_start": "2026-10-21T09:37:48Z", "orkestreringssteg_slutt": "2026-10-21T09:41:42Z", "jobb_ferdig": "2026-10-21T09:41:45Z", "run_oppdatert": "2026-10-21T09:41:46Z" },
+  "varighet_observert": { "run_totalt": "ca. 4 min 24 s", "jobb": "ca. 4 min 17 s", "orkestreringssteg": "ca. 3 min 54 s", "merknad": "Observert for denne ene kjøringen. Ikke en garanti for senere kjøringer (bildehenting, runnerbelastning og utvikling av testsuiten kan endre tiden)." },
+  "runner": { "label": "ubuntu-latest", "image": "ubuntu-24.04 (versjon 20261012.334.1)", "token_rettigheter": "Contents: read, Metadata: read" },
+  "artefakter": "ingen",
+  "hentet": "21.10.2026 fra GitHub Actions API (run, jobb, steg) og den offentlige jobblogg; ingen rå statusfiler eller credentials"
+}

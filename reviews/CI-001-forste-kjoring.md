@@ -1,6 +1,6 @@
 # CI-001 — første manuelle Actions-kjøring (21.10.2026)
 
-**Kjøring:** https://github.com/chrakre-cyber/project-scout/actions/runs/39578387230 (run #1, `workflow_dispatch`, startet av Christians tillatelse). **Kjørt commit:** `7ff3bbdef470fcb23d9eb6c148f9bf30da189523` på `claude/wonderful-bardeen-yussx3` (kode identisk med den reviewede `215bc2c`; avviker bare i fire dokumentasjonsfiler). **Workflowfil på `main`:** `a778c97` (PR [#4](https://github.com/chrakre-cyber/project-scout/pull/4), kun `.github/workflows/supabase-local.yml`, blob `83fa4fd2…`, SHA-256 `3d3d2a17…c7767a93` = reviewet fil). Tid: 09:37:22–09:41:45 UTC (ca. 4 min; estimatet 20–35 min var for høyt).
+**Kjøring:** https://github.com/chrakre-cyber/project-scout/actions/runs/39578387230 (run #1, `workflow_dispatch`, startet av Christians tillatelse). **Kjørt commit:** `7ff3bbdef470fcb23d9eb6c148f9bf30da189523` på `claude/wonderful-bardeen-yussx3` (kode identisk med den reviewede `215bc2c`; avviker bare i fire dokumentasjonsfiler). **Workflowfil på `main`:** `a778c97` (PR [#4](https://github.com/chrakre-cyber/project-scout/pull/4), kun `.github/workflows/supabase-local.yml`, blob `83fa4fd2…`, SHA-256 `3d3d2a17…c7767a93` = reviewet fil). **Observert varighet for denne ene kjøringen: ca. 4 minutter** (run 09:37:22–09:41:46 UTC = ca. 4 min 24 s; orkestreringssteget ca. 3 min 54 s). Dette er en enkeltobservasjon, **ikke en garanti** for senere kjøringer. Review-underlag: `reviews/CI-001-forste-kjoring/` (sanert `jobbsammendrag.md` og `kjoringsmetadata.json`).
 
 **Utfall: jobb `success`, rapportert «Samlet: PASS»** (utviklerens avlesning av den offentlige loggen — ikke en uavhengig reviewers vurdering). CI-001 forblir REVIEW.
 
@@ -25,5 +25,5 @@ Vercel-integrasjonen på repoet laget en preview-deployment for PR #4 og kan ha 
 
 ## Forslag (ikke gjort)
 1. Uavhengig review av selve kjøringen og denne rapporten (reviewer kan lese den offentlige loggen).
-2. Neste avgrensede steg: L4–L6 + Playwright mot den lokale stakken (egen leveranse/godkjenning); L3c (forsøk på de seks mot stakkens Postgres 17) er fortsatt utsatt og kan nå vurderes siden kjøringen viser at det fungerer å kjøre i stakken.
-3. Vurder å la Vercel ignorere `.github/`-endringer; oppdater kjøretidsestimatet i dokumentasjonen til ca. 4–5 min (én måling).
+2. Neste avgrensede steg: L4–L6 + Playwright mot den lokale stakken (plan: `docs/econ/plan-l4-l6-playwright.md`; egen godkjenning). **L3c er utsatt** (Christians beslutning).
+3. Vurder å la Vercel ignorere `.github/`-endringer; kjøretiden (ca. 4 min) er én observasjon og ikke et løfte.
