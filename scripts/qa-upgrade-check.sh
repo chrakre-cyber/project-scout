@@ -21,11 +21,14 @@ V004=20261006090000
 V004FIX=20261006100000
 V005=20261007090000
 V005B0=20261008090000
+# Sluttilstanden = alle migrasjonsfiler i rekkefølge (utledet fra katalogen, så nye migrasjoner ikke gjør forventningen utdatert).
+ALL_VERSIONS="$(ls supabase/migrations/*.sql | sed -e 's#.*/##' -e 's/_.*//' | sort | paste -sd, -)"
 FIRM_A=00000000-0000-4000-a000-00000000000a
 FIRM_B=00000000-0000-4000-a000-00000000000b
 OUT="${QA_OUT:-/tmp}"
 fails=0
-check() { if [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (forventet «$3», fikk «$2»)"; fails=$((fails+1)); fi; }
+# En tom respons er alltid feil (spørringsfeil gir tom utskrift og ville ellers gjort sammenligninger tomt = tomt «grønne»).
+check() { if [ -n "$2" ] && [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FAIL  $1 (forventet «$3», fikk «$2»)"; fails=$((fails+1)); fi; }
 # pg_dump legger inn et tilfeldig \restrict-token per kjøring; det filtreres bort.
 dump() { docker exec supabase_db_project-scout pg_dump -U postgres --schema-only --no-owner --schema=public --schema=private postgres | grep -v -E '^\\(un)?restrict '; }
 reset_to() { npx supabase db reset ${1:+--version "$1"} 2>&1 | grep -E "Applying migration|ERROR" | sed 's/^/      /'; }
@@ -33,9 +36,9 @@ reset_to() { npx supabase db reset ${1:+--version "$1"} 2>&1 | grep -E "Applying
 echo "== 1. Ren oppbygging (alle migrasjoner)"
 reset_to "" 
 dump > "$OUT/schema-clean.sql"
-check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000,20261008090000,20261009090000"
+check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "$ALL_VERSIONS"
 check "seed: to syntetiske firma, ingen brukere eller agenter" "$($PSQL -c "select (select count(*) from public.dealerships)||'/'||(select count(*) from auth.users)||'/'||(select count(*) from public.search_agents)")" "2/0/0"
-check "RLS på alle tabeller" "$($PSQL -c "select count(*) from pg_class where relnamespace='public'::regnamespace and relkind='r' and relrowsecurity")" "5"
+check "RLS på alle tabeller i public (ingen uten RLS, minst én tabell)" "$($PSQL -c "select (count(*) filter (where not relrowsecurity))||'/'||(count(*) > 0)::text from pg_class where relnamespace='public'::regnamespace and relkind='r'")" "0/true"
 
 echo "== 2. Oppgradering fra DEV-002 med eksisterende agentdata"
 reset_to "$V002"
@@ -114,7 +117,7 @@ insert into public.search_run_results (search_run_id, source, source_listing_id,
 update public.search_runs r set status = 'completed', counts = '{"matches":3,"needsReview":0}' from public.search_agents a where a.id = r.agent_id and a.name = 'Run-agent 1';
 update public.search_runs r set status = 'failed', error_code = 'timeout' from public.search_agents a where a.id = r.agent_id and a.name = 'Run-agent 2';
 SQL
-data_md5() { $PSQL -c "select md5(coalesce((select string_agg(id||agent_id||status||coalesce(counts::text,'')||coalesce(error_code,'')||criteria_snapshot::text||started_at::text, ',' order by id) from public.search_runs),'') || coalesce((select string_agg(id||search_run_id||source_listing_id||content_hash||rank||listing_snapshot::text, ',' order by id) from public.search_run_results),''))"; }
+data_md5() { $PSQL -c "select md5(coalesce((select string_agg(id::text||agent_id::text||status::text||coalesce(counts::text,'')||coalesce(error_code,'')||criteria_snapshot::text||started_at::text, ',' order by id) from public.search_runs),'') || coalesce((select string_agg(id::text||search_run_id::text||source_listing_id||content_hash||rank::text||listing_snapshot::text, ',' order by id) from public.search_run_results),''))"; }
 before_runs="$(data_md5)"
 npx supabase migration up 2>&1 | grep -E "Applying|ERROR" | sed 's/^/      /'
 check "DEV-005B0-migrasjonen registrert" "$($PSQL -c "select count(*) from supabase_migrations.schema_migrations where version='20261008090000'")" "1"
@@ -143,7 +146,7 @@ insert into public.search_run_results (search_run_id, source, source_listing_id,
  from public.search_runs r, generate_series(1, 2) g;
 update public.search_runs set status = 'completed', counts = '{"matches":2,"needsReview":0}';
 SQL
-data5_md5() { $PSQL -c "select md5(coalesce((select string_agg(id||status||counts::text||criteria_snapshot::text||expires_at::text||rights_profile_version, ',' order by id) from public.search_runs),'') || coalesce((select string_agg(id||source_listing_id||content_hash||rank||expires_at::text, ',' order by id) from public.search_run_results),''))"; }
+data5_md5() { $PSQL -c "select md5(coalesce((select string_agg(id::text||status::text||counts::text||criteria_snapshot::text||expires_at::text||rights_profile_version::text, ',' order by id) from public.search_runs),'') || coalesce((select string_agg(id::text||source_listing_id||content_hash||rank::text||expires_at::text, ',' order by id) from public.search_run_results),''))"; }
 before_e="$(data5_md5)"
 npx supabase migration up 2>&1 | grep -E "Applying|ERROR" | sed 's/^/      /'
 check "synlighetsmigrasjonen registrert" "$($PSQL -c "select count(*) from supabase_migrations.schema_migrations where version='20261009090000'")" "1"
@@ -173,7 +176,7 @@ check "dataene er uendret" "$($PSQL -c "select count(*) from public.search_agent
 
 echo "== 4. Avslutter med ren database fra alle migrasjoner"
 reset_to ""
-check "ren database etter avslutning" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "20261005090000,20261006090000,20261006100000,20261007090000,20261008090000,20261009090000"
+check "ren database etter avslutning" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "$ALL_VERSIONS"
 echo
 [ "$fails" -eq 0 ] && echo "MIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT" || echo "MIGRASJONSKJEDE: $fails KONTROLL(ER) FEILET"
 exit "$fails"

@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# EMULERING: `docker exec <container> pg_dump …` → lokal pg_dump mot den isolerte klyngen (kun for scripts/test-qa-migrations-offline.sh).
+[ "${1:-}" = "ps" ] && { printf "public.ecr.aws/supabase/postgres:EMULATED\npublic.ecr.aws/supabase/gotrue:EMULATED\n"; exit 0; }
+[ "${1:-}" = "exec" ] || exit 2
+shift 2   # exec <container>
+[ "${1:-}" = "pg_dump" ] || exit 2
+shift
+args=(); skip=0
+for a in "$@"; do if [ "$skip" = 1 ]; then skip=0; continue; fi; case "$a" in -U) skip=1 ;; postgres) ;; *) args+=("$a") ;; esac; done
+exec pg_dump "postgres://postgres@127.0.0.1:$EMU_PORT/$EMU_DB" "${args[@]}"
