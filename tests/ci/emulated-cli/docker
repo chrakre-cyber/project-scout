@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-# EMULERING: `docker exec <container> pg_dump …` → lokal pg_dump mot den isolerte klyngen (kun for scripts/test-qa-migrations-offline.sh).
+# EMULERING: `docker ps` og `docker exec <container> pg_dump …` → lokal pg_dump mot den isolerte klyngen (kun for scripts/test-*-offline.sh).
+# Feilinnsetting for pg_dump (kun test): EMU_DUMP_FAULT = empty-fail | partial-fail | empty-ok | partial-ok, fra og med kall nr. EMU_DUMP_FAULT_FROM (standard 1) til og med EMU_DUMP_FAULT_TO (standard uendelig).
+#   empty-fail   ingen stdout, exit 1          partial-fail  delvis stdout (inkl. en gjenkjennbar sentinel-linje), exit 1
+#   empty-ok     ingen stdout, exit 0          partial-ok    avkortet stdout uten avslutningslinjen, exit 0
 [ "${1:-}" = "ps" ] && { printf "public.ecr.aws/supabase/postgres:EMULATED\npublic.ecr.aws/supabase/gotrue:EMULATED\n"; exit 0; }
 [ "${1:-}" = "exec" ] || exit 2
 shift 2   # exec <container>
@@ -7,4 +10,14 @@ shift 2   # exec <container>
 shift
 args=(); skip=0
 for a in "$@"; do if [ "$skip" = 1 ]; then skip=0; continue; fi; case "$a" in -U) skip=1 ;; postgres) ;; *) args+=("$a") ;; esac; done
+n=1
+if [ -n "${EMU_DUMP_CTR:-}" ]; then n=$(( $(cat "$EMU_DUMP_CTR" 2>/dev/null || echo 0) + 1 )); echo "$n" > "$EMU_DUMP_CTR"; fi
+if [ -n "${EMU_DUMP_FAULT:-}" ] && [ "$n" -ge "${EMU_DUMP_FAULT_FROM:-1}" ] && [ "$n" -le "${EMU_DUMP_FAULT_TO:-999999}" ]; then
+  case "$EMU_DUMP_FAULT" in
+    empty-fail) echo "pg_dump: error: simulert feil" >&2; exit 1 ;;
+    empty-ok) exit 0 ;;
+    partial-fail) pg_dump "postgres://postgres@127.0.0.1:$EMU_PORT/$EMU_DB" "${args[@]}" | head -5; echo "CREATE TABLE public.partial_dump_sentinel ("; echo "pg_dump: error: simulert avbrudd" >&2; exit 1 ;;
+    partial-ok) pg_dump "postgres://postgres@127.0.0.1:$EMU_PORT/$EMU_DB" "${args[@]}" | head -8; echo "CREATE TABLE public.partial_dump_sentinel ("; exit 0 ;;
+  esac
+fi
 exec pg_dump "postgres://postgres@127.0.0.1:$EMU_PORT/$EMU_DB" "${args[@]}"

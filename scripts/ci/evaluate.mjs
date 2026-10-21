@@ -13,7 +13,7 @@ export const KNOWN_ISOLATED_ONLY = [
 export const OPEN_CHECKS = ["L4 innlogging via ekte GoTrue", "L5 lagring/gjenåpning via ekte PostgREST (nettleserforløp)", "L6 firmaskille med ekte JWT-er", "Playwright-integrasjon"];
 
 const read = (dir, name) => (existsSync(join(dir, name)) ? readFileSync(join(dir, name), "utf8") : null);
-const rcOf = (dir, name) => { const t = read(dir, name); return t === null ? null : Number.parseInt(t.trim(), 10); };
+const rcOf = (dir, name) => { const t = read(dir, name); if (t === null) return null; const n = Number.parseInt(t.trim(), 10); return Number.isNaN(n) ? null : n; }; // uleselig exit-kode = ikke registrert
 const rcText = (rc) => (rc === 124 ? "tidsavbrudd" : `exit ${rc}`);
 
 export function evaluateL1({ startRc, resetRc, actualVersions, expectedVersions, pgVersion, images, tail }) {
@@ -68,9 +68,12 @@ export function evaluateL7(output, rc, buildRc) {
   const fails = lines.filter((l) => l.startsWith("FAIL ")), skips = lines.filter((l) => l.startsWith("SKIP "));
   const done = lines.some((l) => l.startsWith("SECRET-SKANN: INGEN FUNN"));
   const notes = [`${lines.filter((l) => l.startsWith("PASS ")).length} PASS, ${fails.length} FAIL, ${skips.length} SKIP`, ...fails.slice(0, 20), ...skips.slice(0, 20)];
-  if (buildRc !== null && buildRc !== 0) notes.push(`npm run build feilet (${rcText(buildRc)}): build-artefakter er ikke skannet`);
+  // L7 omfatter skann av build-artefakter: PASS krever en REGISTRERT, vellykket build (exit 0). Manglende registrering er en manglende kontroll, ikke en bestått.
+  const buildOk = buildRc === 0;
+  if (buildRc === null || Number.isNaN(buildRc)) notes.push("build ble ikke registrert: build-artefakter er ikke skannet (manglende kontroll, regnes ikke som bestått)");
+  else if (buildRc !== 0) notes.push(`npm run build feilet (${rcText(buildRc)}): build-artefakter er ikke skannet`);
   if (fails.length > 0 || rc !== 0 && skips.length === 0 && !done) return { status: "FAIL", notes };
-  if (skips.length > 0 || (buildRc !== null && buildRc !== 0)) return { status: "SKIPPED", notes: [...notes, "hoppede kontroller regnes ikke som bestått"] };
+  if (skips.length > 0 || !buildOk) return { status: "SKIPPED", notes: [...notes, "hoppede eller manglende kontroller regnes ikke som bestått"] };
   return { status: done && rc === 0 ? "PASS" : "FAIL", notes };
 }
 

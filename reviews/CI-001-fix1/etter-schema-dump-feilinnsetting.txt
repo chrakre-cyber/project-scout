@@ -1,0 +1,41 @@
+== normal  (modus=ingen, kall 1–0): skript exit=0, L2-vurdering=PASS, FAIL-linjer=0, PASS-linjer=50
+PASS  normal: normaltilfelle: skriptet består (exit 0, sluttmelding)
+PASS  normal: normaltilfelle: L2-vurderingen gir PASS
+== tom dump, exit≠0 (alle dumper)  (modus=empty-fail, kall 1–999999): skript exit=11, L2-vurdering=FAIL, FAIL-linjer=11, PASS-linjer=45
+PASS  tom dump, exit≠0 (alle dumper): migrasjonsskriptet avviser (exit ≠ 0)
+PASS  tom dump, exit≠0 (alle dumper): skriptet sier ikke «ALLE KONTROLLER BESTÅTT»
+PASS  tom dump, exit≠0 (alle dumper): minst én FAIL-linje om schema-dumpen
+PASS  tom dump, exit≠0 (alle dumper): L2-vurderingen avviser (FAIL)
+PASS  tom dump, exit≠0 (alle dumper): ingen rå dump-linje i utskriften
+== delvis dump + exit≠0 (alle dumper)  (modus=partial-fail, kall 1–999999): skript exit=11, L2-vurdering=FAIL, FAIL-linjer=11, PASS-linjer=45
+PASS  delvis dump + exit≠0 (alle dumper): migrasjonsskriptet avviser (exit ≠ 0)
+PASS  delvis dump + exit≠0 (alle dumper): skriptet sier ikke «ALLE KONTROLLER BESTÅTT»
+PASS  delvis dump + exit≠0 (alle dumper): minst én FAIL-linje om schema-dumpen
+PASS  delvis dump + exit≠0 (alle dumper): L2-vurderingen avviser (FAIL)
+PASS  delvis dump + exit≠0 (alle dumper): ingen rå dump-linje i utskriften
+== tom dump, exit 0 (alle dumper)  (modus=empty-ok, kall 1–999999): skript exit=11, L2-vurdering=FAIL, FAIL-linjer=11, PASS-linjer=45
+PASS  tom dump, exit 0 (alle dumper): migrasjonsskriptet avviser (exit ≠ 0)
+PASS  tom dump, exit 0 (alle dumper): skriptet sier ikke «ALLE KONTROLLER BESTÅTT»
+PASS  tom dump, exit 0 (alle dumper): minst én FAIL-linje om schema-dumpen
+PASS  tom dump, exit 0 (alle dumper): L2-vurderingen avviser (FAIL)
+PASS  tom dump, exit 0 (alle dumper): ingen rå dump-linje i utskriften
+== avkortet dump, exit 0 (alle dumper)  (modus=partial-ok, kall 1–999999): skript exit=11, L2-vurdering=FAIL, FAIL-linjer=11, PASS-linjer=45
+PASS  avkortet dump, exit 0 (alle dumper): migrasjonsskriptet avviser (exit ≠ 0)
+PASS  avkortet dump, exit 0 (alle dumper): skriptet sier ikke «ALLE KONTROLLER BESTÅTT»
+PASS  avkortet dump, exit 0 (alle dumper): minst én FAIL-linje om schema-dumpen
+PASS  avkortet dump, exit 0 (alle dumper): L2-vurderingen avviser (FAIL)
+PASS  avkortet dump, exit 0 (alle dumper): ingen rå dump-linje i utskriften
+== bare referansedumpen feiler (tom)  (modus=empty-fail, kall 1–1): skript exit=6, L2-vurdering=FAIL, FAIL-linjer=6, PASS-linjer=45
+PASS  bare referansedumpen feiler (tom): migrasjonsskriptet avviser (exit ≠ 0)
+PASS  bare referansedumpen feiler (tom): skriptet sier ikke «ALLE KONTROLLER BESTÅTT»
+PASS  bare referansedumpen feiler (tom): minst én FAIL-linje om schema-dumpen
+PASS  bare referansedumpen feiler (tom): L2-vurderingen avviser (FAIL)
+PASS  bare referansedumpen feiler (tom): ingen rå dump-linje i utskriften
+== bare én oppgradert dump feiler (delvis)  (modus=partial-fail, kall 3–3): skript exit=2, L2-vurdering=FAIL, FAIL-linjer=2, PASS-linjer=49
+PASS  bare én oppgradert dump feiler (delvis): migrasjonsskriptet avviser (exit ≠ 0)
+PASS  bare én oppgradert dump feiler (delvis): skriptet sier ikke «ALLE KONTROLLER BESTÅTT»
+PASS  bare én oppgradert dump feiler (delvis): minst én FAIL-linje om schema-dumpen
+PASS  bare én oppgradert dump feiler (delvis): L2-vurderingen avviser (FAIL)
+PASS  bare én oppgradert dump feiler (delvis): ingen rå dump-linje i utskriften
+
+SCHEMA-DUMP-FEILINNSETTING: ALLE KONTROLLER BESTÅTT

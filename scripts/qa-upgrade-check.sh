@@ -33,9 +33,35 @@ check() { if [ -n "$2" ] && [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FA
 dump() { docker exec supabase_db_project-scout pg_dump -U postgres --schema-only --no-owner --schema=public --schema=private postgres | grep -v -E '^\\(un)?restrict '; }
 reset_to() { npx supabase db reset ${1:+--version "$1"} 2>&1 | grep -E "Applying migration|ERROR" | sed 's/^/      /'; }
 
+# Schema-dump med KONTROLLERT status (CI-001-FIX1): en dump brukes bare hvis pg_dump lyktes (exit 0 gjennom hele pipelinen), utskriften er ikke tom og den er
+# fullstendig (pg_dump avslutter alltid med «PostgreSQL database dump complete»). Ellers FAIL — og ingen gyldig fil å sammenligne. Rå dumper skrives aldri til
+# standard utskrift (diff-linjer bare med QA_SHOW_DIFF=1 lokalt; aldri i CI).
+dump_to() { # fil
+  local f="$1" tmp rc reason
+  rm -f "$f" "$f.ok"
+  tmp="$(mktemp)"
+  dump > "$tmp" 2>/dev/null; rc=$?
+  if [ "$rc" -ne 0 ]; then reason="exit $rc"
+  elif [ ! -s "$tmp" ]; then reason="tom utskrift"
+  elif ! tail -n 5 "$tmp" | grep -q 'PostgreSQL database dump complete'; then reason="ufullstendig, mangler avslutningslinjen"
+  else mv "$tmp" "$f"; touch "$f.ok"; return 0; fi
+  rm -f "$tmp"
+  echo "FAIL  schema-dump $(basename "$f") er ugyldig ($reason): kan ikke brukes til sammenligning"
+  fails=$((fails+1)); return 1
+}
+same_schema() { # referanse annen pass-tekst fail-tekst
+  if [ ! -f "$1.ok" ] || [ ! -f "$2.ok" ]; then echo "FAIL  $4: ikke sammenlignet (gyldig schema-dump mangler)"; fails=$((fails+1)); return; fi
+  if diff -q "$1" "$2" >/dev/null; then echo "PASS  $3"
+  else
+    echo "FAIL  $4: schema avviker ($(diff "$1" "$2" | grep -c '^[<>]') linjer)"
+    [ "${QA_SHOW_DIFF:-0}" = "1" ] && diff "$1" "$2" | head -20
+    fails=$((fails+1))
+  fi
+}
+
 echo "== 1. Ren oppbygging (alle migrasjoner)"
 reset_to "" 
-dump > "$OUT/schema-clean.sql"
+dump_to "$OUT/schema-clean.sql"
 check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "$ALL_VERSIONS"
 check "seed: to syntetiske firma, ingen brukere eller agenter" "$($PSQL -c "select (select count(*) from public.dealerships)||'/'||(select count(*) from auth.users)||'/'||(select count(*) from public.search_agents)")" "2/0/0"
 check "RLS på alle tabeller i public (ingen uten RLS, minst én tabell)" "$($PSQL -c "select (count(*) filter (where not relrowsecurity))||'/'||(count(*) > 0)::text from pg_class where relnamespace='public'::regnamespace and relkind='r'")" "0/true"
@@ -57,8 +83,8 @@ check "pris i DEV-002-format beholdt (paused, versjon 1)" "$($PSQL -c "select ac
 check "aktive agenter uten krav ble pauset (versjon økt)" "$($PSQL -c "select count(*) from public.search_agents where active")" "0"
 check "ingen agenter slettet" "$($PSQL -c "select count(*) from public.search_agents")" "4"
 check "DEV-004-constraints finnes etter oppgradering" "$($PSQL -c "select count(*) from pg_constraint where conname in ('search_agents_filters_valid','search_agents_assumptions_valid','search_agents_ready_when_active')")" "3"
-dump > "$OUT/schema-upgraded.sql"
-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded.sql" >/dev/null; then echo "PASS  schema etter oppgradering er identisk med ren oppbygging"; else echo "FAIL  schema avviker:"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded.sql" | head -20; fails=$((fails+1)); fi
+dump_to "$OUT/schema-upgraded.sql"
+same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded.sql" "schema etter oppgradering er identisk med ren oppbygging" "schema avviker"
 
 echo "== 2b. Oppgradering fra eksisterende DEV-004-schema (QA-001-FIX) med aktive agenter"
 reset_to "$V004"
@@ -77,8 +103,8 @@ check "ny migrasjon registrert" "$($PSQL -c "select count(*) from supabase_migra
 check "funksjonen har nå F1- og F2-vernene" "$($PSQL -c "select (prosrc like '%insufficient_privilege%' and prosrc like '%repeatable read%')::text from pg_proc where proname='enforce_active_agent_limit'")" "true"
 check "grensen virker etter oppgradering: 11. aktivering avvises av grensetriggeren" "$($PSQL -c "update public.search_agents set active = true where name = 'Pauset utkast'" 2>&1 | grep -c 'active_agent_limit: maks 10 aktive')" "1"
 check "fortsatt nøyaktig 10 aktive etter avvist forsøk" "$($PSQL -c "select count(*) from public.search_agents where active")" "10"
-dump > "$OUT/schema-upgraded-004.sql"
-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-004 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-004):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" | head -20; fails=$((fails+1)); fi
+dump_to "$OUT/schema-upgraded-004.sql"
+same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" "schema etter oppgradering fra DEV-004 er identisk med ren oppbygging" "schema avviker (fra DEV-004)"
 
 echo "== 2c. Oppgradering fra DEV-004 + QA-001-FIX (hosted-tilstand) til DEV-005 med eksisterende agentdata"
 reset_to "$V004FIX"
@@ -98,8 +124,8 @@ check "nye tabeller har RLS" "$($PSQL -c "select count(*) from pg_class where re
 check "søkekjøring kan startes for eksisterende aktiv agent etter oppgradering" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Aktiv 1' returning status")" "running"
 check "aktiv agent kan ikke ha to pågående kjøringer" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Aktiv 1'" 2>&1 | grep -c 'search_runs_one_running_per_agent')" "1"
 $PSQL -c "delete from public.search_runs"
-dump > "$OUT/schema-upgraded-fix.sql"
-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra QA-001-FIX er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra QA-001-FIX):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" | head -20; fails=$((fails+1)); fi
+dump_to "$OUT/schema-upgraded-fix.sql"
+same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" "schema etter oppgradering fra QA-001-FIX er identisk med ren oppbygging" "schema avviker (fra QA-001-FIX)"
 
 echo "== 2d. Oppgradering fra DEV-005-schema (med kjøringer og resultater) til DEV-005B0"
 reset_to "$V005"
@@ -130,8 +156,8 @@ check "synthetic-demo har verifisert profil v1" "$($PSQL -c "select status||'/'|
 check "scout_ingest finnes og kan ikke logge inn" "$($PSQL -c "select rolcanlogin::text from pg_roles where rolname='scout_ingest'")" "false"
 check "ny start fungerer etter oppgradering (får profil og expires_at)" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name='Run-agent 2' returning rights_profile_version||'/'||(expires_at > now())::text")" "1/true"
 $PSQL -c "delete from public.search_run_results; delete from public.search_runs"
-dump > "$OUT/schema-upgraded-005.sql"
-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-005 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-005):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" | head -20; fails=$((fails+1)); fi
+dump_to "$OUT/schema-upgraded-005.sql"
+same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" "schema etter oppgradering fra DEV-005 er identisk med ren oppbygging" "schema avviker (fra DEV-005)"
 
 echo "== 2e. Oppgradering fra DEV-005B0 (0433ccc) til synlighetsrettelsen med eksisterende kjøringer"
 reset_to "$V005B0"
@@ -160,8 +186,8 @@ delete from public.search_run_results; delete from public.search_runs;
 insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Synlighet-agent' returning (expires_at = (select effective_to from private.provider_rights_profiles where provider = 'synthetic-demo' and version = 1))::text;
 SQL
 )" "true"
-dump > "$OUT/schema-upgraded-005b0.sql"
-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-005B0 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-005B0):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" | head -20; fails=$((fails+1)); fi
+dump_to "$OUT/schema-upgraded-005b0.sql"
+same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" "schema etter oppgradering fra DEV-005B0 er identisk med ren oppbygging" "schema avviker (fra DEV-005B0)"
 
 echo "== 3. Feilscenario: DEV-002-data som bryter DEV-004-reglene → atomisk feil"
 reset_to "$V002"

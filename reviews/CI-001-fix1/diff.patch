@@ -1,0 +1,166 @@
+diff --git a/scripts/ci/evaluate.mjs b/scripts/ci/evaluate.mjs
+index ddcc7fd..894f817 100644
+--- a/scripts/ci/evaluate.mjs
++++ b/scripts/ci/evaluate.mjs
+@@ -13,7 +13,7 @@ export const KNOWN_ISOLATED_ONLY = [
+ export const OPEN_CHECKS = ["L4 innlogging via ekte GoTrue", "L5 lagring/gjenåpning via ekte PostgREST (nettleserforløp)", "L6 firmaskille med ekte JWT-er", "Playwright-integrasjon"];
+ 
+ const read = (dir, name) => (existsSync(join(dir, name)) ? readFileSync(join(dir, name), "utf8") : null);
+-const rcOf = (dir, name) => { const t = read(dir, name); return t === null ? null : Number.parseInt(t.trim(), 10); };
++const rcOf = (dir, name) => { const t = read(dir, name); if (t === null) return null; const n = Number.parseInt(t.trim(), 10); return Number.isNaN(n) ? null : n; }; // uleselig exit-kode = ikke registrert
+ const rcText = (rc) => (rc === 124 ? "tidsavbrudd" : `exit ${rc}`);
+ 
+ export function evaluateL1({ startRc, resetRc, actualVersions, expectedVersions, pgVersion, images, tail }) {
+@@ -68,9 +68,12 @@ export function evaluateL7(output, rc, buildRc) {
+   const fails = lines.filter((l) => l.startsWith("FAIL ")), skips = lines.filter((l) => l.startsWith("SKIP "));
+   const done = lines.some((l) => l.startsWith("SECRET-SKANN: INGEN FUNN"));
+   const notes = [`${lines.filter((l) => l.startsWith("PASS ")).length} PASS, ${fails.length} FAIL, ${skips.length} SKIP`, ...fails.slice(0, 20), ...skips.slice(0, 20)];
+-  if (buildRc !== null && buildRc !== 0) notes.push(`npm run build feilet (${rcText(buildRc)}): build-artefakter er ikke skannet`);
++  // L7 omfatter skann av build-artefakter: PASS krever en REGISTRERT, vellykket build (exit 0). Manglende registrering er en manglende kontroll, ikke en bestått.
++  const buildOk = buildRc === 0;
++  if (buildRc === null || Number.isNaN(buildRc)) notes.push("build ble ikke registrert: build-artefakter er ikke skannet (manglende kontroll, regnes ikke som bestått)");
++  else if (buildRc !== 0) notes.push(`npm run build feilet (${rcText(buildRc)}): build-artefakter er ikke skannet`);
+   if (fails.length > 0 || rc !== 0 && skips.length === 0 && !done) return { status: "FAIL", notes };
+-  if (skips.length > 0 || (buildRc !== null && buildRc !== 0)) return { status: "SKIPPED", notes: [...notes, "hoppede kontroller regnes ikke som bestått"] };
++  if (skips.length > 0 || !buildOk) return { status: "SKIPPED", notes: [...notes, "hoppede eller manglende kontroller regnes ikke som bestått"] };
+   return { status: done && rc === 0 ? "PASS" : "FAIL", notes };
+ }
+ 
+diff --git a/scripts/qa-upgrade-check.sh b/scripts/qa-upgrade-check.sh
+index c4e539e..b25a179 100755
+--- a/scripts/qa-upgrade-check.sh
++++ b/scripts/qa-upgrade-check.sh
+@@ -33,9 +33,35 @@ check() { if [ -n "$2" ] && [ "$2" = "$3" ]; then echo "PASS  $1"; else echo "FA
+ dump() { docker exec supabase_db_project-scout pg_dump -U postgres --schema-only --no-owner --schema=public --schema=private postgres | grep -v -E '^\\(un)?restrict '; }
+ reset_to() { npx supabase db reset ${1:+--version "$1"} 2>&1 | grep -E "Applying migration|ERROR" | sed 's/^/      /'; }
+ 
++# Schema-dump med KONTROLLERT status (CI-001-FIX1): en dump brukes bare hvis pg_dump lyktes (exit 0 gjennom hele pipelinen), utskriften er ikke tom og den er
++# fullstendig (pg_dump avslutter alltid med «PostgreSQL database dump complete»). Ellers FAIL — og ingen gyldig fil å sammenligne. Rå dumper skrives aldri til
++# standard utskrift (diff-linjer bare med QA_SHOW_DIFF=1 lokalt; aldri i CI).
++dump_to() { # fil
++  local f="$1" tmp rc reason
++  rm -f "$f" "$f.ok"
++  tmp="$(mktemp)"
++  dump > "$tmp" 2>/dev/null; rc=$?
++  if [ "$rc" -ne 0 ]; then reason="exit $rc"
++  elif [ ! -s "$tmp" ]; then reason="tom utskrift"
++  elif ! tail -n 5 "$tmp" | grep -q 'PostgreSQL database dump complete'; then reason="ufullstendig, mangler avslutningslinjen"
++  else mv "$tmp" "$f"; touch "$f.ok"; return 0; fi
++  rm -f "$tmp"
++  echo "FAIL  schema-dump $(basename "$f") er ugyldig ($reason): kan ikke brukes til sammenligning"
++  fails=$((fails+1)); return 1
++}
++same_schema() { # referanse annen pass-tekst fail-tekst
++  if [ ! -f "$1.ok" ] || [ ! -f "$2.ok" ]; then echo "FAIL  $4: ikke sammenlignet (gyldig schema-dump mangler)"; fails=$((fails+1)); return; fi
++  if diff -q "$1" "$2" >/dev/null; then echo "PASS  $3"
++  else
++    echo "FAIL  $4: schema avviker ($(diff "$1" "$2" | grep -c '^[<>]') linjer)"
++    [ "${QA_SHOW_DIFF:-0}" = "1" ] && diff "$1" "$2" | head -20
++    fails=$((fails+1))
++  fi
++}
++
+ echo "== 1. Ren oppbygging (alle migrasjoner)"
+ reset_to "" 
+-dump > "$OUT/schema-clean.sql"
++dump_to "$OUT/schema-clean.sql"
+ check "migrasjoner anvendt i rekkefølge" "$($PSQL -c "select string_agg(version, ',' order by version) from supabase_migrations.schema_migrations")" "$ALL_VERSIONS"
+ check "seed: to syntetiske firma, ingen brukere eller agenter" "$($PSQL -c "select (select count(*) from public.dealerships)||'/'||(select count(*) from auth.users)||'/'||(select count(*) from public.search_agents)")" "2/0/0"
+ check "RLS på alle tabeller i public (ingen uten RLS, minst én tabell)" "$($PSQL -c "select (count(*) filter (where not relrowsecurity))||'/'||(count(*) > 0)::text from pg_class where relnamespace='public'::regnamespace and relkind='r'")" "0/true"
+@@ -57,8 +83,8 @@ check "pris i DEV-002-format beholdt (paused, versjon 1)" "$($PSQL -c "select ac
+ check "aktive agenter uten krav ble pauset (versjon økt)" "$($PSQL -c "select count(*) from public.search_agents where active")" "0"
+ check "ingen agenter slettet" "$($PSQL -c "select count(*) from public.search_agents")" "4"
+ check "DEV-004-constraints finnes etter oppgradering" "$($PSQL -c "select count(*) from pg_constraint where conname in ('search_agents_filters_valid','search_agents_assumptions_valid','search_agents_ready_when_active')")" "3"
+-dump > "$OUT/schema-upgraded.sql"
+-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded.sql" >/dev/null; then echo "PASS  schema etter oppgradering er identisk med ren oppbygging"; else echo "FAIL  schema avviker:"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded.sql" | head -20; fails=$((fails+1)); fi
++dump_to "$OUT/schema-upgraded.sql"
++same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded.sql" "schema etter oppgradering er identisk med ren oppbygging" "schema avviker"
+ 
+ echo "== 2b. Oppgradering fra eksisterende DEV-004-schema (QA-001-FIX) med aktive agenter"
+ reset_to "$V004"
+@@ -77,8 +103,8 @@ check "ny migrasjon registrert" "$($PSQL -c "select count(*) from supabase_migra
+ check "funksjonen har nå F1- og F2-vernene" "$($PSQL -c "select (prosrc like '%insufficient_privilege%' and prosrc like '%repeatable read%')::text from pg_proc where proname='enforce_active_agent_limit'")" "true"
+ check "grensen virker etter oppgradering: 11. aktivering avvises av grensetriggeren" "$($PSQL -c "update public.search_agents set active = true where name = 'Pauset utkast'" 2>&1 | grep -c 'active_agent_limit: maks 10 aktive')" "1"
+ check "fortsatt nøyaktig 10 aktive etter avvist forsøk" "$($PSQL -c "select count(*) from public.search_agents where active")" "10"
+-dump > "$OUT/schema-upgraded-004.sql"
+-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-004 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-004):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" | head -20; fails=$((fails+1)); fi
++dump_to "$OUT/schema-upgraded-004.sql"
++same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-004.sql" "schema etter oppgradering fra DEV-004 er identisk med ren oppbygging" "schema avviker (fra DEV-004)"
+ 
+ echo "== 2c. Oppgradering fra DEV-004 + QA-001-FIX (hosted-tilstand) til DEV-005 med eksisterende agentdata"
+ reset_to "$V004FIX"
+@@ -98,8 +124,8 @@ check "nye tabeller har RLS" "$($PSQL -c "select count(*) from pg_class where re
+ check "søkekjøring kan startes for eksisterende aktiv agent etter oppgradering" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Aktiv 1' returning status")" "running"
+ check "aktiv agent kan ikke ha to pågående kjøringer" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Aktiv 1'" 2>&1 | grep -c 'search_runs_one_running_per_agent')" "1"
+ $PSQL -c "delete from public.search_runs"
+-dump > "$OUT/schema-upgraded-fix.sql"
+-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra QA-001-FIX er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra QA-001-FIX):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" | head -20; fails=$((fails+1)); fi
++dump_to "$OUT/schema-upgraded-fix.sql"
++same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-fix.sql" "schema etter oppgradering fra QA-001-FIX er identisk med ren oppbygging" "schema avviker (fra QA-001-FIX)"
+ 
+ echo "== 2d. Oppgradering fra DEV-005-schema (med kjøringer og resultater) til DEV-005B0"
+ reset_to "$V005"
+@@ -130,8 +156,8 @@ check "synthetic-demo har verifisert profil v1" "$($PSQL -c "select status||'/'|
+ check "scout_ingest finnes og kan ikke logge inn" "$($PSQL -c "select rolcanlogin::text from pg_roles where rolname='scout_ingest'")" "false"
+ check "ny start fungerer etter oppgradering (får profil og expires_at)" "$($PSQL -c "insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name='Run-agent 2' returning rights_profile_version||'/'||(expires_at > now())::text")" "1/true"
+ $PSQL -c "delete from public.search_run_results; delete from public.search_runs"
+-dump > "$OUT/schema-upgraded-005.sql"
+-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-005 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-005):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" | head -20; fails=$((fails+1)); fi
++dump_to "$OUT/schema-upgraded-005.sql"
++same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005.sql" "schema etter oppgradering fra DEV-005 er identisk med ren oppbygging" "schema avviker (fra DEV-005)"
+ 
+ echo "== 2e. Oppgradering fra DEV-005B0 (0433ccc) til synlighetsrettelsen med eksisterende kjøringer"
+ reset_to "$V005B0"
+@@ -160,8 +186,8 @@ delete from public.search_run_results; delete from public.search_runs;
+ insert into public.search_runs (agent_id, request_token, provider) select id, gen_random_uuid(), 'synthetic-demo' from public.search_agents where name = 'Synlighet-agent' returning (expires_at = (select effective_to from private.provider_rights_profiles where provider = 'synthetic-demo' and version = 1))::text;
+ SQL
+ )" "true"
+-dump > "$OUT/schema-upgraded-005b0.sql"
+-if diff -q "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" >/dev/null; then echo "PASS  schema etter oppgradering fra DEV-005B0 er identisk med ren oppbygging"; else echo "FAIL  schema avviker (fra DEV-005B0):"; diff "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" | head -20; fails=$((fails+1)); fi
++dump_to "$OUT/schema-upgraded-005b0.sql"
++same_schema "$OUT/schema-clean.sql" "$OUT/schema-upgraded-005b0.sql" "schema etter oppgradering fra DEV-005B0 er identisk med ren oppbygging" "schema avviker (fra DEV-005B0)"
+ 
+ echo "== 3. Feilscenario: DEV-002-data som bryter DEV-004-reglene → atomisk feil"
+ reset_to "$V002"
+diff --git a/scripts/test-qa-migrations-offline.sh b/scripts/test-qa-migrations-offline.sh
+index 4abcf99..47446ae 100755
+--- a/scripts/test-qa-migrations-offline.sh
++++ b/scripts/test-qa-migrations-offline.sh
+@@ -15,5 +15,6 @@ RUN "$PGBIN/initdb" -D "$TMP/data" -A trust -U postgres --no-sync >/dev/null
+ RUN "$PGBIN/pg_ctl" -D "$TMP/data" -o "-p $PORT -c listen_addresses=127.0.0.1 -c unix_socket_directories=$TMP -c fsync=off" -l "$TMP/log" -w start >/dev/null
+ "$PGBIN/psql" "postgres://postgres@127.0.0.1:$PORT/postgres" -q -At -c "create role anon nologin noinherit; create role authenticated nologin noinherit; create role service_role nologin noinherit bypassrls" >/dev/null
+ export EMU_PORT="$PORT" EMU_DB=scout_emu EMU_MIG="$ROOT/supabase/migrations" EMU_SEED="$ROOT/supabase/seed.sql" EMU_SHIM="$ROOT/tests/db/support/supabase-shim.sql" EMU_ORIG_PATH="$PATH"
+-export PATH="$ROOT/tests/ci/emulated-cli:$PGBIN:$PATH" QA_OUT="$TMP"
+-bash scripts/qa-upgrade-check.sh
++export PATH="$ROOT/tests/ci/emulated-cli:$PGBIN:$PATH" QA_OUT="$TMP" EMU_DUMP_CTR="$TMP/dumpcount"
++# QA_SCRIPT: alternativt skript (f.eks. forrige versjon for før-/etter-sammenligning). EMU_DUMP_FAULT*: feilinnsetting for pg_dump (se tests/ci/emulated-cli/docker).
++bash "${QA_SCRIPT:-scripts/qa-upgrade-check.sh}"
+diff --git a/tests/ci/emulated-cli/docker b/tests/ci/emulated-cli/docker
+index efe02e8..052a79c 100755
+--- a/tests/ci/emulated-cli/docker
++++ b/tests/ci/emulated-cli/docker
+@@ -1,5 +1,8 @@
+ #!/usr/bin/env bash
+-# EMULERING: `docker exec <container> pg_dump …` → lokal pg_dump mot den isolerte klyngen (kun for scripts/test-qa-migrations-offline.sh).
++# EMULERING: `docker ps` og `docker exec <container> pg_dump …` → lokal pg_dump mot den isolerte klyngen (kun for scripts/test-*-offline.sh).
++# Feilinnsetting for pg_dump (kun test): EMU_DUMP_FAULT = empty-fail | partial-fail | empty-ok | partial-ok, fra og med kall nr. EMU_DUMP_FAULT_FROM (standard 1) til og med EMU_DUMP_FAULT_TO (standard uendelig).
++#   empty-fail   ingen stdout, exit 1          partial-fail  delvis stdout (inkl. en gjenkjennbar sentinel-linje), exit 1
++#   empty-ok     ingen stdout, exit 0          partial-ok    avkortet stdout uten avslutningslinjen, exit 0
+ [ "${1:-}" = "ps" ] && { printf "public.ecr.aws/supabase/postgres:EMULATED\npublic.ecr.aws/supabase/gotrue:EMULATED\n"; exit 0; }
+ [ "${1:-}" = "exec" ] || exit 2
+ shift 2   # exec <container>
+@@ -7,4 +10,14 @@ shift 2   # exec <container>
+ shift
+ args=(); skip=0
+ for a in "$@"; do if [ "$skip" = 1 ]; then skip=0; continue; fi; case "$a" in -U) skip=1 ;; postgres) ;; *) args+=("$a") ;; esac; done
++n=1
++if [ -n "${EMU_DUMP_CTR:-}" ]; then n=$(( $(cat "$EMU_DUMP_CTR" 2>/dev/null || echo 0) + 1 )); echo "$n" > "$EMU_DUMP_CTR"; fi
++if [ -n "${EMU_DUMP_FAULT:-}" ] && [ "$n" -ge "${EMU_DUMP_FAULT_FROM:-1}" ] && [ "$n" -le "${EMU_DUMP_FAULT_TO:-999999}" ]; then
++  case "$EMU_DUMP_FAULT" in
++    empty-fail) echo "pg_dump: error: simulert feil" >&2; exit 1 ;;
++    empty-ok) exit 0 ;;
++    partial-fail) pg_dump "postgres://postgres@127.0.0.1:$EMU_PORT/$EMU_DB" "${args[@]}" | head -5; echo "CREATE TABLE public.partial_dump_sentinel ("; echo "pg_dump: error: simulert avbrudd" >&2; exit 1 ;;
++    partial-ok) pg_dump "postgres://postgres@127.0.0.1:$EMU_PORT/$EMU_DB" "${args[@]}" | head -8; echo "CREATE TABLE public.partial_dump_sentinel ("; exit 0 ;;
++  esac
++fi
+ exec pg_dump "postgres://postgres@127.0.0.1:$EMU_PORT/$EMU_DB" "${args[@]}"
