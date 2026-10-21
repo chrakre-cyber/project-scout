@@ -104,7 +104,7 @@ describe("testfilene og identitetslisten henger sammen (statisk kildetekst)", ()
       expect(text).not.toMatch(/service_role|SERVICE_ROLE|sb_secret/i);
       expect(text).not.toMatch(/console\.(log|info|error|debug)/);
       expect(text).not.toMatch(/\bskipIf\b|\bit\.skip\b|\bdescribe\.skip\b|\.todo\(/);
-      expect(text).toContain("assertLocal()");
+      expect(text).toContain("assertTarget()");   // HOST-001: samme sperre; standard (uten SCOUT_HOSTED_TESTS=1) er assertLocal() — se tests/hosted-static.test.ts
     }
     const sh = readFileSync(join(__dirname, "../scripts/test-db.sh"), "utf8");
     expect(sh).toMatch(/export SUPABASE_TEST_JWT_SECRET="\$\(get JWT_SECRET\)"/);

@@ -7,6 +7,7 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Client } from "pg";
+import { parseHostedTarget } from "../../scripts/hosted/target.mjs";
 
 export const env = {
   url: process.env.SUPABASE_TEST_URL ?? "",
@@ -20,6 +21,17 @@ export function assertLocal() {
     const host = new URL(u).hostname;
     if (host !== "127.0.0.1" && host !== "localhost") throw new Error(`Nekter å kjøre mot ikke-lokal host ${host}`);
   }
+}
+
+/**
+ * HOST-001 (forberedelse; ikke kjørt mot hosted): mål-sperre for testene som kan kjøres mot ETT hosted TESTPROSJEKT (tests/db/auth-gotrue.test.ts og rest-isolation.test.ts).
+ * Standard er uendret: uten SCOUT_HOSTED_TESTS=1 gjelder `assertLocal()` (kun 127.0.0.1/localhost). Hosted-modus er separat og uttrykkelig: mål, bekreftelse, modus og trinn
+ * (SCOUT_HOSTED_STAGE=h3-api) valideres mot samme prosjekt, ellers kastes en feil uten å skrive ut adresser eller nøkler. `assertLocal()` er ikke endret.
+ */
+export function assertTarget() {
+  if (process.env.SCOUT_HOSTED_TESTS !== "1") return assertLocal();
+  if (!env.url || !env.key || !env.dbUrl) throw new Error("Mangler SUPABASE_TEST_* for hosted-modus.");
+  parseHostedTarget(process.env, { stage: "h3-api" });
 }
 
 export async function adminDb(): Promise<Client> {

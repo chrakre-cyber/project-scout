@@ -8,7 +8,7 @@
 import { createHmac } from "node:crypto";
 import type { Client } from "pg";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { adminDb, assertLocal, cleanup, createFirmWithMember, createUser, env, signIn, type TestUser } from "./harness";
+import { adminDb, assertTarget, cleanup, createFirmWithMember, createUser, env, signIn, type TestUser } from "./harness";
 
 let db: Client;
 let a: TestUser, loner: TestUser;
@@ -35,7 +35,7 @@ const password = (email: string, pw: string) => http("POST", "/auth/v1/token?gra
 const asObj = (j: unknown) => (j ?? {}) as Record<string, unknown>;
 
 beforeAll(async () => {
-  assertLocal();
+  assertTarget();
   db = await adminDb();
   a = await createUser(db, "gotrue-a");
   loner = await createUser(db, "gotrue-nofirm");

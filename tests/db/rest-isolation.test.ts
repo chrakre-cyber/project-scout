@@ -13,7 +13,7 @@ import type { SearchSpecJson } from "@/domain/search-v2/serialization";
 import { EXAMPLES } from "@/server/search-examples";
 import { parseSearchFormValues } from "@/server/search-form";
 import { dealerInput } from "../fixtures/economics-005c";
-import { adminDb, assertLocal, cleanup, createFirmWithMember, createUser, env, signIn, type TestUser } from "./harness";
+import { adminDb, assertTarget, cleanup, createFirmWithMember, createUser, env, signIn, type TestUser } from "./harness";
 
 type J = Record<string, unknown>;
 let db: Client;
@@ -64,7 +64,7 @@ const count = async (sql: string, params: unknown[] = []) => (await db.query(sql
 const noTraceOfOther = (text: string, ...ids: string[]) => { for (const id of ids) expect(text).not.toContain(id); };
 
 beforeAll(async () => {
-  assertLocal();
+  assertTarget();
   db = await adminDb();
   a = await createUser(db, "rest-a"); b = await createUser(db, "rest-b"); loner = await createUser(db, "rest-nofirm");
   users.push(a, b, loner);
