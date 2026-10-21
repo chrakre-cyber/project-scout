@@ -15,7 +15,7 @@
    "ødelagt sesjonscookie: behandles som utlogget (beskyttet side nektes, «Logg inn» vises), ingen krasj",
    "utlogging: sendes til /login og sesjonscookiene er fjernet",
    "etter utlogging: beskyttet side nektes (anonym landing med «Logg inn»)",
-   "gjenbruk av gammel sesjon etter utlogging avvises av GoTrue (sesjonen er revokert server-side) — emulatoren validerer bare JWT-signatur/utløp og har ingen sesjonsrevokering; krever ekte GoTrue",
+   "gjenbruk av gammel sesjon etter utlogging avvises av GoTrue (sesjonen er revokert server-side)",
    "bruker uten firma: kan logge inn, vises som «ikke knyttet til firma», og ser ingen data fra andre firma",
    "ingen JavaScript-feil i konsollen under hele flyten"
   ],
