@@ -1,0 +1,43 @@
+# Lokal Supabase (L1–L3 og L7) på en standard GitHub-hostet Ubuntu-runner.
+# - Kun manuell start (workflow_dispatch). Ingen push-/PR-/schedule-triggere, ingen inndata.
+# - Ingen secrets, ingen hosted Supabase, ingen deploy, ingen betalte (larger) runnere, ingen tredjeparts-actions og ingen artefakter.
+# - Repoet er offentlig: logg og jobbsammendrag er offentlige. All utskrift går gjennom scripts/ci/sanitize.mjs (se scripts/ci-supabase-local.sh).
+# - L4–L6 (ekte GoTrue/PostgREST via appen, Playwright) og hosted Supabase (Trinn H) er IKKE del av dette workflowet og står åpne.
+name: Supabase lokal kontroll (L1–L3, L7)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: supabase-local
+  cancel-in-progress: false
+
+jobs:
+  local-supabase:
+    name: L1–L3 og L7 mot lokal Supabase
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      SUPABASE_TELEMETRY_DISABLED: "1"
+      DO_NOT_TRACK: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - name: Hent koden på kjørt commit (fullt historikk for secret-skann; ingen action, ingen innloggingsdata lagres)
+        run: |
+          git init -q .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch -q --no-tags origin "${GITHUB_SHA}"
+          git checkout -q --detach FETCH_HEAD
+
+      - name: Installer avhengigheter fra låsefilen
+        run: npm ci --no-audit --no-fund --loglevel=error > /dev/null
+
+      - name: L1–L3 og L7 (sanert rapport er eneste utskrift)
+        run: bash scripts/ci-supabase-local.sh
+
+      - name: Stopp lokal stakk
+        if: always()
+        run: npx supabase stop --no-backup > /dev/null 2>&1 || true
