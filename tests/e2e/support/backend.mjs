@@ -5,16 +5,20 @@
 // Skriptene skriver «MODUS: …» først i utskriften så ingen kan forveksle de to.
 import { startMiniSupabase } from "./mini-supabase.mjs";
 import { preflightTargets } from "./preflight.mjs";
+import { startRequestObserver } from "./request-observer.mjs";
 
 export const MODE = process.env.E2E_SUPABASE_MODE === "real" ? "real" : "emulator";
 
-export async function connectBackend({ db, dbUrl, users, port, pgModulePath }) {
+// `observe`: skrivekall fra appen observeres av en gjennomsendingsproxy (request-observer.mjs). I ekte modus er den alltid på når den bes om; i emulatormodus bare med E2E_REQUEST_OBSERVER=1
+// (kryssjekk mot emulatorens egen logg). Appen får proxyens URL; innholdet sendes uendret videre.
+export async function connectBackend({ db, dbUrl, users, port, pgModulePath, observe = false }) {
   // Ekstra vern (skriptene forhåndsvalidererer allerede før databaseklienten opprettes): samme felles validering, her mot det dbUrl som faktisk brukes.
   preflightTargets({ mode: MODE, env: { ...process.env, SUPABASE_TEST_DB_URL: dbUrl } });
   console.log(`MODUS: ${MODE === "real" ? "EKTE lokal Supabase (GoTrue + PostgREST)" : "EMULATOR (mini-supabase over isolert PostgreSQL) — IKKE Supabase"}`);
   if (MODE === "emulator") {
     const emu = await startMiniSupabase({ dbUrl, users, port, pgModulePath });
-    return { mode: MODE, url: emu.url, publishableKey: "test-publishable-key-not-secret", log: emu.log, close: () => emu.close(), cleanup: async () => {} };
+    const obs = observe && process.env.E2E_REQUEST_OBSERVER === "1" ? await startRequestObserver({ target: emu.url }) : null;
+    return { mode: MODE, url: obs ? obs.url : emu.url, publishableKey: "test-publishable-key-not-secret", log: emu.log, observer: obs, close: async () => { await obs?.close(); await emu.close(); }, cleanup: async () => {} };
   }
   const url = process.env.SUPABASE_TEST_URL, key = process.env.SUPABASE_TEST_PUBLISHABLE_KEY; // validert av preflightTargets over
   for (const u of users) {
@@ -22,8 +26,9 @@ export async function connectBackend({ db, dbUrl, users, port, pgModulePath }) {
       select $1::text, $2::uuid, jsonb_build_object('sub', $1::text, 'email', $3::text), 'email', now(), now(), now()
       where not exists (select 1 from auth.identities where user_id = $2::uuid)`, [u.id, u.id, u.email]);
   }
+  const obs = observe ? await startRequestObserver({ target: url }) : null; // lokalt mål er allerede validert; observatøren validerer på nytt og binder til loopback
   return {
-    mode: MODE, url, publishableKey: key, log: null, close: async () => {},
+    mode: MODE, url: obs ? obs.url : url, publishableKey: key, log: null, observer: obs, close: async () => { await obs?.close(); },
     cleanup: async ({ firmIds, users: us }) => {
       const q = (sql, p) => db.query(sql, p).catch(() => {});
       await q("delete from public.dealer_economics_inputs where dealership_id = any($1::uuid[])", [firmIds]);

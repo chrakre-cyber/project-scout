@@ -87,10 +87,12 @@ describe("skriptene: moduser, delvis dekning og avgrensning", () => {
     }
     expect(read("tests/e2e/support/backend.mjs")).toMatch(/MODUS: \$\{MODE === "real"/);
   });
-  it("econ006: emulatorens forespørselslogg-sjekk hoppes over (HOPP) i ekte modus — ikke stilltiende fjernet — og kjører i emulatormodus", () => {
+  it("econ006: J3 er en faktisk check() i begge moduser (emulatorlogg i emulatormodus, observerende proxy i ekte modus) — ingen skip() av J3 lenger", () => {
     const c = read("tests/e2e/econ006.e2e.mjs");
-    expect(c).toMatch(/if \(emu\.log\) \{[\s\S]*?check\("J3: appen sendte aldri dealership_id/);
-    expect(c).toMatch(/\} else \{\s*skip\("J3: appen sendte aldri dealership_id[^"]*", "ekte modus har ingen forespørselslogg/);
+    expect(c).toMatch(/if \(emu\.log\) \{[\s\S]*?check\("J3: appen sendte aldri dealership_id[^"]*", writes\.length >= 1/);
+    expect(c).toMatch(/if \(emu\.mode === "real"\) \{[\s\S]*?j3Verdict\(emu\.observer\.summary\(\)\)[\s\S]*?"observatør mangler"[\s\S]*?check\("J3: appen sendte aldri dealership_id[^"]*", v\.ok, v\.detail\)/);
+    expect(c).not.toMatch(/skip\("J3/);
+    expect(c).toMatch(/observe: true/);
   });
   it("econ006d bygger den uendrede appen mot valgt backend før start (ingen avhengighet av en eldre .next)", () => {
     const c = code("tests/e2e/econ006d.e2e.mjs");

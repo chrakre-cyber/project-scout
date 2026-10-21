@@ -50,3 +50,11 @@ export function preflightTargets({ mode = process.env.E2E_SUPABASE_MODE === "rea
   if (typeof env.SUPABASE_TEST_PUBLISHABLE_KEY !== "string" || env.SUPABASE_TEST_PUBLISHABLE_KEY.trim() === "") throw new TargetError("publishable key (SUPABASE_TEST_PUBLISHABLE_KEY) mangler");
   return { mode, dbUrl, apiUrl, hasPublishableKey: true };
 }
+
+/** Observatørens mål (CI-001, J3): bare lokalt http-mål (127.0.0.1/localhost, uten innlogging i adressen). Kaster TargetError uten å skrive ut adressen. */
+export function assertLocalHttpTarget(label, value) {
+  const v = parseTarget(label, value, ["http:"]);
+  const u = new URL(v);
+  if (u.username || u.password) throw new TargetError(`${label} har innlogging i adressen; avvist`);
+  return v;
+}

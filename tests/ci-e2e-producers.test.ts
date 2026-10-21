@@ -1,5 +1,7 @@
 // Produsent–konsument-kontrakt: sjekkidentitetene i scripts/ci/e2e-plan.json må stemme med check()/skip()-kallene i selve nettleserskriptene.
 // Testgrunnlaget her leses fra skriptenes kildekode, ikke fra planen vurdereren bruker (avvik gjorde at et vellykket ekte L4-løp ble FAIL).
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { evaluateE2E } from "../scripts/ci/evaluate.mjs";
 import { normalizeCheckName } from "../scripts/ci/e2e-names.mjs";
@@ -15,7 +17,9 @@ describe.each(KEYS)("%s: planens sjekkidentiteter mot produsenten", (k) => {
     expect(orphan).toEqual([]);
   });
   it("hvert check()/skip()-kall dekkes av planen (ingen uplanlagt sjekk som ville gi UVENTET)", () => {
-    const orphan = P.filter((p) => !planNames(k).some((n) => p.regex.test(n))).map((p) => `l.${p.line}: ${p.literal}`);
+    // Unntak: to kryssjekker som bare finnes i emulatormodus med E2E_REQUEST_OBSERVER=1 (observatør mot emulatorlogg); de kjøres aldri i ekte modus (se statisk test under).
+    const EMULATOR_ONLY = /^kryssjekk: observatøren og emulatorloggen ser de samme skrivekallene|^kryssjekk: observatørens J3-utfall er lik emulatorens$/;
+    const orphan = P.filter((p) => !planNames(k).some((n) => p.regex.test(n)) && !(k === "econ006" && EMULATOR_ONLY.test(p.literal))).map((p) => `l.${p.line}: ${p.literal}`);
     expect(orphan).toEqual([]);
   });
   it("ingen planlagt identitet inneholder en HOPP-/FEIL-begrunnelse (skip()-årsaken er et eget argument)", () => {
@@ -51,12 +55,22 @@ describe("rapport med skriptets egne navn", () => {
     expect(evaluateE2E("l4", mk(real.slice(0, -5)), 0).status).toBe("FAIL");
   });
   it("econ006: J3 som HOPP med produsentens egen årsak ⇒ DELVIS (identiteten er J3-navnet uten årsak)", () => {
-    const j3 = producers("econ006").find((p) => p.kind === "skip")!.literal;
+    const j3 = producers("econ006").find((p) => p.kind === "check" && p.literal.startsWith("J3: appen sendte aldri dealership_id"))!.literal;
     expect(j3).toBe(J3);
     expect(PLAN.econ006.partialInReal).toEqual([J3]);
     const r = e2eOutput("econ006", { skip: [J3] });
     expect(evaluateE2E("econ006", r.out, r.rc).status).toBe("PARTIAL");
     const ok = e2eOutput("econ006", {});
     expect(evaluateE2E("econ006", ok.out, ok.rc).status).toBe("PASS");
+  });
+});
+
+describe("econ006: observatørens kryssjekker kjøres bare i emulatormodus", () => {
+  it("kryssjekkene ligger i grenen `else if (emu.observer)` etter ekte-modus-grenen, ikke i ekte modus", () => {
+    const c = readFileSync(join(__dirname, "e2e/econ006.e2e.mjs"), "utf8");
+    const real = c.indexOf('if (emu.mode === "real") {'), other = c.indexOf("} else if (emu.observer) {"), cross = c.indexOf('check("kryssjekk:');
+    expect(real).toBeGreaterThan(-1);
+    expect(other).toBeGreaterThan(real);
+    expect(cross).toBeGreaterThan(other);
   });
 });

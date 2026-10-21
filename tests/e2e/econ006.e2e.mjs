@@ -20,6 +20,7 @@ import { buildPatchedCopy } from "./support/patched-build.mjs";
 import { defaultEpoch, epochIso, expectationForDefault, expiredEpoch, freshEpoch, labelFor } from "./support/synthetic-epoch.mjs";
 import { FX_RATE, LISTINGS, TRANSPORT_NOK, expected, nok } from "./support/econ006-reference.mjs";
 import { preflightTargets } from "./support/preflight.mjs";
+import { j3Verdict } from "./support/request-observer.mjs";
 preflightTargets(); // CI-001-FIX3: avvis manglende/ugyldig/ikke-lokal database og API FØR databaseklienten opprettes (null DB-kall før avslag)
 
 const require = createRequire(import.meta.url);
@@ -31,7 +32,6 @@ const EMU_PORT = 54399, MAIN = 3100, FAILP = 3101, DENY_ECON = 3102, DENY_LID = 
 const EPOCH = freshEpoch(), OLD_EPOCH = expiredEpoch();
 const base = (p) => `http://localhost:${p}`;
 const results = [];
-const skip = (name, reason) => { results.push(`HOPP ${name} — ${reason}`); console.error(`HOPP ${name} — ${reason}`); };
 const check = (name, ok, extra = "") => { results.push(`${ok ? "OK  " : "FEIL"} ${name}${ok || !extra ? "" : ` — ${extra}`}`); if (!ok) console.error(`FEIL ${name} — ${extra}`); };
 const nb = (s) => s.replace(/ | /g, " ");
 const iso = (d) => d.toISOString().slice(0, 10);
@@ -56,7 +56,7 @@ const firmB = (await db.query("select private.admin_create_dealership($1) id", [
 await db.query("select private.admin_add_member($1,$2)", [A.email, firmA]);
 await db.query("select private.admin_add_member($1,$2)", [B.email, firmB]);
 
-const emu = await connectBackend({ db, dbUrl: DB, users: [A, B], port: EMU_PORT, pgModulePath: process.env.PG ?? "pg" }); // emu.mode: "emulator" | "real"
+const emu = await connectBackend({ db, dbUrl: DB, users: [A, B], port: EMU_PORT, pgModulePath: process.env.PG ?? "pg", observe: true }); // emu.mode: "emulator" | "real"
 const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: emu.url, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: emu.publishableKey, NEXT_TELEMETRY_DISABLED: "1" };
 delete env.SCOUT_SYNTHETIC_FAILURE; delete env.SCOUT_PUBLIC_ID_KEY;
 env.SCOUT_ENABLE_LEGACY_ROUTES = "1";
@@ -299,9 +299,8 @@ try {
   if (emu.log) {
     const writes = emu.log.filter((x) => (x.method === "POST" || x.method === "PATCH") && /dealer_economics/.test(x.path));
     check("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)", writes.length >= 1 && writes.every((x) => !(x.bodyKeys ?? []).includes("dealership_id")), JSON.stringify(writes.map((x) => x.bodyKeys)));
-  } else {
-    skip("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)", "ekte modus har ingen forespørselslogg (bare emulatoren logger kall); kolonnerettighetene som avviser dealership_id er dekket av L6 (tests/db/rest-isolation.test.ts), ikke av dette nettleserløpet");
   }
+  // Ekte modus: J3 kontrolleres av den observerende proxyen (se slutten av løpet, slik at ALLE skrivekall i hele løpet — også fra senere forløp og midlertidige bygg — er med).
   check("J3: ingen rå identitet i detalj-HTML (kandidat-id/revisjon) eller i serverens action-svar", leaks(await pA.content(), LISTINGS.diesel.providerId, { providerIdAllowed: true }).length === 0 && actionBodies.every((b) => leaks(b.body, LISTINGS.diesel.providerId, { providerIdAllowed: false }).length === 0));
 
   // =============================================================== gjenåpning
@@ -603,6 +602,19 @@ try {
 
   check("ingen JavaScript-feil i konsollen under hele flyten", problems.length === 0, problems.slice(0, 3).join(" | "));
   check("alle action-svar (alle brukere og bygg) er fri for kandidat-id-format og revisjonsavtrykk", actionBodies.length > 10 && actionBodies.every((b) => !CAND_ID_RE.test(b.body) && !/rev\d*:[0-9a-f]{16}/.test(b.body)), `${actionBodies.length} svar`);
+  if (emu.mode === "real") {
+    // J3 i ekte modus: kroppen til alle skrivekall mot forhandlerinput/-profil gjennom hele løpet (filteret .eq("dealership_id") er ikke skriving). Feiler lukket (se request-observer.mjs).
+    const v = emu.observer ? j3Verdict(emu.observer.summary()) : { ok: false, detail: "observatør mangler" };
+    check("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)", v.ok, v.detail);
+  } else if (emu.observer) {
+    // Kryssjekk (bare med E2E_REQUEST_OBSERVER=1): observatøren og emulatorens egen logg skal se de samme skrivekallene (metode, tabell, nøkkelnavn).
+    const norm = (a) => a.map((w) => `${w.method} ${w.table} ${w.keys.join(",")}`).sort();
+    const fromEmu = emu.log.filter((x) => ["POST", "PATCH", "PUT", "DELETE"].includes(x.method) && /\/rest\/v1\/dealer_economics_(inputs|profiles)\/?(\?|$)/.test(x.path))
+      .map((x) => ({ method: x.method, table: /dealer_economics_(inputs|profiles)/.exec(x.path)[0], keys: [...(x.bodyKeys ?? [])].sort() }));
+    const sObs = emu.observer.summary();
+    check("kryssjekk: observatøren og emulatorloggen ser de samme skrivekallene (metode, tabell, nøkkelnavn)", JSON.stringify(norm(sObs.writes)) === JSON.stringify(norm(fromEmu)) && sObs.writes.length > 0, `observatør ${sObs.writes.length} / emulator ${fromEmu.length}`);
+    check("kryssjekk: observatørens J3-utfall er lik emulatorens", j3Verdict(sObs).ok === (fromEmu.length >= 1 && fromEmu.every((w) => !w.keys.includes("dealership_id"))));
+  }
   await ctxA.close();
 } finally {
   await browser.close().catch(() => {});
