@@ -209,12 +209,19 @@ describe("L6 dealer_economics_profiles", () => {
     expect([dup.status, dup.code]).toEqual([409, "23505"]);
     const get = await rest("GET", "dealer_economics_profiles", tokA);
     expect(get.rows.map((r) => r.dealership_id)).toEqual([firmA]);
-    const upd = await rest("PATCH", "dealer_economics_profiles", tokA, { payload: { schemaVersion: 1, vatHandling: "unknown", deduction: "recoverable" } });
+    // Eksplisitt filter på eget firma (slik appen gjør: .eq("dealership_id", …)); forventningen er uendret: 200 og oppdatert rad.
+    const upd = await rest("PATCH", `dealer_economics_profiles?dealership_id=eq.${firmA}`, tokA, { payload: { schemaVersion: 1, vatHandling: "unknown", deduction: "recoverable" } });
     expect(upd.status).toBe(200);
-    expect(upd.rows[0]).toMatchObject({ updated_by: a.id, payload: { deduction: "recoverable" } });
+    expect(upd.rows).toHaveLength(1);
+    expect(upd.rows[0]).toMatchObject({ dealership_id: firmA, updated_by: a.id, payload: { deduction: "recoverable" } });
+    expect((await db.query("select payload->>'deduction' d, updated_by from public.dealer_economics_profiles where dealership_id=$1", [firmA])).rows[0]).toEqual({ d: "recoverable", updated_by: a.id });
+    expect((await db.query("select payload->>'deduction' d from public.dealer_economics_profiles where dealership_id=$1", [firmB])).rows[0]).toEqual({ d: "unknown" });
   });
   it("på tvers av firma: B ser/endrer ikke As profil; falsk dealership_id avvises; ingen kan slette; databasen er uendret", async () => {
+    const snap = async () => (await db.query("select dealership_id, payload, updated_by, created_at, updated_at from public.dealer_economics_profiles where dealership_id = any($1) order by dealership_id", [[firmA, firmB]])).rows;
     const before = (await db.query("select payload, updated_by from public.dealer_economics_profiles where dealership_id=$1", [firmA])).rows[0];
+    const bothBefore = await snap();
+    expect(bothBefore).toHaveLength(2);
     const peek = await rest("GET", `dealer_economics_profiles?dealership_id=eq.${firmA}`, tokB);
     expect([peek.status, peek.rows]).toEqual([200, []]);
     const all = await rest("GET", "dealer_economics_profiles", tokB);
@@ -226,13 +233,15 @@ describe("L6 dealer_economics_profiles", () => {
       const spoof = await rest("POST", "dealer_economics_profiles", tokB, { payload: PROFILE, dealership_id });
       expect([spoof.status, spoof.code]).toEqual([403, "42501"]);
     }
-    const move = await rest("PATCH", "dealer_economics_profiles", tokB, { dealership_id: firmA });
+    // Filter på Bs EGEN rad (ellers ville As rad vært skjult før operasjonen og kolonnerettigheten ikke blitt prøvd); payload forsøker å flytte raden til A.
+    const move = await rest("PATCH", `dealer_economics_profiles?dealership_id=eq.${firmB}`, tokB, { dealership_id: firmA });
     expect([move.status, move.code]).toEqual([403, "42501"]);
     for (const tok of [tokB, tokA]) {
       const del = await rest("DELETE", `dealer_economics_profiles?dealership_id=eq.${firmA}`, tok);
       expect([del.status, del.code]).toEqual([403, "42501"]);
     }
     expect((await db.query("select payload, updated_by from public.dealer_economics_profiles where dealership_id=$1", [firmA])).rows[0]).toEqual(before);
+    expect(await snap()).toEqual(bothBefore);   // begge firmaenes profiler er helt uendret (inkl. nøkkel og tidsstempler)
   });
 });
 
