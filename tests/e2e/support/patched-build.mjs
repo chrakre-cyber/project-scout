@@ -19,6 +19,14 @@ export const PATCHES = {
   deny_economics_display: [
     ["src/domain/provider-rights.ts", "derivedEconomics: Object.freeze({ allow: Object.freeze({ price: true, registration: true, specs: true }), display: true })", "derivedEconomics: Object.freeze({ allow: Object.freeze({ price: true, registration: true, specs: true }), display: false })"],
   ],
+  /** Ukjent rettighetsprofil: ingen profil er registrert i kjøretiden (kilden kan hverken identifiseres eller vises). */
+  no_rights_profile: [
+    ["src/domain/provider-rights.ts", "export const REGISTERED_PROFILES: readonly ProviderRightsProfile[] = Object.freeze([SYNTHETIC_RIGHTS_PROFILE]);", "export const REGISTERED_PROFILES: readonly ProviderRightsProfile[] = Object.freeze([]);"],
+  ],
+  /** Ukjent rettighetsprofil: profilen finnes, men er bare et utkast (ikke verifisert) og er dermed ikke i kraft. */
+  draft_rights_profile: [
+    ["src/domain/provider-rights.ts", `  version: 1,\n  status: "verified",\n  validFrom: "2026-10-01T00:00:00Z",\n  validUntil: null,\n  sourceRef: "Intern syntetisk`, `  version: 1,\n  status: "draft",\n  validFrom: "2026-10-01T00:00:00Z",\n  validUntil: null,\n  sourceRef: "Intern syntetisk`],
+  ],
   /** Visning av leverandørens annonse-id (`listing_id`) er nektet; alt annet som før. */
   deny_listing_id: [
     ["src/domain/provider-rights.ts", "display: Object.freeze({ ...allRights(), images: false }),", "display: Object.freeze({ ...allRights(), images: false, listing_id: false }),"],
