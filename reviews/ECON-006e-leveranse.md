@@ -1,6 +1,6 @@
 # ECON-006e — fornyelse av syntetiske demodata (levert til uavhengig review, 21.10.2026)
 
-**Task:** ECON-006e (demodatafornyelse etter forslaget, `docs/econ/forslag-demodata-fornyelse.md` med avvikene øverst). **Ikke DONE** før uavhengig review. Ikke pilotklarhet, ingen regel-/parametergodkjenning. Økonomiflagg `false`, E7 utsatt, E8 åpent. Ingen hosted migrasjon, deploy, CI-oppsett eller Supabase-implementering.
+**Task:** ECON-006e (demodatafornyelse etter forslaget, `docs/econ/forslag-demodata-fornyelse.md` med avvikene øverst). Status: DONE innen levert omfang etter review og dokumentkontroll (`reviews/ECON-006e-avslutning.md`). Ikke pilotklarhet, ingen regel-/parametergodkjenning. Økonomiflagg `false`, E7 utsatt, E8 åpent. Ingen hosted migrasjon, deploy, CI-oppsett eller Supabase-implementering.
 
 ## Brukerutfall
 - Den uendrede appen kan igjen beregne økonomi på demodata: observasjonstidene simuleres 0–48 t før en eksplisitt epoke (standard `SYNTHETIC_DEFAULT_EPOCH = 2026-10-21T06:50:00Z`, valgfri server-only `SCOUT_SYNTHETIC_EPOCH`).
@@ -19,7 +19,7 @@ Docs: `FIXTURES.md` § Fornyelse (rutine), README, `.env.example`, TEST_PLAN, fo
 ## Kontroller (faktisk kjørt av utvikler — ikke review)
 - `npx vitest run`: 72 filer / 1 664 tester består. `tsc --noEmit` og `eslint .` uten feil.
 - Nettleser, UENDRET app (`SCOUT_SYNTHETIC_EPOCH = nå − 1 t`): `bash scripts/test-e2e-econ006.sh` **94/94** (tidligere 88 + 6 nye) og `bash scripts/test-e2e-econ006d.sh` **26/26**; belegg i `reviews/ECON-006e/`. Nye løp mot samme bygg: utløpt epoke (8 d) ⇒ «kildedataene er for gamle»; fremtidig epoke og «i morgen» ⇒ «Kilden kunne ikke leses»; uten variabel ⇒ standardepoken (forventning utledet fra konstanten, ingen tidsbombe); merkingen synlig.
-- `npm run build`, `qa:secrets` (ingen funn; lokal Supabase kjørte ikke ⇒ nøkkelsammenligning hoppet over), `qa:demo`, `scripts/qa-partner-mode.sh` bestått. `npm run check-docs` finnes ikke som skript i repoet og er ikke kjørt.
+- `npm run build`, `qa:secrets` (ingen funn; lokal Supabase kjørte ikke ⇒ nøkkelsammenligning hoppet over), `qa:demo`, `scripts/qa-partner-mode.sh` bestått. `check-docs` ble ikke kjørt i denne leveransen. KORRIGERT 21.10.2026: kontrollen finnes som `node docs/tax/check-docs.mjs` (ikke som npm-skript) og er kjørt i fullt repo etter reviewen: bestått, se `reviews/ECON-006e-avslutning.md`.
 - Emulator ≠ Supabase; rettighetsavslag kjøres fortsatt mot midlertidige testkopier.
 
 ## Begrensninger
