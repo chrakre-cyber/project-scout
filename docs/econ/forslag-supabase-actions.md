@@ -76,3 +76,6 @@ Estimat for implementering: ≈ 1 dag (workflow + skript + e2e-modus) pluss 1–
 
 ## 9. Ikke gjort i denne runden
 Ingen workflow opprettet, ingen kjøring startet, ingen repo- eller Actions-innstilling endret, ingen avhengighet installert, ingen credentials etterspurt, ingen hosted aktivitet, ingen kodeendring. Økonomiflagg `false`, E7 utsatt, E8 åpent.
+
+## 10. Oppdatering 21.10.2026 — L1–L3 og L7 klargjort (til review, ikke kjørt)
+Christian ba om klargjøring av oppsettet for L1–L3 og L7 (L4–L6 og Playwright er neste steg og står åpne). Levert i `reviews/CI-001-leveranse.md`: `.github/workflows/supabase-local.yml`, `scripts/ci-supabase-local.sh`, `scripts/ci/{sanitize,evaluate}.mjs`, tester og emulerte tørrkjøringer. Avvik fra forslaget over: **ingen tredjeparts-actions og ingen artefakter** (rapporten leveres som sanert tekst i logg/jobbsammendrag), full historikk hentes med `git fetch` av kjørt SHA, `timeout-minutes: 75`. Funn: `scripts/qa-upgrade-check.sh` var utdatert (6 migrasjoner/5 tabeller hardkodet, to vakuumt grønne sjekker) og er rettet. Aktivering krever fortsatt Christians kontroll av Actions-innstillinger og at workflowfilen finnes på `main` (se leveransen). Ingen kjøring er startet.
