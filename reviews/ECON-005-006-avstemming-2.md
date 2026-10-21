@@ -50,3 +50,8 @@ Oppdaterer `reviews/ECON-005-avstemming.md` (før 006) etter 006a–c. **Dette e
 
 ## 5. Ikke gjort i denne runden
 Ingen kodeendring, ingen hosted migrasjon, ingen deploy, ingen kontroll mot Supabase. Økonomiflagg false; E7 utsatt; E8 åpent.
+
+---
+## Oppdatering 21.10.2026 (ECON-006d — testrester)
+De små restene i § 2/§ 3 er nå dekket gjennom faktisk visning og i nettleser (`reviews/ECON-006d-leveranse.md`, vitest 12 tester + nettleser 26/26; emulator, ikke Supabase): **ukjent rettighetsprofil** (ingen profil ⇒ «ikke funnet»; utkastprofil ⇒ blokkert med forklaring), **ukjent kjøretøy-/registreringsprofil** (uspesifisert/varebil ⇒ «Ikke beregnet»; ukjent drivlinje), **B1** (akseptdato før/etter 2026 ⇒ aldri estimat, årsak vist) og **J5** (ukjent fradrag ⇒ to scenarioer for økonomisk kost, adskilt fra BEV med ukjent elbilkvalifisering og fra BEV med begge ukjente). Test 8 og J5 regnes dermed som oppfylt innen de dokumenterte forbeholdene (emulator, testkopier, relative datoer). **Gjenstår uendret:** ekte Supabase (L1–L7, H1–H4), øvrige rettighetsvarianter og server-action-POST i nettleser, skjermleser/andre nettlesere, port (a), fornyelse av demodata (forslag), E7/E8. **ECON-005/006 er fortsatt ikke markert DONE** — avventer uavhengig review av 006d og Christians beslutning.
+

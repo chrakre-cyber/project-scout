@@ -7,7 +7,7 @@ OK   J5 diesel: «Hva mangler?» nevner fradragsstatus med lenke til skjemaet og
 OK   BEV (fradrag KJENT, elbilkvalifisering ukjent): to scenarioer 384 727 kr / 459 727 kr merket med elbilfritak — ikke fradrag
 OK   BEV (fradrag kjent): mangelen er elbilkvalifisering — «kan ikke registreres ennå» — og fradragsstatus mangler IKKE
 OK   BEV med BEGGE ukjente: fire kombinasjoner, alle merket med både elbilfritak og fradragsstatus, alle ulike; positivt false
-OK   BEV med begge ukjente: kontantbehov er bare påvirket av elbilfritak (to verdier, begge nevnt), ikke av fradragsstatus
+OK   BEV med begge ukjente: brutto utlegg vises som «Fra … (scenarier)» (laveste = med elbilfritak), ikke som ett tall, og er ikke merket med fradragsstatus; økonomisk-kost-listen inneholder begge kontantverdiene
 OK   B1 (etter 2026: 2027-01-05): aldri estimat — status not_calculated; positivt false; ingen punktestimat-tall
 OK   B1 (2027-01-05): årsaken «Akseptdatoen ligger utenfor dokumentert periode.» vises, og tolldato er et registrerbart manglende felt med lenke
 OK   B1 (før 2026: 2025-12-31): aldri estimat — status not_calculated; positivt false; ingen punktestimat-tall
