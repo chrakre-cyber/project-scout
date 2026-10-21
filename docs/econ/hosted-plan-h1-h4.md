@@ -1,5 +1,7 @@
 # Hosted Supabase (Trinn H, H1–H4) — prioritert plan (ikke utført, 21.10.2026)
 
+**Oppdatering 22.10.2026 (2):** forberedelsen er uavhengig reviewet (FIX1 re-review av 0d50a8d: tre P2 lukket, ingen nye blokkerende funn; `reviews/HOST-001-FIX1-re-review-0d50a8d.md`). HOST-001 forblir REVIEW; **ingen hosted kontakt eller kjøring er godkjent**.
+
 **Oppdatering 22.10.2026:** forberedelsen (punkt 3) er gjort offline og levert til review — se `docs/econ/hosted-kjoreinstruks.md`, `docs/econ/hosted-rapportformat-eksempel.md` og `reviews/HOST-001-forberedelse.md`. Ingen hosted handling er utført.
 
 **Status:** plan. **Ingenting er utført**, ingen hosted handling, ingen credentials etterspurt. Alle trinn krever Christians uttrykkelige tillatelse i hvert enkelt tilfelle (CLAUDE.md pkt 7, 11). Kilde: `docs/econ/forslag-supabase-kontroll.md` § 3/§ 5/§ 7. Dette er et **nytt, tomt TEST-prosjekt** — aldri produksjon, aldri pilotdata.

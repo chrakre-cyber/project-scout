@@ -1,5 +1,7 @@
 # HOST-001 — kjøreinstruks for hosted testprosjekt (H2–H4) — FORBEREDELSE, IKKE UTFØRT
 
+**Status 22.10.2026 (2):** forberedelsen er reviewet (re-review av 0d50a8d, ingen nye blokkerende funn). **Ingen hosted kjøring er godkjent;** H1–H4 er ikke utført, og H3-nettleserdelene er fortsatt uforberedt. Avklaringer som trengs før H1/H2 er samlet i `reviews/HOST-001-avklaringer.md`.
+
 **Status 22.10.2026:** skript, tester og rapportformat er klargjort offline og levert til uavhengig review. **Ingenting er kjørt mot hosted.** Ingen credentials er etterspurt eller brukt. Hvert trinn under krever **Christians uttrykkelige tillatelse hver for seg** (se «Tillatelser»). Planen/rekkefølgen: `docs/econ/hosted-plan-h1-h4.md`. Dette er et hosted **TESTPROSJEKT** — aldri produksjon, aldri pilotdata. Økonomiflagg forblir `false`.
 
 ## 1. Kartlegging: hva som kan gjenbrukes
