@@ -1,6 +1,8 @@
 # Plan: kjør de seks hoppede oppgraderingstestene (L3b) — forslag før implementering (21.10.2026)
 
-**Status:** plan, ikke implementert. CI-001 forblir REVIEW (re-review av 3e6c059 registrert: begge P2 lukket, ingen nye blokkerende funn; `reviews/CI-001-re-review-3e6c059.md`). Ingen endring av `main`, ingen Actions-start, ingen innstillinger, ingen hosted. PASS-kravet svekkes ikke, og hoppede tester merkes aldri som bestått.
+**Status 21.10.2026 (oppdatert):** godkjent av Christian og implementert som CI-001-FIX2 (alternativ B; L3c utsatt) — se `reviews/CI-001-FIX2-retting.md`. Teksten under er den opprinnelige planen.
+
+**Opprinnelig status:** plan, ikke implementert. CI-001 forblir REVIEW (re-review av 3e6c059 registrert: begge P2 lukket, ingen nye blokkerende funn; `reviews/CI-001-re-review-3e6c059.md`). Ingen endring av `main`, ingen Actions-start, ingen innstillinger, ingen hosted. PASS-kravet svekkes ikke, og hoppede tester merkes aldri som bestått.
 
 ## 1. Hva de seks testene er (verifisert i sandboxen)
 To `describe.skipIf(!SCOUT_DB_ISOLATED)`-blokker: **DATA-002D** «oppgradering fra eldre tilstand» (5 tester) og **ECON-005b** «oppgradering — eksisterende ikke-syntetiske profiler får ingenting» (1 test). De bygger en *scratch-database* (`create database …`), legger inn `supabase-shim.sql` (uten `create role`), anvender migrasjonene i rekkefølge **unntatt** den som testes, legger inn eldre data, anvender så migrasjonen og kontrollerer resultatet (byte-for-byte uendrede rader, presis stopp ved ugyldige rader, ingen antatte rettigheter). De trenger ikke Auth/PostgREST.

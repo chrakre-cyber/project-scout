@@ -54,3 +54,4 @@ Test uavhengige invariants og offisielle grenser; ikke bare kopier samme formel 
 ## CI for lokal Supabase (CI-001)
 - `tests/ci-workflow.test.ts` (rammer: kun `workflow_dispatch`, `contents: read`, ingen secrets/actions/artefakter/hosted, ingen lekkasjekommandoer), `tests/ci-sanitize.test.ts`, `tests/ci-evaluate.test.ts` (feil/hoppet over/ikke kjørt ≠ bestått; ingen hemmeligheter i rapport).
 - Emulerte tørrkjøringer uten Docker: `bash scripts/test-qa-migrations-offline.sh` (L2-logikk), `bash scripts/test-ci-orchestrator-offline.sh` (orkestrering). De er IKKE L1–L3/L7 mot ekte Supabase.
+- CI-001-FIX2 (L3b): `tests/ci-l3b.test.ts` (statisk vurderingslogikk), `bash scripts/test-l3b-faults-offline.sh` (ekte midlertidig PostgreSQL-klynge, IKKE Supabase), `bash scripts/test-ci-orchestrator-offline.sh` (emulert orkestrering). Ekte Supabase-/Actions-kjøring: ikke utført.

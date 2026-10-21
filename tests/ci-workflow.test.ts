@@ -75,3 +75,35 @@ describe("orkestreringsskript: rammer", () => {
     expect(scriptCode).not.toMatch(/^\s*exit 0\b/m); // ingen «exit 0» som overstyrer resultatet
   });
 });
+
+describe("L3b (CI-001-FIX2): separat isolert klynge, ingen installasjon, strenge sjekker", () => {
+  const l3b = readFileSync(join(ROOT, "scripts/ci/run-l3b.sh"), "utf8");
+  const l3bCode = l3b.split("\n").filter((l) => !/^\s*#/.test(l)).join("\n");
+  const isolated = readFileSync(join(ROOT, "scripts/test-db-isolated.sh"), "utf8");
+
+  it("orkestreringen kjører L3b etter L3a, uavhengig av stakken, med rå utskrift til privat katalog", () => {
+    expect(scriptCode).toMatch(/bash scripts\/ci\/run-l3b\.sh "\$W" > \/dev\/null 2>&1/);
+    expect(scriptCode.indexOf("run-l3b.sh")).toBeGreaterThan(scriptCode.indexOf("test-db.sh"));
+    expect(l3bCode).toMatch(/> "\$W\/l3b\.out" 2>&1/);
+    expect(l3bCode).toMatch(/--reporter=json --outputFile="\$W\/l3b\.json"/);
+  });
+
+  it("ingen automatisk installasjon eller nettverk i L3b, workflowen eller orkestreringen; manglende binærer gir l3b.nobinaries", () => {
+    for (const f of [l3bCode, scriptCode, code]) {
+      expect(f).not.toMatch(/\bapt(-get)?\b|\bsudo\b|\bbrew\b|\bpip3?\b|npm\s+(i|install)\s+-g|curl\s|wget\s|dpkg\s+-i|docker\s+pull/);
+    }
+    expect(l3bCode).toMatch(/: > "\$W\/l3b\.nobinaries"; exit 0/);
+    for (const b of ["initdb", "pg_ctl", "psql", "postgres"]) expect(l3bCode).toContain(b);
+  });
+
+  it("klyngeskriptet avslutter ≠ 0 ved endret eller tomt øyeblikksbilde", () => {
+    expect(isolated).toMatch(/OPPGRADERING FEIL: øyeblikksbildet endret seg[^\n]*exit 3/);
+    expect(isolated).toMatch(/\[ -n "\$BEFORE" \] && \[ -n "\$AFTER" \] \|\| \{ echo "OPPGRADERING FEIL: tomt øyeblikksbilde"; exit 3; \}/);
+  });
+
+  it("de seks er identifisert i en fast liste (fil + fullt navn), ikke bare telt", () => {
+    const list = JSON.parse(readFileSync(join(ROOT, "scripts/ci/isolated-upgrade-tests.json"), "utf8")) as { file: string; fullName: string }[];
+    expect(list).toHaveLength(6);
+    for (const t of list) { expect(t.file).toMatch(/^tests\/db\/.+\.test\.ts$/); expect(t.fullName.length).toBeGreaterThan(30); }
+  });
+});

@@ -6,7 +6,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import type { Result } from "../scripts/ci/evaluate.mjs";
-import { buildReport, evaluateDir, evaluateL1, evaluateL2, evaluateL3, evaluateL7, overall } from "../scripts/ci/evaluate.mjs";
+import { l3bPass } from "./ci/l3b-fixtures";
+import { buildReport, evaluateDir, evaluateL1, evaluateL2, evaluateL3a, evaluateL7, overall } from "../scripts/ci/evaluate.mjs";
 
 const l2Ok = "== 1. Ren oppbygging\nPASS  a\nPASS  b\n\nMIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT\n";
 const t = (status: string, name: string, extra: Record<string, unknown> = {}) => ({ status, title: name, fullName: name, ...extra });
@@ -30,28 +31,27 @@ describe("L2", () => {
 });
 
 describe("L3", () => {
-  it("bare passerte tester ⇒ PASS", () => expect(evaluateL3(vitest([t("passed", "a"), t("passed", "b")]), 0).status).toBe("PASS"));
+  it("bare passerte tester ⇒ PASS", () => expect(evaluateL3a(vitest([t("passed", "a"), t("passed", "b")]), 0).status).toBe("PASS"));
   it("én feilet ⇒ FAIL med navn", () => {
-    const r = evaluateL3(vitest([t("passed", "a"), t("failed", "bruker B ser A")], false), 1);
+    const r = evaluateL3a(vitest([t("passed", "a"), t("failed", "bruker B ser A")], false), 1);
     expect(r.status).toBe("FAIL");
     expect(r.notes.join("\n")).toContain("bruker B ser A");
   });
-  it("hoppet over ⇒ SKIPPED (ikke bestått), kjent og ukjent årsak skilles", () => {
-    const r = evaluateL3(vitest([t("passed", "a"), t("skipped", "DATA-002D: oppgradering fra eldre tilstand gyldige", { fullName: "DATA-002D: oppgradering fra eldre tilstand gyldige" }), t("skipped", "annet")]), 0);
+  it("hoppet over ⇒ SKIPPED (ikke bestått); bare de seks identifiserte regnes som kjente, alt annet (også prefiks-treff) er uventet", () => {
+    const r = evaluateL3a(vitest([t("passed", "a"), t("skipped", "DATA-002D: oppgradering fra eldre tilstand gyldige eksisterende rader", { fullName: "DATA-002D: oppgradering fra eldre tilstand gyldige eksisterende rader" }), t("skipped", "annet")]), 0);
     expect(r.status).toBe("SKIPPED");
-    const n = r.notes.join("\n");
-    expect(n).toMatch(/1 hoppet over med KJENT årsak/);
-    expect(n).toMatch(/1 hoppet over uten kjent årsak/);
-    expect(n).toMatch(/regnes ikke som bestått/);
+    expect(r.knownSkipped).toHaveLength(0); // samme prefiks men ikke full identitet ⇒ ikke «kjent»
+    expect(r.unknownSkipped).toHaveLength(2);
+    expect(r.notes.join("\n")).toMatch(/2 UVENTET hoppet over/);
   });
   it("todo og pending regnes også som hoppet over", () => {
-    expect(evaluateL3(vitest([t("passed", "a"), t("todo", "b")]), 0).status).toBe("SKIPPED");
-    expect(evaluateL3(vitest([t("passed", "a"), t("pending", "b")]), 0).status).toBe("SKIPPED");
+    expect(evaluateL3a(vitest([t("passed", "a"), t("todo", "b")]), 0).status).toBe("SKIPPED");
+    expect(evaluateL3a(vitest([t("passed", "a"), t("pending", "b")]), 0).status).toBe("SKIPPED");
   });
   it.each([["ingen tester", vitest([]), 0], ["ugyldig JSON", "{", 1], ["ingen rapport", null, 1], ["exit ≠ 0 uten feilede", vitest([t("passed", "a")]), 1]])("%s ⇒ FAIL", (_n, rep, rc) => {
-    expect(evaluateL3(rep as string | null, rc as number).status).toBe("FAIL");
+    expect(evaluateL3a(rep as string | null, rc as number).status).toBe("FAIL");
   });
-  it("ikke kjørt ⇒ NOT_RUN", () => expect(evaluateL3(null, null).status).toBe("NOT_RUN"));
+  it("ikke kjørt ⇒ NOT_RUN", () => expect(evaluateL3a(null, null).status).toBe("NOT_RUN"));
 });
 
 describe("L7", () => {
@@ -106,7 +106,7 @@ describe("evaluateDir: ende-til-ende med falske hemmeligheter", () => {
     for (const [n, c] of Object.entries(files)) writeFileSync(join(d, n), c);
     return d;
   }
-  const base = { "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vitest([t("passed", "a")]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "plain-odd-secret\n" };
+  const base = { ...l3bPass(), "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vitest([t("passed", "a")]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "plain-odd-secret\n" };
 
   it("alt bestått ⇒ PASS", () => expect(evaluateDir(make(base)).verdict).toBe("PASS"));
   it("manglende steg ⇒ NOT_RUN og IKKE FULLT BESTÅTT", () => {

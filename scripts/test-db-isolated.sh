@@ -76,6 +76,8 @@ BEFORE="$(PSQL "$DB" -c "$SNAPSHOT_SQL")"
 [ -f "$MIG/$NEW_MIGRATION" ] && apply "$MIG/$NEW_MIGRATION"
 AFTER="$(PSQL "$DB" -c "$SNAPSHOT_SQL")"
 for f in $(ls "$MIG"/*_econ005c_*.sql 2>/dev/null | sort); do apply "$f"; done
+# Et tomt øyeblikksbilde (spørringsfeil) kan aldri telle som «uendret» (CI-001: ingen vakuøse sammenligninger).
+[ -n "$BEFORE" ] && [ -n "$AFTER" ] || { echo "OPPGRADERING FEIL: tomt øyeblikksbilde"; exit 3; }
 if [ "$BEFORE" = "$AFTER" ]; then echo "OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret ($BEFORE)"; else echo "OPPGRADERING FEIL: øyeblikksbildet endret seg ($BEFORE -> $AFTER)"; exit 3; fi
 export SUPABASE_TEST_DB_URL="$URL"
 export SUPABASE_TEST_URL="http://127.0.0.1:9"        # ingen Auth/PostgREST finnes; brukes bare av assertLocal()

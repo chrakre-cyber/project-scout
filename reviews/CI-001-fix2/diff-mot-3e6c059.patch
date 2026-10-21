@@ -1,0 +1,726 @@
+diff --git a/.github/workflows/supabase-local.yml b/.github/workflows/supabase-local.yml
+index 460c695..83fa4fd 100644
+--- a/.github/workflows/supabase-local.yml
++++ b/.github/workflows/supabase-local.yml
+@@ -19,7 +19,7 @@ jobs:
+   local-supabase:
+     name: L1–L3 og L7 mot lokal Supabase
+     runs-on: ubuntu-latest
+-    timeout-minutes: 75
++    timeout-minutes: 90
+     env:
+       SUPABASE_TELEMETRY_DISABLED: "1"
+       DO_NOT_TRACK: "1"
+diff --git a/scripts/ci-supabase-local.sh b/scripts/ci-supabase-local.sh
+index e6fa1eb..c2b3a84 100755
+--- a/scripts/ci-supabase-local.sh
++++ b/scripts/ci-supabase-local.sh
+@@ -3,11 +3,12 @@
+ # Ikke hosted Supabase: skriptet bruker bare `supabase start` (lokal stakk) og nekter alt annet. Ingen secrets inn; ingen nøkler ut.
+ #   L1  supabase start + db reset fra tom database, migrasjonene registrert i rekkefølge, versjoner noteres
+ #   L2  scripts/qa-upgrade-check.sh (oppgraderingstester; destruktivt for den lokale databasen)
+-#   L3  scripts/test-db.sh (hele DB-suiten mot ekte Auth/PostgREST); hoppede tester regnes IKKE som bestått
++#   L3a scripts/test-db.sh (hele DB-suiten mot ekte Auth/PostgREST); hoppede tester regnes IKKE som bestått
++#   L3b de seks navngitte oppgraderingstestene i en SEPARAT midlertidig PostgreSQL-klynge (scripts/ci/run-l3b.sh; IKKE Supabase). Samlet L3 = PASS bare når L3a har ingen feil/uventede hopp og hver av de seks er faktisk bestått i L3b
+ #   L7  npm run build + scripts/qa-secret-scan.sh (repo, historikk, build-artefakter, faktiske lokale nøkler)
+ # Utskrift: bare en SANERT rapport (scripts/ci/evaluate.mjs + sanitize.mjs). Rå utskrift fra underskript ligger i en privat midlertidig
+ # katalog og skrives aldri til logg, jobbsammendrag eller artefakt. Aldri `set -x`, `env`, `supabase status` uten fil, `docker logs`/`inspect`.
+-# Tidsgrenser per trinn summerer til 67 min (jobbgrensen er 75 min), slik at rapporten alltid rekker å skrives.
++# Tidsgrenser per trinn summerer til 79 min inkl. L3b (jobbgrensen er 90 min), slik at rapporten alltid rekker å skrives.
+ # Exit 0 bare hvis L1, L2, L3 og L7 alle er BESTÅTT; feil, hoppede og ikke kjørte kontroller gir exit 1.
+ set -uo pipefail
+ cd "$(dirname "$0")/.."
+@@ -77,6 +78,9 @@ if [ "$(cat "$W/reset.rc" 2>/dev/null)" = "0" ]; then
+   run l7 300 bash scripts/qa-secret-scan.sh
+ fi
+ 
++# --- L3b: de seks oppgraderingstestene i en SEPARAT midlertidig PostgreSQL-klynge (ikke Supabase). Uavhengig av stakken; manglende PostgreSQL-binærer ⇒ IKKE KJØRT (ingen installasjon).
++bash scripts/ci/run-l3b.sh "$W" > /dev/null 2>&1 || true
++
+ # --- sanert rapport (eneste utskrift); jobbsammendrag får samme sanerte tekst
+ node scripts/ci/evaluate.mjs "$W" > "$W/report.txt"; rc=$?
+ cat "$W/report.txt"
+diff --git a/scripts/ci/evaluate.d.mts b/scripts/ci/evaluate.d.mts
+index 1f205d6..439f245 100644
+--- a/scripts/ci/evaluate.d.mts
++++ b/scripts/ci/evaluate.d.mts
+@@ -1,11 +1,16 @@
+ export type Status = "PASS" | "FAIL" | "SKIPPED" | "NOT_RUN";
+ export interface Result { status: Status; notes: string[] }
+-export const KNOWN_ISOLATED_ONLY: string[];
++export const ISOLATED_UPGRADE_TESTS: { file: string; fullName: string }[];
+ export const OPEN_CHECKS: string[];
+ export function evaluateL1(i: { startRc: number | null; resetRc: number | null; actualVersions?: string; expectedVersions?: string; pgVersion?: string; images?: string[]; tail?: string[] }): Result;
+ export function evaluateL2(output: string | null, rc: number | null): Result;
+-export function evaluateL3(report: string | null, rc: number | null): Result;
++export interface L3aResult extends Result { knownSkipped: string[]; unknownSkipped: string[]; failed: number }
++export interface L3bResult extends Result { passedIds: string[] }
++export function evaluateL3a(report: string | null, rc: number | null): L3aResult;
++export function evaluateL3b(i: { report: string | null; rc: number | null | undefined; binariesMissing?: boolean; upgradeOk?: boolean; pgVersion?: string }): L3bResult;
++export function combineL3(a: L3aResult, b: L3bResult): Result;
+ export function evaluateL7(output: string | null, rc: number | null, buildRc: number | null): Result;
+ export function overall(results: Record<"L1" | "L2" | "L3" | "L7", Result>): "PASS" | "IKKE FULLT BESTÅTT";
+ export function buildReport(results: Record<"L1" | "L2" | "L3" | "L7", Result>, meta?: { preflight?: string[] }): string;
+-export function evaluateDir(dir: string): { results: Record<"L1" | "L2" | "L3" | "L7", Result>; report: string; verdict: "PASS" | "IKKE FULLT BESTÅTT"; suppressed: boolean };
++export function evaluateDir(dir: string): { results: Record<"L1" | "L2" | "L3" | "L7", Result> & { L3a?: Result; L3b?: Result }; report: string; verdict: "PASS" | "IKKE FULLT BESTÅTT"; suppressed: boolean };
++export function l3bFromDir(dir: string): L3bResult;
+diff --git a/scripts/ci/evaluate.mjs b/scripts/ci/evaluate.mjs
+index 894f817..5f58fc4 100644
+--- a/scripts/ci/evaluate.mjs
++++ b/scripts/ci/evaluate.mjs
+@@ -5,11 +5,13 @@ import { existsSync, readFileSync } from "node:fs";
+ import { join } from "node:path";
+ import { hasLeak, loadLiterals, sanitizeText } from "./sanitize.mjs";
+ 
+-/** Tester som er hoppet over med KJENT årsak (describe.skipIf(!SCOUT_DB_ISOLATED)): krever en isolert klynge med shim. Teller likevel ikke som bestått. */
+-export const KNOWN_ISOLATED_ONLY = [
+-  "DATA-002D: oppgradering fra eldre tilstand",
+-  "ECON-005b: oppgradering — eksisterende ikke-syntetiske profiler får ingenting",
+-];
++/**
++ * De SEKS oppgraderingstestene som hoppes over mot Supabase-stakken (describe.skipIf(!SCOUT_DB_ISOLATED)) og som bare kan dekkes av L3b (midlertidig PostgreSQL-klynge).
++ * Identitet = testfil + fullt testnavn (ikke antall, ikke prefiks). Listen står i isolated-upgrade-tests.json og endres bare bevisst.
++ */
++export const ISOLATED_UPGRADE_TESTS = JSON.parse(readFileSync(new URL("./isolated-upgrade-tests.json", import.meta.url), "utf8"));
++const idOf = (file, name) => `${file}::${name}`;
++const EXPECTED_IDS = new Set(ISOLATED_UPGRADE_TESTS.map((t) => idOf(t.file, t.fullName)));
+ export const OPEN_CHECKS = ["L4 innlogging via ekte GoTrue", "L5 lagring/gjenåpning via ekte PostgREST (nettleserforløp)", "L6 firmaskille med ekte JWT-er", "Playwright-integrasjon"];
+ 
+ const read = (dir, name) => (existsSync(join(dir, name)) ? readFileSync(join(dir, name), "utf8") : null);
+@@ -41,24 +43,78 @@ export function evaluateL2(output, rc) {
+   return { status, notes };
+ }
+ 
+-export function evaluateL3(report, rc) {
+-  if (rc === null) return { status: "NOT_RUN", notes: ["DB-suiten ble ikke kjørt"] };
++function collectTests(report) {
+   let data = null;
+   try { data = JSON.parse(report ?? ""); } catch { /* ingen gyldig rapport */ }
+-  if (!data || !Array.isArray(data.testResults)) return { status: "FAIL", notes: [`ingen lesbar vitest-rapport (${rcText(rc)})`] };
+-  const all = data.testResults.flatMap((f) => (f.assertionResults ?? []).map((a) => ({ file: String(f.name ?? "").replace(/^.*\/tests\//, "tests/"), ...a })));
+-  const by = (s) => all.filter((a) => a.status === s);
+-  const failed = by("failed"), skipped = all.filter((a) => a.status === "skipped" || a.status === "pending" || a.status === "todo"), passed = by("passed");
+-  const known = (a) => KNOWN_ISOLATED_ONLY.some((k) => String(a.fullName ?? a.title ?? "").startsWith(k));
+-  const knownSkips = skipped.filter(known), unknownSkips = skipped.filter((a) => !known(a));
++  if (!data || !Array.isArray(data.testResults)) return null;
++  return data.testResults.flatMap((f) => {
++    const file = String(f.name ?? "").replace(/^.*\/tests\//, "tests/");
++    return (f.assertionResults ?? []).map((a) => ({ file, name: String(a.fullName ?? a.title ?? ""), status: a.status, id: idOf(file, String(a.fullName ?? a.title ?? "")) }));
++  });
++}
++const NOT_EXECUTED = new Set(["skipped", "pending", "todo"]);
++
++/** L3a: hele DB-suiten mot Supabase-stakken. De seks kjente hoppene er IKKE bestått her (status SKIPPED); de kan bare dekkes av L3b. */
++export function evaluateL3a(report, rc) {
++  if (rc === null) return { status: "NOT_RUN", notes: ["DB-suiten ble ikke kjørt"], knownSkipped: [], unknownSkipped: [], failed: 0 };
++  const all = collectTests(report);
++  if (!all) return { status: "FAIL", notes: [`ingen lesbar vitest-rapport (${rcText(rc)})`], knownSkipped: [], unknownSkipped: [], failed: 0 };
++  const failed = all.filter((a) => a.status === "failed"), passed = all.filter((a) => a.status === "passed");
++  const skipped = all.filter((a) => NOT_EXECUTED.has(a.status));
++  const knownSkipped = skipped.filter((a) => EXPECTED_IDS.has(a.id)), unknownSkipped = skipped.filter((a) => !EXPECTED_IDS.has(a.id));
+   const notes = [`${all.length} tester: ${passed.length} bestått, ${failed.length} feilet, ${skipped.length} hoppet over`];
+-  for (const f of failed.slice(0, 20)) notes.push(`FEIL ${f.file}: ${f.fullName ?? f.title}`);
+-  if (knownSkips.length) notes.push(`${knownSkips.length} hoppet over med KJENT årsak (krever isolert klynge, SCOUT_DB_ISOLATED; dekkes av scripts/test-db-isolated.sh) — regnes ikke som bestått`);
+-  if (unknownSkips.length) notes.push(`${unknownSkips.length} hoppet over uten kjent årsak — undersøk`);
+-  for (const s of skipped.slice(0, 20)) notes.push(`HOPPET ${s.file}: ${s.fullName ?? s.title}`);
+-  if (all.length === 0 || failed.length > 0) return { status: "FAIL", notes: all.length === 0 ? ["ingen tester ble kjørt", ...notes] : notes };
+-  if (rc !== 0) return { status: "FAIL", notes: [...notes, `vitest avsluttet med ${rcText(rc)}`] };
+-  return { status: skipped.length > 0 ? "SKIPPED" : "PASS", notes };
++  for (const f of failed.slice(0, 20)) notes.push(`FEIL ${f.file}: ${f.name}`);
++  if (knownSkipped.length) notes.push(`${knownSkipped.length} av de ${EXPECTED_IDS.size} navngitte oppgraderingstestene er hoppet over her (krever isolert klynge, SCOUT_DB_ISOLATED) — regnes IKKE som bestått i L3a; de kan bare dekkes av L3b`);
++  if (unknownSkipped.length) notes.push(`${unknownSkipped.length} UVENTET hoppet over (ikke blant de navngitte seks) — undersøk`);
++  for (const sk of unknownSkipped.slice(0, 20)) notes.push(`HOPPET ${sk.file}: ${sk.name}`);
++  const base = { notes, knownSkipped: knownSkipped.map((a) => a.id), unknownSkipped: unknownSkipped.map((a) => a.id), failed: failed.length };
++  if (all.length === 0) return { status: "FAIL", ...base, notes: ["ingen tester ble kjørt", ...notes] };
++  if (failed.length > 0) return { status: "FAIL", ...base };
++  if (rc !== 0) return { status: "FAIL", ...base, notes: [...notes, `vitest avsluttet med ${rcText(rc)}`] };
++  return { status: skipped.length > 0 ? "SKIPPED" : "PASS", ...base };
++}
++
++/**
++ * L3b: de seks navngitte oppgraderingstestene kjørt i en SEPARAT, midlertidig PostgreSQL-klynge (scripts/test-db-isolated.sh). Dette er IKKE Supabase-stakken.
++ * PASS krever at hver av de seks (identitet = fil + fullt navn) er faktisk kjørt og bestått, at ingen annen test er kjørt, ingen av de seks er feilet/hoppet over/mangler,
++ * vitest-exit 0 og klyngeskriptets egen «OPPGRADERING OK». Manglende PostgreSQL-binærer ⇒ NOT_RUN.
++ */
++export function evaluateL3b({ report, rc, binariesMissing, upgradeOk, pgVersion }) {
++  if (binariesMissing) return { status: "NOT_RUN", notes: ["PostgreSQL-binærer (initdb/pg_ctl/psql) finnes ikke på runneren: L3b ikke kjørt, og det installeres ikke automatisk"], passedIds: [] };
++  if (rc === null || rc === undefined) return { status: "NOT_RUN", notes: ["L3b ble ikke kjørt"], passedIds: [] };
++  const all = collectTests(report);
++  if (!all) return { status: "FAIL", notes: [`ingen lesbar vitest-rapport fra L3b (${rcText(rc)})`], passedIds: [] };
++  const byId = new Map();
++  for (const a of all) byId.set(a.id, a.status);
++  const problems = [];
++  const passedIds = [];
++  for (const t of ISOLATED_UPGRADE_TESTS) {
++    const id = idOf(t.file, t.fullName), st = byId.get(id);
++    if (st === "passed") passedIds.push(id);
++    else problems.push(st === undefined ? `MANGLER i L3b: ${t.file}: ${t.fullName}` : `${st === "failed" ? "FEILET" : "IKKE KJØRT (" + st + ")"} i L3b: ${t.file}: ${t.fullName}`);
++  }
++  // Tester utenfor de seks: «hoppet over» er bare filteret (-t) som utelot dem; alt som faktisk ble kjørt er uventet.
++  const unexpected = all.filter((a) => !EXPECTED_IDS.has(a.id) && !NOT_EXECUTED.has(a.status));
++  for (const u of unexpected.slice(0, 20)) problems.push(`UVENTET test kjørt i L3b (${u.status}): ${u.file}: ${u.name}`);
++  if (rc !== 0) problems.push(`vitest avsluttet med ${rcText(rc)}`);
++  if (!upgradeOk) problems.push("klyngeskriptets forhåndskontroll «OPPGRADERING OK» mangler eller meldte feil");
++  const label = "IKKE Supabase-stakken: midlertidig lokal PostgreSQL-klynge" + (pgVersion ? ` (${pgVersion})` : "") + " med shim";
++  if (problems.length) return { status: "FAIL", notes: [`${passedIds.length} av ${EXPECTED_IDS.size} navngitte oppgraderingstester kjørt og bestått (${label})`, ...problems], passedIds };
++  return { status: "PASS", notes: [`${passedIds.length} av ${EXPECTED_IDS.size} navngitte oppgraderingstester kjørt og bestått (${label})`, `${all.length - passedIds.length} øvrige tester i filene ble utelatt av filteret og er ikke talt`], passedIds };
++}
++
++/** Samlet L3: PASS bare når L3a har ingen feil/uventede hopp og HVER hoppet kjent test er faktisk bestått i L3b. */
++export function combineL3(a, b) {
++  const notes = [`L3a: ${a.status} — ${a.notes[0] ?? ""}`, `L3b: ${b.status} — ${b.notes[0] ?? ""}`];
++  if (a.status === "NOT_RUN") return { status: "NOT_RUN", notes };
++  if (a.status === "FAIL" || b.status === "FAIL") return { status: "FAIL", notes };
++  if (b.status === "NOT_RUN") return { status: "NOT_RUN", notes: [...notes, "L3 kan ikke bli PASS uten L3b"] };
++  if (a.unknownSkipped.length > 0) return { status: "SKIPPED", notes: [...notes, "uventede hoppede tester i L3a regnes ikke som bestått"] };
++  const covered = new Set(b.passedIds);
++  const uncovered = a.knownSkipped.filter((id) => !covered.has(id));
++  if (uncovered.length > 0) return { status: "FAIL", notes: [...notes, ...uncovered.map((id) => `hoppet over i L3a, men ikke bestått i L3b: ${id}`)] };
++  if (a.status !== "PASS" && a.status !== "SKIPPED") return { status: "FAIL", notes };
++  return { status: "PASS", notes: [...notes, a.knownSkipped.length ? `${a.knownSkipped.length} hoppet over i L3a er hver for seg kjørt og bestått i L3b (separat klynge, ikke Supabase)` : "ingen hoppede tester i L3a"] };
+ }
+ 
+ const L7_ALLOW = /^(== |PASS |FAIL |SKIP |SECRET-SKANN:)/;
+@@ -83,11 +139,12 @@ export function overall(results) {
+ 
+ export function buildReport(results, meta = {}) {
+   const label = { PASS: "BESTÅTT", FAIL: "FEILET", SKIPPED: "HOPPET OVER (ikke bestått)", NOT_RUN: "IKKE KJØRT" };
+-  const names = { L1: "L1 lokal Supabase fra tom database (start + db reset)", L2: "L2 oppgraderingstester (qa:migrations)", L3: "L3 DB-suiten mot ekte Auth/PostgREST (test-db.sh)", L7: "L7 hemmelighetsskann (qa:secrets, inkl. build-artefakter)" };
++  const names = { L1: "L1 lokal Supabase fra tom database (start + db reset)", L2: "L2 oppgraderingstester (qa:migrations)", L3a: "L3a DB-suiten mot Supabase-stakken (ekte Auth/PostgREST; test-db.sh)", L3b: "L3b seks navngitte oppgraderingstester i SEPARAT midlertidig PostgreSQL-klynge (IKKE Supabase)", L3: "L3 samlet (L3a + L3b)", L7: "L7 hemmelighetsskann (qa:secrets, inkl. build-artefakter)" };
+   const out = ["# Lokal Supabase på GitHub-runner — L1–L3 og L7", "", "Kjørt mot en lokal Supabase-stakk i en container på runneren. IKKE hosted Supabase, ikke emulator, ikke pilotgodkjenning, ingen regel-/parametergodkjenning.", ""];
+   for (const l of meta.preflight ?? []) out.push(l);
+   if (meta.preflight?.length) out.push("");
+-  for (const k of ["L1", "L2", "L3", "L7"]) {
++  for (const k of ["L1", "L2", "L3a", "L3b", "L3", "L7"]) {
++    if (!results[k]) continue;
+     out.push(`## ${names[k]}: ${label[results[k].status]}`);
+     for (const n of results[k].notes) out.push(`- ${n}`);
+     out.push("");
+@@ -100,15 +157,23 @@ export function buildReport(results, meta = {}) {
+   return out.join("\n") + "\n";
+ }
+ 
++/** Leser L3b-filene (scripts/ci/run-l3b.sh) fra en arbeidskatalog. */
++export function l3bFromDir(dir) {
++  const l3bOut = read(dir, "l3b.out") ?? "";
++  return evaluateL3b({ report: read(dir, "l3b.json"), rc: rcOf(dir, "l3b.rc"), binariesMissing: existsSync(join(dir, "l3b.nobinaries")), upgradeOk: /^OPPGRADERING OK/m.test(l3bOut) && !/^OPPGRADERING FEIL/m.test(l3bOut), pgVersion: (read(dir, "l3b.pg.txt") ?? "").trim().split("\n")[0] || "" });
++}
++
+ /** Leser arbeidskatalogen fra ci-supabase-local.sh og bygger { results, report }. */
+ export function evaluateDir(dir) {
+   const rc = (n) => rcOf(dir, n);
+   const tailLines = (name) => (read(dir, name) ?? "").split(/\r?\n/).filter(Boolean).slice(-15);
+   const migrations = (read(dir, "migrations.txt") ?? "").split(/\r?\n/);
++  const L3a = evaluateL3a(read(dir, "l3.json"), rc("l3.rc"));
++  const L3b = l3bFromDir(dir);
+   const results = {
+     L1: evaluateL1({ startRc: rc("start.rc"), resetRc: rc("reset.rc"), actualVersions: migrations[0] || "", expectedVersions: migrations[1] || "", pgVersion: (read(dir, "pgversion.txt") ?? "").trim().split("\n")[0] || "", images: (read(dir, "images.txt") ?? "").split(/\r?\n/).filter((i) => /^[\w./:@-]+$/.test(i)).slice(0, 20), tail: rc("start.rc") !== 0 ? tailLines("start.out") : tailLines("reset.out") }),
+     L2: evaluateL2(read(dir, "l2.out"), rc("l2.rc")),
+-    L3: evaluateL3(read(dir, "l3.json"), rc("l3.rc")),
++    L3a, L3b, L3: combineL3(L3a, L3b),
+     L7: evaluateL7(read(dir, "l7.out"), rc("l7.rc"), rc("build.rc")),
+   };
+   const preflight = (read(dir, "preflight.txt") ?? "").split(/\r?\n/).filter(Boolean).map((l) => `- ${l}`);
+@@ -120,7 +185,12 @@ export function evaluateDir(dir) {
+ }
+ 
+ const isMain = process.argv[1] && import.meta.url === new URL(`file://${process.argv[1]}`).href;
+-if (isMain) {
++if (isMain && process.argv[2] === "--l3b") {
++  // Kun L3b (brukes av scripts/test-l3b-faults-offline.sh): skriver «L3B_STATUS=<status>» og sanerte notater.
++  const r = l3bFromDir(process.argv[3]);
++  process.stdout.write(`L3B_STATUS=${r.status}\n${sanitizeText(r.notes.map((n) => `- ${n}`).join("\n"))}\n`);
++  process.exit(r.status === "PASS" ? 0 : 1);
++} else if (isMain) {
+   const dir = process.argv[2];
+   const r = evaluateDir(dir);
+   process.stdout.write(r.report);
+diff --git a/scripts/ci/isolated-upgrade-tests.json b/scripts/ci/isolated-upgrade-tests.json
+new file mode 100644
+index 0000000..76091ff
+--- /dev/null
++++ b/scripts/ci/isolated-upgrade-tests.json
+@@ -0,0 +1,26 @@
++[
++ {
++  "file": "tests/db/data002d-field-map.test.ts",
++  "fullName": "DATA-002D: oppgradering fra eldre tilstand gyldige eksisterende rader: migrasjonen går gjennom, radene er byte-for-byte uendret, og `{}` avvises etterpå"
++ },
++ {
++  "file": "tests/db/data002d-field-map.test.ts",
++  "fullName": "DATA-002D: oppgradering fra eldre tilstand ugyldig eksisterende rad (display_fields): migrasjonen STOPPER med presis forklaring, ingenting endres (ingen antatte rettigheter, ingen omgåelse av immutabilitet)"
++ },
++ {
++  "file": "tests/db/data002d-field-map.test.ts",
++  "fullName": "DATA-002D: oppgradering fra eldre tilstand ugyldig eksisterende rad (matching_fields): migrasjonen STOPPER med presis forklaring, ingenting endres (ingen antatte rettigheter, ingen omgåelse av immutabilitet)"
++ },
++ {
++  "file": "tests/db/data002d-field-map.test.ts",
++  "fullName": "DATA-002D: oppgradering fra eldre tilstand ugyldig eksisterende rad (begge): migrasjonen STOPPER med presis forklaring, ingenting endres (ingen antatte rettigheter, ingen omgåelse av immutabilitet)"
++ },
++ {
++  "file": "tests/db/data002d-field-map.test.ts",
++  "fullName": "DATA-002D: oppgradering fra eldre tilstand kartlegging: meldingen nevner bare ugyldige rader (provider@versjon) og skiller display/matching"
++ },
++ {
++  "file": "tests/db/econ005b-rights.test.ts",
++  "fullName": "ECON-005b: oppgradering — eksisterende ikke-syntetiske profiler får ingenting scratch-database bygges til og med DATA-002C, legacy-profiler legges inn, ECON-005b anvendes: bare synthetic-demo v1 får true"
++ }
++]
+diff --git a/scripts/ci/run-l3b.sh b/scripts/ci/run-l3b.sh
+new file mode 100755
+index 0000000..5f0df1e
+--- /dev/null
++++ b/scripts/ci/run-l3b.sh
+@@ -0,0 +1,17 @@
++#!/usr/bin/env bash
++# L3b: de seks navngitte oppgraderingstestene (tests/db: DATA-002D og ECON-005b «oppgradering») kjørt i en SEPARAT, midlertidig PostgreSQL-klynge via
++# scripts/test-db-isolated.sh. Dette er IKKE Supabase-stakken (vanlig PostgreSQL + shim). Skriver til arbeidskatalogen $1 (privat; aldri til logg):
++#   l3b.json / l3b.rc / l3b.out / l3b.pg.txt, eller l3b.nobinaries hvis PostgreSQL-binærer mangler (da er L3b «IKKE KJØRT»; ingenting installeres).
++# Valgfrie miljøvariabler (kun test): PGBIN (alternativ binærkatalog), L3B_FILTER (vitest -t), MIGRATIONS_DIR (endret migrasjonskopi, brukes av klyngeskriptet).
++set -uo pipefail
++cd "$(dirname "$0")/../.."
++W="${1:?bruk: run-l3b.sh <arbeidskatalog>}"
++PGBIN="${PGBIN-$(ls -d /usr/lib/postgresql/*/bin 2>/dev/null | sort -V | tail -1)}"
++for b in initdb pg_ctl psql postgres; do
++  if [ ! -x "${PGBIN:-/nonexistent}/$b" ]; then : > "$W/l3b.nobinaries"; exit 0; fi
++done
++export PGBIN
++"$PGBIN/postgres" --version 2>/dev/null | head -1 > "$W/l3b.pg.txt"
++FILTER="${L3B_FILTER:-oppgradering fra eldre tilstand|oppgradering — eksisterende}"
++timeout 720 bash scripts/test-db-isolated.sh tests/db/data002d-field-map.test.ts tests/db/econ005b-rights.test.ts -t "$FILTER" --reporter=json --outputFile="$W/l3b.json" > "$W/l3b.out" 2>&1
++echo $? > "$W/l3b.rc"
+diff --git a/scripts/test-ci-orchestrator-offline.sh b/scripts/test-ci-orchestrator-offline.sh
+index 0fb9e19..d582dbe 100755
+--- a/scripts/test-ci-orchestrator-offline.sh
++++ b/scripts/test-ci-orchestrator-offline.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Tørrkjøring av scripts/ci-supabase-local.sh UTEN Docker/Supabase: `npx supabase` og `docker` er EMULERT (tests/ci/emulated-cli) mot en isolert
+ # PostgreSQL-klynge, og den emulerte «stakken» skriver ut falske, gjenkjennbare nøkler. Beviser orkestreringen og at ingenting hemmelig-liknende når
+-# stdout/jobbsammendrag/rapport. Forventet utfall: L1/L2 bestått, L3 FEILET (Auth/PostgREST finnes ikke i emuleringen), samlet IKKE FULLT BESTÅTT.
++# stdout/jobbsammendrag/rapport. Forventet utfall: L1/L2/L7 bestått, L3a FEILET (Auth/PostgREST finnes ikke i emuleringen), L3b BESTÅTT (kjører ekte i en midlertidig PostgreSQL-klynge), L3 samlet FEILET, samlet IKKE FULLT BESTÅTT.
+ # Dette er IKKE L1–L3/L7 mot ekte Supabase. Kjører en ekte `npm run build`.
+ set -uo pipefail
+ cd "$(dirname "$0")/.."
+@@ -29,7 +29,9 @@ chk "ingen JWT-/sb_secret-/tilkoblings-URL-mønster i utskriften" '! grep -q -E
+ chk "rapporten er skrevet (stdout og sammendrag er like)" 'grep -q "^## Samlet:" "$OUT" && diff -q <(grep -v "^exit-kode" "$OUT") "$GITHUB_STEP_SUMMARY" >/dev/null'
+ chk "L1 bestått i emuleringen" 'grep -q "^## L1 .*: BESTÅTT" "$OUT"'
+ chk "L2 bestått i emuleringen" 'grep -q "^## L2 .*: BESTÅTT" "$OUT"'
+-chk "L3 regnes IKKE som bestått uten Auth/PostgREST" '! grep -q "^## L3 .*: BESTÅTT" "$OUT"'
++chk "L3a (stakken) FEILET i emuleringen uten Auth/PostgREST" 'grep -q "^## L3a .*: FEILET" "$OUT"'
++chk "L3b rapporteres separat og BESTÅTT (ekte isolert klynge), merket IKKE Supabase" 'grep -q "^## L3b .*IKKE Supabase.*: BESTÅTT" "$OUT" && grep -q "6 av 6 navngitte oppgraderingstester kjørt og bestått (IKKE Supabase-stakken" "$OUT"'
++chk "L3 samlet regnes IKKE som bestått når L3a feiler, selv om L3b består" '! grep -q "^## L3 samlet.*: BESTÅTT" "$OUT"'
+ chk "samlet er IKKE FULLT BESTÅTT og exit-koden er ≠ 0" 'grep -q "^## Samlet: IKKE FULLT BESTÅTT" "$OUT" && [ "$rc" -ne 0 ]'
+ chk "åpne kontroller L4–L6 og hosted er oppført som ÅPEN" 'grep -q "L4 innlogging.*ÅPEN" "$OUT" && grep -q "Hosted Supabase.*ÅPEN" "$OUT"'
+ echo; sed -n '1,60p' "$OUT"
+diff --git a/scripts/test-db-isolated.sh b/scripts/test-db-isolated.sh
+index 17668d2..62da9e9 100755
+--- a/scripts/test-db-isolated.sh
++++ b/scripts/test-db-isolated.sh
+@@ -76,6 +76,8 @@ BEFORE="$(PSQL "$DB" -c "$SNAPSHOT_SQL")"
+ [ -f "$MIG/$NEW_MIGRATION" ] && apply "$MIG/$NEW_MIGRATION"
+ AFTER="$(PSQL "$DB" -c "$SNAPSHOT_SQL")"
+ for f in $(ls "$MIG"/*_econ005c_*.sql 2>/dev/null | sort); do apply "$f"; done
++# Et tomt øyeblikksbilde (spørringsfeil) kan aldri telle som «uendret» (CI-001: ingen vakuøse sammenligninger).
++[ -n "$BEFORE" ] && [ -n "$AFTER" ] || { echo "OPPGRADERING FEIL: tomt øyeblikksbilde"; exit 3; }
+ if [ "$BEFORE" = "$AFTER" ]; then echo "OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret ($BEFORE)"; else echo "OPPGRADERING FEIL: øyeblikksbildet endret seg ($BEFORE -> $AFTER)"; exit 3; fi
+ export SUPABASE_TEST_DB_URL="$URL"
+ export SUPABASE_TEST_URL="http://127.0.0.1:9"        # ingen Auth/PostgREST finnes; brukes bare av assertLocal()
+diff --git a/scripts/test-l3b-faults-offline.sh b/scripts/test-l3b-faults-offline.sh
+new file mode 100755
+index 0000000..faaab9d
+--- /dev/null
++++ b/scripts/test-l3b-faults-offline.sh
+@@ -0,0 +1,46 @@
++#!/usr/bin/env bash
++# Feilinnsetting for L3b (CI-001-FIX2) i en EKTE midlertidig PostgreSQL-klynge (scripts/test-db-isolated.sh via scripts/ci/run-l3b.sh) — IKKE Supabase og ikke Actions.
++# Kjører de seks navngitte oppgraderingstestene normalt og med bevisst innsatte feil, og krever at vurderingen (scripts/ci/evaluate.mjs --l3b) gir riktig utfall:
++#   normal ⇒ PASS · mutert migrasjon ⇒ FAIL · endret øyeblikksbilde ⇒ FAIL (klyngeskriptet exit 3) · filter som utelater en test ⇒ FAIL · filter uten treff ⇒ FAIL ·
++#   for bredt filter (uventede tester) ⇒ FAIL · manglende PostgreSQL-binærer ⇒ IKKE KJØRT. Krever PostgreSQL-binærer lokalt (som test-db-isolated.sh).
++set -uo pipefail
++cd "$(dirname "$0")/.."
++fails=0
++chk() { if [ "$2" = "ok" ]; then echo "PASS  $1"; else echo "FAIL  $1"; fails=$((fails+1)); fi; }
++mutated_dir() { # fil gammel ny → ny migrasjonskatalog (kopi); skriver stien
++  local d; d="$(mktemp -d)"; cp supabase/migrations/*.sql "$d"/
++  python3 - "$d/$1" "$2" "$3" <<'PY'
++import sys
++p, old, new = sys.argv[1:4]; t = open(p).read(); assert old in t, old; open(p, "w").write(t.replace(old, new, 1))
++PY
++  echo "$d"
++}
++phase() { # navn forventet-status [miljø…]  (kjører L3b med gitt miljø og vurderer)
++  local name="$1" want="$2"; shift 2
++  local W; W="$(mktemp -d)"
++  ( env "$@" bash scripts/ci/run-l3b.sh "$W" ) > /dev/null 2>&1
++  local out status
++  out="$(node scripts/ci/evaluate.mjs --l3b "$W")"; status="$(printf '%s\n' "$out" | sed -n 's/^L3B_STATUS=//p')"
++  echo "== $name: L3b-vurdering=$status  (rc=$(cat "$W/l3b.rc" 2>/dev/null || echo -), binærer=$([ -e "$W/l3b.nobinaries" ] && echo mangler || echo ok))"
++  chk "$name ⇒ $want" "$([ "$status" = "$want" ] && echo ok)"
++  LAST_OUT="$out"; LAST_DIR="$W"
++}
++phase "normal (seks bestått i ekte isolert klynge)" PASS
++printf '%s\n' "$LAST_OUT" | sed 's/^/   /'
++M1="$(mutated_dir 20261021090000_econ005b_derived_economics_rights.sql "where provider = 'synthetic-demo' and version = 1 and environment = 'synthetic';" "where true;")"
++phase "mutert ECON-005b-migrasjon (legacy-profiler får rettigheter)" FAIL MIGRATIONS_DIR="$M1"
++chk "  … den navngitte ECON-005b-testen er rapportert som feilet" "$(printf '%s' "$LAST_OUT" | grep -q 'FEILET i L3b: tests/db/econ005b-rights.test.ts' && echo ok)"
++M2="$(mutated_dir 20261015090000_search005_search_drafts.sql "create table" "alter table public.search_agents add column zz_mut int default 1;
++create table")"
++phase "endret øyeblikksbilde (oppgradering endrer eksisterende data)" FAIL MIGRATIONS_DIR="$M2"
++chk "  … klyngeskriptet avsluttet ≠ 0 med «OPPGRADERING FEIL»" "$([ "$(cat "$LAST_DIR/l3b.rc")" != "0" ] && grep -q '^OPPGRADERING FEIL' "$LAST_DIR/l3b.out" && echo ok)"
++phase "filter utelater ECON-005b-testen (bare fem kjørt)" FAIL L3B_FILTER="oppgradering fra eldre tilstand"
++chk "  … manglende/ikke kjørt test er navngitt" "$(printf '%s' "$LAST_OUT" | grep -q -E 'MANGLER i L3b|IKKE KJØRT' && echo ok)"
++phase "filter uten treff (ingen tester)" FAIL L3B_FILTER="finnes-ikke-xyzzy"
++phase "for bredt filter (uventede tester kjørt)" FAIL L3B_FILTER="ECON-005b"
++chk "  … uventet test er rapportert" "$(printf '%s' "$LAST_OUT" | grep -q 'UVENTET test kjørt i L3b' && echo ok)"
++phase "PostgreSQL-binærer mangler" NOT_RUN PGBIN=/finnes/ikke
++rm -rf "$M1" "$M2"
++echo
++[ "$fails" -eq 0 ] && echo "L3B-FEILINNSETTING: ALLE KONTROLLER BESTÅTT" || echo "L3B-FEILINNSETTING: $fails KONTROLL(ER) FEILET"
++exit "$fails"
+diff --git a/tests/ci-evaluate.test.ts b/tests/ci-evaluate.test.ts
+index 4120bfc..5d047d7 100644
+--- a/tests/ci-evaluate.test.ts
++++ b/tests/ci-evaluate.test.ts
+@@ -6,7 +6,8 @@ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ import { afterEach, describe, expect, it } from "vitest";
+ import type { Result } from "../scripts/ci/evaluate.mjs";
+-import { buildReport, evaluateDir, evaluateL1, evaluateL2, evaluateL3, evaluateL7, overall } from "../scripts/ci/evaluate.mjs";
++import { l3bPass } from "./ci/l3b-fixtures";
++import { buildReport, evaluateDir, evaluateL1, evaluateL2, evaluateL3a, evaluateL7, overall } from "../scripts/ci/evaluate.mjs";
+ 
+ const l2Ok = "== 1. Ren oppbygging\nPASS  a\nPASS  b\n\nMIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT\n";
+ const t = (status: string, name: string, extra: Record<string, unknown> = {}) => ({ status, title: name, fullName: name, ...extra });
+@@ -30,28 +31,27 @@ describe("L2", () => {
+ });
+ 
+ describe("L3", () => {
+-  it("bare passerte tester ⇒ PASS", () => expect(evaluateL3(vitest([t("passed", "a"), t("passed", "b")]), 0).status).toBe("PASS"));
++  it("bare passerte tester ⇒ PASS", () => expect(evaluateL3a(vitest([t("passed", "a"), t("passed", "b")]), 0).status).toBe("PASS"));
+   it("én feilet ⇒ FAIL med navn", () => {
+-    const r = evaluateL3(vitest([t("passed", "a"), t("failed", "bruker B ser A")], false), 1);
++    const r = evaluateL3a(vitest([t("passed", "a"), t("failed", "bruker B ser A")], false), 1);
+     expect(r.status).toBe("FAIL");
+     expect(r.notes.join("\n")).toContain("bruker B ser A");
+   });
+-  it("hoppet over ⇒ SKIPPED (ikke bestått), kjent og ukjent årsak skilles", () => {
+-    const r = evaluateL3(vitest([t("passed", "a"), t("skipped", "DATA-002D: oppgradering fra eldre tilstand gyldige", { fullName: "DATA-002D: oppgradering fra eldre tilstand gyldige" }), t("skipped", "annet")]), 0);
++  it("hoppet over ⇒ SKIPPED (ikke bestått); bare de seks identifiserte regnes som kjente, alt annet (også prefiks-treff) er uventet", () => {
++    const r = evaluateL3a(vitest([t("passed", "a"), t("skipped", "DATA-002D: oppgradering fra eldre tilstand gyldige eksisterende rader", { fullName: "DATA-002D: oppgradering fra eldre tilstand gyldige eksisterende rader" }), t("skipped", "annet")]), 0);
+     expect(r.status).toBe("SKIPPED");
+-    const n = r.notes.join("\n");
+-    expect(n).toMatch(/1 hoppet over med KJENT årsak/);
+-    expect(n).toMatch(/1 hoppet over uten kjent årsak/);
+-    expect(n).toMatch(/regnes ikke som bestått/);
++    expect(r.knownSkipped).toHaveLength(0); // samme prefiks men ikke full identitet ⇒ ikke «kjent»
++    expect(r.unknownSkipped).toHaveLength(2);
++    expect(r.notes.join("\n")).toMatch(/2 UVENTET hoppet over/);
+   });
+   it("todo og pending regnes også som hoppet over", () => {
+-    expect(evaluateL3(vitest([t("passed", "a"), t("todo", "b")]), 0).status).toBe("SKIPPED");
+-    expect(evaluateL3(vitest([t("passed", "a"), t("pending", "b")]), 0).status).toBe("SKIPPED");
++    expect(evaluateL3a(vitest([t("passed", "a"), t("todo", "b")]), 0).status).toBe("SKIPPED");
++    expect(evaluateL3a(vitest([t("passed", "a"), t("pending", "b")]), 0).status).toBe("SKIPPED");
+   });
+   it.each([["ingen tester", vitest([]), 0], ["ugyldig JSON", "{", 1], ["ingen rapport", null, 1], ["exit ≠ 0 uten feilede", vitest([t("passed", "a")]), 1]])("%s ⇒ FAIL", (_n, rep, rc) => {
+-    expect(evaluateL3(rep as string | null, rc as number).status).toBe("FAIL");
++    expect(evaluateL3a(rep as string | null, rc as number).status).toBe("FAIL");
+   });
+-  it("ikke kjørt ⇒ NOT_RUN", () => expect(evaluateL3(null, null).status).toBe("NOT_RUN"));
++  it("ikke kjørt ⇒ NOT_RUN", () => expect(evaluateL3a(null, null).status).toBe("NOT_RUN"));
+ });
+ 
+ describe("L7", () => {
+@@ -106,7 +106,7 @@ describe("evaluateDir: ende-til-ende med falske hemmeligheter", () => {
+     for (const [n, c] of Object.entries(files)) writeFileSync(join(d, n), c);
+     return d;
+   }
+-  const base = { "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vitest([t("passed", "a")]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "plain-odd-secret\n" };
++  const base = { ...l3bPass(), "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": vitest([t("passed", "a")]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "plain-odd-secret\n" };
+ 
+   it("alt bestått ⇒ PASS", () => expect(evaluateDir(make(base)).verdict).toBe("PASS"));
+   it("manglende steg ⇒ NOT_RUN og IKKE FULLT BESTÅTT", () => {
+diff --git a/tests/ci-independent-regressions.test.ts b/tests/ci-independent-regressions.test.ts
+index e21a870..e686a3d 100644
+--- a/tests/ci-independent-regressions.test.ts
++++ b/tests/ci-independent-regressions.test.ts
+@@ -4,7 +4,7 @@ import { evaluateL7 } from '../scripts/ci/evaluate.mjs'; // reviewerens regresjo
+ it('does not pass L7 when the build was never recorded', () => {
+   const scan = 'PASS scan (0 treff)\nSECRET-SKANN: INGEN FUNN\n';
+   expect(evaluateL7(scan, 0, null).status).not.toBe('PASS');
+-});
++});
+ 
+ // ---- Utviklerens supplement (CI-001-FIX1): evaluateDir med ellers vellykkede resultater, men uten registrert build; og at bestått build fortsatt gir PASS.
+ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+@@ -12,11 +12,12 @@ import { tmpdir } from "node:os";
+ import { join } from "node:path";
+ import { afterEach, describe } from "vitest";
+ import { evaluateDir } from '../scripts/ci/evaluate.mjs';
++import { l3bPass } from './ci/l3b-fixtures';
+ 
+ const okScan = "PASS scan (0 treff)\nSECRET-SKANN: INGEN FUNN\n";
+ const l2Ok = "== 1\nPASS  a\n\nMIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT\n";
+ const l3Ok = JSON.stringify({ success: true, testResults: [{ name: "/x/tests/db/rls.test.ts", assertionResults: [{ status: "passed", title: "a", fullName: "a" }] }] });
+-const base: Record<string, string> = { "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": l3Ok, "l3.rc": "0", "l7.out": okScan, "l7.rc": "0", "build.rc": "0", literals: "" };
++const base: Record<string, string> = { ...l3bPass(), "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0", "l3.json": l3Ok, "l3.rc": "0", "l7.out": okScan, "l7.rc": "0", "build.rc": "0", literals: "" };
+ 
+ describe("L7 krever registrert, vellykket build", () => {
+   const dirs: string[] = [];
+diff --git a/tests/ci-l3b.test.ts b/tests/ci-l3b.test.ts
+new file mode 100644
+index 0000000..8ebe14c
+--- /dev/null
++++ b/tests/ci-l3b.test.ts
+@@ -0,0 +1,182 @@
++/**
++ * L3a/L3b-vurderingen (CI-001-FIX2): de seks navngitte oppgraderingstestene kan bare dekkes av en FAKTISK kjørt og bestått L3b i en separat PostgreSQL-klynge.
++ * STATISKE enhetstester av vurderingslogikken (fixtures) — ikke kjøring mot Supabase og ikke selve klyngekjøringen (den er prøvd i scripts/test-l3b-faults-offline.sh).
++ */
++import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
++import { tmpdir } from "node:os";
++import { join } from "node:path";
++import { afterEach, describe, expect, it } from "vitest";
++import { combineL3, evaluateDir, evaluateL3a, evaluateL3b } from "../scripts/ci/evaluate.mjs";
++import { SIX, filteredOut, l3bPass, sixWith, vitestJson, type TestRow } from "./ci/l3b-fixtures";
++
++const real = (n: number): TestRow[] => Array.from({ length: n }, (_, i) => ({ file: "tests/db/rls.test.ts", fullName: `RLS test ${i}`, status: "passed" }));
++const l3aFrom = (rows: TestRow[], rc = 0) => evaluateL3a(vitestJson(rows), rc);
++const l3a = (extra: TestRow[] = []) => l3aFrom([...real(3), ...sixWith("skipped"), ...extra]);
++const l3b = (rows: TestRow[], over: Record<string, unknown> = {}) => evaluateL3b({ report: vitestJson(rows), rc: 0, upgradeOk: true, pgVersion: "postgres (PostgreSQL) 16.14", ...over });
++const good = () => l3b([...sixWith("passed"), ...filteredOut()]);
++
++describe("de seks identifiserte testene", () => {
++  it("listen har nøyaktig seks unike identiteter fra de to kjente filene", () => {
++    expect(SIX).toHaveLength(6);
++    expect(new Set(SIX.map((t) => `${t.file}::${t.fullName}`)).size).toBe(6);
++    expect(SIX.filter((t) => t.file === "tests/db/data002d-field-map.test.ts")).toHaveLength(5);
++    expect(SIX.filter((t) => t.file === "tests/db/econ005b-rights.test.ts")).toHaveLength(1);
++  });
++});
++
++describe("L3a", () => {
++  it("de seks hoppet over + resten bestått ⇒ SKIPPED (ikke PASS), seks kjente og ingen uventede", () => {
++    const r = l3a();
++    expect(r.status).toBe("SKIPPED");
++    expect(r.knownSkipped).toHaveLength(6);
++    expect(r.unknownSkipped).toHaveLength(0);
++  });
++  it("feilet test ⇒ FAIL; uventet hoppet test ⇒ SKIPPED med uventet-liste", () => {
++    expect(l3aFrom([...real(2), { file: "tests/db/rls.test.ts", fullName: "x", status: "failed" }, ...sixWith("skipped")], 1).status).toBe("FAIL");
++    const r = l3a([{ file: "tests/db/rls.test.ts", fullName: "uventet hopp", status: "skipped" }]);
++    expect(r.status).toBe("SKIPPED");
++    expect(r.unknownSkipped).toHaveLength(1);
++  });
++});
++
++describe("L3b alene", () => {
++  it("alle seks bestått, ingen andre kjørt (filtrerte tester er hoppet over av -t) ⇒ PASS, merket som IKKE Supabase", () => {
++    const r = good();
++    expect(r.status).toBe("PASS");
++    expect(r.passedIds).toHaveLength(6);
++    expect(r.notes.join("\n")).toMatch(/IKKE Supabase-stakken/);
++    expect(r.notes.join("\n")).toMatch(/16\.14/);
++  });
++  it("én av de seks feilet ⇒ FAIL med navn", () => {
++    const rows = sixWith("passed"); rows[2]!.status = "failed";
++    const r = l3b(rows);
++    expect(r.status).toBe("FAIL");
++    expect(r.notes.join("\n")).toContain("FEILET i L3b");
++    expect(r.passedIds).toHaveLength(5);
++  });
++  it("én av de seks hoppet over / todo / pending ⇒ FAIL (faktisk kjørt og bestått kreves)", () => {
++    for (const st of ["skipped", "todo", "pending"]) {
++      const rows = sixWith("passed"); rows[0]!.status = st;
++      expect(l3b(rows).status, st).toBe("FAIL");
++    }
++  });
++  it("én av de seks mangler i rapporten ⇒ FAIL (antallet 5 passerer ikke, selv om ingen feilet)", () => {
++    const r = l3b(sixWith("passed").slice(1));
++    expect(r.status).toBe("FAIL");
++    expect(r.notes.join("\n")).toContain("MANGLER i L3b");
++  });
++  it("antall 6 er ikke nok: seks bestått tester med ANDRE navn (eller omdøpt test) ⇒ FAIL", () => {
++    const renamed = sixWith("passed").map((t, i) => (i === 0 ? { ...t, fullName: t.fullName + " (omdøpt)" } : t));
++    expect(l3b(renamed).status).toBe("FAIL");
++    const wrongFile = sixWith("passed").map((t, i) => (i === 5 ? { ...t, file: "tests/db/annen.test.ts" } : t));
++    expect(l3b(wrongFile).status).toBe("FAIL");
++    const others = real(6);
++    const r = l3b(others);
++    expect(r.status).toBe("FAIL");
++    expect(r.passedIds).toHaveLength(0);
++  });
++  it("uventet test kjørt i L3b (bestått eller feilet) ⇒ FAIL; filtrerte (hoppet) utenfor de seks er ikke et problem", () => {
++    expect(l3b([...sixWith("passed"), { file: "tests/db/econ005b-rights.test.ts", fullName: "ekstra", status: "passed" }]).status).toBe("FAIL");
++    expect(l3b([...sixWith("passed"), { file: "tests/db/econ005b-rights.test.ts", fullName: "ekstra", status: "failed" }]).status).toBe("FAIL");
++    expect(l3b([...sixWith("passed"), ...filteredOut(50)]).status).toBe("PASS");
++  });
++  it("vitest-exit ≠ 0, manglende «OPPGRADERING OK», ugyldig rapport ⇒ FAIL", () => {
++    expect(l3b(sixWith("passed"), { rc: 1 }).status).toBe("FAIL");
++    expect(l3b(sixWith("passed"), { upgradeOk: false }).status).toBe("FAIL");
++    expect(evaluateL3b({ report: "{", rc: 1, upgradeOk: true }).status).toBe("FAIL");
++    expect(evaluateL3b({ report: null, rc: 1, upgradeOk: true }).status).toBe("FAIL");
++  });
++  it("PostgreSQL-binærer mangler ⇒ NOT_RUN (IKKE KJØRT), ikke FAIL og aldri PASS; ikke kjørt ⇒ NOT_RUN", () => {
++    const r = evaluateL3b({ report: null, rc: null, binariesMissing: true, upgradeOk: false });
++    expect(r.status).toBe("NOT_RUN");
++    expect(r.notes.join("\n")).toMatch(/installeres ikke automatisk/);
++    expect(evaluateL3b({ report: null, rc: null, upgradeOk: false }).status).toBe("NOT_RUN");
++  });
++});
++
++describe("samlet L3 (L3a + L3b)", () => {
++  it("L3a uten feil + hopp kun blant de seks + L3b PASS ⇒ PASS, med tydelig tekst om separat klynge", () => {
++    const r = combineL3(l3a(), good());
++    expect(r.status).toBe("PASS");
++    expect(r.notes.join("\n")).toMatch(/separat klynge, ikke Supabase/);
++  });
++  it("L3b mangler / ikke kjørt (manglende binærer) ⇒ NOT_RUN, aldri PASS", () => {
++    const nb = evaluateL3b({ report: null, rc: null, binariesMissing: true, upgradeOk: false });
++    expect(combineL3(l3a(), nb).status).toBe("NOT_RUN");
++  });
++  it("L3b FAIL ⇒ FAIL; L3a FAIL ⇒ FAIL selv om L3b består", () => {
++    const rows = sixWith("passed"); rows[1]!.status = "failed";
++    expect(combineL3(l3a(), l3b(rows)).status).toBe("FAIL");
++    expect(combineL3(l3aFrom([...real(2), { file: "tests/db/rls.test.ts", fullName: "x", status: "failed" }, ...sixWith("skipped")], 1), good()).status).toBe("FAIL");
++  });
++  it("uventet hopp i L3a dekkes ikke av L3b ⇒ SKIPPED (ikke PASS)", () => {
++    const r = combineL3(l3a([{ file: "tests/db/rls.test.ts", fullName: "uventet hopp", status: "skipped" }]), good());
++    expect(r.status).toBe("SKIPPED");
++  });
++  it("L3b kan bare dekke de seks: et hoppet navn utenfor listen får aldri dekning, selv med seks bestått i L3b", () => {
++    const a = l3a([{ file: "tests/db/rls.test.ts", fullName: "ikke en av de seks", status: "skipped" }]);
++    expect(combineL3(a, good()).status).not.toBe("PASS");
++  });
++  it("kjent hopp i L3a som L3b ikke har bestått (defensiv dekningskontroll) ⇒ FAIL", () => {
++    const fake = { status: "PASS", notes: ["x"], passedIds: SIX.slice(1).map((t) => `${t.file}::${t.fullName}`) } as ReturnType<typeof evaluateL3b>;
++    const r = combineL3(l3a(), fake);
++    expect(r.status).toBe("FAIL");
++    expect(r.notes.join("\n")).toMatch(/ikke bestått i L3b/);
++  });
++  it("L3a uten hopp (alle seks kjørte der) + L3b PASS ⇒ PASS; L3a ikke kjørt ⇒ NOT_RUN", () => {
++    expect(combineL3(l3aFrom([...real(3), ...sixWith("passed")]), good()).status).toBe("PASS");
++    expect(combineL3(evaluateL3a(null, null), good()).status).toBe("NOT_RUN");
++  });
++});
++
++describe("evaluateDir: rapport og samlet utfall", () => {
++  const dirs: string[] = [];
++  afterEach(() => { for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true }); });
++  const l2Ok = "== 1\nPASS  a\n\nMIGRASJONSKJEDE: ALLE KONTROLLER BESTÅTT\n";
++  const l7Ok = "PASS  x (0 treff)\n\nSECRET-SKANN: INGEN FUNN\n";
++  const base = (over: Record<string, string | null> = {}) => {
++    const files: Record<string, string | null> = {
++      "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0",
++      "l3.json": vitestJson([...real(3), ...sixWith("skipped")]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "", ...l3bPass(), ...over,
++    };
++    const d = mkdtempSync(join(tmpdir(), "scout-l3b-"));
++    dirs.push(d);
++    for (const [k, v] of Object.entries(files)) if (v !== null) writeFileSync(join(d, k), v);
++    return d;
++  };
++  it("alt bestått inkl. L3b ⇒ samlet PASS; L3a og L3b rapporteres hver for seg, L3b merket som ikke Supabase", () => {
++    const r = evaluateDir(base());
++    expect(r.verdict).toBe("PASS");
++    expect(r.results.L3a!.status).toBe("SKIPPED");
++    expect(r.results.L3b!.status).toBe("PASS");
++    expect(r.report).toMatch(/## L3a DB-suiten mot Supabase-stakken.*: HOPPET OVER \(ikke bestått\)/);
++    expect(r.report).toMatch(/## L3b seks navngitte oppgraderingstester i SEPARAT midlertidig PostgreSQL-klynge \(IKKE Supabase\): BESTÅTT/);
++    expect(r.report).toMatch(/## L3 samlet \(L3a \+ L3b\): BESTÅTT/);
++    expect(r.report).toMatch(/L4 innlogging.*ÅPEN/);
++  });
++  it("uten L3b-filer (ikke kjørt) ⇒ L3b IKKE KJØRT og samlet IKKE FULLT BESTÅTT", () => {
++    const r = evaluateDir(base({ "l3b.json": null, "l3b.rc": null, "l3b.out": null, "l3b.pg.txt": null }));
++    expect(r.results.L3b!.status).toBe("NOT_RUN");
++    expect(r.results.L3.status).toBe("NOT_RUN");
++    expect(r.verdict).toBe("IKKE FULLT BESTÅTT");
++  });
++  it("l3b.nobinaries ⇒ IKKE KJØRT og hindrer PASS, selv om resten er vellykket", () => {
++    const r = evaluateDir(base({ "l3b.json": null, "l3b.rc": null, "l3b.out": null, "l3b.nobinaries": "" }));
++    expect(r.results.L3b!.status).toBe("NOT_RUN");
++    expect(r.verdict).toBe("IKKE FULLT BESTÅTT");
++    expect(r.report).toMatch(/L3b .*: IKKE KJØRT/);
++  });
++  it("«OPPGRADERING FEIL» fra klyngeskriptet eller manglende OK ⇒ L3b FAIL og samlet ikke PASS", () => {
++    for (const out of ["OPPGRADERING FEIL: øyeblikksbildet endret seg (a -> b)\n", "ingenting\n"]) {
++      const r = evaluateDir(base({ "l3b.out": out, "l3b.rc": "3" }));
++      expect(r.results.L3b!.status).toBe("FAIL");
++      expect(r.verdict).toBe("IKKE FULLT BESTÅTT");
++    }
++  });
++  it("én av de seks feiler i L3b ⇒ samlet FAIL/ikke PASS og navnet står i rapporten", () => {
++    const rows = sixWith("passed"); rows[3]!.status = "failed";
++    const r = evaluateDir(base({ "l3b.json": vitestJson(rows), "l3b.rc": "1" }));
++    expect(r.verdict).toBe("IKKE FULLT BESTÅTT");
++    expect(r.report).toContain("FEILET i L3b");
++  });
++});
+diff --git a/tests/ci-workflow.test.ts b/tests/ci-workflow.test.ts
+index 2ea3446..4c440e7 100644
+--- a/tests/ci-workflow.test.ts
++++ b/tests/ci-workflow.test.ts
+@@ -75,3 +75,35 @@ describe("orkestreringsskript: rammer", () => {
+     expect(scriptCode).not.toMatch(/^\s*exit 0\b/m); // ingen «exit 0» som overstyrer resultatet
+   });
+ });
++
++describe("L3b (CI-001-FIX2): separat isolert klynge, ingen installasjon, strenge sjekker", () => {
++  const l3b = readFileSync(join(ROOT, "scripts/ci/run-l3b.sh"), "utf8");
++  const l3bCode = l3b.split("\n").filter((l) => !/^\s*#/.test(l)).join("\n");
++  const isolated = readFileSync(join(ROOT, "scripts/test-db-isolated.sh"), "utf8");
++
++  it("orkestreringen kjører L3b etter L3a, uavhengig av stakken, med rå utskrift til privat katalog", () => {
++    expect(scriptCode).toMatch(/bash scripts\/ci\/run-l3b\.sh "\$W" > \/dev\/null 2>&1/);
++    expect(scriptCode.indexOf("run-l3b.sh")).toBeGreaterThan(scriptCode.indexOf("test-db.sh"));
++    expect(l3bCode).toMatch(/> "\$W\/l3b\.out" 2>&1/);
++    expect(l3bCode).toMatch(/--reporter=json --outputFile="\$W\/l3b\.json"/);
++  });
++
++  it("ingen automatisk installasjon eller nettverk i L3b, workflowen eller orkestreringen; manglende binærer gir l3b.nobinaries", () => {
++    for (const f of [l3bCode, scriptCode, code]) {
++      expect(f).not.toMatch(/\bapt(-get)?\b|\bsudo\b|\bbrew\b|\bpip3?\b|npm\s+(i|install)\s+-g|curl\s|wget\s|dpkg\s+-i|docker\s+pull/);
++    }
++    expect(l3bCode).toMatch(/: > "\$W\/l3b\.nobinaries"; exit 0/);
++    for (const b of ["initdb", "pg_ctl", "psql", "postgres"]) expect(l3bCode).toContain(b);
++  });
++
++  it("klyngeskriptet avslutter ≠ 0 ved endret eller tomt øyeblikksbilde", () => {
++    expect(isolated).toMatch(/OPPGRADERING FEIL: øyeblikksbildet endret seg[^\n]*exit 3/);
++    expect(isolated).toMatch(/\[ -n "\$BEFORE" \] && \[ -n "\$AFTER" \] \|\| \{ echo "OPPGRADERING FEIL: tomt øyeblikksbilde"; exit 3; \}/);
++  });
++
++  it("de seks er identifisert i en fast liste (fil + fullt navn), ikke bare telt", () => {
++    const list = JSON.parse(readFileSync(join(ROOT, "scripts/ci/isolated-upgrade-tests.json"), "utf8")) as { file: string; fullName: string }[];
++    expect(list).toHaveLength(6);
++    for (const t of list) { expect(t.file).toMatch(/^tests\/db\/.+\.test\.ts$/); expect(t.fullName.length).toBeGreaterThan(30); }
++  });
++});
+diff --git a/tests/ci/l3b-fixtures.ts b/tests/ci/l3b-fixtures.ts
+new file mode 100644
+index 0000000..18e81c6
+--- /dev/null
++++ b/tests/ci/l3b-fixtures.ts
+@@ -0,0 +1,21 @@
++// Testhjelpere for L3a/L3b-vurderingen. De seks navngitte oppgraderingstestene leses fra samme JSON-liste som vurdereren bruker.
++import { readFileSync } from "node:fs";
++import { join } from "node:path";
++
++export type TestRow = { file: string; fullName: string; status: string };
++export const SIX: { file: string; fullName: string }[] = JSON.parse(readFileSync(join(__dirname, "../../scripts/ci/isolated-upgrade-tests.json"), "utf8"));
++
++/** vitest-JSON (som `--reporter=json`) fra rader med fil, fullt navn og status. */
++export function vitestJson(rows: TestRow[], success = true): string {
++  const byFile = new Map<string, TestRow[]>();
++  for (const r of rows) byFile.set(r.file, [...(byFile.get(r.file) ?? []), r]);
++  return JSON.stringify({ success, testResults: [...byFile].map(([file, rs]) => ({ name: `/work/${file}`, assertionResults: rs.map((r) => ({ status: r.status, title: r.fullName.split(" ").pop(), fullName: r.fullName })) })) });
++}
++export const sixWith = (status: string): TestRow[] => SIX.map((t) => ({ ...t, status }));
++/** Øvrige tester i samme filer som vitests -t-filter utelot (status skipped). */
++export const filteredOut = (n = 3): TestRow[] => Array.from({ length: n }, (_, i) => ({ file: "tests/db/econ005b-rights.test.ts", fullName: `ECON-005b: annen test ${i}`, status: "skipped" }));
++
++/** En fullstendig bestått L3b-katalog (JSON + rc + «OPPGRADERING OK» + versjon) til evaluateDir. */
++export function l3bPass(): Record<string, string> {
++  return { "l3b.json": vitestJson([...sixWith("passed"), ...filteredOut()]), "l3b.rc": "0", "l3b.out": "migrasjon anvendt: x.sql\nOPPGRADERING OK: eksisterende agenter (abc)\n", "l3b.pg.txt": "postgres (PostgreSQL) 16.14\n" };
++}

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Tørrkjøring av scripts/ci-supabase-local.sh UTEN Docker/Supabase: `npx supabase` og `docker` er EMULERT (tests/ci/emulated-cli) mot en isolert
 # PostgreSQL-klynge, og den emulerte «stakken» skriver ut falske, gjenkjennbare nøkler. Beviser orkestreringen og at ingenting hemmelig-liknende når
-# stdout/jobbsammendrag/rapport. Forventet utfall: L1/L2 bestått, L3 FEILET (Auth/PostgREST finnes ikke i emuleringen), samlet IKKE FULLT BESTÅTT.
+# stdout/jobbsammendrag/rapport. Forventet utfall: L1/L2/L7 bestått, L3a FEILET (Auth/PostgREST finnes ikke i emuleringen), L3b BESTÅTT (kjører ekte i en midlertidig PostgreSQL-klynge), L3 samlet FEILET, samlet IKKE FULLT BESTÅTT.
 # Dette er IKKE L1–L3/L7 mot ekte Supabase. Kjører en ekte `npm run build`.
 set -uo pipefail
 cd "$(dirname "$0")/.."
@@ -29,7 +29,9 @@ chk "ingen JWT-/sb_secret-/tilkoblings-URL-mønster i utskriften" '! grep -q -E 
 chk "rapporten er skrevet (stdout og sammendrag er like)" 'grep -q "^## Samlet:" "$OUT" && diff -q <(grep -v "^exit-kode" "$OUT") "$GITHUB_STEP_SUMMARY" >/dev/null'
 chk "L1 bestått i emuleringen" 'grep -q "^## L1 .*: BESTÅTT" "$OUT"'
 chk "L2 bestått i emuleringen" 'grep -q "^## L2 .*: BESTÅTT" "$OUT"'
-chk "L3 regnes IKKE som bestått uten Auth/PostgREST" '! grep -q "^## L3 .*: BESTÅTT" "$OUT"'
+chk "L3a (stakken) FEILET i emuleringen uten Auth/PostgREST" 'grep -q "^## L3a .*: FEILET" "$OUT"'
+chk "L3b rapporteres separat og BESTÅTT (ekte isolert klynge), merket IKKE Supabase" 'grep -q "^## L3b .*IKKE Supabase.*: BESTÅTT" "$OUT" && grep -q "6 av 6 navngitte oppgraderingstester kjørt og bestått (IKKE Supabase-stakken" "$OUT"'
+chk "L3 samlet regnes IKKE som bestått når L3a feiler, selv om L3b består" '! grep -q "^## L3 samlet.*: BESTÅTT" "$OUT"'
 chk "samlet er IKKE FULLT BESTÅTT og exit-koden er ≠ 0" 'grep -q "^## Samlet: IKKE FULLT BESTÅTT" "$OUT" && [ "$rc" -ne 0 ]'
 chk "åpne kontroller L4–L6 og hosted er oppført som ÅPEN" 'grep -q "L4 innlogging.*ÅPEN" "$OUT" && grep -q "Hosted Supabase.*ÅPEN" "$OUT"'
 echo; sed -n '1,60p' "$OUT"

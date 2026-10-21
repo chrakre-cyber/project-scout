@@ -3,11 +3,12 @@
 # Ikke hosted Supabase: skriptet bruker bare `supabase start` (lokal stakk) og nekter alt annet. Ingen secrets inn; ingen nøkler ut.
 #   L1  supabase start + db reset fra tom database, migrasjonene registrert i rekkefølge, versjoner noteres
 #   L2  scripts/qa-upgrade-check.sh (oppgraderingstester; destruktivt for den lokale databasen)
-#   L3  scripts/test-db.sh (hele DB-suiten mot ekte Auth/PostgREST); hoppede tester regnes IKKE som bestått
+#   L3a scripts/test-db.sh (hele DB-suiten mot ekte Auth/PostgREST); hoppede tester regnes IKKE som bestått
+#   L3b de seks navngitte oppgraderingstestene i en SEPARAT midlertidig PostgreSQL-klynge (scripts/ci/run-l3b.sh; IKKE Supabase). Samlet L3 = PASS bare når L3a har ingen feil/uventede hopp og hver av de seks er faktisk bestått i L3b
 #   L7  npm run build + scripts/qa-secret-scan.sh (repo, historikk, build-artefakter, faktiske lokale nøkler)
 # Utskrift: bare en SANERT rapport (scripts/ci/evaluate.mjs + sanitize.mjs). Rå utskrift fra underskript ligger i en privat midlertidig
 # katalog og skrives aldri til logg, jobbsammendrag eller artefakt. Aldri `set -x`, `env`, `supabase status` uten fil, `docker logs`/`inspect`.
-# Tidsgrenser per trinn summerer til 67 min (jobbgrensen er 75 min), slik at rapporten alltid rekker å skrives.
+# Tidsgrenser per trinn summerer til 79 min inkl. L3b (jobbgrensen er 90 min), slik at rapporten alltid rekker å skrives.
 # Exit 0 bare hvis L1, L2, L3 og L7 alle er BESTÅTT; feil, hoppede og ikke kjørte kontroller gir exit 1.
 set -uo pipefail
 cd "$(dirname "$0")/.."
@@ -76,6 +77,9 @@ if [ "$(cat "$W/reset.rc" 2>/dev/null)" = "0" ]; then
   NEXT_PUBLIC_SUPABASE_URL="$API_URL" NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$PUBLISHABLE_KEY" run build 480 npm run build
   run l7 300 bash scripts/qa-secret-scan.sh
 fi
+
+# --- L3b: de seks oppgraderingstestene i en SEPARAT midlertidig PostgreSQL-klynge (ikke Supabase). Uavhengig av stakken; manglende PostgreSQL-binærer ⇒ IKKE KJØRT (ingen installasjon).
+bash scripts/ci/run-l3b.sh "$W" > /dev/null 2>&1 || true
 
 # --- sanert rapport (eneste utskrift); jobbsammendrag får samme sanerte tekst
 node scripts/ci/evaluate.mjs "$W" > "$W/report.txt"; rc=$?
