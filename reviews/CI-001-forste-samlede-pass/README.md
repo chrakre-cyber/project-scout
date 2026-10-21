@@ -1,0 +1,3 @@
+# Reviewgrunnlag: første samlede PASS for den utvidede kontrollpakken (run 39629190050, commit c2dd683)
+Innhold: `jobbsammendrag.md` (den sanerte rapporten gjengitt ordrett fra den offentlige loggen, uten tidsstempler), `kjoringsmetadata.json` (lenke, full kjørt commit, status, tidspunkter, observert varighet), `MANIFEST.sha256`. Rapport: `reviews/CI-001-kjoring-5.md`; avstemming: `reviews/CI-001-avstemming.md`.
+Ingen rå statusfiler, forespørsler, verdier, cookies, tokens eller nøkler. **Reviewer må hente originalloggen selv** for uavhengig bekreftelse; dette grunnlaget er utviklerens gjengivelse av den sanerte rapporten.
