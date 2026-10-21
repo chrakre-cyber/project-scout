@@ -3,18 +3,18 @@
 //   2. ukjent kjøretøy-/registreringsprofil (planlagt registrering «uspesifisert»/«varebil» støttes ikke; ukjent drivlinje)
 //   3. B1: akseptdato utenfor dokumentert periode (2026) — aldri estimat, årsaken vises
 //   4. J5: ukjent fradragsstatus ⇒ to scenarioer for økonomisk kost — adskilt fra BEV med ukjent elbilkvalifisering (elbilfritak-scenarioer), og BEV med begge ukjente (fire kombinasjoner)
-import { spawn } from "node:child_process";
+import { spawn, execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
-import { startMiniSupabase } from "./support/mini-supabase.mjs";
+import { connectBackend } from "./support/backend.mjs";
+import { launchBrowser } from "./support/browser.mjs";
 import { freshEpoch } from "./support/synthetic-epoch.mjs";
 import { buildPatchedCopy } from "./support/patched-build.mjs";
 import { FX_RATE, LISTINGS, TRANSPORT_NOK, expected, nok } from "./support/econ006-reference.mjs";
 
 const require = createRequire(import.meta.url);
-const { chromium } = require(process.env.PW);
-const { Client } = require(process.env.PG);
+const { Client } = require(process.env.PG ?? "pg");
 const DB = process.env.SUPABASE_TEST_DB_URL;
 const SHOTS = process.env.SHOTS || "reviews/ECON-006d/screenshots";
 mkdirSync(SHOTS, { recursive: true });
@@ -36,8 +36,8 @@ await db.query(`insert into auth.users (instance_id,id,aud,role,email,encrypted_
   values ('00000000-0000-0000-0000-000000000000',$1,'authenticated','authenticated',$2,extensions.crypt($3,extensions.gen_salt('bf')),now(),'{"provider":"email"}','{}',now(),now(),'','','','')`, [A.id, A.email, A.password]);
 const firmA = (await db.query("select private.admin_create_dealership($1) id", [`ECON-D Firma A ${run}`])).rows[0].id;
 await db.query("select private.admin_add_member($1,$2)", [A.email, firmA]);
-const emu = await startMiniSupabase({ dbUrl: DB, users: [A], port: EMU_PORT, pgModulePath: process.env.PG });
-const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: emu.url, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "test-publishable-key-not-secret", NEXT_TELEMETRY_DISABLED: "1" };
+const emu = await connectBackend({ db, dbUrl: DB, users: [A], port: EMU_PORT, pgModulePath: process.env.PG ?? "pg" }); // emu.mode: "emulator" | "real"
+const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: emu.url, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: emu.publishableKey, NEXT_TELEMETRY_DISABLED: "1" };
 delete env.SCOUT_SYNTHETIC_FAILURE; delete env.SCOUT_PUBLIC_ID_KEY;
 env.SCOUT_ENABLE_LEGACY_ROUTES = "1";
 const cleanups = [], servers = [];
@@ -50,6 +50,8 @@ async function startIn(cwd, port) {
   throw new Error(`appen på ${port} startet ikke`);
 }
 // ECON-006e: hovedløpet kjører den UENDREDE appen (ingen fresh_observations-patch); datasettepoken er nå − 1 t. Her er IKKE utløp temaet. Kopier brukes bare for endret rettighetsprofil.
+console.log("bygger uendret app mot valgt backend (NEXT_PUBLIC_*-verdier legges inn ved bygging; ikke gjenbruk en eldre .next) …");
+execFileSync("npm", ["run", "build"], { env, stdio: ["ignore", "ignore", "inherit"] });
 console.log(`starter hovedløpet (uendret app, SCOUT_SYNTHETIC_EPOCH=${EPOCH}) …`);
 await startIn(process.cwd(), MAIN);
 console.log("bygger kopi uten registrert rettighetsprofil …");
@@ -57,7 +59,7 @@ const cNo = buildPatchedCopy({ root: process.cwd(), names: ["no_rights_profile"]
 console.log("bygger kopi der rettighetsprofilen bare er et utkast …");
 const cDr = buildPatchedCopy({ root: process.cwd(), names: ["draft_rights_profile"], env }); cleanups.push(cDr.cleanup); await startIn(cDr.dir, DRAFT);
 
-const browser = await chromium.launch();
+const browser = await launchBrowser();
 const problems = [];
 const watch = (page) => { page.on("pageerror", (e) => problems.push("pageerror: " + e.message)); page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource/.test(m.text())) problems.push("console: " + m.text()); }); };
 async function login(ctx, port) {
@@ -216,12 +218,13 @@ try {
   await browser.close().catch(() => {});
   for (const s of servers) s.kill("SIGTERM");
   for (const c of cleanups) c();
+  await emu.cleanup({ firmIds: [firmA], users: [A] }).catch(() => {}); // bare ekte modus (emulatorens isolerte DB forkastes)
   await emu.close().catch(() => {});
   await db.query("delete from public.dealer_economics_inputs where dealership_id=$1", [firmA]).catch(() => {});
   await db.query("delete from public.search_drafts where dealership_id=$1", [firmA]).catch(() => {});
   await db.end().catch(() => {});
 }
 console.log(results.join("\n"));
-const failed = results.filter((r) => r.startsWith("FEIL"));
-console.log(`\n${results.length - failed.length}/${results.length} sjekker OK${failed.length ? `, ${failed.length} FEIL` : ""}`);
-process.exit(failed.length ? 1 : 0);
+const failed = results.filter((r) => r.startsWith("FEIL")), skipped = results.filter((r) => r.startsWith("HOPP"));
+console.log(`\n${results.length - failed.length - skipped.length}/${results.length} sjekker OK${failed.length ? `, ${failed.length} FEIL` : ""}${skipped.length ? `, ${skipped.length} HOPPET (regnes IKKE som bestått — delvis dekning)` : ""} [modus: ${emu.mode}]`);
+process.exit(failed.length ? 1 : skipped.length ? 4 : 0);

@@ -14,14 +14,14 @@ import { spawn, execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
-import { startMiniSupabase } from "./support/mini-supabase.mjs";
+import { connectBackend } from "./support/backend.mjs";
+import { launchBrowser } from "./support/browser.mjs";
 import { buildPatchedCopy } from "./support/patched-build.mjs";
 import { defaultEpoch, epochIso, expectationForDefault, expiredEpoch, freshEpoch, labelFor } from "./support/synthetic-epoch.mjs";
 import { FX_RATE, LISTINGS, TRANSPORT_NOK, expected, nok } from "./support/econ006-reference.mjs";
 
 const require = createRequire(import.meta.url);
-const { chromium } = require(process.env.PW);
-const { Client } = require(process.env.PG);
+const { Client } = require(process.env.PG ?? "pg");
 const DB = process.env.SUPABASE_TEST_DB_URL;
 const SHOTS = process.env.SHOTS || "reviews/ECON-006c/screenshots";
 mkdirSync(SHOTS, { recursive: true });
@@ -29,6 +29,7 @@ const EMU_PORT = 54399, MAIN = 3100, FAILP = 3101, DENY_ECON = 3102, DENY_LID = 
 const EPOCH = freshEpoch(), OLD_EPOCH = expiredEpoch();
 const base = (p) => `http://localhost:${p}`;
 const results = [];
+const skip = (name, reason) => { results.push(`HOPP ${name} — ${reason}`); console.error(`HOPP ${name} — ${reason}`); };
 const check = (name, ok, extra = "") => { results.push(`${ok ? "OK  " : "FEIL"} ${name}${ok || !extra ? "" : ` — ${extra}`}`); if (!ok) console.error(`FEIL ${name} — ${extra}`); };
 const nb = (s) => s.replace(/ | /g, " ");
 const iso = (d) => d.toISOString().slice(0, 10);
@@ -53,8 +54,8 @@ const firmB = (await db.query("select private.admin_create_dealership($1) id", [
 await db.query("select private.admin_add_member($1,$2)", [A.email, firmA]);
 await db.query("select private.admin_add_member($1,$2)", [B.email, firmB]);
 
-const emu = await startMiniSupabase({ dbUrl: DB, users: [A, B], port: EMU_PORT, pgModulePath: process.env.PG });
-const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: emu.url, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "test-publishable-key-not-secret", NEXT_TELEMETRY_DISABLED: "1" };
+const emu = await connectBackend({ db, dbUrl: DB, users: [A, B], port: EMU_PORT, pgModulePath: process.env.PG ?? "pg" }); // emu.mode: "emulator" | "real"
+const env = { ...process.env, NEXT_PUBLIC_SUPABASE_URL: emu.url, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: emu.publishableKey, NEXT_TELEMETRY_DISABLED: "1" };
 delete env.SCOUT_SYNTHETIC_FAILURE; delete env.SCOUT_PUBLIC_ID_KEY;
 env.SCOUT_ENABLE_LEGACY_ROUTES = "1";
 const cleanups = [];
@@ -85,7 +86,7 @@ console.log("bygger kopi med nektet visning av leverandørens annonse-id …");
 const copyLid = buildPatchedCopy({ root: process.cwd(), names: ["deny_listing_id"], env }); cleanups.push(copyLid.cleanup);
 await startIn(copyLid.dir, DENY_LID, { SCOUT_SYNTHETIC_EPOCH: EPOCH });
 
-const browser = await chromium.launch();
+const browser = await launchBrowser();
 const problems = [];
 const actionBodies = []; // svar fra server actions (RSC) — skannes for rå identitet
 const watch = (page) => {
@@ -293,8 +294,12 @@ try {
   check("J3 lagring: én rad bundet til firma A fra sesjon, kun forhandlerinput (ingen avledede tall), kandidat-id/revisjon utledet av serveren",
     rows1.length === 1 && r1.dealership_id === firmA && r1.search_id === S1 && r1.candidate_id.includes(LISTINGS.diesel.providerId) && r1.candidate_version.length > 8 && !/landed|cash|estimat|valueNok|importVat/i.test(JSON.stringify(r1.payload))
     && r1.payload.transportToBorder.amount === "8000" && r1.payload.deduction === "non_recoverable" && r1.payload.fx.acquisition.rate === FX_RATE && r1.confirmed_by === A.id);
-  const writes = emu.log.filter((x) => (x.method === "POST" || x.method === "PATCH") && /dealer_economics/.test(x.path));
-  check("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)", writes.length >= 1 && writes.every((x) => !(x.bodyKeys ?? []).includes("dealership_id")), JSON.stringify(writes.map((x) => x.bodyKeys)));
+  if (emu.log) {
+    const writes = emu.log.filter((x) => (x.method === "POST" || x.method === "PATCH") && /dealer_economics/.test(x.path));
+    check("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)", writes.length >= 1 && writes.every((x) => !(x.bodyKeys ?? []).includes("dealership_id")), JSON.stringify(writes.map((x) => x.bodyKeys)));
+  } else {
+    skip("J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput", "ekte modus har ingen forespørselslogg (bare emulatoren logger kall); kolonnerettighetene som avviser dealership_id er dekket av L6 (tests/db/rest-isolation.test.ts), ikke av dette nettleserløpet");
+  }
   check("J3: ingen rå identitet i detalj-HTML (kandidat-id/revisjon) eller i serverens action-svar", leaks(await pA.content(), LISTINGS.diesel.providerId, { providerIdAllowed: true }).length === 0 && actionBodies.every((b) => leaks(b.body, LISTINGS.diesel.providerId, { providerIdAllowed: false }).length === 0));
 
   // =============================================================== gjenåpning
@@ -601,6 +606,7 @@ try {
   await browser.close().catch(() => {});
   for (const s of servers) s.kill("SIGTERM");
   for (const c of cleanups) c();
+  await emu.cleanup({ firmIds: [firmA, firmB], users: [A, B] }).catch(() => {}); // bare ekte modus (emulatorens isolerte DB forkastes)
   await emu.close().catch(() => {});
   await db.query("delete from public.dealer_economics_inputs where dealership_id = any($1::uuid[])", [[firmA, firmB]]).catch(() => {});
   await db.query("delete from public.dealer_economics_profiles where dealership_id = any($1::uuid[])", [[firmA, firmB]]).catch(() => {});
@@ -608,6 +614,6 @@ try {
   await db.end().catch(() => {});
 }
 console.log(results.join("\n"));
-const failed = results.filter((r) => r.startsWith("FEIL"));
-console.log(`\n${results.length - failed.length}/${results.length} sjekker OK${failed.length ? `, ${failed.length} FEIL` : ""}`);
-process.exit(failed.length ? 1 : 0);
+const failed = results.filter((r) => r.startsWith("FEIL")), skipped = results.filter((r) => r.startsWith("HOPP"));
+console.log(`\n${results.length - failed.length - skipped.length}/${results.length} sjekker OK${failed.length ? `, ${failed.length} FEIL` : ""}${skipped.length ? `, ${skipped.length} HOPPET (regnes IKKE som bestått — delvis dekning)` : ""} [modus: ${emu.mode}]`);
+process.exit(failed.length ? 1 : skipped.length ? 4 : 0);
