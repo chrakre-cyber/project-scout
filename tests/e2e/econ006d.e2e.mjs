@@ -3,7 +3,7 @@
 //   2. ukjent kjøretøy-/registreringsprofil (planlagt registrering «uspesifisert»/«varebil» støttes ikke; ukjent drivlinje)
 //   3. B1: akseptdato utenfor dokumentert periode (2026) — aldri estimat, årsaken vises
 //   4. J5: ukjent fradragsstatus ⇒ to scenarioer for økonomisk kost — adskilt fra BEV med ukjent elbilkvalifisering (elbilfritak-scenarioer), og BEV med begge ukjente (fire kombinasjoner)
-import { spawn, execFileSync } from "node:child_process";
+import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
@@ -148,7 +148,9 @@ try {
   const four = await scenarioList(pA);
   check("BEV med BEGGE ukjente: fire kombinasjoner, alle merket med både elbilfritak og fradragsstatus, alle ulike; positivt false", e.status === "scenarios" && four.length === 4 && four.every((t) => /elbilfritak/i.test(t) && /fradragsberettiget/.test(t)) && new Set(four).size === 4 && e.positive === "false", four.join(" | "));
   const sumsB = nb(await pA.locator('[data-testid="economics-sums"]').innerText());
-  check("BEV med begge ukjente: kontantbehov er bare påvirket av elbilfritak (to verdier, begge nevnt), ikke av fradragsstatus", sumsB.includes(nok(exB.cash)) || sumsB.includes(nok(exB.cashWithExemption)), sumsB.slice(0, 300));
+  // Brutto utlegg vises som «Fra <laveste> (scenarier)» — ikke som ett tall; de enkelte kontantverdiene listes ikke (UX-begrensning, rapportert), men de ligger i økonomisk-kost-scenarioene for «ikke fradragsberettiget».
+  check("BEV med begge ukjente: brutto utlegg vises som «Fra … (scenarier)» (laveste = med elbilfritak), ikke som ett tall, og er ikke merket med fradragsstatus; økonomisk-kost-listen inneholder begge kontantverdiene",
+    sumsB.includes(`Fra ${nok(exB.cashWithExemption)}`) && /scenarier/.test(sumsB) && !/fradragsberettiget/.test(sumsB.split("Økonomisk")[0] ?? "") && four.some((t) => t.includes(nok(exB.cashWithExemption))) && four.some((t) => t.includes(nok(exB.cash))), `${sumsB.slice(0, 300)} || ${four.join(" | ")}`);
   await shot(pA, "03-BEV-begge-ukjente");
 
   // ============================================================ 3. B1 — akseptdato utenfor dokumentert periode
