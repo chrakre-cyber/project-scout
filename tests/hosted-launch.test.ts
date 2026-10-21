@@ -12,7 +12,9 @@ import { LaunchError, NODE_TOOLS, createLauncher, findBash, isMainModule, nodeTo
 import { WEIRD_ARGS, runSelfTest } from "../scripts/hosted/windows-selftest.mjs";
 
 const ROOT = process.cwd();
-const real = { root: ROOT, fs: { readFileSync, existsSync }, pathMod: path.posix };
+// Kontrollen av FAKTISKE filer bruker vertsplattformens path (native; win32 på Windows, posix ellers). De SIMULERTE testene under bruker eksplisitt path.posix/path.win32.
+const real = { root: ROOT, fs: { readFileSync, existsSync }, pathMod: path };
+const rel = (abs: string) => path.relative(ROOT, abs);
 const dirs: string[] = [];
 const tmp = () => { const d = mkdtempSync(join(tmpdir(), "scout-launch-")); dirs.push(d); return d; };
 afterEach(() => { for (const d of dirs.splice(0)) rmSync(d, { recursive: true, force: true }); });
@@ -20,9 +22,10 @@ afterEach(() => { for (const d of dirs.splice(0)) rmSync(d, { recursive: true, f
 describe("FAKTISK: inngangspunktene i de låste pakkene (ikke antatt)", () => {
   const meta = (p: string) => JSON.parse(readFileSync(`node_modules/${p}/package.json`, "utf8"));
   it("supabase, vitest og next har JS-inngang: dist/supabase.js, vitest.mjs og dist/bin/next (shebang node)", () => {
-    expect(nodeToolEntry("supabase", real).replace(ROOT, "")).toBe("/node_modules/supabase/dist/supabase.js");
-    expect(nodeToolEntry("vitest", real).replace(ROOT, "")).toBe("/node_modules/vitest/vitest.mjs");
-    expect(nodeToolEntry("next", real).replace(ROOT, "")).toBe("/node_modules/next/dist/bin/next");
+    expect(rel(nodeToolEntry("supabase", real))).toBe(path.join("node_modules", "supabase", "dist", "supabase.js"));
+    expect(rel(nodeToolEntry("vitest", real))).toBe(path.join("node_modules", "vitest", "vitest.mjs"));
+    expect(rel(nodeToolEntry("next", real))).toBe(path.join("node_modules", "next", "dist", "bin", "next"));
+    for (const t of ["supabase", "vitest", "next"]) expect(path.isAbsolute(nodeToolEntry(t, real)) && existsSync(nodeToolEntry(t, real)), t).toBe(true);
     expect(readFileSync("node_modules/next/dist/bin/next", "utf8").startsWith("#!/usr/bin/env node")).toBe(true);
     expect(NODE_TOOLS).toEqual(["supabase", "vitest", "next"]);
   });
