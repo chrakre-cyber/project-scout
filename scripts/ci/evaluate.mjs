@@ -126,8 +126,25 @@ export function combineL3(a, b) {
   return { status: "PASS", notes: [...notes, a.knownSkipped.length ? `${a.knownSkipped.length} hoppet over i L3a er hver for seg kjørt og bestått i L3b (separat klynge, ikke Supabase)` : "ingen hoppede tester i L3a"] };
 }
 
+/**
+ * Avgrenset diagnostikk fra tests/db/rest-isolation.test.ts (SCOUT_L6_DIAG_FILE): linjer «L6DIAG<TAB>testnavn<TAB>nr<TAB>METODE<TAB>tabell<TAB>status<TAB>kode».
+ * Bare linjer som følger formatet nøyaktig OG hører til en FEILET, fastlåst test slippes gjennom; alt annet forkastes. Ingen respons, payload, filterverdier eller URL kan passere formatet.
+ */
+export function parseL6Diag(text, failedFullNames) {
+  const allowed = new Set(failedFullNames);
+  const byTest = new Map();
+  for (const line of String(text ?? "").split(/\r?\n/)) {
+    const m = /^L6DIAG\t([^\t]{1,300})\t(\d{1,3})\t(GET|POST|PATCH|DELETE|PUT|HEAD)\t([a-z_]{1,64}|-)\t(\d{3})\t([0-9A-Z]{5}|PGRST\d{3}|-)$/.exec(line);
+    if (!m || !allowed.has(m[1])) continue;
+    const list = byTest.get(m[1]) ?? [];
+    if (list.length < 40) list.push(`  #${m[2]} ${m[3]} ${m[4]} → HTTP ${m[5]}, kode ${m[6]}`);
+    byTest.set(m[1], list);
+  }
+  return byTest;
+}
+
 /** L4a / L6: hver forventede test (fil + fullt navn) må være kjørt og bestått i vitest-rapporten for L3a; ingen uventede tester i filen; manglende rapport ⇒ ikke PASS. */
-export function evaluateGroup(key, report, rc) {
+export function evaluateGroup(key, report, rc, diagText = null) {
   const expected = L4_L6_TESTS[key].map((t) => idOf(t.file, t.fullName));
   if (rc === null) return { status: "NOT_RUN", notes: [`${key}: DB-suiten ble ikke kjørt`] };
   const all = collectTests(report);
@@ -143,6 +160,10 @@ export function evaluateGroup(key, report, rc) {
   }
   for (const a of inFile.filter((x) => !expected.includes(x.id)).slice(0, 20)) problems.push(`UVENTET test i ${a.file} (ikke i den fastlåste listen): ${a.name}`);
   const notes = [`${passed} av ${expected.length} navngitte tester kjørt og bestått`, ...problems];
+  if (diagText) {
+    const failedNames = L4_L6_TESTS[key].filter((t) => byId.get(idOf(t.file, t.fullName)) === "failed").map((t) => t.fullName);
+    for (const [name, ops] of parseL6Diag(diagText, failedNames)) notes.push(`DIAGNOSTIKK (operasjon, tabell, HTTP-status, kode; i rekkefølge; siste operasjon er normalt der påstanden sviktet) for «${name}»:`, ...ops);
+  }
   return { status: problems.length ? "FAIL" : "PASS", notes };
 }
 
@@ -263,8 +284,8 @@ export function evaluateDir(dir) {
     L1: evaluateL1({ startRc: rc("start.rc"), resetRc: rc("reset.rc"), actualVersions: migrations[0] || "", expectedVersions: migrations[1] || "", pgVersion: (read(dir, "pgversion.txt") ?? "").trim().split("\n")[0] || "", images: (read(dir, "images.txt") ?? "").split(/\r?\n/).filter((i) => /^[\w./:@-]+$/.test(i)).slice(0, 20), tail: rc("start.rc") !== 0 ? tailLines("start.out") : tailLines("reset.out") }),
     L2: evaluateL2(read(dir, "l2.out"), rc("l2.rc")),
     L3a, L3b, L3: combineL3(L3a, L3b),
-    L4a: evaluateGroup("L4a", read(dir, "l3.json"), rc("l3.rc")),
-    L6: evaluateGroup("L6", read(dir, "l3.json"), rc("l3.rc")),
+    L4a: evaluateGroup("L4a", read(dir, "l3.json"), rc("l3.rc"), read(dir, "l6-diag.txt")),
+    L6: evaluateGroup("L6", read(dir, "l3.json"), rc("l3.rc"), read(dir, "l6-diag.txt")),
     L4b: evaluateE2E("l4", read(dir, "e2e-l4.out"), rc("e2e-l4.rc")),
     L5a: evaluateE2E("econ006", read(dir, "e2e-econ006.out"), rc("e2e-econ006.rc")),
     L5b: evaluateE2E("econ006d", read(dir, "e2e-econ006d.out"), rc("e2e-econ006d.rc")),

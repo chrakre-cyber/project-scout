@@ -6,7 +6,8 @@
  * klyngen feiler testene i stedet for å hoppes over. Komplementerer `econ005c-dealer-inputs.test.ts`, som bare bruker SET ROLE/claims uten HTTP-laget.
  */
 import type { Client } from "pg";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { appendFileSync } from "node:fs";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { DEMO_CATALOG } from "@/adapters/search-catalog/demo-catalog";
 import type { SearchSpecJson } from "@/domain/search-v2/serialization";
 import { EXAMPLES } from "@/server/search-examples";
@@ -32,13 +33,31 @@ const spec = (): SearchSpecJson => {
   return r.json;
 };
 
+// Avgrenset diagnostikk (CI-001): for en test som feiler lagres bare operasjon, tabellnavn, HTTP-status og SQLSTATE/PostgREST-kode i rekkefølge — aldri respons, payload, filterverdier, headere eller URL.
+// Skrives til filen i SCOUT_L6_DIAG_FILE (satt av orkestreringen); uten miljøvariabelen skjer ingenting. Endrer ingen påstander.
+let trace: string[] = [];
+beforeEach(() => { trace = []; });
+afterEach((ctx) => {
+  const file = process.env.SCOUT_L6_DIAG_FILE;
+  const failed = ctx.task.result?.state === "fail" || (ctx.task.result?.errors?.length ?? 0) > 0;
+  if (!file || !failed) return;
+  const fullName = [ctx.task.suite?.name, ctx.task.name].filter(Boolean).join(" ");
+  try { appendFileSync(file, trace.map((t, i) => `L6DIAG\t${fullName}\t${i + 1}\t${t}\n`).join("")); } catch { /* diagnostikk er valgfri */ }
+});
+const noteTrace = (method: string, path: string, status: number, code: string | undefined) => {
+  const table = /^[a-z_]+/.exec(path)?.[0] ?? "-";
+  trace.push(`${method}\t${table}\t${status}\t${code && /^[0-9A-Z]{5}$|^PGRST\d{3}$/.test(code) ? code : "-"}`);
+};
+
 async function rest(method: string, path: string, token: string | null, body?: unknown, prefer = "return=representation") {
   const headers: Record<string, string> = { apikey: env.key, Prefer: prefer, ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body !== undefined ? { "Content-Type": "application/json" } : {}) };
   const res = await fetch(`${env.url}/rest/v1/${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
   const text = await res.text();
   let json: unknown = null;
   try { json = text ? JSON.parse(text) : null; } catch { /* ikke JSON */ }
-  return { status: res.status, json, text, rows: Array.isArray(json) ? (json as J[]) : [], code: ((json ?? {}) as J).code as string | undefined };
+  const code = ((json ?? {}) as J).code as string | undefined;
+  noteTrace(method, path, res.status, code);
+  return { status: res.status, json, text, rows: Array.isArray(json) ? (json as J[]) : [], code };
 }
 const tokenOf = async (u: TestUser) => (await (await signIn(u)).auth.getSession()).data.session!.access_token;
 const count = async (sql: string, params: unknown[] = []) => (await db.query(sql, params)).rows[0].n as number;

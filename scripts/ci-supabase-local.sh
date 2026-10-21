@@ -78,7 +78,8 @@ fi
 if [ "$(cat "$W/reset.rc" 2>/dev/null)" = "0" ]; then
   QA_OUT="$W" run l2 1500 bash scripts/qa-upgrade-check.sh
   # --- L3 (qa:migrations avslutter med ren database fra alle migrasjoner)
-  run l3cmd 720 bash scripts/test-db.sh --reporter=json --outputFile="$W/l3.json"
+  # Avgrenset diagnostikk for feilende L4a/L6-tester (bare operasjon, tabell, HTTP-status, kode) til privat fil; evaluate.mjs slipper gjennom bare strengt formaterte linjer for feilede tester.
+  SCOUT_L6_DIAG_FILE="$W/l6-diag.txt" run l3cmd 720 bash scripts/test-db.sh --reporter=json --outputFile="$W/l3.json"
   mv "$W/l3cmd.rc" "$W/l3.rc"; rm -f "$W/l3cmd.out"
   # DB-suiten logger inn mange ganger uten at antallet er kjent: regn med at hele innloggingsbudsjettet (30 per 5 min) er brukt ved slutten av L3a.
   node scripts/ci/login-budget.mjs record "$W/logins" 30

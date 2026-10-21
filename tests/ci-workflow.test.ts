@@ -65,7 +65,7 @@ describe("orkestreringsskript: rammer", () => {
     expect(scriptCode).toMatch(/W="\$\(mktemp -d\)"; chmod 700 "\$W"/);
     expect(scriptCode).toMatch(/node scripts\/ci\/evaluate\.mjs "\$W"/);
     expect(scriptCode).toMatch(/::add-mask::/);
-    const direct = scriptCode.split("\n").filter((l) => /npx supabase (start|db reset|status)|qa-upgrade-check|test-db\.sh|qa-secret-scan|npm run build/.test(l) && !/^\s*(run |QA_OUT=|NEXT_PUBLIC)/.test(l) && !/> "\$W|>\/dev\/null/.test(l));
+    const direct = scriptCode.split("\n").filter((l) => /npx supabase (start|db reset|status)|qa-upgrade-check|test-db\.sh|qa-secret-scan|npm run build/.test(l) && !/^\s*(run |QA_OUT=|NEXT_PUBLIC|SCOUT_L6_DIAG_FILE="\$W\/l6-diag\.txt" run )/.test(l) && !/> "\$W|>\/dev\/null/.test(l));
     expect(direct).toEqual([]);
   });
 
