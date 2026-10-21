@@ -92,8 +92,8 @@ describe("H2: inspeksjon → dry-run → anvendelse (bare via gate)", () => {
     expect(await main(["apply"], env("h2-apply"), t.deps as never)).toBe(2);
     expect(t.log.runs).toHaveLength(0);
     expect(await main(["dry-run"], env("h2-dry-run"), t.deps as never)).toBe(0);
-    expect(t.log.runs[0]).toMatchObject({ cmd: "npx" });
-    expect(t.log.runs[0]!.args.slice(0, 5)).toEqual(["supabase", "db", "push", "--dry-run", "--db-url"]);
+    expect(t.log.runs[0]).toMatchObject({ cmd: "supabase" });   // HOST-001-FIX2: logisk program, startes uten shell (launch.mjs); aldri npx
+    expect(t.log.runs[0]!.args.slice(0, 4)).toEqual(["db", "push", "--dry-run", "--db-url"]);
     t.setApplied(versions);   // etter anvendelse
     expect(await main(["apply"], env("h2-apply"), t.deps as never)).toBe(0);
     expect(t.log.runs[1]!.args).not.toContain("--dry-run");
@@ -148,7 +148,7 @@ describe("H3 (API-nivå)", () => {
       return { code: 0, out: "" };
     } });
     const code = await main(["h3-api"], baseEnv({ SCOUT_HOSTED_STAGE: "h3-api", SUPABASE_TEST_JWT_SECRET: JWT, SCOUT_HOSTED_JWT_ALG: "HS256" }), t2.deps as never);
-    const vit = t2.log.runs.find((r) => r.args[0] === "vitest")!;
+    const vit = t2.log.runs.find((r) => r.cmd === "vitest")!;
     expect(vit.args.filter((a) => a.startsWith("tests/"))).toEqual(H3_TEST_FILES);
     expect(vit.env.SCOUT_HOSTED_TESTS).toBe("1");
     expect(vit.args).not.toContain("-t");               // med JWT-hemmelighet OG bekreftet HS256 kjøres alle
@@ -165,7 +165,7 @@ describe("H3 (API-nivå)", () => {
       return cmd === "bash" ? { code: 0, out: "PASS  build-artefakter .next/static (klient) (0 treff)\nPASS  build-artefakter .next/server (server, utenom publishable key) (0 treff)\nSKIP  lokal Supabase kjører ikke\n\nSECRET-SKANN: INGEN FUNN" } : { code: 0, out: "" };
     } });
     expect(await main(["h3-api"], baseEnv({ SCOUT_HOSTED_STAGE: "h3-api" }), t.deps as never)).toBe(1);
-    const vit = t.log.runs.find((r) => r.args[0] === "vitest")!;
+    const vit = t.log.runs.find((r) => r.cmd === "vitest")!;
     expect(vit.args).toContain("-t");
     expect(printed(t.log)).toMatch(/L4a DELVIS/);
     expect(existsSync(join(t.dir, "h3.json"))).toBe(true);
@@ -182,7 +182,7 @@ describe("HOST-001-FIX1 P2-3: hemmelighetsavhengige tester utelates og rapporter
   it.each([["ingen hemmelighet", {}], ["hemmelighet uten bekreftet HS256 (asymmetrisk signering kan ikke antas)", { SUPABASE_TEST_JWT_SECRET: JWT }], ["HS256 uten hemmelighet", { SCOUT_HOSTED_JWT_ALG: "HS256" }], ["feil algoritme", { SUPABASE_TEST_JWT_SECRET: JWT, SCOUT_HOSTED_JWT_ALG: "ES256" }]])("%s ⇒ -t utelater ALLE hemmelighetsavhengige tester og L4a blir DELVIS med navn", async (_n, extra) => {
     const t = setup({ applied: versions, runOut: runOut(skippedRep()) });
     expect(await main(["h3-api"], baseEnv({ SCOUT_HOSTED_STAGE: "h3-api", ...extra }), t.deps as never)).toBe(1);
-    const vit = t.log.runs.find((r) => r.args[0] === "vitest")!;
+    const vit = t.log.runs.find((r) => r.cmd === "vitest")!;
     const filter = new RegExp(vit.args[vit.args.indexOf("-t") + 1]!);
     for (const n of SECRET_DEPENDENT_TESTS as string[]) expect(filter.test(`L4 API: tokenvalidering i PostgREST ${n} osv`)).toBe(false);
     expect(filter.test("L4 API: innlogging riktig passord gir sesjon")).toBe(true);

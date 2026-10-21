@@ -1,0 +1,4 @@
+# HOST-001-FIX2 (egen, avgrenset del av diffen): shell-skript skal alltid ha LF-linjeslutt i arbeidskopien, også på Windows.
+# Uten dette kan Git for Windows (standardvalget «Checkout Windows-style», core.autocrlf=true) gi CRLF i *.sh, og Git Bash feiler da med «\r: command not found».
+# Berører bare arbeidskopiens linjeslutt for *.sh; ingen filinnhold i repoet endres (alle *.sh er allerede LF).
+*.sh text eol=lf

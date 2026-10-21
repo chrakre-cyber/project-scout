@@ -1,13 +1,13 @@
 // HOST-001 (forberedelse, IKKE KJØRT mot hosted): kommandolinje for H2–H4 mot ETT angitt hosted TESTPROSJEKT. Alt som berører nettverk krever (1) gyldig hosted-mål (target.mjs), (2) uttrykkelig
 // tillatelse til akkurat dette trinnet (SCOUT_HOSTED_STAGE) og (3) for anvendelse: nylig inspeksjon + dry-run (gate.mjs). Uten miljøvariablene avslutter alt før noen forbindelse åpnes.
 // Rå utskrift fra underprosesser fanges og vises bare etter sanering mot kjente verdier. Se docs/econ/hosted-kjoreinstruks.md. Bruk: node scripts/hosted/cli.mjs <kommando> [--execute]
-import { spawn } from "node:child_process";
 import { createRequire } from "node:module";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { evaluateGroup } from "../ci/evaluate.mjs";
 import { hasLeak, sanitizeText } from "../ci/sanitize.mjs";
+import { createLauncher, isMainModule } from "./launch.mjs";
 import { executeCleanup, planCleanup } from "./cleanup.mjs";
 import { REPORT_MAX_AGE_MS, checkBinding, stamp } from "./binding.mjs";
 import { checkGate } from "./gate.mjs";
@@ -68,13 +68,8 @@ function realDeps() {
       await c.connect();
       return c;
     },
-    run: (cmd, args, env) => new Promise((resolve) => {
-      const p = spawn(cmd, args, { env: { ...process.env, ...env }, stdio: ["ignore", "pipe", "pipe"] });
-      let out = "";
-      p.stdout.on("data", (d) => { out += d; }); p.stderr.on("data", (d) => { out += d; });
-      p.on("error", () => resolve({ code: 127, out }));
-      p.on("close", (code) => resolve({ code: code ?? 1, out }));
-    }),
+    // Programmer startes UTEN shell (launch.mjs): logiske navn «supabase», «vitest», «next», «bash» — aldri npx/npm (feiler på Windows, og shell ville tolket adressen med passord).
+    run: (tool, args, env) => createLauncher().run(tool, args, env),
   };
 }
 
@@ -138,8 +133,9 @@ export async function main(argv, env, deps = realDeps()) {
       const gate = checkGate({ stage: STAGE_OF[cmd], target, inspect: read(join(deps.dir, "inspect.json")), dryRun: read(join(deps.dir, "dry-run.json")), repoHash: rh, now: deps.now(), backupConfirmed: env.SCOUT_HOSTED_BACKUP === "bekreftet" });
       if (!gate.allow) { say(`avvist av gate:\n- ${gate.reasons.join("\n- ")}`); return 2; }
       const insp = read(join(deps.dir, "inspect.json"));
-      const args = ["supabase", "db", "push", ...(cmd === "dry-run" ? ["--dry-run"] : []), "--db-url", env.SUPABASE_TEST_DB_URL];
-      const r = await deps.run("npx", args, {});
+      const args = ["db", "push", ...(cmd === "dry-run" ? ["--dry-run"] : []), "--db-url", env.SUPABASE_TEST_DB_URL];
+      const r = await deps.run("supabase", args, {});
+      if (r.launchError) say(`kunne ikke starte supabase: ${r.launchError}`);
       const listed = [...new Set([...r.out.matchAll(/\b(\d{14})_[a-z0-9_]+\.sql/g)].map((m) => m[1]))].sort();
       if (cmd === "dry-run") {
         const same = r.code === 0 && JSON.stringify(listed) === JSON.stringify([...insp.migrations.pending].sort());
@@ -168,12 +164,15 @@ export async function main(argv, env, deps = realDeps()) {
         const out = join(tmp, "vitest.json");
         const withSecret = secretTestsEnabled(env);
         const excluded = withSecret ? [] : SECRET_DEPENDENT_TESTS;
-        const args = ["vitest", "run", "--config", "vitest.db.config.ts", ...H3_TEST_FILES, "--reporter=json", `--outputFile=${out}`, ...(withSecret ? [] : ["-t", `^(?!.*(?:${excluded.map(escapeRe).join("|")})).*$`])];
-        const t = await deps.run("npx", args, { SCOUT_HOSTED_TESTS: "1" });
+        const args = ["run", "--config", "vitest.db.config.ts", ...H3_TEST_FILES, "--reporter=json", `--outputFile=${out}`, ...(withSecret ? [] : ["-t", `^(?!.*(?:${excluded.map(escapeRe).join("|")})).*$`])];
+        const t = await deps.run("vitest", args, { SCOUT_HOSTED_TESTS: "1" });
+        if (t.launchError) say(`kunne ikke starte vitest: ${t.launchError}`);
         const rep = existsSync(out) ? readFileSync(out, "utf8") : null;
         const l4a = hostedGroup("L4a", rep, t.code, { excluded }), l6 = hostedGroup("L6", rep, t.code);
-        const build = await deps.run("npm", ["run", "build"], { NEXT_PUBLIC_SUPABASE_URL: env.SUPABASE_TEST_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.SUPABASE_TEST_PUBLISHABLE_KEY });
+        const build = await deps.run("next", ["build"], {   // = `npm run build` (package.json: «build»: «next build»; kontrollert av test)
+           NEXT_PUBLIC_SUPABASE_URL: env.SUPABASE_TEST_URL, NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: env.SUPABASE_TEST_PUBLISHABLE_KEY });
         const scan = await deps.run("bash", ["scripts/qa-secret-scan.sh"], {});
+        for (const [n, r] of [["build", build], ["hemmelighetsskann", scan]]) if (r.launchError) say(`kunne ikke starte ${n}: ${r.launchError}`);
         const secrets = hostedL7(scan.out, scan.code, build.code);
         if (hasLeak(`${build.out}\n${scan.out}`, lits)) secrets.notes.push("rå utskrift fra build/skann inneholdt noe som ville blitt sanert (vises ikke)");
         const b3 = stamp(target, rh, deps.now(), { migrationsVerified: "current" });
@@ -214,4 +213,4 @@ export async function main(argv, env, deps = realDeps()) {
   return 2;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) process.exit(await main(process.argv.slice(2), process.env));
+if (isMainModule(import.meta.url, process.argv[1])) process.exit(await main(process.argv.slice(2), process.env));
