@@ -1,5 +1,7 @@
 # Forslag: kontroll mot ekte Supabase (ikke utført — venter beslutning)
 
+**Status 21.10.2026 (sluttoppdatering):** Trinn L er kjørt som CI-001 (lokal Supabase i GitHub-runner; DONE innen avgrenset omfang, kjøring 39629190050) — `reviews/CI-001-avslutning.md`. **Trinn H (H1–H4) er fortsatt åpent** (ikke utført): plan i `docs/econ/hosted-plan-h1-h4.md`.
+
 **Status:** forslag 20.10.2026, utvidet 21.10.2026 med kartlegging (§ 7). Ingen kontroll er kjørt, ingen kode er endret, ingen hosted handling. Hittil er alt kjørt mot en **emulator** (Auth/PostgREST) og en **isolert PostgreSQL**; ingenting av det er bekreftelse av Supabase-integrasjon, og det skal ikke omtales slik.
 
 ## 1. Hva som ikke er verifisert i dag

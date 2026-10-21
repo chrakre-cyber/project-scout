@@ -1,5 +1,7 @@
 # Første manuelle Actions-kjøring (CI-001) — fremgangsmåte (ikke utført)
 
+**Status 21.10.2026 (sluttoppdatering):** fremgangsmåten er brukt (første kjøring 39578387230) og senere kjøringer er gjort fra arbeidsgrenen uten endring på `main`. Main-integrasjon er egen oppgave CI-002 (`reviews/CI-001-avslutning.md`).
+
 **Status 21.10.2026:** beskrivelse av enkleste vei. **Ingenting er aktivert:** ingenting er endret på `main`, ingen kjøring er startet, ingen GitHub-innstillinger er endret. CI-001 forblir REVIEW; uavhengig review av 215bc2c: ingen nye blokkerende funn (`reviews/CI-001-FIX2-review-215bc2c.md`). Kjøringen gir bare belegg for lokal Supabase i Actions (L1–L3, L7); L4–L6, Playwright og hosted H1–H4 er fortsatt åpne.
 
 ## Fakta om repoet (kontrollert 21.10.2026)

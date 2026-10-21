@@ -1,5 +1,7 @@
 # Forslag: Trinn L (lokal Supabase) på GitHub Actions — kartlegging (ikke implementert)
 
+**Status 21.10.2026 (sluttoppdatering):** CI-001 er DONE innen avgrenset omfang (lokal Supabase på GitHub-runner, L1–L7 etter L3a/L3b-modell; kjøring 39629190050, samlet PASS) — `reviews/CI-001-avslutning.md`. Avvik fra dette forslaget (begrunnet): ingen artefakter og ingen tredjeparts-actions; Chrome er forhåndsinstallert (ingen installasjon). Hosted (Trinn H) står åpent (HOST-001).
+
 **Status 21.10.2026:** kartlegging og forslag. **Ingen workflow er opprettet, ingen kjøring startet, ingen innstilling endret, ingen tjeneste opprettet.** Ingen credentials er etterspurt. Trinn H (hosted testprosjekt) er en separat, senere beslutning. Bakgrunn: Docker Desktop lar seg ikke installere på Christians PC (alternativ O1 i `forslag-supabase-kontroll.md` faller bort); dette utreder O2.
 
 ## 1. Kontrollert i repoet (faktiske funn)

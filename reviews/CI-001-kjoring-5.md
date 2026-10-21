@@ -32,12 +32,12 @@ De seks hoppene i L3a er de samme kjente oppgraderingstestene som krever isolert
 
 ## Slutninger (ikke direkte rapportert)
 - **J3 ble faktisk utført gjennom observatøren:** loggen sier at L5a er PASS uten hoppede sjekker. J3 er en av de 93 faste, og i ekte modus finnes bare observatør-grenen (ingen `skip`). Hvor mange skrivekall observatøren så, skrives ikke ut når sjekken er OK.
-- **Auth/cookie-flyt, CORS og svar fungerte gjennom proxyen:** utledet av at L4b (12/12), L5a og L5b består i ekte modus (innlogging, øktcookie, fornying, utlogging inngår). Ikke målt separat.
+- **Observatørproxyen brukes bare i econ006/L5a.** L4b (l4-browser) og L5b (econ006d) går **ikke** gjennom proxyen og er selvstendige nettleserbelegg mot ekte lokal Supabase. At L5a består, støtter at den testede flyten (innlogging, økt, lagring) fungerte gjennom proxyen; det er ikke en separat måling av CORS, og CORS-adferd generelt er **ikke** verifisert — bare at de testede flytene fungerte.
 - **De to tidligere L6-feilene** (ufiltrert PATCH, 400/21000) er ikke lenger til stede etter at kallene ble filtrert. Årsaken til den tidligere avvisningen er fortsatt **ubekreftet**.
 - `partialInReal` for J3 ligger fortsatt i planen og hindrer ikke PASS når J3 er OK (evaluator uendret).
 
 ## Begrensninger
 - Én kjøring: ingen vurdering av stabilitet over tid (rate limit-venting, image-henting, runner-image-endringer, tid).
-- Originalloggen er ikke uavhengig bekreftet; dette er utviklerens gjengivelse av den sanerte rapporten. Metadata om tokenrettigheter for akkurat denne kjøringen er ikke gjengitt fra loggtoppen.
+- Originalloggen er ikke uavhengig bekreftet (reviewer fikk HTTP 403 på jobblogg-API-et); ingen funn i det sanerte sammendraget beviser ikke at hele originalloggen er uten sensitive data — skille mellom reviewet lekkasjevern, L7-utfall og faktisk logginnsyn gjelder; dette er utviklerens gjengivelse av den sanerte rapporten. Metadata om tokenrettigheter for akkurat denne kjøringen er ikke gjengitt fra loggtoppen.
 - Workflowfilen på `main` er den eldre kopien; kjøringen brukte grenens versjon. Ingenting er merget.
 - Ikke dekket: hosted Supabase (H1–H4), L3c, pilotklarhet, regel-/parametergodkjenning.
