@@ -8,6 +8,7 @@ import { createRequire } from "node:module";
 import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import { startMiniSupabase } from "./support/mini-supabase.mjs";
+import { freshEpoch } from "./support/synthetic-epoch.mjs";
 import { buildPatchedCopy } from "./support/patched-build.mjs";
 import { FX_RATE, LISTINGS, TRANSPORT_NOK, expected, nok } from "./support/econ006-reference.mjs";
 
@@ -41,19 +42,20 @@ delete env.SCOUT_SYNTHETIC_FAILURE; delete env.SCOUT_PUBLIC_ID_KEY;
 env.SCOUT_ENABLE_LEGACY_ROUTES = "1";
 const cleanups = [], servers = [];
 process.on("exit", () => { for (const s of servers) { try { s.kill("SIGKILL"); } catch { /* stoppet */ } } for (const c of cleanups) { try { c(); } catch { /* ignorer */ } } });
+const EPOCH = freshEpoch(); // ECON-006e: den uendrede appen får en frisk datasettepoke (nå − 1 t) via server-miljøet
 async function startIn(cwd, port) {
-  const p = spawn(`${cwd}/node_modules/.bin/next`, ["start", "-p", String(port)], { cwd, env, stdio: ["ignore", "ignore", "inherit"] });
+  const p = spawn(`${cwd}/node_modules/.bin/next`, ["start", "-p", String(port)], { cwd, env: { ...env, SCOUT_SYNTHETIC_EPOCH: EPOCH }, stdio: ["ignore", "ignore", "inherit"] });
   servers.push(p);
   for (let i = 0; i < 80; i++) { try { const r = await fetch(`${base(port)}/login`); if (r.status < 500) return; } catch { /* venter */ } await new Promise((r) => setTimeout(r, 500)); }
   throw new Error(`appen på ${port} startet ikke`);
 }
-// Demoens faste observasjonsdatoer er utløpt (funn i 006c): alle kopier har friske observasjonstidspunkt. Her er IKKE utløp temaet.
-console.log("bygger hovedløpet (friske observasjonstidspunkt) …");
-const cMain = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations"], env }); cleanups.push(cMain.cleanup); await startIn(cMain.dir, MAIN);
+// ECON-006e: hovedløpet kjører den UENDREDE appen (ingen fresh_observations-patch); datasettepoken er nå − 1 t. Her er IKKE utløp temaet. Kopier brukes bare for endret rettighetsprofil.
+console.log(`starter hovedløpet (uendret app, SCOUT_SYNTHETIC_EPOCH=${EPOCH}) …`);
+await startIn(process.cwd(), MAIN);
 console.log("bygger kopi uten registrert rettighetsprofil …");
-const cNo = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations", "no_rights_profile"], env }); cleanups.push(cNo.cleanup); await startIn(cNo.dir, NOPROFILE);
+const cNo = buildPatchedCopy({ root: process.cwd(), names: ["no_rights_profile"], env }); cleanups.push(cNo.cleanup); await startIn(cNo.dir, NOPROFILE);
 console.log("bygger kopi der rettighetsprofilen bare er et utkast …");
-const cDr = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations", "draft_rights_profile"], env }); cleanups.push(cDr.cleanup); await startIn(cDr.dir, DRAFT);
+const cDr = buildPatchedCopy({ root: process.cwd(), names: ["draft_rights_profile"], env }); cleanups.push(cDr.cleanup); await startIn(cDr.dir, DRAFT);
 
 const browser = await chromium.launch();
 const problems = [];

@@ -13,10 +13,13 @@ export function getMarketplaceProvider(): MarketplaceProvider {
   // Kun for demo/kontroll av feilvisning: simulerer kildefeil uten nettverk.
   const simulated = process.env.SCOUT_SYNTHETIC_FAILURE;
   if (simulated && isMarketplaceErrorCode(simulated)) return new SyntheticMarketplaceProvider({ failAll: simulated });
-  cached ??= new SyntheticMarketplaceProvider();
-  return cached;
+  if (cached) return cached;
+  // Ugyldig datasettepoke (SCOUT_SYNTHETIC_EPOCH) gir en provider som feiler lukket; den mellomlagres ikke.
+  const provider = new SyntheticMarketplaceProvider();
+  if (provider.usable) cached = provider;
+  return provider;
 }
 
 export { MarketplaceError, MARKETPLACE_ERROR_LABEL } from "./errors";
 export type { MarketplaceProvider, SearchPage, SearchQuery, SearchWindow } from "./types";
-export { EMPTY_QUERY } from "./synthetic/provider";
+export { EMPTY_QUERY, syntheticDatasetLabel } from "./synthetic/provider";

@@ -46,3 +46,7 @@ Test uavhengige invariants og offisielle grenser; ikke bare kopier samme formel 
 ## SEARCH-005 — kontroller
 
 `npx vitest run` (540 ikke-DB-tester), `bash scripts/test-db-isolated.sh tests/db/search-drafts.test.ts tests/db/qa-catalog.test.ts` (isolert klynge, uten Docker/Supabase), `bash scripts/test-db-mutations.sh` (seks bevisste feil må oppdages), `bash scripts/test-e2e-search005.sh` (nettleserflyt med Auth/PostgREST-emulator mot isolert PostgreSQL). `npm run test:db` mot lokal Supabase kjører `tests/db/search-drafts.test.ts` sammen med de øvrige DB-testene (IKKE kjørt av Claude: ingen Docker).
+
+## Syntetiske demodata: epoke og fornyelse (ECON-006e)
+- `tests/synthetic-epoch.test.ts`: epoke ≤ nå uten toleranse (eksakt nåtid ok, +1 s avvist), format, gulv (profil/datasett), vindu 0–48 t, monoton avbildning, uendret innhold/`modifiedAt`, uendret kandidat-id/revisjon mot baseline (`tests/fixtures/synthetic-identity-baseline.json`), uendret retensjon (utløp i [epoke+5 d, epoke+7 d]), fail-lukket ved ugyldig/fremtidig epoke, ingen rullering (ulik klokke, statisk skann).
+- Nettleser (`scripts/test-e2e-econ006.sh`, `…006d.sh`): den uendrede appen med `SCOUT_SYNTHETIC_EPOCH`; negative løp: utløpt epoke, fremtidig epoke, ugyldig format, uten variabel (forventning utledet fra standardepoken). Emulator ≠ Supabase.

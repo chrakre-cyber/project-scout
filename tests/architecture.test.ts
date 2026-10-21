@@ -87,11 +87,13 @@ describe("Supabase og hemmeligheter", () => {
     }
   });
 
-  it("bare seks miljøvariabler leses; den eneste hemmelige leses kun i den betrodde skriveveien", () => {
+  it("bare sju miljøvariabler leses; den eneste hemmelige leses kun i den betrodde skriveveien", () => {
     const names = new Set<string>();
     for (const f of ALL) for (const m of f.text.matchAll(/process\.env\.([A-Z0-9_]+)/g)) names.add(m[1]!);
-    expect([...names].sort()).toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_URL", "SCOUT_ENABLE_LEGACY_ROUTES", "SCOUT_INGEST_DATABASE_URL", "SCOUT_PUBLIC_ID_KEY", "SCOUT_SYNTHETIC_FAILURE"]); // DEV-006G: SCOUT_ENABLE_LEGACY_ROUTES (bare lest i rotlayouten); DATA-002C: SCOUT_PUBLIC_ID_KEY (server-only, bare lest i public-ids.ts)
+    expect([...names].sort()).toEqual(["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY", "NEXT_PUBLIC_SUPABASE_URL", "SCOUT_ENABLE_LEGACY_ROUTES", "SCOUT_INGEST_DATABASE_URL", "SCOUT_PUBLIC_ID_KEY", "SCOUT_SYNTHETIC_EPOCH", "SCOUT_SYNTHETIC_FAILURE"]); // ECON-006e: SCOUT_SYNTHETIC_EPOCH (server-only, bare lest i synthetic/epoch.ts); DEV-006G: SCOUT_ENABLE_LEGACY_ROUTES (bare lest i rotlayouten); DATA-002C: SCOUT_PUBLIC_ID_KEY (server-only, bare lest i public-ids.ts)
     for (const f of ALL) expect(f.text, f.rel).not.toMatch(/service_role|sb_secret|SERVICE_ROLE/i);
+    const epochReaders = ALL.filter((f) => /process\.env\.SCOUT_SYNTHETIC_EPOCH/.test(f.text)).map((f) => f.rel);
+    expect(epochReaders).toEqual(["src/providers/marketplace/synthetic/epoch.ts"]);
     const readers = ALL.filter((f) => /SCOUT_INGEST_DATABASE_URL/.test(f.text)).map((f) => f.rel);
     expect(readers).toEqual(["src/server/trusted-ingest.ts"]);
   });

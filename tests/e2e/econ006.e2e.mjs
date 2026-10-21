@@ -6,7 +6,8 @@
 //   * Auth/PostgREST er en EMULATOR (tests/e2e/support/mini-supabase.mjs) som videresender app-kallene til en ISOLERT PostgreSQL som rolle `authenticated`: RLS, constraints og triggere er
 //     PostgreSQLs egne. Dette er IKKE bekreftet Supabase/PostgREST/GoTrue-integrasjon (B6) — det er et eget kontrollpunkt hos eier før pilot;
 //   * rettighetsavslag testes mot MIDLERTIDIGE KOPIER av appen med endret rettighetsprofil (produksjonskoden røres ikke); hva som ikke kan verifiseres i nettleser er listet i rapporten;
-//   * demoens faste observasjonsdatoer er for gamle for økonomiberegning (funn): hovedløpet bruker en kopi med friske observasjonstidspunkt; den uendrede appen brukes til å vise at beregningen da feiler lukket;
+//   * demodataene fornyes gjennom datasettepoken (ECON-006e): ALLE servere kjører den uendrede appen med server-miljøvariabelen SCOUT_SYNTHETIC_EPOCH (hovedløp: nå − 1 t); kopiene brukes bare for endret rettighetsprofil.
+//     Utløpt epoke, fremtidig epoke, ugyldig format og uten variabel (standardepoke) kjøres mot samme bygg og viser at utløpskontrollen er uendret og at epoken aldri justeres;
 //   * annonsene er syntetiske demoannonser (ikke mobile.de). Forventede beløp = B-Merovo-scenario / fixturekonvensjon (se support/econ006-reference.mjs), ikke produksjonsregler;
 //   * «foreldet» ved endret annonse-revisjon og endrede rettigheter simuleres ved å endre lagret rad i testdatabasen (annonsene i demoen endres ikke under kjøringen); dette er merket i sjekkene.
 import { spawn, execFileSync } from "node:child_process";
@@ -15,6 +16,7 @@ import { createHmac, randomBytes, randomUUID } from "node:crypto";
 import { mkdirSync } from "node:fs";
 import { startMiniSupabase } from "./support/mini-supabase.mjs";
 import { buildPatchedCopy } from "./support/patched-build.mjs";
+import { defaultEpoch, epochIso, expectationForDefault, expiredEpoch, freshEpoch, labelFor } from "./support/synthetic-epoch.mjs";
 import { FX_RATE, LISTINGS, TRANSPORT_NOK, expected, nok } from "./support/econ006-reference.mjs";
 
 const require = createRequire(import.meta.url);
@@ -23,7 +25,8 @@ const { Client } = require(process.env.PG);
 const DB = process.env.SUPABASE_TEST_DB_URL;
 const SHOTS = process.env.SHOTS || "reviews/ECON-006c/screenshots";
 mkdirSync(SHOTS, { recursive: true });
-const EMU_PORT = 54399, MAIN = 3100, FAILP = 3101, DENY_ECON = 3102, DENY_LID = 3103, STALE = 3104;
+const EMU_PORT = 54399, MAIN = 3100, FAILP = 3101, DENY_ECON = 3102, DENY_LID = 3103, STALE = 3104, UNSET = 3105, FUTURE = 3106, BADFMT = 3107;
+const EPOCH = freshEpoch(), OLD_EPOCH = expiredEpoch();
 const base = (p) => `http://localhost:${p}`;
 const results = [];
 const check = (name, ok, extra = "") => { results.push(`${ok ? "OK  " : "FEIL"} ${name}${ok || !extra ? "" : ` — ${extra}`}`); if (!ok) console.error(`FEIL ${name} — ${extra}`); };
@@ -68,17 +71,19 @@ async function startIn(cwd, port, extra = {}) {
   throw new Error(`appen på ${port} startet ikke`);
 }
 await startIn(process.cwd(), FAILP, { SCOUT_SYNTHETIC_FAILURE: "unavailable" });
-await startIn(process.cwd(), STALE);
-// 2) kopier med friske observasjonstidspunkt (hovedløpet) og med endret rettighetsprofil
-console.log("bygger hovedløpet (kopi med friske observasjonstidspunkt) …");
-const copyMain = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations"], env }); cleanups.push(copyMain.cleanup);
-await startIn(copyMain.dir, MAIN);
+await startIn(process.cwd(), STALE, { SCOUT_SYNTHETIC_EPOCH: OLD_EPOCH });   // uendret app, utløpt epoke (8 døgn tilbake)
+await startIn(process.cwd(), UNSET, { SCOUT_SYNTHETIC_EPOCH: "" });          // uendret app, ingen variabel ⇒ innebygd standardepoke
+await startIn(process.cwd(), FUTURE, { SCOUT_SYNTHETIC_EPOCH: epochIso(Date.now() + 3_600_000) });
+await startIn(process.cwd(), BADFMT, { SCOUT_SYNTHETIC_EPOCH: "i morgen" });
+// 2) hovedløpet: den UENDREDE appen med epoke nå − 1 t; kopier bare for endret rettighetsprofil
+console.log(`starter hovedløpet (uendret app, SCOUT_SYNTHETIC_EPOCH=${EPOCH}) …`);
+await startIn(process.cwd(), MAIN, { SCOUT_SYNTHETIC_EPOCH: EPOCH });
 console.log("bygger kopi med nektet økonomivisning …");
-const copyEcon = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations", "deny_economics_display"], env }); cleanups.push(copyEcon.cleanup);
-await startIn(copyEcon.dir, DENY_ECON);
+const copyEcon = buildPatchedCopy({ root: process.cwd(), names: ["deny_economics_display"], env }); cleanups.push(copyEcon.cleanup);
+await startIn(copyEcon.dir, DENY_ECON, { SCOUT_SYNTHETIC_EPOCH: EPOCH });
 console.log("bygger kopi med nektet visning av leverandørens annonse-id …");
-const copyLid = buildPatchedCopy({ root: process.cwd(), names: ["fresh_observations", "deny_listing_id"], env }); cleanups.push(copyLid.cleanup);
-await startIn(copyLid.dir, DENY_LID);
+const copyLid = buildPatchedCopy({ root: process.cwd(), names: ["deny_listing_id"], env }); cleanups.push(copyLid.cleanup);
+await startIn(copyLid.dir, DENY_LID, { SCOUT_SYNTHETIC_EPOCH: EPOCH });
 
 const browser = await chromium.launch();
 const problems = [];
@@ -178,14 +183,33 @@ try {
 
   const D = { diesel: pidOf(LISTINGS.diesel.providerId), phev: pidOf(LISTINGS.phev.providerId), bev: pidOf(LISTINGS.bev.providerId), diesel2: pidOf(LISTINGS.diesel2.providerId), diesel3: pidOf(LISTINGS.diesel3.providerId), missing: pidOf(LISTINGS.missing.providerId) };
 
-  // =============================================================== foreldet kildedata i den uendrede appen: feiler lukket
+  // =============================================================== datasettepoke (ECON-006e): den uendrede appen, utløpskontrollen uendret
   {
     const ctxS = await browser.newContext({ viewport: { width: 1280, height: 900 } });
-    const pS = await login(ctxS, A, STALE);
-    await pS.goto(`${base(STALE)}/searches/${S1}/preview/${pidOf(LISTINGS.diesel.providerId)}?v=1`);
+    const fresh = () => browser.newContext({ viewport: { width: 1280, height: 900 } }); // cookies deles mellom porter på localhost: egen context per server
+    const detailOf = async (port) => { const pg = await login(await fresh(), A, port); await pg.goto(`${base(port)}/searches/${S1}/preview/${pidOf(LISTINGS.diesel.providerId)}?v=1`); return pg; };
+    const pS = await detailOf(STALE);
     const eS = await econ(pS);
-    check("foreldet kildedata (uendret app; demoens observasjonsdatoer er eldre enn oppbevaringstiden): økonomien er «Ikke beregnet» med forklaring — ingen tall, ingen positivt utfall", eS.status === "not_calculated" && eS.positive === "false" && /kildedataene er for gamle/.test(eS.text) && !/\d{3}\s?\d{3}\s?kr/.test(eS.text));
-    await shot(pS, "00-foreldet-kildedata");
+    check(`utløpt epoke (${OLD_EPOCH}, 8 døgn tilbake; uendret app): økonomien er «Ikke beregnet» med «kildedataene er for gamle» — ingen tall, ingen positivt utfall`, eS.status === "not_calculated" && eS.positive === "false" && /kildedataene er for gamle/.test(eS.text) && !/\d{3}\s?\d{3}\s?kr/.test(eS.text));
+    check("merkingen følger epoken også når den er utløpt: «Syntetisk generert <dato> — ikke hentet fra leverandør»", nb(await pS.locator('[data-testid="layout-generated-label"]').innerText()).includes(labelFor(OLD_EPOCH)));
+    await shot(pS, "00-utlopt-epoke");
+    const pM = await login(await fresh(), A, MAIN);
+    const labelM = nb(await pM.locator('[data-testid="layout-source-label"]').innerText());
+    check(`hovedløpet (uendret app, epoke ${EPOCH}): merkingen «Syntetiske demodata – ikke ekte leverandørdata» og «${labelFor(EPOCH)}» er synlig`, labelM.includes("Syntetiske demodata – ikke ekte leverandørdata") && labelM.includes(labelFor(EPOCH)), labelM);
+    for (const [port, what, epoch] of [[FUTURE, "fremtidig epoke (nå + 1 t; ingen toleranse, ingen justering)", "future"], [BADFMT, "ugyldig epoke («i morgen»)", "bad"]]) {
+      const pg = await login(await fresh(), A, port);
+      const r = await pg.goto(urls(port, S1, 1, D.diesel).form);
+      const t = await body(pg);
+      check(`${what}: kilden feiler lukket («Kilden kunne ikke leses»), uten skjema, uten økonomi og uten merking av ferske data`, /Kilden kunne ikke leses/.test(t) && (await pg.locator('[data-testid="dealer-form"]').count()) === 0 && (await pg.locator('[data-testid="layout-generated-label"]').count()) === 0 && !/\d{3}\s?\d{3}\s?kr/.test(t), `${epoch} ${r?.status()} ${t.slice(0, 120)}`);
+    }
+    const exp = expectationForDefault();
+    const pU = await detailOf(UNSET);
+    const eU = await econ(pU);
+    const labelU = nb(await pU.locator('[data-testid="layout-generated-label"]').innerText().catch(() => ""));
+    check(`uten SCOUT_SYNTHETIC_EPOCH brukes den innebygde standardepoken ${defaultEpoch()}: merkingen viser dens dato`, labelU.includes(labelFor(defaultEpoch())), labelU);
+    if (exp === "fresh") check("standardepoken er ennå innenfor oppbevaringstiden: kildedataene er ikke «for gamle»", !/kildedataene er for gamle/.test(eU.text), eU.text.slice(0, 200));
+    else if (exp === "expired") check("standardepoken er eldre enn 7 døgn: kildedataene er «for gamle» (data blir ikke evig ferske)", eU.status === "not_calculated" && /kildedataene er for gamle/.test(eU.text));
+    else console.log("standardepoken er i overgangsfasen (5–7 døgn): utløp avhenger av annonsen; ingen sjekk av utløp");
     await ctxS.close();
   }
 

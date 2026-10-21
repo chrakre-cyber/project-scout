@@ -1,6 +1,16 @@
 # Forslag: fornyelse av syntetiske demodata — gjennomføringsforslag (ikke implementert)
 
-**Status:** gjennomføringsforslag 21.10.2026 (utdyper forslaget fra 20.10.2026 etter Christians føringer). **Ingen kode er endret.** Ingen hosted handling. Venter beslutning (§ 9).
+**Status:** IMPLEMENTERT 21.10.2026 (ECON-006e, Christians beslutning etter forslaget; til uavhengig review). Teksten under er det opprinnelige forslaget; **avvikene fra forslaget står her og gjelder foran teksten under** (reviewens to presiseringer er tatt inn):
+
+1. **Epoken må være ≤ nå — ingen toleranse** (forslagets `now + 5 min` er fjernet). Eksakt nåtid godtas, ett sekund frem avvises. Epoken justeres eller klemmes aldri; ugyldig epoke ⇒ alle kall feiler som `unavailable` («Kilden kunne ikke leses»), ingen fallback til standardepoken.
+2. **`modifiedAt`/`sourceModifiedAt` og innhold er uendret** (ikke gjort relative): revisjonsgrunnlaget i `src/adapters/search-candidate/candidate.ts` inkluderer `sourceModifiedAt` og er ikke endret. Bare `observed` (`firstSeenAt`/`lastSeenAt`) fornyes, derfor er kandidat-id og revisjon byte-identiske med før fornyelsen (baseline `tests/fixtures/synthetic-identity-baseline.json`, tatt før endringen). Fixturene er derfor **ikke** omformet til relative forskyvninger: de absolutte observasjonstidene er en mal som avbildes monotont (heltall, BigInt, hele sekunder) inn i `[epoke − 48 t, epoke]` i `epoch.ts` (`renewObservations`). Rekkefølgen mellom alle observasjonstider bevares; spredningen komprimeres til 48 t.
+3. Epoken har tre gulv i tillegg til «≤ nå»: eksakt format `ÅÅÅÅ-MM-DDTTT:MM:SSZ`/ekte dato; vinduets start ≥ rettighetsprofilens `validFrom` (2026-10-01); vinduets start ≥ datasettets siste `modifiedAt` (2026-10-05T09:00Z).
+4. Standardepoken `SYNTHETIC_DEFAULT_EPOCH` = `2026-10-21T06:50:00Z` (implementeringstidspunktet, UTC). Overstyring: `SCOUT_SYNTHETIC_EPOCH` (server-only, lest bare i `epoch.ts`; tom verdi = ikke satt).
+5. Merking: `Syntetisk generert <dd.mm.åååå> — ikke hentet fra leverandør` (UTC-dato fra epoken) vises i søkeskallet (`layout-generated-label`) ved siden av den uendrede `SYNTHETIC_ATTRIBUTION`; vises ikke når epoken er ugyldig. Proveniens (`description`, `normalizationNotes`) bærer samme tekst og et notat om at tidene er simulert; begge ligger utenfor revisjonsgrunnlaget.
+6. Vinduet gjelder `firstSeenAt` og `lastSeenAt`; utløp er uendret: tidligste utløp ≥ epoke + 5 d, seneste ≤ epoke + 7 d.
+7. Tester: `tests/synthetic-epoch.test.ts` (19). Nettleser: `tests/e2e/econ006.e2e.mjs`/`econ006d.e2e.mjs` kjører nå den **uendrede** appen med `SCOUT_SYNTHETIC_EPOCH`; `fresh_observations`-patchen er fjernet.
+8. **Fornyelsesrutine:** se `src/providers/marketplace/synthetic/fixtures/FIXTURES.md` § «Fornyelse».
+
 
 ## 1. Problem og krav
 Demoens `lastSeenAt` er faste datoer (siste 4.10.2026 + `demo-variation` 8.10.2026). Økonomiberegningen avviser kildedata eldre enn rettighetsprofilens oppbevaringstid (7 døgn): `sourceUntil = retentionExpiresAt(profil, lastSeenAt)` i `src/server/search-economics.ts` (verifisert: **bare `lastSeenAt` styrer utløpet**; `firstSeenAt` brukes til sortering i `search-run.ts` og visning). Fra 11.10.2026 gir den uendrede appen «Ikke beregnet — kildedataene er for gamle» for alle demoannonser (nettleserbelagt i 006c).

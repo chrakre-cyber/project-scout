@@ -16,6 +16,7 @@ import { MarketplaceError, type MarketplaceErrorCode } from "../errors";
 import type { MarketplaceProvider, RejectedListing, SearchPage, SearchQuery, SearchWindow } from "../types";
 import { evaluateListing } from "@/domain/matching";
 import type { NormalizedListing } from "@/domain/types";
+import { configuredSyntheticEpoch, EPOCH_REFUSAL_TEXT, epochFloors, renewObservations, syntheticGeneratedText, validateSyntheticEpoch } from "./epoch";
 import { syntheticRawListings } from "./fixtures";
 import { normalizeSyntheticListing, SYNTHETIC_SOURCE } from "./normalize";
 import type { SyntheticRawListing } from "./raw";
@@ -27,7 +28,13 @@ export const DEFAULT_RESULT_CAP = 2_000;
 type Entry = { id: string; listing: NormalizedListing } | { id: string; rejected: RejectedListing };
 
 export interface SyntheticProviderOptions {
+  /**
+   * Egne poster (tester). Uten `epoch` brukes de uendret. Uten `records` brukes standarddatasettet, hvis observasjonstider
+   * alltid fornyes mot epoken (`epoch`, ellers `SCOUT_SYNTHETIC_EPOCH`, ellers den innebygde).
+   */
   records?: readonly SyntheticRawListing[];
+  /** Datasettepoke (UTC, `ÅÅÅÅ-MM-DDTTT:MM:SSZ`, ≤ nå). Ugyldig epoke gjør at alle kall feiler (`unavailable`). */
+  epoch?: string;
   resultCap?: number;
   /** Se kilden slik den var på dette tidspunktet (ISO 8601). Standard: alle revisjoner. */
   asOf?: string;
@@ -45,14 +52,35 @@ export class SyntheticMarketplaceProvider implements MarketplaceProvider {
   private readonly resultCap: number;
   private readonly now: () => Date;
   private readonly options: SyntheticProviderOptions;
+  private readonly configError: MarketplaceError | null;
   private calls = { search: 0, getListing: 0 };
 
   constructor(options: SyntheticProviderOptions = {}) {
     this.options = options;
     this.resultCap = options.resultCap ?? DEFAULT_RESULT_CAP;
     this.now = options.now ?? (() => new Date());
-    this.entries = resolve(options.records ?? syntheticRawListings, options.asOf);
+    const records = options.records ?? syntheticRawListings;
+    const epochInput = options.epoch ?? (options.records === undefined ? configuredSyntheticEpoch() : undefined);
+    let prepared = records;
+    let renewedForEpoch: string | undefined;
+    let configError: MarketplaceError | null = null;
+    if (epochInput !== undefined) {
+      const checked = validateSyntheticEpoch(epochInput, this.now(), epochFloors(records));
+      if (checked.ok) {
+        prepared = renewObservations(records, checked.epoch);
+        renewedForEpoch = checked.epoch;
+      } else {
+        configError = new MarketplaceError("unavailable", `Ugyldig datasettepoke for syntetiske data: ${EPOCH_REFUSAL_TEXT[checked.reason]}`);
+      }
+    }
+    this.configError = configError;
+    this.entries = configError ? [] : resolve(prepared, options.asOf, renewedForEpoch);
     this.byId = new Map(this.entries.map((e) => [e.id, e]));
+  }
+
+  /** false når datasettepoken er ugyldig; leverandøren feiler da lukket og bør ikke mellomlagres. */
+  get usable(): boolean {
+    return this.configError === null;
   }
 
   async search(query: SearchQuery, window: SearchWindow): Promise<SearchPage> {
@@ -92,13 +120,20 @@ export class SyntheticMarketplaceProvider implements MarketplaceProvider {
   }
 
   private maybeFail(op: "search" | "getListing") {
+    if (this.configError) throw this.configError;
     const n = this.calls[op]++;
     const code = this.options.failAll ?? this.options.failures?.[op]?.[n] ?? null;
     if (code) throw new MarketplaceError(code, `Simulert feil (${code}) i syntetisk provider`);
   }
 }
 
-function resolve(records: readonly SyntheticRawListing[], asOf: string | undefined): Entry[] {
+/** Merkingen for standarddatasettet nå («Syntetisk generert <dato> — ikke hentet fra leverandør»), eller null når epoken er ugyldig. */
+export function syntheticDatasetLabel(now: Date = new Date()): string | null {
+  const checked = validateSyntheticEpoch(configuredSyntheticEpoch(), now, epochFloors(syntheticRawListings));
+  return checked.ok ? syntheticGeneratedText(checked.epoch) : null;
+}
+
+function resolve(records: readonly SyntheticRawListing[], asOf: string | undefined, renewedForEpoch?: string): Entry[] {
   const asOfMs = asOf === undefined ? Infinity : Date.parse(asOf);
   const groups = new Map<string, SyntheticRawListing[]>();
   const entries: Entry[] = [];
@@ -120,7 +155,7 @@ function resolve(records: readonly SyntheticRawListing[], asOf: string | undefin
       entries.push({ id, rejected: { sourceListingId: id, code: "malformed_data", reason: "motstridende poster med samme ID og endringstid" } });
       continue;
     }
-    const result = normalizeSyntheticListing(latest[0]!);
+    const result = normalizeSyntheticListing(latest[0]!, { renewedForEpoch });
     entries.push(result.ok
       ? { id, listing: result.listing }
       : { id, rejected: { sourceListingId: result.sourceListingId, code: "malformed_data", reason: result.reason } });

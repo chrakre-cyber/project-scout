@@ -7,14 +7,6 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 
 export const PATCHES = {
-  /**
-   * Demoens observasjonstidspunkt er faste datoer i fixturene (siste: 2026-10-04) og kildedata utløper etter rettighetsprofilens oppbevaringstid (7 døgn): fra og med 11.10.2026 er ALLE
-   * demoannonser «for gamle» for økonomiberegning (beregningen feiler lukket — funn i 006c). For å kunne teste brukerforløpene settes sist-sett-tidspunktet i KOPIEN til «nå minus 1 time».
-   * Revisjonsavtrykket (kandidatversjonen) inkluderer ikke observasjonstidspunkt, så identitet/revisjon påvirkes ikke.
-   */
-  fresh_observations: [
-    ["src/providers/marketplace/synthetic/normalize.ts", "const lastSeenAt = isoTimestamp(raw.observed?.lastSeenAt);", "const lastSeenAt = new Date(Date.now() - 3_600_000).toISOString();"],
-  ],
   /** Økonomi: beregningsrett finnes, men visningsrett (`derivedEconomics.display`) er nektet. */
   deny_economics_display: [
     ["src/domain/provider-rights.ts", "derivedEconomics: Object.freeze({ allow: Object.freeze({ price: true, registration: true, specs: true }), display: true })", "derivedEconomics: Object.freeze({ allow: Object.freeze({ price: true, registration: true, specs: true }), display: false })"],
