@@ -1,0 +1,106 @@
+{
+ "L4a": [
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: passordinnlogging riktig passord gir en sesjon (access- og refresh-token, bruker-id), og tokenet gir tilgang til egne data via PostgREST"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: passordinnlogging feil passord og ukjent bruker gir identisk avvisning (status, feilkode, melding) — ingen informasjon om hvilke kontoer som finnes"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: passordinnlogging manglende e-post eller passord gir ingen sesjon"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: passordinnlogging åpen registrering er stengt: signup gir ingen sesjon og ingen ny bruker"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: passordinnlogging bruker uten firma kan logge inn, men ser ingen firma"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: tokenvalidering i PostgREST manglende token, tilfeldig streng og token med forfalsket signatur avvises (401) og gir ingen data"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: tokenvalidering i PostgREST utløpt token avvises mens samme token med fremtidig utløp godtas (kontroll: det er utløpet, ikke signeringen, som avviser)"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: tokenvalidering i PostgREST token signert med feil nøkkel avvises (kontroll mot samme claims signert riktig)"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: refresh og utlogging refresh gir ny sesjon med fungerende token; ugyldig refresh-token avvises"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: refresh og utlogging utlogging (global) ugyldiggjør refresh-token: etter logout gir refresh ingen ny sesjon"
+  },
+  {
+   "file": "tests/db/auth-gotrue.test.ts",
+   "fullName": "L4 API: refresh og utlogging supabase-js: signInWithPassword/getUser/signOut fungerer mot ekte Auth (samme vei som appen bruker)"
+  }
+ ],
+ "L6": [
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 search_drafts — eget firma POST: firma settes av databasen (ikke klienten); GET viser bare eget firma"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 search_drafts — eget firma PATCH eget søk med riktig base_version lykkes og øker versjonen; utdatert base_version avvises (konflikt)"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 search_drafts — på tvers av firma B ser ikke As søk (GET med filter, uten filter og som embed) og får ingen spor av dem"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 search_drafts — på tvers av firma B kan ikke endre eller slette As søk (0 rader / ingen slettegrant), og databasen er uendret"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 search_drafts — på tvers av firma falsk dealership_id (POST og PATCH) avvises av kolonnerettighetene — også mot eget firma — og flytter ikke noe"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 dealer_economics_inputs — eget firma POST: firma og bekreftende bruker settes av databasen; GET/PATCH egne rader; duplikat gir 409 (23505)"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 dealer_economics_inputs — på tvers av firma B ser ikke As forhandlerinput (filter på id, søk og firma; embed mot søk) og får ingen spor"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 dealer_economics_inputs — på tvers av firma B kan ikke endre eller slette As rad; ingen kan slette; databasen er uendret"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 dealer_economics_inputs — på tvers av firma B kan ikke binde input til As søk (POST med As search_id) eller oppgi firma, og kan ikke flytte nøkkel/firma (PATCH)"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 dealer_economics_profiles eget firma: POST (firma/bruker settes av databasen), GET, PATCH; duplikat gir 409 (23505)"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 dealer_economics_profiles på tvers av firma: B ser/endrer ikke As profil; falsk dealership_id avvises; ingen kan slette; databasen er uendret"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 anon, bruker uten firma og forfalsket token (alle tre tabeller) anon (bare publishable key) får verken lese eller skrive"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 anon, bruker uten firma og forfalsket token (alle tre tabeller) bruker uten firma ser ingenting og kan ikke opprette noe"
+  },
+  {
+   "file": "tests/db/rest-isolation.test.ts",
+   "fullName": "L6 anon, bruker uten firma og forfalsket token (alle tre tabeller) forfalsket token (A sitt token med B sin sub, original signatur) avvises før RLS — ingen data fra noen av firmaene"
+  }
+ ]
+}

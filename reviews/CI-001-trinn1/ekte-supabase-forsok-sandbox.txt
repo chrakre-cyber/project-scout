@@ -1,0 +1,3 @@
+Forsøk på å kjøre ekte lokal Supabase-stakk i utviklersandboxen (21.10.2026): mislyktes
+- dockerd med overlay2 startet; 'supabase start' (CLI 2.119.0) kunne ikke hente images: public.ecr.aws ga 'toomanyrequests: Data limit exceeded' og ghcr.io/supabase/postgres ga 'Forbidden' ved blob-nedlasting.
+- Konsekvens: de nye testene er IKKE kjørt mot ekte Supabase (GoTrue + PostgREST v16.4 + PostgreSQL 17.11). De GoTrue-avhengige L4a-testene (8) er ikke kjørt noe sted.

@@ -1,0 +1,10 @@
+PostgREST-binær: v12.2.12 (lastet ned manuelt fra den offisielle GitHub-releasen; ikke Supabase-imaget v16.4)
+OPPDAGET  M1 search_drafts: select-policy åpen for alle firmaer
+OPPDAGET  M2 search_drafts: dealership_id skrivbar for klienten (insert)
+OPPDAGET  M3 dealer_economics_inputs: select-policy åpen
+OPPDAGET  M4 dealer_economics_inputs: dealership_id skrivbar ved UPDATE (flytte rad til annet firma)
+OPPDAGET  M5 dealer_economics_inputs: DELETE tillatt for innloggede
+OPPDAGET  M6 dealer_economics_profiles: select-policy åpen
+OPPDAGET  M7 dealer_economics_profiles: dealership_id skrivbar (insert)
+OPPDAGET  M8 anon får lese search_drafts
+L6-MUTASJONER: ALLE OPPDAGET

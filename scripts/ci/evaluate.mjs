@@ -12,7 +12,13 @@ import { hasLeak, loadLiterals, sanitizeText } from "./sanitize.mjs";
 export const ISOLATED_UPGRADE_TESTS = JSON.parse(readFileSync(new URL("./isolated-upgrade-tests.json", import.meta.url), "utf8"));
 const idOf = (file, name) => `${file}::${name}`;
 const EXPECTED_IDS = new Set(ISOLATED_UPGRADE_TESTS.map((t) => idOf(t.file, t.fullName)));
-export const OPEN_CHECKS = ["L4 innlogging via ekte GoTrue", "L5 lagring/gjenåpning via ekte PostgREST (nettleserforløp)", "L6 firmaskille med ekte JWT-er", "Playwright-integrasjon"];
+/**
+ * L4a (API-delen av innlogging mot ekte GoTrue/PostgREST) og L6 (firmaskille gjennom ekte PostgREST) er vitest-tester i tests/db som kjøres som en del av L3a. De vurderes HER separat,
+ * på identitet (fil + fullt navn) fra den samme vitest-rapporten. Listen i l4-l6-tests.json er fastlåst: en ny eller omdøpt test må legges inn bevisst.
+ */
+export const L4_L6_TESTS = JSON.parse(readFileSync(new URL("./l4-l6-tests.json", import.meta.url), "utf8"));
+const GROUP_FILE = { L4a: "tests/db/auth-gotrue.test.ts", L6: "tests/db/rest-isolation.test.ts" };
+export const OPEN_CHECKS = ["L4 nettleserdel (innlogging i appen, cookies via @supabase/ssr)", "L5 lagring/gjenåpning via ekte PostgREST (nettleserforløp)", "Playwright-integrasjon"];
 
 const read = (dir, name) => (existsSync(join(dir, name)) ? readFileSync(join(dir, name), "utf8") : null);
 const rcOf = (dir, name) => { const t = read(dir, name); if (t === null) return null; const n = Number.parseInt(t.trim(), 10); return Number.isNaN(n) ? null : n; }; // uleselig exit-kode = ikke registrert
@@ -117,6 +123,26 @@ export function combineL3(a, b) {
   return { status: "PASS", notes: [...notes, a.knownSkipped.length ? `${a.knownSkipped.length} hoppet over i L3a er hver for seg kjørt og bestått i L3b (separat klynge, ikke Supabase)` : "ingen hoppede tester i L3a"] };
 }
 
+/** L4a / L6: hver forventede test (fil + fullt navn) må være kjørt og bestått i vitest-rapporten for L3a; ingen uventede tester i filen; manglende rapport ⇒ ikke PASS. */
+export function evaluateGroup(key, report, rc) {
+  const expected = L4_L6_TESTS[key].map((t) => idOf(t.file, t.fullName));
+  if (rc === null) return { status: "NOT_RUN", notes: [`${key}: DB-suiten ble ikke kjørt`] };
+  const all = collectTests(report);
+  if (!all) return { status: "FAIL", notes: [`${key}: ingen lesbar vitest-rapport`] };
+  const inFile = all.filter((a) => a.file === GROUP_FILE[key]);
+  const byId = new Map(inFile.map((a) => [a.id, a.status]));
+  const problems = [];
+  let passed = 0;
+  for (const t of L4_L6_TESTS[key]) {
+    const st = byId.get(idOf(t.file, t.fullName));
+    if (st === "passed") passed += 1;
+    else problems.push(st === undefined ? `MANGLER: ${t.fullName}` : `${st === "failed" ? "FEILET" : "IKKE KJØRT (" + st + ")"}: ${t.fullName}`);
+  }
+  for (const a of inFile.filter((x) => !expected.includes(x.id)).slice(0, 20)) problems.push(`UVENTET test i ${a.file} (ikke i den fastlåste listen): ${a.name}`);
+  const notes = [`${passed} av ${expected.length} navngitte tester kjørt og bestått`, ...problems];
+  return { status: problems.length ? "FAIL" : "PASS", notes };
+}
+
 const L7_ALLOW = /^(== |PASS |FAIL |SKIP |SECRET-SKANN:)/;
 export function evaluateL7(output, rc, buildRc) {
   if (output === null || rc === null) return { status: "NOT_RUN", notes: ["qa:secrets ble ikke kjørt"] };
@@ -134,16 +160,16 @@ export function evaluateL7(output, rc, buildRc) {
 }
 
 export function overall(results) {
-  return ["L1", "L2", "L3", "L7"].every((k) => results[k].status === "PASS") ? "PASS" : "IKKE FULLT BESTÅTT";
+  return ["L1", "L2", "L3", "L4a", "L6", "L7"].every((k) => results[k] && results[k].status === "PASS") ? "PASS" : "IKKE FULLT BESTÅTT";
 }
 
 export function buildReport(results, meta = {}) {
   const label = { PASS: "BESTÅTT", FAIL: "FEILET", SKIPPED: "HOPPET OVER (ikke bestått)", NOT_RUN: "IKKE KJØRT" };
-  const names = { L1: "L1 lokal Supabase fra tom database (start + db reset)", L2: "L2 oppgraderingstester (qa:migrations)", L3a: "L3a DB-suiten mot Supabase-stakken (ekte Auth/PostgREST; test-db.sh)", L3b: "L3b seks navngitte oppgraderingstester i SEPARAT midlertidig PostgreSQL-klynge (IKKE Supabase)", L3: "L3 samlet (L3a + L3b)", L7: "L7 hemmelighetsskann (qa:secrets, inkl. build-artefakter)" };
+  const names = { L1: "L1 lokal Supabase fra tom database (start + db reset)", L2: "L2 oppgraderingstester (qa:migrations)", L3a: "L3a DB-suiten mot Supabase-stakken (ekte Auth/PostgREST; test-db.sh)", L3b: "L3b seks navngitte oppgraderingstester i SEPARAT midlertidig PostgreSQL-klynge (IKKE Supabase)", L3: "L3 samlet (L3a + L3b)", L4a: "L4a innlogging mot ekte GoTrue og tokenvalidering i PostgREST (API-nivå, tests/db)", L6: "L6 firmaskille via ekte PostgREST: search_drafts, dealer_economics_inputs, dealer_economics_profiles (tests/db)", L7: "L7 hemmelighetsskann (qa:secrets, inkl. build-artefakter)" };
   const out = ["# Lokal Supabase på GitHub-runner — L1–L3 og L7", "", "Kjørt mot en lokal Supabase-stakk i en container på runneren. IKKE hosted Supabase, ikke emulator, ikke pilotgodkjenning, ingen regel-/parametergodkjenning.", ""];
   for (const l of meta.preflight ?? []) out.push(l);
   if (meta.preflight?.length) out.push("");
-  for (const k of ["L1", "L2", "L3a", "L3b", "L3", "L7"]) {
+  for (const k of ["L1", "L2", "L3a", "L3b", "L3", "L4a", "L6", "L7"]) {
     if (!results[k]) continue;
     out.push(`## ${names[k]}: ${label[results[k].status]}`);
     for (const n of results[k].notes) out.push(`- ${n}`);
@@ -153,7 +179,7 @@ export function buildReport(results, meta = {}) {
   for (const o of OPEN_CHECKS) out.push(`- ${o}: ÅPEN, ikke kjørt`);
   out.push("- Hosted Supabase (Trinn H): ÅPEN, separat beslutning", "");
   const v = overall(results);
-  out.push(`## Samlet: ${v}`, "", v === "PASS" ? "Alle fire kontroller bestått. L4–L6 og Trinn H er fortsatt åpne." : "Minst én kontroll feilet, ble hoppet over eller ble ikke kjørt. Hoppede kontroller regnes ikke som bestått.");
+  out.push(`## Samlet: ${v}`, "", v === "PASS" ? "Alle seks kontroller (L1, L2, L3, L4a, L6, L7) bestått. L4 nettleserdel, L5, Playwright og Trinn H er fortsatt åpne." : "Minst én kontroll feilet, ble hoppet over eller ble ikke kjørt. Hoppede kontroller regnes ikke som bestått.");
   return out.join("\n") + "\n";
 }
 
@@ -174,6 +200,8 @@ export function evaluateDir(dir) {
     L1: evaluateL1({ startRc: rc("start.rc"), resetRc: rc("reset.rc"), actualVersions: migrations[0] || "", expectedVersions: migrations[1] || "", pgVersion: (read(dir, "pgversion.txt") ?? "").trim().split("\n")[0] || "", images: (read(dir, "images.txt") ?? "").split(/\r?\n/).filter((i) => /^[\w./:@-]+$/.test(i)).slice(0, 20), tail: rc("start.rc") !== 0 ? tailLines("start.out") : tailLines("reset.out") }),
     L2: evaluateL2(read(dir, "l2.out"), rc("l2.rc")),
     L3a, L3b, L3: combineL3(L3a, L3b),
+    L4a: evaluateGroup("L4a", read(dir, "l3.json"), rc("l3.rc")),
+    L6: evaluateGroup("L6", read(dir, "l3.json"), rc("l3.rc")),
     L7: evaluateL7(read(dir, "l7.out"), rc("l7.rc"), rc("build.rc")),
   };
   const preflight = (read(dir, "preflight.txt") ?? "").split(/\r?\n/).filter(Boolean).map((l) => `- ${l}`);

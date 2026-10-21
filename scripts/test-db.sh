@@ -7,6 +7,8 @@ get() { printf '%s\n' "$status" | sed -n "s/^$1=\"\{0,1\}\([^\"]*\)\"\{0,1\}$/\1
 export SUPABASE_TEST_URL="$(get API_URL)"
 export SUPABASE_TEST_PUBLISHABLE_KEY="$(get PUBLISHABLE_KEY)"
 export SUPABASE_TEST_DB_URL="$(get DB_URL)"
+# Lokal JWT-hemmelighet (kortlevd lokal stakk): brukes KUN av tests/db/auth-gotrue.test.ts til å lage en utløpt test-token. Skrives aldri ut.
+export SUPABASE_TEST_JWT_SECRET="$(get JWT_SECRET)"
 # Vent til Auth og PostgREST svarer (tjenestene kobler til på nytt etter `supabase db reset`).
 ready() { [ "$(curl -s -o /dev/null -w '%{http_code}' -H "apikey: $SUPABASE_TEST_PUBLISHABLE_KEY" "$SUPABASE_TEST_URL$1" || true)" = "200" ]; }
 for _ in $(seq 1 60); do

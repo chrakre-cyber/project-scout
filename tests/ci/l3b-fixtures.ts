@@ -19,3 +19,7 @@ export const filteredOut = (n = 3): TestRow[] => Array.from({ length: n }, (_, i
 export function l3bPass(): Record<string, string> {
   return { "l3b.json": vitestJson([...sixWith("passed"), ...filteredOut()]), "l3b.rc": "0", "l3b.out": "migrasjon anvendt: x.sql\nOPPGRADERING OK: eksisterende agenter (abc)\n", "l3b.pg.txt": "postgres (PostgreSQL) 16.14\n" };
 }
+
+/** Alle forhåndsdefinerte L4a/L6-tester (scripts/ci/l4-l6-tests.json) som bestått, til en l3.json der L4a og L6 skal være PASS. */
+export const L46: { L4a: { file: string; fullName: string }[]; L6: { file: string; fullName: string }[] } = JSON.parse(readFileSync(join(__dirname, "../../scripts/ci/l4-l6-tests.json"), "utf8"));
+export const l46Rows = (status = "passed"): TestRow[] => [...L46.L4a, ...L46.L6].map((t) => ({ ...t, status }));

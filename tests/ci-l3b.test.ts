@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { combineL3, evaluateDir, evaluateL3a, evaluateL3b } from "../scripts/ci/evaluate.mjs";
-import { SIX, filteredOut, l3bPass, sixWith, vitestJson, type TestRow } from "./ci/l3b-fixtures";
+import { SIX, filteredOut, l3bPass, l46Rows, sixWith, vitestJson, type TestRow } from "./ci/l3b-fixtures";
 
 const real = (n: number): TestRow[] => Array.from({ length: n }, (_, i) => ({ file: "tests/db/rls.test.ts", fullName: `RLS test ${i}`, status: "passed" }));
 const l3aFrom = (rows: TestRow[], rc = 0) => evaluateL3a(vitestJson(rows), rc);
@@ -137,7 +137,7 @@ describe("evaluateDir: rapport og samlet utfall", () => {
   const base = (over: Record<string, string | null> = {}) => {
     const files: Record<string, string | null> = {
       "start.rc": "0", "reset.rc": "0", "migrations.txt": "1,2\n1,2\n", "pgversion.txt": "PostgreSQL 17.0\n", "images.txt": "x/y:1\n", "l2.out": l2Ok, "l2.rc": "0",
-      "l3.json": vitestJson([...real(3), ...sixWith("skipped")]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "", ...l3bPass(), ...over,
+      "l3.json": vitestJson([...real(3), ...sixWith("skipped"), ...l46Rows()]), "l3.rc": "0", "l7.out": l7Ok, "l7.rc": "0", "build.rc": "0", literals: "", ...l3bPass(), ...over,
     };
     const d = mkdtempSync(join(tmpdir(), "scout-l3b-"));
     dirs.push(d);
@@ -152,7 +152,7 @@ describe("evaluateDir: rapport og samlet utfall", () => {
     expect(r.report).toMatch(/## L3a DB-suiten mot Supabase-stakken.*: HOPPET OVER \(ikke bestått\)/);
     expect(r.report).toMatch(/## L3b seks navngitte oppgraderingstester i SEPARAT midlertidig PostgreSQL-klynge \(IKKE Supabase\): BESTÅTT/);
     expect(r.report).toMatch(/## L3 samlet \(L3a \+ L3b\): BESTÅTT/);
-    expect(r.report).toMatch(/L4 innlogging.*ÅPEN/);
+    expect(r.report).toMatch(/L4 nettleserdel.*ÅPEN/);
   });
   it("uten L3b-filer (ikke kjørt) ⇒ L3b IKKE KJØRT og samlet IKKE FULLT BESTÅTT", () => {
     const r = evaluateDir(base({ "l3b.json": null, "l3b.rc": null, "l3b.out": null, "l3b.pg.txt": null }));

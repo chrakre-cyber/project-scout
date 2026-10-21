@@ -33,7 +33,8 @@ chk "L3a (stakken) FEILET i emuleringen uten Auth/PostgREST" 'grep -q "^## L3a .
 chk "L3b rapporteres separat og BESTÅTT (ekte isolert klynge), merket IKKE Supabase" 'grep -q "^## L3b .*IKKE Supabase.*: BESTÅTT" "$OUT" && grep -q "6 av 6 navngitte oppgraderingstester kjørt og bestått (IKKE Supabase-stakken" "$OUT"'
 chk "L3 samlet regnes IKKE som bestått når L3a feiler, selv om L3b består" '! grep -q "^## L3 samlet.*: BESTÅTT" "$OUT"'
 chk "samlet er IKKE FULLT BESTÅTT og exit-koden er ≠ 0" 'grep -q "^## Samlet: IKKE FULLT BESTÅTT" "$OUT" && [ "$rc" -ne 0 ]'
-chk "åpne kontroller L4–L6 og hosted er oppført som ÅPEN" 'grep -q "L4 innlogging.*ÅPEN" "$OUT" && grep -q "Hosted Supabase.*ÅPEN" "$OUT"'
+chk "åpne kontroller (L4 nettleserdel, L5, Playwright) og hosted er oppført som ÅPEN; L4a og L6 rapporteres separat (FEILET i emuleringen uten Auth/PostgREST)" 'grep -q "L4 nettleserdel.*ÅPEN" "$OUT" && grep -q "Hosted Supabase.*ÅPEN" "$OUT"'
+chk "L4a og L6 rapporteres som egne seksjoner og regnes ikke som bestått uten Auth/PostgREST" 'grep -q "^## L4a .*: FEILET" "$OUT" && grep -q "^## L6 .*: FEILET" "$OUT"'
 echo; sed -n '1,60p' "$OUT"
 [ "$fails" -eq 0 ] && echo "ORKESTRERING (EMULERT): ALLE KONTROLLER BESTÅTT" || echo "ORKESTRERING (EMULERT): $fails KONTROLL(ER) FEILET"
 exit "$fails"

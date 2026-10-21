@@ -1,6 +1,8 @@
 # Plan: L4–L6 og Playwright mot lokal Supabase på GitHub-runner (kort, ikke implementert)
 
-**Status 21.10.2026:** plan. Ingen implementering, ingen kjøring. CI-001 forblir REVIEW. Hosted (H1–H4), økonomiflagg (`false`), E7 (utsatt), E8 (åpent) og øvrige avgrensninger er uendret. **L3c er utsatt.** Utgangspunkt: første kjøring (`reviews/CI-001-forste-kjoring.md`) viste at lokal stakk (GoTrue v2.197.0, PostgREST v16.4, PostgreSQL 17.11) starter og at L1, L2, L3a og L7 kan kjøres på `ubuntu-latest` (ca. 4 min, enkeltobservasjon).
+**Status 21.10.2026 (oppdatert):** trinn 1 (L6 + API-delen av L4) er implementert og levert til review (`reviews/CI-001-TRINN1-leveranse.md`; ikke kjørt mot ekte Supabase). Trinn 2–3 er ikke startet. Teksten under er den opprinnelige planen.
+
+**Opprinnelig status:** plan. Ingen implementering, ingen kjøring. CI-001 forblir REVIEW. Hosted (H1–H4), økonomiflagg (`false`), E7 (utsatt), E8 (åpent) og øvrige avgrensninger er uendret. **L3c er utsatt.** Utgangspunkt: første kjøring (`reviews/CI-001-forste-kjoring.md`) viste at lokal stakk (GoTrue v2.197.0, PostgREST v16.4, PostgreSQL 17.11) starter og at L1, L2, L3a og L7 kan kjøres på `ubuntu-latest` (ca. 4 min, enkeltobservasjon).
 
 ## 1. Eksisterende testdekning (ikke ny, skal gjenbrukes — og hva den ikke dekker)
 | Område | Allerede dekket | Mot hva | Hull |
