@@ -1,0 +1,23 @@
+== normal (seks bestått i ekte isolert klynge): L3b-vurdering=PASS  (rc=0, binærer=ok)
+PASS  normal (seks bestått i ekte isolert klynge) ⇒ PASS
+   L3B_STATUS=PASS
+   - 6 av 6 navngitte oppgraderingstester kjørt og bestått (IKKE Supabase-stakken: midlertidig lokal PostgreSQL-klynge (postgres (PostgreSQL) 16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)) med shim)
+   - 87 øvrige tester i filene ble utelatt av filteret og er ikke talt
+== mutert ECON-005b-migrasjon (legacy-profiler får rettigheter): L3b-vurdering=FAIL  (rc=1, binærer=ok)
+PASS  mutert ECON-005b-migrasjon (legacy-profiler får rettigheter) ⇒ FAIL
+PASS    … den navngitte ECON-005b-testen er rapportert som feilet
+== endret øyeblikksbilde (oppgradering endrer eksisterende data): L3b-vurdering=FAIL  (rc=3, binærer=ok)
+PASS  endret øyeblikksbilde (oppgradering endrer eksisterende data) ⇒ FAIL
+PASS    … klyngeskriptet avsluttet ≠ 0 med «OPPGRADERING FEIL»
+== filter utelater ECON-005b-testen (bare fem kjørt): L3b-vurdering=FAIL  (rc=0, binærer=ok)
+PASS  filter utelater ECON-005b-testen (bare fem kjørt) ⇒ FAIL
+PASS    … manglende/ikke kjørt test er navngitt
+== filter uten treff (ingen tester): L3b-vurdering=FAIL  (rc=0, binærer=ok)
+PASS  filter uten treff (ingen tester) ⇒ FAIL
+== for bredt filter (uventede tester kjørt): L3b-vurdering=FAIL  (rc=0, binærer=ok)
+PASS  for bredt filter (uventede tester kjørt) ⇒ FAIL
+PASS    … uventet test er rapportert
+== PostgreSQL-binærer mangler: L3b-vurdering=NOT_RUN  (rc=-, binærer=mangler)
+PASS  PostgreSQL-binærer mangler ⇒ NOT_RUN
+
+L3B-FEILINNSETTING: ALLE KONTROLLER BESTÅTT

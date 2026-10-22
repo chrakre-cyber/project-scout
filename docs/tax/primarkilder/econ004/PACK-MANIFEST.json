@@ -1,0 +1,221 @@
+{
+  "purpose": "ECON-004 source delivery; no approval",
+  "retrievedOn": "2026-10-19",
+  "files": [
+    {
+      "path": "acquisition.json",
+      "bytes": 32274,
+      "sha256": "4df6f8c3e27e7f1c028b259cb43214b7bc4abbf667e0603bb59ec281cde35b74"
+    },
+    {
+      "path": "CLAUDE_INSTRUCTIONS.md",
+      "bytes": 3086,
+      "sha256": "b4f4a0e7d8866320e54eb84f780499952b425d70a71479f49dc48856ce4f4633"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Tollkurs_endring_2026.html",
+      "bytes": 784897,
+      "sha256": "ad1c0b8b81221d17f342e262480d22152a275bd07cc4b109e0023b7a3766102e"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Tollkurs_endring_2026.txt",
+      "bytes": 4644,
+      "sha256": "6e3b5a1fdfb7b01082aa36ddc564c36e0c842ae45b8e3f87922b493fb21eea4d"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Tollkurser.html",
+      "bytes": 792098,
+      "sha256": "24543fa3e894324f4bfe2d3bf6bd09ab7e5c51347e9173b885fe3688a69d2ca5"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Tollkurser.txt",
+      "bytes": 3896,
+      "sha256": "0e501849a662921a4925c74764c46ba14d46562c362aa0441c46763e87236f2e"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Tollkurs_datasett.html",
+      "bytes": 25326,
+      "sha256": "bb9b285fafe6012104d0f738f275e95eec07c836ba943ab11961372d439c44a7"
+    },
+    {
+      "path": "docs/tax/primarkilder/03_Tollkurs_datasett.txt",
+      "bytes": 2147,
+      "sha256": "dfb93d12317e009447f1e5871860bf077e44d6c92034296aee984176cfce8836"
+    },
+    {
+      "path": "docs/tax/primarkilder/04_Tollkurs_snapshot.json",
+      "bytes": 6666,
+      "sha256": "99f618706176fc4500c587501d7ae35155afa1fe88dcc8aab002021150bdbf09"
+    },
+    {
+      "path": "docs/tax/primarkilder/05_Vareforselshandbok_6-12.html",
+      "bytes": 491439,
+      "sha256": "9824831193759748450d36a096c373f0bc21a737e0106de7e2852beb1787901e"
+    },
+    {
+      "path": "docs/tax/primarkilder/05_Vareforselshandbok_6-12.txt",
+      "bytes": 2244,
+      "sha256": "f476f3aee636c4831b24bc3edca52779f1a0e70470fdc1d924679638c19f5c08"
+    },
+    {
+      "path": "docs/tax/primarkilder/06_Innforselsmva_beregning_rapportering.html",
+      "bytes": 90959,
+      "sha256": "558ae3c32a33890bbb84a1edf7b2fdaa8a15a59aba7013f84e033a355c55e127"
+    },
+    {
+      "path": "docs/tax/primarkilder/06_Innforselsmva_beregning_rapportering.txt",
+      "bytes": 13443,
+      "sha256": "43608dbf4ae0429990aa81387eb91539a8940f927dc76e2098e5060c99361715"
+    },
+    {
+      "path": "docs/tax/primarkilder/07_Elektriske_kjoretoy.html",
+      "bytes": 779590,
+      "sha256": "8db315ca37930f32fa2f16605ac6efe2f41bfe6a6857948dbf7c44e76181e2e0"
+    },
+    {
+      "path": "docs/tax/primarkilder/07_Elektriske_kjoretoy.txt",
+      "bytes": 2481,
+      "sha256": "723f77e0e798dd4688c0b45dba00de53f12d0edf998650ccc7d152552e69fb44"
+    },
+    {
+      "path": "docs/tax/primarkilder/08_Mva_handbok_lopende_endringer.html",
+      "bytes": 1530520,
+      "sha256": "faf24aed34072e6e1cdb868269e1cd434facbae5b5a75a7aee6f2707aa7481ec"
+    },
+    {
+      "path": "docs/tax/primarkilder/08_Mva_handbok_lopende_endringer.txt",
+      "bytes": 4344,
+      "sha256": "677209f692ed52d1847a609b4a1f4e7ddcfe7b4bd2631ba35c845b143cb9fe21"
+    },
+    {
+      "path": "docs/tax/primarkilder/09_Mva_handbok_kap8.html",
+      "bytes": 3566764,
+      "sha256": "2d6aebb8096ade8acd0adb7bfa9ac302b32aa0a123e02be1461b39f8d1b24086"
+    },
+    {
+      "path": "docs/tax/primarkilder/09_Mva_handbok_kap8.txt",
+      "bytes": 428079,
+      "sha256": "10636be32c5e772ae872d11f00f479a6d581feb42031b2aa46ecae63b586bf04"
+    },
+    {
+      "path": "docs/tax/primarkilder/10_Mva_handbok_kap4.html",
+      "bytes": 2622867,
+      "sha256": "51c05bef895499b17858d1ec56d1c8728c2a38870ee873bc4e570bc44e9463ba"
+    },
+    {
+      "path": "docs/tax/primarkilder/10_Mva_handbok_kap4.txt",
+      "bytes": 187707,
+      "sha256": "c04e65265fc774b9091f5989178c9e1208ba8f4e79897a870f240f0d92ecb28e"
+    },
+    {
+      "path": "docs/tax/primarkilder/11_Mva_handbok_kap6.html",
+      "bytes": 3869466,
+      "sha256": "011b6430ebe2ab968735ac87bef8336fd50bb6db7c8a539cc0f411428ad6670e"
+    },
+    {
+      "path": "docs/tax/primarkilder/11_Mva_handbok_kap6.txt",
+      "bytes": 325096,
+      "sha256": "45a5b201b34281450c804e41285a9ddd2416c48a9d6d2c5a5655ac4b37df5d6d"
+    },
+    {
+      "path": "docs/tax/primarkilder/12_Mva_handbok_kap7.html",
+      "bytes": 1806702,
+      "sha256": "6523828b6bf921485b43673ec405cc9e5a0cf8f63a0a1be4d372345aee094d0f"
+    },
+    {
+      "path": "docs/tax/primarkilder/12_Mva_handbok_kap7.txt",
+      "bytes": 36570,
+      "sha256": "af40da58df278bb74ed2d64b32529ee451288f751d1b86c29e2f185b4f36df3f"
+    },
+    {
+      "path": "docs/tax/primarkilder/13_Mva_handbok_2023_8-4_3.html",
+      "bytes": 512282,
+      "sha256": "0aefd40aa62c5621d5037c170cade39a9f17ae7be8158905cf04ed452539a96f"
+    },
+    {
+      "path": "docs/tax/primarkilder/13_Mva_handbok_2023_8-4_3.txt",
+      "bytes": 54485,
+      "sha256": "bc25510af80e04c7f29439655766c5fb2ebe077df179d4f02892edee7a2ff957"
+    },
+    {
+      "path": "docs/tax/primarkilder/14_Merverdiavgiftsloven.html",
+      "bytes": 580772,
+      "sha256": "92c8434cc371e07dd7a28f1464842e9e92fa7bf7c1002d1335b18c5a8723288c"
+    },
+    {
+      "path": "docs/tax/primarkilder/14_Merverdiavgiftsloven.txt",
+      "bytes": 140122,
+      "sha256": "91386f5afb89c774c1615beca8403bbd6023a4495368fe0778a9515d4420ef4a"
+    },
+    {
+      "path": "docs/tax/primarkilder/15_Sjablongfrakt.html",
+      "bytes": 776090,
+      "sha256": "82aa9010332f419078e347ce8e77b11f87769676c7e276d5bd624864b4cd96d3"
+    },
+    {
+      "path": "docs/tax/primarkilder/15_Sjablongfrakt.txt",
+      "bytes": 2869,
+      "sha256": "04d5b9d7d20a43344db8f56576613e4129ea7f8f9e9262220c32c1e3fdde73e7"
+    },
+    {
+      "path": "docs/tax/primarkilder/16_Endringsforskrift_2026-08-21-1661.html",
+      "bytes": 30373,
+      "sha256": "6442c09a4a3c718a21e657dbb0081b5dff344373f76698411833c6f79c958688"
+    },
+    {
+      "path": "docs/tax/primarkilder/16_Endringsforskrift_2026-08-21-1661.txt",
+      "bytes": 3761,
+      "sha256": "638e076fbe6868c7aad7619fc49894e1cf10d6dcc51e2aecf2509aa06b2c6c55"
+    },
+    {
+      "path": "docs/tax/primarkilder/17_Vareforselsforskriften.html",
+      "bytes": 132310,
+      "sha256": "be4fe6540b22dc66384d3873d94abd8a2ef14d3a7a24d5df6dc2570577034e77"
+    },
+    {
+      "path": "docs/tax/primarkilder/17_Vareforselsforskriften.txt",
+      "bytes": 27363,
+      "sha256": "fd8073149c2935ddefb2c92857a8c6f3beb0b146c64a5f72c6573bbc566bc9e8"
+    },
+    {
+      "path": "docs/tax/primarkilder/18_Vareforselsloven.html",
+      "bytes": 437113,
+      "sha256": "6849f9ecf7bf7e2d7a1ade01419fc1dfaec988f4ea7e3007e6d133c0f38770db"
+    },
+    {
+      "path": "docs/tax/primarkilder/18_Vareforselsloven.txt",
+      "bytes": 124026,
+      "sha256": "e2678ed8edf37afad35b5d5cfa50fb181857d5459d8efd9a99020b91b5ef00cf"
+    },
+    {
+      "path": "docs/tax/primarkilder/19_Tollavgiftsloven.html",
+      "bytes": 191953,
+      "sha256": "5c4b5b0da0ae50c601caeaa7735f7e489b0288f3f569340ffb0205cf77a51a1f"
+    },
+    {
+      "path": "docs/tax/primarkilder/19_Tollavgiftsloven.txt",
+      "bytes": 50135,
+      "sha256": "9d818c96ae105ef42f9d0f392a3921012f99a40a319c0a58ac537f4439b4528f"
+    },
+    {
+      "path": "docs/tax/primarkilder/20_Vareforselsforskriften_kap6.html",
+      "bytes": 137986,
+      "sha256": "2721ebf9f40cb4327ca1986a587219a7a6c054b983308c0c946125172cd172c4"
+    },
+    {
+      "path": "docs/tax/primarkilder/20_Vareforselsforskriften_kap6.txt",
+      "bytes": 31348,
+      "sha256": "998802e17ed42309784a68ad30fa5551439a98849cdda450297fe4ee041fa2c2"
+    },
+    {
+      "path": "docs/tax/primarkilder/MANIFEST.md",
+      "bytes": 34721,
+      "sha256": "9622fa18d7bd5461c3d2544571779dacdaa1da868ec12975b4b1c4a69d8bdaea"
+    },
+    {
+      "path": "LES-MEG.md",
+      "bytes": 1966,
+      "sha256": "f0450cd8a33a1dff3bf6637cd4c9003fb22cddb1e429eff61d77d5232db19b5b"
+    }
+  ]
+}

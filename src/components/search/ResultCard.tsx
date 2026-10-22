@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { StatusBadge, SyntheticChip } from "@/components/merovo/StatusBadge";
+import { EconomicsNote } from "@/components/search/EconomicsNote";
 import { Explanation } from "@/components/search/Explanation";
 import { BODY_LABEL, FUEL_LABEL, TRANSMISSION_LABEL, formatFirstRegistration, formatListingPrice, formatMileage, formatPriceBasis } from "@/lib/format";
 import { fieldText, fieldValue } from "@/lib/display-text";
@@ -19,7 +20,10 @@ export function ResultCard({ item, draftId, version, expanded = false }: { item:
   return (
     <li className="overflow-hidden rounded-2xl border border-sand bg-paper shadow-sm" data-listing={l.listingId} data-status={status}>
       <div className="grid gap-0 md:grid-cols-[12rem_1fr]">
-        <CarPlaceholder variant="merovo" seed={l.listingId} bodyType={fieldValue(l.specs.bodyType)} className="h-36 md:h-full" />
+        {item.media?.images[0]
+          // eslint-disable-next-line @next/next/no-img-element
+          ? <img src={item.media.images[0].src} alt={item.media.images[0].alt} className="h-36 w-full object-cover md:h-full" data-testid="card-thumb" />
+          : <CarPlaceholder variant="merovo" seed={l.listingId} bodyType={fieldValue(l.specs.bodyType)} className="h-36 md:h-full" />}
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h3 className="text-xl font-bold tracking-tight text-forest">{title}</h3>
@@ -50,6 +54,7 @@ export function ResultCard({ item, draftId, version, expanded = false }: { item:
               ? (() => { const price = formatListingPrice(l.price.value); return (<><p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span><strong className="text-base">{price.text}</strong>{price.note && <span className="text-muted"> ({price.note})</span>}</p><p className="text-xs text-muted">{formatPriceBasis(l.price.value)}</p></>); })()
               : <p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span>{fieldText(l.price, () => "")}</p>}
             <p className="mt-1 text-xs" data-testid="budget-note">{BUDGET_NOT_CALCULATED}</p>
+            <EconomicsNote economics={item.economics} compact />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <SyntheticChip text={l.attribution} />

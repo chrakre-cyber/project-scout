@@ -5,6 +5,7 @@ import {
   REGISTERED_PROFILES, RIGHTS_FIELD_KEYS, SYNTHETIC_DISPLAY_POLICY, SYNTHETIC_RIGHTS_PROFILE, canDisplay, canMatch, geographyAllows, isWithinRetention,
   noRights, policyForSource, resolveRights, restrictForMatching, retentionExpiresAt, toDisplayPolicy, validateProfile, type ProviderRightsProfile,
 } from "@/domain/provider-rights";
+import { syntheticRawListings } from "@/providers/marketplace/synthetic/fixtures";
 import { SyntheticMarketplaceProvider } from "@/providers/marketplace/synthetic/provider";
 import { DEMO_CATALOG } from "@/adapters/search-catalog/demo-catalog";
 import { detailForDisplay, previewForDisplay } from "@/server/search-display";
@@ -22,7 +23,7 @@ const spec = () => {
   if (!r.ok || !r.spec) throw new Error(JSON.stringify(r.errors));
   return r.spec;
 };
-const provider0 = () => new SyntheticMarketplaceProvider({ now: () => NOW });
+const provider0 = () => new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => NOW });
 const run = (profiles: readonly ProviderRightsProfile[], provider = provider0()) =>
   previewForDisplay(spec(), { provider, now: () => NOW, profiles }).then((o) => { if (!o.ok) throw new Error("kilden feilet"); return o; });
 const statuses = (o: Awaited<ReturnType<typeof run>>) => o.items.map((i) => `${i.listing.listingId}:${i.assessment.vehicle.status}`);
@@ -235,5 +236,16 @@ describe("DATA-002B: syntetisk regresjon og eksempelprofil", () => {
     expect(rf.inForce).toBe(true);
     expect(Object.values(toDisplayPolicy(rf).allow).every((v) => v === false)).toBe(true);
     for (const k of RIGHTS_FIELD_KEYS) { expect(canDisplay(rf, k)).toBe(false); expect(canMatch(rf, k)).toBe(false); }
+  });
+});
+
+describe("DATA-002D: validateProfile er total for ugyldige feltkart", () => {
+  it.each([null, [], "x", 5, true, {}, { title: true }, { ...noRights(), vin: true }, { ...noRights(), price: "ja" }])("display/matching = %j gir et funn, ikke et unntak", (bad) => {
+    for (const key of ["display", "matching"] as const) {
+      const p = { ...profile(), [key]: bad } as unknown as ProviderRightsProfile;
+      expect(() => validateProfile(p)).not.toThrow();
+      expect(validateProfile(p)).toContain(key);
+      expect(resolveRights(p.providerId, [p], NOW)).toMatchObject({ inForce: false, reason: "invalid_profile" });
+    }
   });
 });

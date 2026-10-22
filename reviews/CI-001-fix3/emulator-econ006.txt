@@ -1,0 +1,96 @@
+MODUS: EMULATOR (mini-supabase over isolert PostgreSQL) — IKKE Supabase
+OK   oppsett: søk S1 (ingen kostnadslinjer) og S2 (transport 12 000 kr) lagret i firma A
+OK   utløpt epoke (2026-10-13T10:54:34Z, 8 døgn tilbake; uendret app): økonomien er «Ikke beregnet» med «kildedataene er for gamle» — ingen tall, ingen positivt utfall
+OK   merkingen følger epoken også når den er utløpt: «Syntetisk generert <dato> — ikke hentet fra leverandør»
+OK   hovedløpet (uendret app, epoke 2026-10-21T09:54:34Z): merkingen «Syntetiske demodata – ikke ekte leverandørdata» og «Syntetisk generert 21.10.2026 — ikke hentet fra leverandør» er synlig
+OK   fremtidig epoke (nå + 1 t; ingen toleranse, ingen justering): kilden feiler lukket («Kilden kunne ikke leses»), uten skjema, uten økonomi og uten merking av ferske data
+OK   ugyldig epoke («i morgen»): kilden feiler lukket («Kilden kunne ikke leses»), uten skjema, uten økonomi og uten merking av ferske data
+OK   uten SCOUT_SYNTHETIC_EPOCH brukes den innebygde standardepoken 2026-10-21T06:50:00Z: merkingen viser dens dato
+OK   standardepoken er ennå innenfor oppbevaringstiden: kildedataene er ikke «for gamle»
+OK   J1 diesel: uten bekreftede opplysninger er kortet «ikke beregnet» eller «Minst … (ufullstendig)» (nedre grense), aldri estimat eller positivt budsjettutfall
+OK   J1 phev: uten bekreftede opplysninger er kortet «ikke beregnet» eller «Minst … (ufullstendig)» (nedre grense), aldri estimat eller positivt budsjettutfall
+OK   J1 bev: uten bekreftede opplysninger er kortet «ikke beregnet» eller «Minst … (ufullstendig)» (nedre grense), aldri estimat eller positivt budsjettutfall
+OK   J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede
+OK   J2 diesel: uten opplysninger er detaljen «Ikke beregnet» eller «Minst …» (nedre grense), aldri estimat; den tilbyr skjema og viser hva som mangler
+OK   J2: skjemaet har introduksjon (tomt = ikke oppgitt), annonsens påstander merket «ikke dokumentasjon», og er helt tomt (ingenting forhåndsutfylt)
+OK   lekkasje: skjemaet har bare skjulte felt searchId, listingId (opak m1_…) og bindingMarker — ingen candidateId/-Version/draftVersion
+OK   lekkasje: skjemaets HTML inneholder verken kandidat-id, revisjonsavtrykk eller leverandørens annonse-id
+OK   lekkasje: rå SSR-respons (inkl. RSC-nyttelast) for skjemasiden har ingen kandidat-id eller revisjonsavtrykk
+OK   lekkasje: skjemaets markør er opak (b1_ + 32 tegn)
+OK   J4: ugyldige verdier gir norske feltfeil (heltall, dato/presisjon, kurs, beløp, begrunnelse, metode, bekreftelse)
+OK   J4: ingenting lagres ved feil, verdiene beholdes i skjemaet og fokus flyttes til feiloversikten
+OK   J4: feilsvar fra serveren inneholder ingen rå identitet
+OK   J4: uten uttrykkelig bekreftelse lagres ingenting selv om alle felt er gyldige
+OK   J3 diesel: «Estimat — ikke validert: 830 583 kr» (B-Merovo/fixturekonvensjon), positivt budsjett false
+OK   J3: lagringsmelding vises, og budsjettnotatet er uendret (ikke beregnet)
+OK   J3: to summer (brutto utlegg og økonomisk kostnad) med forklaring av at brutto utlegg ikke nødvendigvis er kontantbetaling ved grensen
+OK   J3: nedbrytningen stemmer med uavhengig utledede referanser (kjøpesum, mva.) og summerer til brutto utlegg
+OK   J3: forutsetninger viser kurs med kilde/dato og «Testkurs/forhandleroppgitt», regler ikke godkjent for validering, og ikke-rådgivning står i tillegg til usikkerhet
+OK   J3: dokumentasjonsdekning er en konkret teller uten score, og annonsepåstand/forhandleroppgitt teller ikke som dokumentert
+OK   J3: ingen positivt budsjettspråk i estimatet
+OK   J3 lagring: én rad bundet til firma A fra sesjon, kun forhandlerinput (ingen avledede tall), kandidat-id/revisjon utledet av serveren
+OK   J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen)
+OK   J3: ingen rå identitet i detalj-HTML (kandidat-id/revisjon) eller i serverens action-svar
+OK   gjenåpning: lagrede verdier er forhåndsutfylt (kurs vises med komma), men bekreftelsen er IKKE avkrysset og merknaden sier at ny bekreftelse kreves for å lagre
+OK   J9 PHEV: «Estimat — ikke validert: 1 097 958 kr» (CASE-001-avgifter, fixturekonvensjon), positivt false
+OK   J9 PHEV: kjøpesum og mva. stemmer med uavhengig utledning
+OK   J9 BEV: to merkede scenarioer (med/uten elbilfritak: 384 727 kr / 459 727 kr), ikke ett tall; positivt false
+OK   J9 BEV: EV-kvalifisering er ikke innsamlet og vises som «kan ikke registreres ennå» (ingen utvidelse av kjøretøyomfang), uten lenke
+OK   preview: kortene viser estimat/scenarier/ikke beregnet — ingen med positivt budsjettutfall; diesel-kortet viser estimatet merket «ikke validert»
+OK   preview: budsjettvurderingen er fortsatt «ikke beregnet» og uten positivt språk/varsel
+OK   manglende opplysninger: delvis input gir IKKE estimat (nedre grense eller ikke beregnet), positivt false
+OK   manglende opplysninger: «Hva mangler?» nevner registrerbare felt med lenke til skjemaet (ikke 0 eller dokumentert)
+OK   manglende transport vises som ukjent (ikke 0)
+OK   manglende opplysninger: lenken (f-foreignVat) fører til et faktisk skjemafelt
+OK   J6 utløpt kurs: «må bekreftes på nytt» med årsak, og ingen tall fra den gamle bekreftelsen (ikke estimat)
+OK   J6: skjemaet viser årsaken og er forhåndsutfylt til gjennomgang, bekreftelsen ikke avkrysset
+OK   J6: aktiv ny bekreftelse med gyldig kurs gir estimat igjen
+OK   avrundingslikhet: fullt utfylt, men mva. havner nøyaktig på 50 øre (U-013 uavklart) ⇒ «Minst 1 065 075 kr (ufullstendig)», ikke punktestimat; positivt false
+OK   J7: søket endret via skjemaet (versjon 2)
+OK   J7: endret kostnadsgrunnlag ⇒ bekreftelsen er foreldet («må bekreftes på nytt: kostnadslinjene i søket er endret») og dieselestimatet vises ikke
+OK   J7: gammel søkeversjon (v=1) avvises med forklaring i stedet for å vise foreldede tall
+OK   J7: skjemaet viser årsaken, er forhåndsutfylt og krever aktiv ny bekreftelse
+OK   J7: etter aktiv ny bekreftelse er estimatet tilbake (søkets tilleggslinje påvirker ikke kjernens tall)
+OK   J7 (simulert rettighetsendring i testdatabasen): «kildens rettigheter er endret» ⇒ må bekreftes på nytt, ingen estimat
+OK   fail-lukket: en lagret bekreftelse uten bekrefter (confirmed_by NULL) brukes ikke — ingen tall fra den, ingen delvis tillit
+OK   databasen forbyr å endre nøkkelen til en bekreftelse (kandidat/revisjon) — vern mot flytting av bekreftelser mellom revisjoner
+OK   J7 (simulert ny annonserevisjon): bekreftelsen for gammel revisjon brukes ikke (ikke estimat)
+OK   J7 (simulert ny revisjon): skjemaet forhåndsutfylles fra tidligere revisjon med tydelig merknad og krever ny bekreftelse
+OK   omfang: transportlinjen i søket vises med beløp og valg (til/etter/fordelt), standard «Ikke bekreftet»
+OK   omfang: fordeling som ikke summerer til linjens beløp avvises med norsk feil, ingenting lagres
+OK   omfang: korrekt fordeling lagres i øre som strenger (1 000 000 + 200 000 = 1 200 000)
+OK   omfang: vurderingen etter fordeling er fortsatt ikke et positivt budsjettutfall
+OK   profil: skjemaet er tomt (ingen standard) og forklarer at profilen aldri overstyrer bekreftede verdier
+OK   profil: lagret for firma A fra sesjonen, bare standardene
+OK   profil: gjenåpning viser lagrede standarder
+OK   profil: uten egen verdi på annonsen gjelder profilens fradragsstatus (oppgitt av firmaprofil)
+OK   profil: annonsens egen bekreftede verdi vinner over profilen
+OK   firmaskille: firma B får ikke se firma A sitt detalj (ikke funnet, ingen økonomi eller skjema)
+OK   firmaskille: firma B får ikke se firma A sitt skjema (ikke funnet, ingen økonomi eller skjema)
+OK   firmaskille: firma B får ikke se firma A sitt resultat (ikke funnet, ingen økonomi eller skjema)
+OK   firmaskille: firma B ser ikke firma A sin profil (tomt skjema)
+OK   firmaskille: samme annonse i firma B er «Ikke beregnet»/«Minst …» (nedre grense) uten A sine opplysninger — aldri A sitt estimat
+OK   firmaskille: manipulert søk-id (A sitt søk) og forfalsket firma-id fra firma B avvises uten skriving
+OK   binding: manipulert konfliktmarkør avvises («endret») uten skriving
+OK   binding: markør brukt mot en annen offentlig annonse-id avvises uten skriving
+OK   firmaskille: gyldig innsending fra firma B lagres under firma B (ikke A)
+OK   firmaskille: ingen rå identitet i firma B sine action-svar eller sider
+OK   rettighetsavslag (visning av økonomi nektet): kortet er «unavailable» uten tall, estimat eller årsaker — selv om A har en bekreftelse
+OK   rettighetsavslag: detaljen viser ingen økonomi, ingen forklaring, ingen lenke til skjema
+OK   rettighetsavslag: direkte URL til skjemaet viser «kan ikke vises», ingen skjema, ingen skjulte felt
+OK   rettighetsavslag: SSR/RSC-nyttelast for skjemasiden har ingen markør, kandidat-id eller beløp
+OK   listing_id nektet: økonomien vises fortsatt, men leverandørens annonse-id finnes ingen steder i detaljsiden (HTML + RSC)
+OK   listing_id nektet: skjemasiden (HTML, rå SSR/RSC, props) har ingen rå annonse-id, kandidat-id eller revisjon
+OK   listing_id nektet: gyldig innsending virker fortsatt (serveren kjenner identiteten), lagres under serverutledet nøkkel
+OK   listing_id nektet: feilsvar (manipulert markør) røper ingen identitet
+OK   kildefeil: skjemasiden viser «kilden kunne ikke leses», uten skjema og uten økonomi
+OK   anonym: /searches/<uuid>/preview/m1_…/dealer-input?v=2 omdirigeres til innlogging
+OK   anonym: /searches/economics-profile omdirigeres til innlogging
+OK   tastatur: skjemaets felt og «Bekreft og lagre» nås med Tab alene, og fokus har synlig markering
+OK   mobil 390 px: forhandlerskjema: ingen horisontal rulling (390 ≤ 390)
+OK   mobil: skjemafeltene og knappen har treffflate ≥ 40 px høyde
+OK   mobil 390 px: detalj med forklaring: ingen horisontal rulling (390 ≤ 390)
+OK   mobil 390 px: firmaprofil: ingen horisontal rulling (390 ≤ 390)
+OK   ingen JavaScript-feil i konsollen under hele flyten
+OK   alle action-svar (alle brukere og bygg) er fri for kandidat-id-format og revisjonsavtrykk
+94/94 sjekker OK [modus: emulator]

@@ -1,0 +1,60 @@
+AVLEDET LESEKOPI. Kontroller sitater i HTML-originalen.
+
+Valutakurs / Exchange rates - Datasett - Toll åpne data
+Skip to main content
+Logg inn
+Tolletatens åpne data
+Valutakurs / Exchange rates
+Tolletaten gir næringsliv, forskere og sivilsamfunn tilgang til data på en slik måte at de lett kan brukes i nye
+sammenhenger både av mennesker og maskiner.
+Tolletaten skal bli navngitt som kilde. Grunnen til det er at vi er svært opptatt av å få tilbakemeldinger om det
+foreligger feil i datagrunnlaget. Alle våre data er derfor lisensiert med CC BY 4.0 eller NLOD
+(norsk lisens for offentlig data).
+Valutakurs / Exchange rates
+Gjeldende og fremtidige valutakurser. Oppdateres annenhver tirsdag, kursene gjelder for to kalenderuker fra tredje påfølgende torsdag. Standard ISO4217. Deklarasjonens rubrikk 22.
+Current and future exchange rates. Updated every other Tuesday, the exchange rates are valid for two calendar weeks from the third Thursday following the update. ISO4217 standard. The value is declared in box 22 of the customs declaration.
+Data og ressurser
+valutakurs.xml
+XML
+Tilleggsinformasjon
+Nedlasting
+valutakurs.xsd
+XSD
+Tilleggsinformasjon
+Nedlasting
+valutakurs.json
+JSON
+Tilleggsinformasjon
+Nedlasting
+kurs
+valuta
+Tilleggsinformasjon
+Tema
+Avgift
+Tilgangsrettigheter
+public
+Versjon
+1.1
+Lisens
+Creative Commons Attribution 4.0
+Sist oppdatert
+oktober 15, 2026, 00:00 (UTC)
+Opprettet
+desember 17, 2025, 08:07 (UTC)
+Kontaktinformasjon
+https://www.toll.no/no/om-tolletaten/kontakt-oss
+Revisjon
+E45485C1C954DFD87402EAA477DC547C
+Informasjonskapsler (Cookies)
+Tolletaten bruker informasjonskapsler som er viktige for at tjenesten skal fungere.
+Vi bruker også informasjonskapsler for å forbedre de digitale tjenestene våre.
+All data som lagres er anonymisert. Ved å bruke denne tjenesten godtar du bruk av informasjonskapsler.
+Les mer om personvern og vår bruk av informasjonskapsler
+GODKJENN COOKIES
+Om Tolletaten
+Personvern og informasjonskapsler
+CKAN API
+CKAN Association
+Tolletaten
+| Postadresse: Postboks 2103 Vika, 0125 OSLO | Org.nr. 974761343 |
+Kontakt Tolletaten

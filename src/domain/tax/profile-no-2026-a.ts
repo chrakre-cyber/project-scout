@@ -1,0 +1,142 @@
+/**
+ * Avgiftsprofil NO-OTA-2026-A-PB: engangsavgift 2026, avgiftsgruppe a, personbil (M1). Gjenbruker `docs/tax/rules.json`
+ * (datedParameters DP-WEIGHT-GEN-A-2026, DP-WEIGHT-A-2026, DP-CO2-A-2026; avrunding R-OTA-014) — ingen egen regelmodell. En test sammenligner
+ * tallene her med rules.json. Parametrene er kilde-belagt (E1; stortingsvedtaket FOR-2025-12-18-2755 lest) og er uttrykkelig godkjent av Christian
+ * 2026-10-19 innen avgrenset omfang (`approval`, docs/tax/rules.json). Godkjent runtime gjelder bare de tre validerte personbilprofilene i `vehicleProfiles`.
+ */
+import type { TaxPowertrain, VehicleProfileId } from "./types";
+
+export interface Co2Band {
+  /** Eksklusiv nedre grense (g/km). */
+  fromGramKm: number;
+  /** Øvre grense (g/km); null = uten øvre grense. */
+  toGramKm: number | null;
+  /** kr per g/km for grammene i dette intervallet (marginalt/progressivt, T40). */
+  ratePerGramKm: string;
+}
+
+export interface DeductionStep {
+  ageMonths: number;
+  percent: number;
+}
+
+export interface TaxProfile {
+  id: string;
+  version: string;
+  taxGroup: "a";
+  vehicleClass: "passenger_car_m1";
+  /** Styrende hendelse: første gangs registrering i Norge (forskrift § 1-2 nr. 1). */
+  governingEvent: "first_norwegian_registration";
+  /** KILDEDOKUMENTERT startdato (T41 § 1: «Fra 1. januar 2026»; T03 13.1). */
+  validFrom: string;
+  /** KILDEDOKUMENTERT sluttdato; null = kildene oppgir ingen (de 2026-satsene vi har lest har ingen oppgitt opphørsdato). */
+  documentedValidTo: string | null;
+  /** INTERN sikkerhetssperre, ikke en kildedokumentert opphørsdato: etter denne datoen regner motoren ikke uten ny kildekontroll. */
+  internalSafetyLimit: { date: string; kind: "internal_guard"; basis: string };
+  /** Kildedokumentert periode slik Lovdata merker vedtaket («Budsjettåret 2026»); ikke en eksplisitt sluttdato. */
+  documentedPeriodLabel: string;
+  /** Hentedato for den konsoliderte vedtaksteksten satsene er verifisert mot; senere endringer er ikke kontrollert. */
+  ratesVerifiedAsOf: string;
+  parameters: {
+    generalWeight: { thresholdKg: number; ratePerKg: string; ruleRef: string; paramRef: string };
+    combustionWeight: { thresholdKg: number; ratePerKg: string; ruleRef: string; paramRef: string };
+    co2Bands: readonly Co2Band[];
+    co2RuleRef: string;
+    co2ParamRef: string;
+    scrappageDepositNok: number;
+    scrappageRuleRef: string;
+    /** Skattebetalingsforskriften § 10-4-4: avrund ned til hele kroner — bare det samlede kravet (R-OTA-014, E1); mellomledd avrundes ikke (U-012). */
+    rounding: { ruleRef: string; scope: "final_claim"; direction: "down"; unit: "whole_nok"; basis: string };
+  };
+  deductionTable: readonly DeductionStep[];
+  /** Brukes når registrering skjer 20 år eller mer etter første registrering (1. januar-regelen, forskrift § 3-3). */
+  deductionRuleRef: string;
+  sources: readonly string[];
+  /** `class1References`: antall klasse 1-referanser (docs/tax/references.json) som dekker profilen. 3 i dag (PHEV, EV, diesel); profilen er godkjent 2026-10-19 innen dokumentert omfang. */
+  approval: { approved: boolean; class1References: number; reason: string; approvedBy?: string; approvedDate?: string; approvedAtCommit?: string };
+  /** Klasse 1-dekning per støttet kjøretøyprofil (docs/tax/references.json, `profileId`); en test holder dem lik registeret. Profiler som ikke står her er utenfor støttet omfang. */
+  vehicleProfiles: Readonly<Record<VehicleProfileId, { powertrain: TaxPowertrain; class1CaseIds: readonly string[] }>>;
+  /** Regelnivå (docs/tax/rules.json evidenceLevel) per regel profilen anvender; en test holder dem lik registeret. */
+  ruleEvidence: Readonly<Record<string, "E1" | "E1P">>;
+  openItems: readonly string[];
+}
+
+/** T42 / forskrift § 3-3 (41 trinn; siste trinn 20 år = 100 % styres av 1. januar-regelen). */
+export const DEDUCTION_STEPS_2026: readonly DeductionStep[] = [
+  [1, 2], [2, 4], [3, 6], [4, 8], [5, 10], [6, 12], [7, 14], [8, 15], [9, 16], [10, 17], [11, 18], [12, 19], [14, 20], [16, 21],
+  [18, 22], [20, 23], [22, 24], [24, 26], [30, 30], [36, 33], [42, 37], [48, 40], [54, 44], [60, 50], [66, 54], [72, 58], [78, 62],
+  [84, 66], [90, 70], [96, 74], [102, 78], [108, 82], [120, 90], [132, 91], [144, 92], [156, 93], [168, 94], [180, 95], [192, 96],
+  [216, 98], [240, 100],
+].map(([ageMonths, percent]) => ({ ageMonths: ageMonths!, percent: percent! }));
+
+export const NO_OTA_2026_A_PB: TaxProfile = {
+  id: "NO-OTA-2026-A-PB",
+  version: "ECON-002/1",
+  taxGroup: "a",
+  vehicleClass: "passenger_car_m1",
+  governingEvent: "first_norwegian_registration",
+  validFrom: "2026-01-01",
+  documentedValidTo: null,
+  internalSafetyLimit: {
+    date: "2026-12-31",
+    kind: "internal_guard",
+    basis: "Vedtaket er «for 2026» og merket «Budsjettåret 2026» (Lovdata), men teksten har ingen eksplisitt sluttdato. Sperren hindrer at 2026-satser stilltiende brukes for 2027 uten ny kildekontroll.",
+  },
+  documentedPeriodLabel: "Budsjettåret 2026",
+  ratesVerifiedAsOf: "2026-10-18",
+  parameters: {
+    generalWeight: { thresholdKg: 500, ratePerKg: "12.71", ruleRef: "R-OTA-001", paramRef: "DP-WEIGHT-GEN-A-2026" },
+    combustionWeight: { thresholdKg: 1200, ratePerKg: "260", ruleRef: "R-OTA-001", paramRef: "DP-WEIGHT-A-2026" },
+    co2Bands: [
+      { fromGramKm: 0, toGramKm: 100, ratePerGramKm: "800" },
+      { fromGramKm: 100, toGramKm: 150, ratePerGramKm: "1600" },
+      { fromGramKm: 150, toGramKm: 225, ratePerGramKm: "3200" },
+      { fromGramKm: 225, toGramKm: null, ratePerGramKm: "5000" },
+    ],
+    co2RuleRef: "R-OTA-002",
+    co2ParamRef: "DP-CO2-A-2026",
+    scrappageDepositNok: 2400,
+    scrappageRuleRef: "R-IMP-OTH-001",
+    rounding: { ruleRef: "R-OTA-014", scope: "final_claim", direction: "down", unit: "whole_nok", basis: "skattebetalingsforskriften § 10-4-4 (T46); håndbok (T45)" },
+  },
+  deductionTable: DEDUCTION_STEPS_2026,
+  deductionRuleRef: "R-OTA-010",
+  sources: ["T03", "T05", "T40", "T42", "T43", "T44", "T45", "T46", "T47", "T48", "T49"],
+  ruleEvidence: {
+    "R-OTA-001": "E1",
+    "R-OTA-002": "E1", // avgrenset: gruppe a, WLTP, hele g/km (NEDC/egenvekt-10 = R-OTA-015, blokkert)
+    "R-OTA-005": "E1",
+    "R-OTA-007": "E1",
+    "R-OTA-010": "E1", // avgrenset: trinndato finnes; dag 29–31 = R-OTA-016 (U-009), blokkert i vinduet
+    "R-IMP-OTH-001": "E1",
+    "R-OTA-014": "E1", // sluttkravet (§ 10-4-4; forarbeid T50, omnummerering T52); mellomledd U-012 utenfor
+  },
+  // Godkjent runtime er avgrenset til tre validerte personbilprofiler; bensin, ikke-ladbar hybrid og ukjent undertype er blokkert (`vehicle_profile_*`).
+  vehicleProfiles: {
+    "PB-DIE": { powertrain: "ice", class1CaseIds: ["C1-GR-20261018-03"] },
+    "PB-BEV": { powertrain: "bev", class1CaseIds: ["C1-GR-20261018-02"] },
+    "PB-PHEV": { powertrain: "phev", class1CaseIds: ["C1-GR-20261018-01"] },
+  },
+  approval: {
+    approved: true,
+    class1References: 3,
+    approvedBy: "Christian",
+    approvedDate: "2026-10-19",
+    approvedAtCommit: "cc738ef73fdd0304b2a9fb4546870884b5b0f1a9",
+    reason: "Uttrykkelig godkjent av Christian 2026-10-19 for de syv reglene R-OTA-001, -002 (WLTP, hele g/km), -005, -007, -010 (trinndato finnes, under 20 år), R-IMP-OTH-001 og R-OTA-014 (sluttkravet), innen dokumentert og reviewet omfang (docs/tax/rules.json parameterApproval). Gjelder ikke: NEDC/desimal-CO₂ (R-OTA-015), dag 29–31 (R-OTA-016), 20-årsminimum, mellomavrunding (U-012), MVA (U-013). Godkjent profil gir bare approved-beløp når inputene er entydige og dokumenterte (inputResolution = resolved); udokumentert/referansevekt og datofølsomme beløp er estimat.",
+  },
+  openItems: [
+    "U-012: avrunding av mellomledd er ikke omtalt i noen kilde; motoren avrunder bare sluttkravet",
+    "R-OTA-014 er E1 for sluttkravet (forarbeid T50: «generelt for alle skatte- og avgiftskrav»; omnummerering T52); den vedtatte 2007-ordlyden er ikke lest direkte, og mellomledd er ikke omtalt (U-012)",
+    "U-009 / R-OTA-016: trinndato som ikke finnes i målmåneden (dag 29–31) er ikke spesifisert; blokkert i vinduet",
+    "Vekt: forhandleroppgitt vekt uten dokumentert grunnlag (dealer_entered), referansevekt og ukjent grunnlag gir estimat, ikke godkjent beløp (policy 2026-10-19); dokumentert grunnlag (typegodkjenning/kjøretøyregister) kreves for godkjent beløp",
+    "20 år eller eldre: § 3-3-setningen om minimumsavgift er ikke utledet (R-OTA-011); motoren blokkerer (twenty_year_minimum_unresolved) og gir ikke sluttkrav",
+    "R-OTA-015: NEDC, egenvekt/10 og desimal-CO₂ er blokkert (avrunding av desimaler mangler kilde)",
+    "PHEV: anvendelsen hviler på det tekniske vilkåret i § 3 og på forskrift § 3-1 (E1-tekst); forutsetter dokumentert stempeldrevet motor og ekstern lading per kjøretøy",
+    "Ingen eksplisitt sluttdato for 2026-satsene (intern sikkerhetssperre); endringer etter hentedato 2026-10-18 og lov 19 juni 2026 nr. 41 er ikke kontrollert",
+    "Godkjent av Christian 2026-10-19 innen omfanget over; runtime er avgrenset til PB-DIE, PB-BEV og PB-PHEV (klasse 1 per profil). Bensin, ikke-ladbar hybrid og ukjent undertype er blokkert (vehicle_profile_unsupported/unknown) og arver ikke dieselens dekning",
+  ],
+
+};
+
+export const TAX_PROFILES: readonly TaxProfile[] = [NO_OTA_2026_A_PB];

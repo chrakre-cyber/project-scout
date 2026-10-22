@@ -13,6 +13,7 @@ import { isCurrencyCodeFormat, toMoney, minorDigits, parseDecimalToMinor } from 
 import type {
   BodyType, ClaimValue, FirstRegistration, Fuel, ListingPrice, NormalizedListing, SourceVatStatement, Transmission,
 } from "@/domain/types";
+import { OBSERVATION_WINDOW_HOURS, syntheticGeneratedText } from "./epoch";
 import type { SyntheticRawListing } from "./raw";
 
 export const SYNTHETIC_SOURCE = "synthetic-demo";
@@ -32,18 +33,23 @@ const BODY: Record<string, BodyType> = {
 
 class Rejected extends Error {}
 
-export function normalizeSyntheticListing(raw: SyntheticRawListing): NormalizeResult {
+export interface NormalizeOptions {
+  /** Datasettepoken når observasjonstidene er fornyet (ECON-006e). Kun merking; påvirker ikke innhold eller revisjon. */
+  renewedForEpoch?: string;
+}
+
+export function normalizeSyntheticListing(raw: SyntheticRawListing, options: NormalizeOptions = {}): NormalizeResult {
   const id = typeof raw?.id === "string" && raw.id.trim() !== "" ? raw.id.trim() : null;
   try {
     if (!id) throw new Rejected("mangler kilde-ID");
-    return { ok: true, listing: build(id, raw) };
+    return { ok: true, listing: build(id, raw, options) };
   } catch (e) {
     if (e instanceof Rejected) return { ok: false, sourceListingId: id, reason: e.message };
     throw e;
   }
 }
 
-function build(id: string, raw: SyntheticRawListing): NormalizedListing {
+function build(id: string, raw: SyntheticRawListing, options: NormalizeOptions): NormalizedListing {
   const notes: string[] = [];
   const v = raw.vehicle ?? {};
 
@@ -89,8 +95,10 @@ function build(id: string, raw: SyntheticRawListing): NormalizedListing {
     seller: seller(raw.seller, notes),
     provenance: {
       kind: "synthetic",
-      description: "Syntetisk demo-fixture (DEV-003). Ikke en ekte annonse og ikke data fra en markedsplass.",
-      normalizationNotes: notes,
+      description: `${options.renewedForEpoch ? `${syntheticGeneratedText(options.renewedForEpoch)}. ` : ""}Syntetisk demo-fixture (DEV-003). Ikke en ekte annonse og ikke data fra en markedsplass.`,
+      normalizationNotes: options.renewedForEpoch
+        ? [...notes, `observasjonstidspunkt simulert innenfor ${OBSERVATION_WINDOW_HOURS} timer før epoken ${options.renewedForEpoch} (ikke observert hos en leverandør)`]
+        : notes,
     },
   };
 }

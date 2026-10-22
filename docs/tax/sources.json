@@ -2,7 +2,7 @@
  "schema": "merovo.tax.sources",
  "version": "TAX-001E/1",
  "researchDate": "2026-10-15",
- "coverage": "TAX-001B 15.10.2026: seks originale kildefiler hentet av Codex og lest lokalt av Claude (kildepakke TAX-001B-handoff, hash i MANIFEST). Kilder merket E1 er lest i hele eller relevante deler; E1 betyr lest primærkilde, ikke godkjent regelparameter. Direkte nettverkstilgang til norske verter er fortsatt blokkert; øvrige kilder står uendret på E2/E0. Stortingsvedtak, forskrift (§ 3-1, § 3-3), Lovdata og tollkurs er IKKE lest. TAX-001C 2026-10-16: ingen nye primærkilder kunne leses (nettverkspolicy). Alle nye opplysninger er E2-ledetråder fra søkesammendrag.",
+ "coverage": "TAX-001B 15.10.2026: seks originale kildefiler hentet av Codex og lest lokalt av Claude (kildepakke TAX-001B-handoff, hash i MANIFEST). Kilder merket E1 er lest i hele eller relevante deler; E1 betyr lest primærkilde, ikke godkjent regelparameter. Direkte nettverkstilgang til norske verter er fortsatt blokkert; øvrige kilder står uendret på E2/E0. Stortingsvedtak, forskrift (§ 3-1, § 3-3), Lovdata og tollkurs er IKKE lest. TAX-001C 2026-10-16: ingen nye primærkilder kunne leses (nettverkspolicy). Alle nye opplysninger er E2-ledetråder fra søkesammendrag. ECON-002 18.10.2026: kildepakke med fem filer (T03 uendret hash, T05 forskrift, T40 avgiftssatser 2026, T41 Prop. 1 LS-utdrag, T42 bruksfradragstabell) er lest lokalt av Claude og registrert som E1 for konkrete regler. Kildene er skannede/utskrevne PDF-er uten tekstlag (unntatt T03) og er lest visuelt. Ingen kilde omtaler avrunding av engangsavgiften. ECON-002 runde 4 (18.10.2026): tilleggspakke med syv HTML-filer (T43–T49) lest: konsolidert stortingsvedtak FOR-2025-12-18-2755 (T47), opprinnelig vedtak 220 (T43), endringsvedtak FOR-2026-06-19-1246 (T48) og vedtak 1131/1132 (T44), skattebetalingsforskriften § 10-4-4 (T46), håndbok (T45) og skattebetalingsloven (T49). ECON-004 runde 31 (19.10.2026): ajourført Lovdata-visning av FOR-2025-12-18-2752 (T80; § 2 viser per hentedato uendret 25 %, ordlyd lik T77) og to Tolletaten-sider om bilimport/betaling (T81, T82; privatperson, ingen tollsats/elbilgrense/avrunding). ECON-004 runde 32 (19.10.2026): målrettet nettkontroll. Tolltariffen 2026 side 501–502 (T83; ordinær sats 0 for 87.03), prinsipputtalelse om innførselsmva. (T84), fersk henting av bilimport-siden (T85), Om tolltariffen (T86), vareførselshåndbøkene §§ 6-10/6-11 (T87/T88), historisk forklaring om engangsavgiften (T89). Korrigert: bilimportsiden (T81) inneholder elbilregelen i serialiserte sidedata.",
  "sources": [
   {
    "id": "T01",
@@ -74,7 +74,7 @@
     "R-OTA-008",
     "R-OTA-009"
    ],
-   "note": "",
+   "note": "ECON-002: samme filbytes (SHA-256) som i TAX-001B-pakken; filen ligger nå i repoet. Rundskrivet inneholder ingen omtale av avrunding av engangsavgiften (søkt: «avrund», «rundes», «nærmeste»).",
    "retrievedBy": "Codex (kildepakke TAX-001B-handoff)",
    "packageFile": "primarkilder/engangsavgift-2026.pdf",
    "packageSha256": "08296e9a32afb53fae95ae99bc961d485f01c139a68bdbb31ef6eb89bd6dea23",
@@ -93,7 +93,11 @@
     "6.21",
     "13.1"
    ],
-   "limitations": "Januarversjon. Dokumenterer ikke endringer senere i 2026. Inneholder ikke satstabellene i stortingsvedtaket § 2/§ 3 og ikke bruksfradragstabellen (viser til forskrift § 3-3)."
+   "limitations": "Januarversjon. Dokumenterer ikke endringer senere i 2026. Inneholder ikke satstabellene i stortingsvedtaket § 2/§ 3 og ikke bruksfradragstabellen (viser til forskrift § 3-3).",
+   "repoFile": "docs/tax/primarkilder/05_Arsrundskriv_engangsavgift_2026_Skattedirektoratet.pdf",
+   "supportedClaims": [
+    "Pkt. 11.1: ikke-registrerte (kontantkunder): avgiften skal være innbetalt før motorvognen kan registreres; brukt kjøretøy må være «fortollet (betalt merverdiavgift)» før enkeltgodkjenning; avgiften er foreløpig til endelig fastsettelse etter registrering"
+   ]
   },
   {
    "id": "T04",
@@ -118,7 +122,8 @@
     "R-OTA-010",
     "R-OTA-013"
    ],
-   "note": "Lovdata-oppføringen viste ifølge søkeverktøyet en endring av 19.6.2026 med virkning fra 1.9.2026 for § 3. Innholdet er ukjent. | Uavklart kildeopplysning U-001: søkesammendrag nevnte endring med virkning 1.9.2026; ikke bekreftet i lest materiale og ikke brukt som regelgrunnlag."
+   "note": "Lovdata-oppføringen viste ifølge søkeverktøyet en endring av 19.6.2026 med virkning fra 1.9.2026 for § 3. Innholdet er ukjent. | Uavklart kildeopplysning U-001: søkesammendrag nevnte endring med virkning 1.9.2026; ikke bekreftet i lest materiale og ikke brukt som regelgrunnlag. ECON-002 runde 4: faktisk konsolidert fil er lest som T47; identiteten FOR-2025-12-18-2755 er verifisert mot Lovdata-metadata.",
+   "supersededBy": "T47"
   },
   {
    "id": "T05",
@@ -126,9 +131,9 @@
    "publisher": "Lovdata / Finansdepartementet",
    "url": "https://lovdata.no/dokument/SF/forskrift/2001-03-19-268",
    "kind": "primary",
-   "evidenceLevel": "E1X",
-   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
-   "directReadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
    "searchLeadDate": "2026-10-15",
    "whatToExtract": [
     "Definisjoner: varebil klasse 1/2, avgiftsgrupper",
@@ -137,21 +142,44 @@
     "Gjeldende versjon per 2026-10-15"
    ],
    "rules": [
+    "R-OTA-002",
+    "R-OTA-004",
     "R-OTA-005",
     "R-OTA-006",
     "R-OTA-009",
+    "R-OTA-010",
+    "R-OTA-011",
     "R-OTA-013"
    ],
    "note": "",
-   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)",
-   "verifiedDate": "2026-10-16",
-   "providedFacts": [
-    "§ 3-1: WLTP-kjøretøy bruker relevant kombinert CO2-verdi",
-    "Ladbar hybrid bruker vektet kombinert CO2-verdi",
-    "NEDC-omregning der forskriften anvender den: faktor 1,24 for gruppe a/j og 1,22 for gruppe b",
-    "Der relevant CO2-grunnlag mangler og lovfestet fallback gjelder, bygger fallback på egenvekt/10"
+   "limitations": "PDF-utskrift uten maskinlesbart tekstlag (lest visuelt). Alle 17 sider er gjennomgått for avrunding og beregningsregler; §§ 1-2, 1-3, 3-1 til 3-4, 5-2 og 7-2 er lest i detalj. Kapittel II (definisjoner), IV (fritak), VI–VIII er bare skumlest og ikke vurdert for andre formål. Ingen bestemmelse om avrunding funnet i de leste paragrafene. Ikke samme fil som den utelatte Lovdata-varianten nevnt i MANIFEST.",
+   "retrievedBy": "Christian (ECON-002 primarkildepakke, manifest i docs/tax/primarkilder/MANIFEST.md)",
+   "packageFile": "primarkilder/03_Forskrift_engangsavgift_FOR-2001-03-19-268.pdf",
+   "repoFile": "docs/tax/primarkilder/03_Forskrift_engangsavgift_FOR-2001-03-19-268.pdf",
+   "packageSha256": "e70ae21b2195e696ca112adc9f67411e4977312778dc07177c8368382b29a88b",
+   "publishedVersion": "Lovdata konsolidert PDF-utskrift (17 s.): FOR-2001-03-19-268, ikrafttredelse 01.04.2001, «Sist endret FOR-2026-01-13-29»; § 3-1 sist endret ved forskrift 19 des 2025 nr. 2787 (i kraft 1 jan 2026)",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "PDF s. 1–17 gjennomgått (visuelt) for avrunding og beregningsregler",
+    "§ 1-2, § 1-3 (s. 2)",
+    "§ 3-1, § 3-2, § 3-3 med tabell og alderregler (s. 5–6)",
+    "§ 3-4 (s. 7)",
+    "§ 5-2 (s. 11)",
+    "§ 7-2 (s. 12)",
+    "§ 9-3 (s. 16)"
    ],
-   "limitations": "Bare faktaene oppgitt er verifisert. Ikke generalisert utover gruppene/situasjonene regelen dekker. § 2-3 og § 3-3 er ikke adressert i TAX-001E. Ikke lest av Claude; ingen kildefil/hash."
+   "externalVerification": {
+    "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001E)",
+    "verifiedDate": "2026-10-16",
+    "providedFacts": [
+     "§ 3-1: WLTP-kjøretøy bruker relevant kombinert CO2-verdi",
+     "Ladbar hybrid bruker vektet kombinert CO2-verdi",
+     "NEDC-omregning der forskriften anvender den: faktor 1,24 for gruppe a/j og 1,22 for gruppe b",
+     "Der relevant CO2-grunnlag mangler og lovfestet fallback gjelder, bygger fallback på egenvekt/10"
+    ],
+    "limitations": "Se T05 (E1) for hash og lesning (ECON-002).",
+    "sourceUrlGiven": true
+   }
   },
   {
    "id": "T06",
@@ -284,7 +312,7 @@
     "R-IMP-VAT-002",
     "R-IMP-FX-001"
    ],
-   "note": "Tilleggsurler: https://www.toll.no/no/bedrift/import/beregning, https://www.toll.no/no/verktoy/regelverk/tollverdi/fastsettelse-av-tollverdi-sjablongsatser"
+   "note": "Tilleggsurler: https://www.toll.no/no/bedrift/import/beregning, https://www.toll.no/no/verktoy/regelverk/tollverdi/fastsettelse-av-tollverdi-sjablongsatser Siden ble lest 2026-10-19 som T82 (samme URL); T82 dekker ikke tollverdiformel, kursdato eller sjablongbeløp (sjablong: T64). Håndbøkene §§ 6-10/6-11 (T87/T88) dekker tollverdikomponentene."
   },
   {
    "id": "T11",
@@ -346,7 +374,7 @@
    "rules": [
     "R-DED-003"
    ],
-   "note": "Samme som S06 i SOURCES.md. Utenfor DEC-030-budsjettsummen."
+   "note": "Samme som S06 i SOURCES.md. Utenfor DEC-030-budsjettsummen. Samme URL som T35 (lest 2026-10-19, ECON-004-pakke fil 11); T13 beholdes for sporbarhet og er ikke separat lest."
   },
   {
    "id": "T14",
@@ -574,7 +602,7 @@
     "R-IMP-VAT-002",
     "R-IMP-REF-001"
    ],
-   "note": "Siden henvender seg til privatpersoner («som privatperson»). Gir ikke sats, tollkurs, fraktsjablong eller regel for næringsdrivende forhandler.",
+   "note": "Siden henvender seg til privatpersoner («som privatperson»). Gir ikke sats, tollkurs, fraktsjablong eller regel for næringsdrivende forhandler. Ny hentet versjon av samme URL registrert 2026-10-19 som T81 (samme «Oppdatert: 5.2.2026»). Korrigering 2026-10-19 (runde 32): sidens utvidbare innhold (serialiserte sidedata) inneholder elbilregelen og tollverdiformelen; se T81. Notatet over om at siden ikke gir regel for andre enn privatpersoner står.",
    "evidenceLevel": "E1",
    "fetchStatus": "lest_lokalt_fra_kildepakke",
    "directReadDate": "2026-10-15",
@@ -622,9 +650,9 @@
    "publisher": "Tolletaten",
    "url": "https://www.toll.no/no/verktoy/valutakurser",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
-   "directReadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
    "searchLeadDate": "2026-10-16",
    "whatToExtract": [
     "Kursens syklus og gyldighetsperiode",
@@ -633,7 +661,23 @@
    "rules": [
     "R-IMP-FX-001"
    ],
-   "note": "Sammendrag: fastsettes annenhver tirsdag, gjelder i to uker; eldre omtale sier ukentlig – KONFLIKT."
+   "note": "Sammendrag: fastsettes annenhver tirsdag, gjelder i to uker; eldre omtale sier ukentlig – KONFLIKT. Lest 2026-10-19 (ECON-004-pakke fil 02). Konflikten ukentlig/annenhver tirsdag er forklart som regimeskifte 3.9.2026 (T53, T65); se U-008.",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/02_Tollkurser.html",
+   "repoFile": "docs/tax/primarkilder/econ004/02_Tollkurser.html",
+   "packageSha256": "24543fa3e894324f4bfe2d3bf6bd09ab7e5c51347e9173b885fe3688a69d2ca5",
+   "retrievedAt": "2026-10-19T11:21:23.820687+00:00",
+   "publishedVersion": "«Oppdatert: 14.9.2026» (hentet 2026-10-19)",
+   "readSections": [
+    "Hele siden, kurstabell"
+   ],
+   "supportedClaims": [
+    "Kurser oppdateres og fastsettes annenhver tirsdag; gjelder i to kalenderuker fra og med tredje påfølgende torsdag",
+    "Kurstabell med valutakode, f.o.m./t.o.m. dato, myntenhet og NOK per myntenhet (enhet 1 eller 100); to perioder per valuta (15.10–28.10.2026 og 29.10–11.11.2026)",
+    "EUR: myntenhet 1, 10,817 og 10,695 NOK; CHF, CNY, CZK, DKK, HUF, INR, JPY, KRW, PKR, RON, SEK, THB m.fl.: myntenhet 100",
+    "Historiske kurser nås via «Finn historiske kursar»"
+   ],
+   "limitations": "Datert visning av publiserte kurser; ikke historikk. Siden oppgir «rubrikk 23», datasettet T54 oppgir «rubrikk 22». Suspensjon er ikke vist."
   },
   {
    "id": "T24",
@@ -641,9 +685,9 @@
    "publisher": "Tolletaten",
    "url": "https://www.toll.no/no/verktoy/regelverk/handboker/vareforselshandboken/6-12",
    "kind": "primary",
-   "evidenceLevel": "E2",
-   "fetchStatus": "ikke_hentet_nettverk_blokkert",
-   "directReadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
    "searchLeadDate": "2026-10-16",
    "whatToExtract": [
     "Hvilket tidspunkt som styrer kursen",
@@ -652,7 +696,22 @@
    "rules": [
     "R-IMP-FX-001"
    ],
-   "note": ""
+   "note": "Lest 2026-10-19 (ECON-004-pakke fil 05).",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/05_Vareforselshandbok_6-12.html",
+   "repoFile": "docs/tax/primarkilder/econ004/05_Vareforselshandbok_6-12.html",
+   "packageSha256": "9824831193759748450d36a096c373f0bc21a737e0106de7e2852beb1787901e",
+   "retrievedAt": "2026-10-19T11:21:23.579089+00:00",
+   "publishedVersion": "Vareførselshåndboken § 6-12 (hentet 2026-10-19)",
+   "readSections": [
+    "§ 6-12 Omregningskurs"
+   ],
+   "supportedClaims": [
+    "«Ved omregning skal kursen på tidspunktet for fastsettelse av tollavgiftssats etter tollavgiftsloven § 2-2 anvendes … i utgangspunktet … det tidspunktet tollmyndighetene aksepterer deklarasjonen etter vareførselsloven § 3-4»",
+    "Hva kjøperen har betalt i norske kroner er ikke relevant for omregningen",
+    "Hvis oppgjør er i en valuta som ikke finnes på Tolletatens kurslister, kan Norges Bank eller annen valutabank brukes"
+   ],
+   "limitations": "Håndbok (veiledning) som viderefører tolloven § 7-19; omtaler ikke avviksordningen eller endringen av 3.9.2026."
   },
   {
    "id": "T25",
@@ -776,7 +835,9 @@
     "Gruppe b 2026-01-01–2026-08-31: vekt 30 kr/kg over 1 200 kg; CO2 0–100 300 kr/g, 101–150 600, over 150 1 200",
     "(se også tidligere: Vedtak 220 er grunnvedtaket for 2026)"
    ],
-   "limitations": "Oppgitt som verifisert fra offisielt Storting/Lovdata-materiale uten kildefil/hash. Trinnvis/marginal beregning, styrende hendelsesdato, bruksfradragsrekkefølge, avrunding og satser for andre avgiftsgrupper er ikke gitt. Gruppe a etter 2026-09-01 og vektsats gruppe b fra 2026-09-01 er ikke oppgitt."
+   "limitations": "Oppgitt som verifisert fra offisielt Storting/Lovdata-materiale uten kildefil/hash. Trinnvis/marginal beregning, styrende hendelsesdato, bruksfradragsrekkefølge, avrunding og satser for andre avgiftsgrupper er ikke gitt. Gruppe a etter 2026-09-01 og vektsats gruppe b fra 2026-09-01 er ikke oppgitt.",
+   "supersededBy": "T43",
+   "note": " ECON-002 runde 4: faktisk side er lest som T43 (E1)."
   },
   {
    "id": "T31",
@@ -799,7 +860,9 @@
    "providedFacts": [
     "Avgiftsgruppe b, fra 1. september 2026: CO2-sats 450 kr per g/km for 0–100 g/km, 600 kr for 101–150, 1 200 kr over 150 g/km"
    ],
-   "limitations": "Hvilken hendelse som styrer datoen (registrering/innførsel), om intervallene regnes trinnvis (marginalt), og satsene før 1.9.2026 er ikke gitt. Gruppe a og vektkomponent ikke gitt."
+   "limitations": "Hvilken hendelse som styrer datoen (registrering/innførsel), om intervallene regnes trinnvis (marginalt), og satsene før 1.9.2026 er ikke gitt. Gruppe a og vektkomponent ikke gitt.",
+   "supersededBy": "T44",
+   "note": " ECON-002 runde 4: faktisk side er lest som T44 (E1); selve endringsvedtaket T48."
   },
   {
    "id": "T32",
@@ -846,7 +909,7 @@
     "Merverdiavgift ved import av kjøretøy er 25 %",
     "Mva.-grunnlaget er tollverdien"
    ],
-   "limitations": "Samme URL som T21 (lest lokalt, privatpersonside uten sats). Faktaene her er gitt av ekstern verifisering. Forhandlerbehandling ikke gitt."
+   "limitations": "Samme URL som T21 (lest lokalt, privatpersonside uten sats). Faktaene her er gitt av ekstern verifisering. Forhandlerbehandling ikke gitt. Se T81 (2026-10-19, runde 32): tollverdiformelen og 25 % på tollverdi er lest i sidens serialiserte sidedata."
   },
   {
    "id": "T34",
@@ -881,17 +944,37 @@
     "R-IMP-VAT-003"
    ],
    "searchLeadDate": null,
-   "evidenceLevel": "E1X",
-   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
-   "directReadDate": null,
-   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
-   "verifiedDate": "2026-10-16",
-   "providedFacts": [
-    "Fra 1.1.2026: kvalifiserende elektriske personkjøretøy er mva.-frie opptil 300 000 kr",
-    "25 % mva. på beløp over 300 000 kr",
-    "Vektkomponenten i engangsavgiften er ikke del av dette mva.-grunnlaget"
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/11_Mva_handbok_kap6.html",
+   "repoFile": "docs/tax/primarkilder/econ004/11_Mva_handbok_kap6.html",
+   "packageSha256": "011b6430ebe2ab968735ac87bef8336fd50bb6db7c8a539cc0f411428ad6670e",
+   "retrievedAt": "2026-10-19T11:21:31.071835+00:00",
+   "publishedVersion": "«Publisert 15.03.2025» (løpende utgave hentet 2026-10-19; URL-segmentet MVA2025 er et navn, ikke en årsutgave)",
+   "readSections": [
+    "§ 6-8 (Elbiler, Leasing, Ny beløpsgrense med virkning fra 1.1.2026)"
    ],
-   "limitations": "Håndbokens URL er merket 2025-utgaven. Eksplisitt anvendelse ved innførsel (import), «kvalifiserende»-vilkår og lov av 19.6.2026 er ikke gitt."
+   "supportedClaims": [
+    "Beløpsgrensen er endret fra 500 000 til 300 000 kr med virkning fra 1.1.2026 (Prop. 1 LS (2025–2026))",
+    "«Avgiftsgrunnlaget fastsettes på grunnlag av vederlaget som betales for selve kjøretøyet, fratrukket 300 000 kroner» (omsetning); vektkomponenten i engangsavgiften inngår ikke i grunnlaget (mval. § 4-2 (1) a)",
+    "Personkjøretøy er definert i FMVA § 1-3-1",
+    "Fritaket omfatter nye og brukte elektriske kjøretøy"
+   ],
+   "limitations": "Omtaler omsetning; innførsel er behandlet i kap. 7 (T62). Målegrunnlag ved innførsel, overgangsregler og lov 19.6.2026 nr. 41 er ikke dekket. T13 har samme URL.",
+   "externalVerification": {
+    "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+    "verifiedDate": "2026-10-16",
+    "providedFacts": [
+     "Fra 1.1.2026: kvalifiserende elektriske personkjøretøy er mva.-frie opptil 300 000 kr",
+     "25 % mva. på beløp over 300 000 kr",
+     "Vektkomponenten i engangsavgiften er ikke del av dette mva.-grunnlaget"
+    ],
+    "limitations": "Håndbokens URL er merket 2025-utgaven. Eksplisitt anvendelse ved innførsel (import), «kvalifiserende»-vilkår og lov av 19.6.2026 er ikke gitt.",
+    "sourceUrlGiven": true
+   },
+   "note": "Oppgradert til E1 ved ECON-004-pakken (samme dokumentidentitet; URL identisk)."
   },
   {
    "id": "T36",
@@ -904,16 +987,34 @@
     "R-DED-001"
    ],
    "searchLeadDate": null,
-   "evidenceLevel": "E1X",
-   "fetchStatus": "verifisert_eksternt_ikke_lest_av_claude",
-   "directReadDate": null,
-   "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
-   "verifiedDate": "2026-10-16",
-   "providedFacts": [
-    "Inngående mva. på personkjøretøy kan fradragsføres når kjøretøyet anskaffes for videresalg",
-    "Dette er et uttrykkelig unntak fra den ordinære fradragsbegrensningen for personkjøretøy"
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/13_Mva_handbok_2023_8-4_3.html",
+   "repoFile": "docs/tax/primarkilder/econ004/13_Mva_handbok_2023_8-4_3.html",
+   "packageSha256": "0aefd40aa62c5621d5037c170cade39a9f17ae7be8158905cf04ed452539a96f",
+   "retrievedAt": "2026-10-19T11:21:27.611780+00:00",
+   "publishedVersion": "Merverdiavgiftshåndboken 2023, § 8-4.3 (HTML-original hentet 2026-10-19)",
+   "readSections": [
+    "8-4.3 Fradragsrett for personkjøretøy ved nærmere bestemt bruk (videresalg)"
    ],
-   "limitations": "2023-utgave (T22 er 2025-utgaven, lest). Gjelder IKKE generalisert til utleie, privat bruk eller andre profiler. Innførselsmva., varebil, bindingstid og importørprofil er ikke gitt."
+   "supportedClaims": [
+    "«Etter § 8-4 første ledd bokstav a kan inngående avgift fradragsføres ved anskaffelse av personkjøretøy for videresalg»",
+    "Avsnittet om videresalg har samme ord som gjeldende kapittel 8 (T59) ved ordmengdesammenligning"
+   ],
+   "limitations": "2023-utgave (historisk). Gjelder ikke generalisert til utleie, privat bruk eller andre profiler. Innførselsmva., varebil, bindingstid og importørprofil er ikke dekket.",
+   "externalVerification": {
+    "verifiedBy": "Christian/Codex (ekstern verifisering, oppdrag TAX-001D)",
+    "verifiedDate": "2026-10-16",
+    "providedFacts": [
+     "Inngående mva. på personkjøretøy kan fradragsføres når kjøretøyet anskaffes for videresalg",
+     "Dette er et uttrykkelig unntak fra den ordinære fradragsbegrensningen for personkjøretøy"
+    ],
+    "limitations": "2023-utgave (T22 er 2025-utgaven, lest). Gjelder IKKE generalisert til utleie, privat bruk eller andre profiler. Innførselsmva., varebil, bindingstid og importørprofil er ikke gitt.",
+    "sourceUrlGiven": true
+   },
+   "note": "Oppgradert til E1 ved ECON-004-pakken."
   },
   {
    "id": "T37",
@@ -977,6 +1078,1613 @@
     "Kvalifiserende utførselsleveranser kan være mva.-fritatt; berettigelse avhenger av lovens vilkår"
    ],
    "limitations": "Abholfall, bevis og utenlandsk kjøper ikke gitt. Ingen enkeltannonse kan antas å kvalifisere."
+  },
+  {
+   "id": "T40",
+   "title": "Avgiftssatser 2026 (Finansdepartementet / regjeringen.no) — PDF-utskrift, 11 sider",
+   "publisher": "Finansdepartementet / Regjeringen.no",
+   "url": "https://www.regjeringen.no/no/tema/okonomi-og-budsjett/skatter-og-avgifter/skatte-og-avgiftssatser/avgiftssatser-2026/id3121982/",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-007",
+    "R-OTA-008"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 primarkildepakke, manifest i docs/tax/primarkilder/MANIFEST.md)",
+   "packageFile": "primarkilder/01_Avgiftssatser_2026_Regjeringen.pdf",
+   "repoFile": "docs/tax/primarkilder/01_Avgiftssatser_2026_Regjeringen.pdf",
+   "packageSha256": "3e2dc2d434998218abb9ed9eb04f9cd08357c11a8830f0fd889a54956e37a6f1",
+   "publishedVersion": "Synlig dokumentdato 01.05.2026 («Dato: 01.05.2026»). «Tabellen viser vedtatte avgiftssatser for 2025 og 2026». Kolonner: 2025-regler, Enighet 2026, Endring i pst., Fra 1. april/1. mai, Fra 1. september.",
+   "effectiveDate": null,
+   "readSections": [
+    "PDF s. 3 «Engangsavgift på kjøretøy»: personbiler avgiftsgruppe a (egenvekt, forbrenningsmotor, CO2) og varebiler klasse 2 (start)",
+    "PDF s. 4 (varebil klasse 2 fortsatt; campingbiler)",
+    "PDF s. 9 fotnote 1–4"
+   ],
+   "limitations": "PDF-utskrift uten maskinlesbart tekstlag (lest visuelt). Satsoversikt, ikke vedtakstekst. Ingen felles ikrafttredelsesdato for hele tabellen; kolonnen «Enighet 2026» har ingen eksplisitt fra-dato for gruppe a. Kolonnene «Fra 1. april/1. mai» og «Fra 1. september» er tomme for gruppe a-radene (ingen dokumentert endring per dokumentdatoen 2026-05-01); senere endringer er ikke kontrollert. Opprinnelig utskriftsdato ukjent."
+  },
+  {
+   "id": "T41",
+   "title": "Prop. 1 LS (2025–2026): Forslag til stortingsvedtak om engangsavgift på motorvogner mv. for 2026 — utdrag, 8 sider",
+   "publisher": "Finansdepartementet / Regjeringen.no",
+   "url": "https://www.regjeringen.no/no/dokumenter/prop.-1-ls-20252026/id3124192/?ch=23",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-007",
+    "R-IMP-OTH-001",
+    "R-OTA-010"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 primarkildepakke, manifest i docs/tax/primarkilder/MANIFEST.md)",
+   "packageFile": "primarkilder/02_Prop_1_LS_2025-2026_Engangsavgift.pdf",
+   "repoFile": "docs/tax/primarkilder/02_Prop_1_LS_2025-2026_Engangsavgift.pdf",
+   "packageSha256": "6284b92cd1064c6c30292eb1be1861a20ae4e0c0ea13f05085947992c8ec726b",
+   "publishedVersion": "Budsjettår 2026; § 1: «Fra 1. januar 2026». Publiseringsdato ikke fastslått fra vedlegget.",
+   "effectiveDate": null,
+   "readSections": [
+    "PDF s. 1 (§ 1, § 2)",
+    "PDF s. 2 (§ 3 a, b)",
+    "PDF s. 5 (§ 3 j, § 4, start § 5)",
+    "PDF s. 6 (§ 5 tabell, § 7, start § 8)",
+    "PDF s. 7–8 (§ 8 fritak, § 9–11)"
+   ],
+   "limitations": "FORSLAG til stortingsvedtak, ikke endelig vedtatt tekst. Paragrafnummerering kan avvike fra endelig vedtak (rundskriv 3.4 viser til «§ 5 og § 8 andre ledd» for vrakpantavgift). Brukes bare som støtte sammen med T40/T03/T05, aldri alene som regelbevis. PDF-utskrift uten maskinlesbart tekstlag (lest visuelt).",
+   "documentType": "forslag_til_stortingsvedtak"
+  },
+  {
+   "id": "T42",
+   "title": "Bruksfradragstabellen (Skatteetaten, norsk satsside) — PDF-utskrift, 2 sider",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/satser/bruksfradragstabell/",
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-010",
+    "R-OTA-011"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 primarkildepakke, manifest i docs/tax/primarkilder/MANIFEST.md)",
+   "packageFile": "primarkilder/04_Bruksfradragstabellen_Skatteetaten.pdf",
+   "repoFile": "docs/tax/primarkilder/04_Bruksfradragstabellen_Skatteetaten.pdf",
+   "packageSha256": "abbacfb75175f3e54c637dbb597e8499a6eecb5a4188eb61b72a573e64375660",
+   "publishedVersion": "Publiseringsdato ikke angitt i utskriften. Tabellen omtaler endring fra 1. januar 2024 (nytt steg 20 år) og særregel for siste steg.",
+   "effectiveDate": null,
+   "readSections": [
+    "PDF s. 1–2: hele tabellen (41 trinn), forklaringstekst"
+   ],
+   "limitations": "Satsside uten publiseringsdato; PDF-utskrift uten maskinlesbart tekstlag (lest visuelt). Tabellen er avstemt mot § 3-3 i T05 (samme 41 trinn)."
+  },
+  {
+   "id": "T43",
+   "title": "Stortinget – Vedtak 220: Vedtak om engangsavgift på motorvogner mv. for 2026 (opprinnelig vedtak, nettside)",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?did=40035798&p=104911",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_opprinnelig",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-007",
+    "R-OTA-008",
+    "R-IMP-OTH-001",
+    "R-OTA-010"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/06_Stortinget_Vedtak_220_2026.html",
+   "repoFile": "docs/tax/primarkilder/06_Stortinget_Vedtak_220_2026.html",
+   "packageSha256": "b2389f11a380b2281569f16b8013436f75678889300472a10a0cdefe0cfe50a8",
+   "publishedVersion": "Vedtak 220 (sak «Skatte- og avgiftsinntekter 2026», Prop. 1 S / Innst. 3 S 2025–2026); vedtatt 18.12.2025; § 1: fra 1. januar 2026; opprinnelig ikke-konsolidert tekst",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "§§ 1–11 (hele vedtaket)"
+   ],
+   "limitations": "Opprinnelig tekst; omfatter ikke endringsvedtaket 2026 (T48/T44). Nettside-HTML; avledet TXT-lesekopi er ikke i repoet."
+  },
+  {
+   "id": "T44",
+   "title": "Stortinget – Endringar i skatte- og avgiftslovgivinga (S-delen), vedtak 1070–: inkl. vedtak 1131 og 1132 (endring av engangsavgiftsvedtaket)",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?p=200313",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_endring",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-008",
+    "R-OTA-001",
+    "R-OTA-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/07_Stortinget_RNB_2026_vedtak.html",
+   "repoFile": "docs/tax/primarkilder/07_Stortinget_RNB_2026_vedtak.html",
+   "packageSha256": "316b8db22f6eed466c2d660711b14b1e94933b79ddd5effdae36c3ca53c79c0d",
+   "publishedVersion": "Prop. 95 LS / Innst. 450 S (2025–2026); vedtak 1131: § 3 fyrste ledd bokstav b nr 2; vedtak 1132: «tek til å gjelde 1. september 2026»; vedtaksdato (19.06.2026) står ikke i siden, men i T48",
+   "effectiveDate": "2026-09-01",
+   "readSections": [
+    "Vedtak 1131 og 1132 (linje ~5279–5296 i lesekopi)",
+    "Vedtak 1070 – engangsavgift økes (budsjettinntekt; ikke regel)"
+   ],
+   "limitations": "Stor side med mange vedtak; bare vedtak 1131–1132 om engangsavgift er lest for dette formålet. Siden oppgir ikke vedtaksdato; dato og identitet er avstemt mot T48. Omtaler vedtaket som «nr. 220» (Stortingets nummer) mens Lovdata bruker FOR-2025-12-18-2755."
+  },
+  {
+   "id": "T45",
+   "title": "Skattebetalingshåndboken kap. 10 (§ 10-4 inkl. avsnittet «Avrunding») — Skattedirektoratet",
+   "publisher": "Skattedirektoratet / Skatteetaten",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/skattebetalingshandboken/gjeldende/SKTB_ID-10-0.001/SKTB_ID-10-4.001/SKTB_ID-10-4.003",
+   "kind": "primary",
+   "documentType": "handbok",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/08_Skattebetalingshandboken_10-4.html",
+   "repoFile": "docs/tax/primarkilder/08_Skattebetalingshandboken_10-4.html",
+   "packageSha256": "734e44fb264108e8bd6735ad979c5f881fe50ed5bf554fbe82331f52be19a4e5",
+   "publishedVersion": "Håndbok fra Skattedirektoratet; «Generelt om § 10-4» og «§ 10-4-4 – Avrunding» publisert 24.06.2026 (publiseringsfelt i siden); hentet 2026-10-18",
+   "effectiveDate": null,
+   "readSections": [
+    "«Generelt om § 10-4»",
+    "«Skattebetalingsforskriften § 10-4-1» (engangsavgift, 200 kr)",
+    "«Skattebetalingsforskriften § 10-4-4 – Avrunding»",
+    "«§ 10-40» (engangsavgift forfall)"
+   ],
+   "limitations": "Veiledning (Skattedirektoratets tolkning), ikke rettskilde i seg selv. Gjelder kap. 10 (forfall); øvrige avsnitt på siden er ikke vurdert. Gir ikke belegg for avrunding av mellomledd."
+  },
+  {
+   "id": "T46",
+   "title": "Forskrift til utfylling og gjennomføring mv. av skattebetalingsloven (skattebetalingsforskriften), FOR-2007-12-21-1766 — konsolidert",
+   "publisher": "Finansdepartementet / Lovdata",
+   "url": "https://lovdata.no/dokument/SF/forskrift/2007-12-21-1766",
+   "kind": "primary",
+   "documentType": "forskrift",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/09_Skattebetalingsforskriften.html",
+   "repoFile": "docs/tax/primarkilder/09_Skattebetalingsforskriften.html",
+   "packageSha256": "70ba35fff7ccc47c90b80eaa727fb46e31809a278795043429c4b88c1a33b8ad",
+   "publishedVersion": "Lovdata konsolidert; «Sist endret FOR-2026-06-26-1385»; § 10-4-4 «Endret ved forskrift 25 mars 2010 nr. 462 (i kraft 1 april 2010, tidligere § 10-4-3)»",
+   "effectiveDate": "2010-04-01",
+   "readSections": [
+    "§ 10-4 Forskrifter (§§ 10-4-1 til 10-4-4)",
+    "§ 1-1 Virkeområde"
+   ],
+   "limitations": "Bare kap. 10 § 10-4-1…10-4-4 og § 1-1 er lest; resten av forskriften er ikke vurdert. Lest 2026-10-19 på nytt for U-013: § 10-4-4 nevner ikke merverdiavgift eller innførsel uttrykkelig; koblingen til innførselsmva. er § 10-4-1 (1) b og skattebetalingsloven § 1-1 (2) g.",
+   "supportedClaims": [
+    "§ 10-4-1 (1) b: beløpsgrense 50 kr for «betaling av krav på tollavgift, merverdiavgift og særavgifter som kreves opp ved innførsel, jf. skattebetalingsloven § 10-41»",
+    "§ 10-4-1 (2): for krav som betales i terminer eller etter avgiftsspesifikasjon eller deklarasjon gjelder beløpsgrensen for den enkelte termin, spesifikasjon eller deklarasjon",
+    "§ 10-4-4: «Ved beregning av skatte- og avgiftskrav avrundes beløpet ned til nærmeste hele krone.»"
+   ]
+  },
+  {
+   "id": "T47",
+   "title": "Stortingsvedtak om engangsavgift på motorvogner mv. for 2026, FOR-2025-12-18-2755 — konsolidert (Lovdata)",
+   "publisher": "Stortinget / Lovdata",
+   "url": "https://lovdata.no/dokument/STV/forskrift/2025-12-18-2755",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_konsolidert",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-007",
+    "R-OTA-008",
+    "R-OTA-010",
+    "R-IMP-OTH-001",
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/10_Lovdata_Engangsavgift_2026.html",
+   "repoFile": "docs/tax/primarkilder/10_Lovdata_Engangsavgift_2026.html",
+   "packageSha256": "3de4e672d90f83977bc4222422610f194bddef180b3b27b0b227380d37fc92e3",
+   "publishedVersion": "Dato FOR-2025-12-18-2755; Departement Stortinget; Ikrafttredelse «Budsjettåret 2026»; Kunngjort 22.12.2025 kl. 11.30; Sist endret FOR-2026-06-19-1246 fra 01.09.2026; hjemmel Grl. § 75 a og LOV-1959-06-19-2",
+   "effectiveDate": "2026-01-01",
+   "readSections": [
+    "§§ 1–11 (hele vedtaket) og metadata"
+   ],
+   "limitations": "Konsolidert nettside-HTML hentet 2026-10-18 (dekker endringer til og med FOR-2026-06-19-1246). Ingen eksplisitt sluttdato i teksten; «Budsjettåret 2026» er Lovdatas metadata."
+  },
+  {
+   "id": "T48",
+   "title": "Vedtak om endring i stortingsvedtak 18. desember 2025 nr. 2755 om engangsavgift på motorvogner mv. for 2026, FOR-2026-06-19-1246",
+   "publisher": "Stortinget / Lovdata",
+   "url": "https://lovdata.no/dokument/LTI/forskrift/2026-06-19-1246",
+   "kind": "primary",
+   "documentType": "stortingsvedtak_endring",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-008",
+    "R-OTA-001",
+    "R-OTA-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/11_Endringsvedtak_2026-06-19-1246.html",
+   "repoFile": "docs/tax/primarkilder/11_Endringsvedtak_2026-06-19-1246.html",
+   "packageSha256": "d5373cd23d57bd433a0735288f65996e9de36a03880af9a4df22ff81bf80313f",
+   "publishedVersion": "FOR-2026-06-19-1246; vedtatt 19.06.2026; kunngjort 23.06.2026 kl. 15.50; journalnr 2026-0793; ikrafttredelse 01.09.2026; endrer FOR-2025-12-18-2755",
+   "effectiveDate": "2026-09-01",
+   "readSections": [
+    "I (endring av § 3 første ledd bokstav b nr 2) og II (ikrafttredelse)"
+   ],
+   "limitations": "Hele endringsvedtaket (kort). Endrer KUN § 3 første ledd bokstav b nr 2 (avgiftsgruppe b, CO2-tabell)."
+  },
+  {
+   "id": "T49",
+   "title": "Lov om betaling og innkreving av skatte- og avgiftskrav (skattebetalingsloven), LOV-2005-06-17-67 — konsolidert",
+   "publisher": "Lovgiver / Lovdata",
+   "url": "https://lovdata.no/dokument/NL/lov/2005-06-17-67",
+   "kind": "primary",
+   "documentType": "lov",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 tilleggspakke, manifest i docs/tax/primarkilder/MANIFEST-tilleggspakke.md)",
+   "packageFile": "primarkilder/12_Skattebetalingsloven.html",
+   "repoFile": "docs/tax/primarkilder/12_Skattebetalingsloven.html",
+   "packageSha256": "01cd0f700e2f8a821009da3c2aacc494a2e33c0778b39bbeab84d44dac4b38ed",
+   "publishedVersion": "Lovdata konsolidert; «Sist endret LOV-2026-06-19-45 fra 01.07.2026»; «Endres ved lov 19 juni 2026 nr. 41 (i kraft fra den tid Kongen bestemmer)» på bl.a. §§ 1-1, 10-30, 10-40, 10-41",
+   "effectiveDate": "2008-01-01",
+   "readSections": [
+    "§ 1-1 Virkeområde (2) bokstav i",
+    "§ 10-4 Forskrifter",
+    "§ 10-40 Innenlands særavgifter (1) c"
+   ],
+   "limitations": "Bare §§ 1-1, 10-4 og 10-40 er lest. Lov 19 juni 2026 nr. 41 endrer bl.a. § 1-1 og § 10-40/10-41 men er ikke trådt i kraft per hentedato; innholdet er ikke lest.",
+   "supportedClaims": [
+    "§ 1-1 (2) g og j: «skatte- og avgiftskrav» omfatter merverdiavgift etter merverdiavgiftsloven og tollavgift omfattet av tollavgiftsloven",
+    "§ 10-30 (1): merverdiavgift for en periode forfaller samme dag som skattemelding skal leveres (skatteforvaltningsloven § 8-3 første og annet ledd)",
+    "§ 10-41 (1)–(3): tollavgift og andre avgifter som oppstår ved innførsel forfaller samtidig med at plikten til å beregne avgiftene oppstår; tollkreditt/månedsoppgjør forfaller den 18. i neste måned; dagsoppgjør første virkedag etter frigjøring",
+    "Fotnoter: «Endres ved lov 19 juni 2026 nr. 41 (i kraft fra den tid Kongen bestemmer)» på bl.a. § 1-1, §§ 10-30 til 10-32, 10-40, 10-41, 14-20 til 14-22, 16-40 til 16-42; § 10-4 er ikke nevnt"
+   ]
+  },
+  {
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 R-OTA-014-forarbeidspakke; HTML-original lastet ned fra offentlig URL; SHA-256 kontrollert av Claude mot MANIFEST.json)",
+   "id": "T50",
+   "title": "Høring — Forskrifter til ny skattebetalingslov (høringsnotat med forskriftsutkast og merknader), Finansdepartementet",
+   "publisher": "Finansdepartementet / regjeringen.no",
+   "url": "https://www.regjeringen.no/no/dokumenter/horing-forskrifter-til-ny-skattebetaling/id98941/",
+   "documentType": "høring / forarbeid (historisk forslag og merknader; ikke gjeldende forskrift)",
+   "packageFile": "primarkilder/01_Horing_forskrifter_ny_skattebetalingslov_2006.html",
+   "repoFile": "docs/tax/primarkilder/01_Horing_forskrifter_ny_skattebetalingslov_2006.html",
+   "packageSha256": "e18f8a782dbaf5383fa6fe4ea7545a1e815b507258530b3f154f0d269edace30",
+   "publishedVersion": "Høring, dato 10.07.2006, høringsfrist 16.10.2006, status «Ferdigbehandlet», resultat «Forskrift av 21.12.2007 nr. 1766»",
+   "effectiveDate": null,
+   "readSections": [
+    "Forskriftsutkast § 10-4-3 Avrunding",
+    "Merknader «Til § 10-4-3 Avrunding»",
+    "Opprinnelsestabell (§ 10-4-3 ← F. 23.12.1974 nr. 9 § 8)"
+   ],
+   "limitations": "Historisk utkast og merknader, ikke dagens forskrift og ikke den vedtatte 2007-versjonen. Utkastet har en setning om forsinkelsesrenter som ikke står i gjeldende § 10-4-4; hvorfor/når den utgikk er ikke lest. Ikke engangsavgiftsspesifikk. Hentedato er ikke ikrafttredelsesdato."
+  },
+  {
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 R-OTA-014-forarbeidspakke; HTML-original lastet ned fra offentlig URL; SHA-256 kontrollert av Claude mot MANIFEST.json)",
+   "id": "T51",
+   "title": "Ot.prp. nr. 83 (2004–2005) Om lov om betaling og innkreving av skatte- og avgiftskrav (skattebetalingsloven), kapittel 27: merknader til de enkelte bestemmelsene",
+   "publisher": "Finansdepartementet / regjeringen.no",
+   "url": "https://www.regjeringen.no/no/dokumenter/otprp-nr-83-2004-2005-/id399880/?ch=27",
+   "documentType": "lovproposisjon / forarbeid (kapittel 27)",
+   "packageFile": "primarkilder/02_Ot_prp_83_2004-2005_kap27.html",
+   "repoFile": "docs/tax/primarkilder/02_Ot_prp_83_2004-2005_kap27.html",
+   "packageSha256": "f00bb6f8edf5c5d58cf301cb1abf7cb8c522d510cd77631dcf28d9f768472efa",
+   "publishedVersion": "Ot.prp. nr. 83 (2004–2005), kapittel 27 (side hentet 2026-10-18)",
+   "effectiveDate": null,
+   "readSections": [
+    "Til § 10-4 Forskrifter",
+    "Til § 10-40 Innenlands særavgifter"
+   ],
+   "limitations": "Bare merknadene til § 10-4 og § 10-40 er lest. Proposisjonen omtaler ikke avrunding (søk uten treff i kapittel 27). Gir hjemmelens bakgrunn (generell hjemmel for beløpsgrenser mv. for skatte- og avgiftskrav, inkl. særavgiftsvedtakene) og at engangsavgift er et krav med forfall etter kapittel 10."
+  },
+  {
+   "kind": "primary",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-18",
+   "retrievedBy": "Christian (ECON-002 R-OTA-014-forarbeidspakke; HTML-original lastet ned fra offentlig URL; SHA-256 kontrollert av Claude mot MANIFEST.json)",
+   "id": "T52",
+   "title": "Forskrift om endring i forskrift til utfylling og gjennomføring av skattebetalingsloven (skattebetalingsforskriften), FOR-2010-03-25-462",
+   "publisher": "Finansdepartementet / Lovdata",
+   "url": "https://lovdata.no/forskrift/2010-03-25-462",
+   "documentType": "endringsforskrift",
+   "packageFile": "primarkilder/03_Endringsforskrift_2010-03-25-462.html",
+   "repoFile": "docs/tax/primarkilder/03_Endringsforskrift_2010-03-25-462.html",
+   "packageSha256": "d4ca241a95c07b2e17490a07a4a77029774c487b8d8b49f9645754545410e2a4",
+   "publishedVersion": "Fastsatt 25.03.2010, kunngjort 30.03.2010, Norsk Lovtidend I 2010 hefte 5 s. 798; «Endringene trer i kraft straks med virkning fra 1. april 2010»",
+   "effectiveDate": "2010-04-01",
+   "readSections": [
+    "§ 10-4-1…§ 10-4-3 (ny), «Nåværende § 10-4-3 blir ny § 10-4-4.»",
+    "ikrafttredelse"
+   ],
+   "limitations": "Endrer teksten i §§ 10-4-1 og 10-4-2 og innfører ny § 10-4-3; for avrundingsbestemmelsen står bare omnummereringen. Gjengir ikke avrundingsteksten, og viser ikke den opprinnelige vedtatte 2007-versjonen."
+  },
+  {
+   "id": "T53",
+   "title": "Tolletaten: Endringsforskrift omregningskurser for valuta (veiledning, publisert 1.9.2026)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/bedrift/nyheter-for-naeringslivet/endringsforskrift-omregningskurser-for-valuta",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning (ikke forskriftstekst)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/01_Tollkurs_endring_2026.html",
+   "repoFile": "docs/tax/primarkilder/econ004/01_Tollkurs_endring_2026.html",
+   "packageSha256": "ad1c0b8b81221d17f342e262480d22152a275bd07cc4b109e0023b7a3766102e",
+   "retrievedAt": "2026-10-19T11:21:23.831593+00:00",
+   "publishedVersion": "Publisert 01.09.2026, «Oppdatert: 1.9.2026»",
+   "readSections": [
+    "Hele siden"
+   ],
+   "supportedClaims": [
+    "Fra 3.9.2026: kurser fastsettes annenhver tirsdag på grunnlag av Norges Banks kurser foregående virkedag; gjelder fra tredje påfølgende torsdag i 14 dager",
+    "Tidligere ordning: ukentlig fastsettelse hver onsdag med virkning fra påfølgende mandag, perioder mandag–søndag",
+    "Avviksordning: suspensjon ved mer enn 5 % avvik mot Norges Banks daglige kurs to påfølgende dager; deklarasjon kan da ikke leveres på forhånd",
+    "Overgang: 7.–16.9.2026 (fastsatt 2.9.2026) og 17.–30.9.2026 (fastsatt 3.9.2026)",
+    "Tolletaten publiserer omregningskurser for 22 valutaer; øvrige valutaer: Norges Banks daglige markedskurs"
+   ],
+   "limitations": "Veiledning, ikke forskriftstekst (se T65/T69). Sier ikke hvordan en konkret deklarasjon tidfestes utover henvisninger; sier ingenting om avrunding.",
+   "effectiveDate": "2026-09-03"
+  },
+  {
+   "id": "T54",
+   "title": "Toll åpne data: Valutakurs / Exchange rates (datasettside)",
+   "publisher": "Tolletaten",
+   "url": "https://data.toll.no/no/dataset/valutakurs",
+   "kind": "primary",
+   "documentType": "datasettbeskrivelse",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/03_Tollkurs_datasett.html",
+   "repoFile": "docs/tax/primarkilder/econ004/03_Tollkurs_datasett.html",
+   "packageSha256": "bb9b285fafe6012104d0f738f275e95eec07c836ba943ab11961372d439c44a7",
+   "retrievedAt": "2026-10-19T11:21:23.060370+00:00",
+   "publishedVersion": "Siden viser «Sist oppdatert oktober 15, 2026, 00:00 (UTC)», versjon 1.1, lisens CC BY 4.0",
+   "readSections": [
+    "Hele siden"
+   ],
+   "supportedClaims": [
+    "Gjeldende og fremtidige kurser oppdateres annenhver tirsdag; gjelder to kalenderuker fra tredje påfølgende torsdag",
+    "Maskinlesbare formater XML/XSD/JSON, ISO 4217",
+    "Kilde skal oppgis (Tolletaten); lisens CC BY 4.0 / NLOD"
+   ],
+   "limitations": "Beskrivelse av datasett; rubrikknummer oppgis som 22 her og 23 på T23 (inkonsistent mellom Tolletatens sider). Ikke historikk.",
+   "effectiveDate": "2026-10-15"
+  },
+  {
+   "id": "T55",
+   "title": "Toll åpne data: valutakurs.json (øyeblikksuttrekk hentet 2026-10-19)",
+   "publisher": "Tolletaten",
+   "url": "https://data.toll.no/dataset/340b660f-acdd-4155-9909-dde72144d093/resource/4677ff8a-5fa7-47b8-be58-65418dd10fce/download/valutakurs.json",
+   "kind": "data-snapshot",
+   "documentType": "rådata (snapshot)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/04_Tollkurs_snapshot.json",
+   "repoFile": "docs/tax/primarkilder/econ004/04_Tollkurs_snapshot.json",
+   "packageSha256": "99f618706176fc4500c587501d7ae35155afa1fe88dcc8aab002021150bdbf09",
+   "retrievedAt": "2026-10-19T11:21:23.051826+00:00",
+   "publishedVersion": "JSON versjon 1.1, hentet 2026-10-19",
+   "readSections": [
+    "Hele filen"
+   ],
+   "supportedClaims": [
+    "Felter valutakode, valutabeskrivelse, valutakurs (desimalkomma, tre desimaler), omregningsenhet (1 eller 100), fomdato, tomdato",
+    "Snapshot inneholder periodene 2026-10-15–2026-10-28 og 2026-10-29–2026-11-11 (fremtidig periode publisert på forhånd)",
+    "EUR: enhet 1, 10,817 og 10,695"
+   ],
+   "limitations": "Datert snapshot, ikke komplett historikk og ikke bevis for en bestemt casekurs eller akseptdato. Dekker ikke perioder før 2026-10-15 eller suspensjon.",
+   "effectiveDate": "2026-10-15"
+  },
+  {
+   "id": "T56",
+   "title": "Skatteetaten: Beregne og rapportere merverdiavgift ved import av varer",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/bedrift-og-organisasjon/avgifter/mva/utland/import/beregne/",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-DED-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/06_Innforselsmva_beregning_rapportering.html",
+   "repoFile": "docs/tax/primarkilder/econ004/06_Innforselsmva_beregning_rapportering.html",
+   "packageSha256": "558ae3c32a33890bbb84a1edf7b2fdaa8a15a59aba7013f84e033a355c55e127",
+   "retrievedAt": "2026-10-19T11:21:23.896928+00:00",
+   "publishedVersion": "Nettside uten synlig revisjonsdato (hentet 2026-10-19)",
+   "readSections": [
+    "Hele siden"
+   ],
+   "supportedClaims": [
+    "Mva-registrerte virksomheter beregner innførselsmva. selv og fører den i mva-meldingen; gjelder også varer til videresalg og varer uten fradragsrett",
+    "Privatpersoner og ikke mva-registrerte betaler til Tolletaten ved innførsel",
+    "Ekspedisjonsdato avgjør perioden innførselen deklareres i mva-meldingen; fakturadato avgjør bokføringstermin",
+    "Grunnlag = statistisk verdi (tolldeklarasjonens post 46) + toll og andre avgifter (rubrikk 47); eksempel 3 000 + 1 700 = 4 700 × 25 % = 1 175",
+    "Mva-meldingens koder 81 (med fradragsrett) og 82 (uten), høy sats",
+    "«Det gjelder samme regler for fradrag for kjøp fra utlandet som for kjøp av varer og tjenester i Norge»",
+    "Dokumentasjon: tolldeklarasjon med underbilag; grunnlag og avgift per sats per tolldeklarasjon"
+   ],
+   "limitations": "Veiledning. Sier ingenting om avrunding, betalingsfrist, nettoeffekt eller hva Tolletaten innkrever ved grensen fra registrerte. Statistisk verdi er ikke definert lik tollverdi her."
+  },
+  {
+   "id": "T57",
+   "title": "Tolletaten: Elektriske kjøretøy (import)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/elektriske-kjoretoy",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-003"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/07_Elektriske_kjoretoy.html",
+   "repoFile": "docs/tax/primarkilder/econ004/07_Elektriske_kjoretoy.html",
+   "packageSha256": "8db315ca37930f32fa2f16605ac6efe2f41bfe6a6857948dbf7c44e76181e2e0",
+   "retrievedAt": "2026-10-19T11:21:25.113923+00:00",
+   "publishedVersion": "«Oppdatert: 19.8.2026»",
+   "readSections": [
+    "Hele siden"
+   ],
+   "supportedClaims": [
+    "Elektriske kjøretøy med verdi inntil 300 000 kr er fritatt for mva.; overstiger verdien 300 000, betales 25 % av beløpet som overstiger",
+    "Gjelder nye og brukte kjøretøy som ikke tidligere har vært registrert i Norge",
+    "Hybridbiler er avgiftspliktige",
+    "Importøren må dokumentere at vilkårene for fritak er oppfylt",
+    "Henviser til mval. §§ 7-1 og 6-8 første ledd"
+   ],
+   "limitations": "Bruker uttrykket «verdi» uten å definere målegrunnlaget (tollverdi/vederlag). Sier ingenting om overgangsregler eller 2027-trapp. Runde 32: sidens synlige tekst sier 300 000 kr. De serialiserte sidedataene inneholder i tillegg en eldre metadatabeskrivelse («opptil 500 000 kroner», nynorsk) som ikke er sidens brødtekst; loven (T71/T63 § 6-8) og brødteksten gjelder, og 500 000 er utdatert metadata."
+  },
+  {
+   "id": "T58",
+   "title": "Merverdiavgiftshåndboken (løpende): «Siste endringer»",
+   "publisher": "Skatteetaten / Skattedirektoratet",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende",
+   "kind": "primary",
+   "documentType": "håndbok-endringsoversikt",
+   "whatToExtract": [],
+   "rules": [
+    "R-DED-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/08_Mva_handbok_lopende_endringer.html",
+   "repoFile": "docs/tax/primarkilder/econ004/08_Mva_handbok_lopende_endringer.html",
+   "packageSha256": "faf24aed34072e6e1cdb868269e1cd434facbae5b5a75a7aee6f2707aa7481ec",
+   "retrievedAt": "2026-10-19T11:21:26.029284+00:00",
+   "publishedVersion": "Hentet 2026-10-19; nyeste oppføring 22.09.2026",
+   "readSections": [
+    "Hele siden"
+   ],
+   "supportedClaims": [
+    "Håndbøkene oppdateres løpende; årsversjoner publiseres ikke lenger",
+    "De fire viste endringene (22.9.2026) gjelder §§ 3-11, 3-30 og 8-1 (ikke § 8-4)"
+   ],
+   "limitations": "Viser bare de nyeste endringene («Se flere endringer» ikke fulgt). Er ikke en fullstendig endringslogg."
+  },
+  {
+   "id": "T59",
+   "title": "Merverdiavgiftshåndboken (løpende) kapittel 8: Fradrag for inngående merverdiavgift",
+   "publisher": "Skatteetaten / Skattedirektoratet",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende/MVA2025_M-8",
+   "kind": "primary",
+   "documentType": "håndbok",
+   "whatToExtract": [],
+   "rules": [
+    "R-DED-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/09_Mva_handbok_kap8.html",
+   "repoFile": "docs/tax/primarkilder/econ004/09_Mva_handbok_kap8.html",
+   "packageSha256": "2d6aebb8096ade8acd0adb7bfa9ac302b32aa0a123e02be1461b39f8d1b24086",
+   "retrievedAt": "2026-10-19T11:21:30.502280+00:00",
+   "publishedVersion": "«Håndbok fra Skattedirektoratet, Publisert 15.03.2025» (løpende utgave hentet 2026-10-19)",
+   "readSections": [
+    "8-4.3 § 8-4 første ledd annet punktum (videresalg)"
+   ],
+   "supportedClaims": [
+    "Videresalg: «Etter § 8-4 første ledd bokstav a kan inngående avgift fradragsføres ved anskaffelse av personkjøretøy for videresalg»",
+    "Avsnittet om videresalg i 8-4.3 har samme ord som T36 (2023) ved ordmengdesammenligning"
+   ],
+   "limitations": "Håndbok (veiledning), ikke rettskilde med bindende kraft. Omtaler ikke innførselsmva. spesielt i 8-4.3."
+  },
+  {
+   "id": "T60",
+   "title": "Merverdiavgiftshåndboken (løpende) kapittel 4: Grunnlaget for beregning av merverdiavgift",
+   "publisher": "Skatteetaten / Skattedirektoratet",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende/MVA2025_M-4",
+   "kind": "primary",
+   "documentType": "håndbok",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/10_Mva_handbok_kap4.html",
+   "repoFile": "docs/tax/primarkilder/econ004/10_Mva_handbok_kap4.html",
+   "packageSha256": "51c05bef895499b17858d1ec56d1c8728c2a38870ee873bc4e570bc44e9463ba",
+   "retrievedAt": "2026-10-19T11:21:28.049612+00:00",
+   "publishedVersion": "«Publisert 15.03.2025» (løpende utgave hentet 2026-10-19)",
+   "readSections": [
+    "§ 4-2 første ledd bokstav a (engangsavgift)",
+    "§ 4-11 første ledd"
+   ],
+   "supportedClaims": [
+    "§ 4-11 (1): beregningsgrunnlaget ved innførsel fastsettes etter vareførselsloven §§ 6-2 flg. om tollverdi; tollavgift og andre avgifter som skal beregnes ved innførsel inngår",
+    "Engangsavgift på motorvogner er unntatt fra beregningsgrunnlaget etter § 4-2 (1) a (omsetning); engangsavgiften ble lagt om fra innførselsavgift til registreringsavgift fra 1.4.2001",
+    "«Andre avgifter» ved innførsel er i all hovedsak særavgifter, herunder motorvognavgifter og forskningsavgift"
+   ],
+   "limitations": "Unntaket for engangsavgift er uttrykkelig beskrevet for § 4-2 (omsetning), ikke for § 4-11 (innførsel). Omtalen av «motorvognavgifter» i § 4-11 er ikke avklart mot engangsavgift. Runde 32: avsnittet «Engangsavgift på motorkjøretøy» (under § 4-2 første ledd a) forklarer at engangsavgiften fra 1.4.2001 ble lagt om fra innførselsavgift til avgift ved førstegangsregistrering; lest sammen med § 4-11, vedtaket § 1 (T47) og T89."
+  },
+  {
+   "id": "T62",
+   "title": "Merverdiavgiftshåndboken (løpende) kapittel 7: Varer som det ikke skal beregnes merverdiavgift av ved innførsel",
+   "publisher": "Skatteetaten / Skattedirektoratet",
+   "url": "https://oppslag.rettskilder.skatteetaten.no/rettskilder2/type/handboker/merverdiavgiftshandboken/gjeldende/MVA2025_M-7",
+   "kind": "primary",
+   "documentType": "håndbok",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-003"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/12_Mva_handbok_kap7.html",
+   "repoFile": "docs/tax/primarkilder/econ004/12_Mva_handbok_kap7.html",
+   "packageSha256": "6523828b6bf921485b43673ec405cc9e5a0cf8f63a0a1be4d372345aee094d0f",
+   "retrievedAt": "2026-10-19T11:21:30.509009+00:00",
+   "publishedVersion": "«Publisert 15.03.2025» (løpende utgave hentet 2026-10-19)",
+   "readSections": [
+    "§ 7-1 (Elbiler)"
+   ],
+   "supportedClaims": [
+    "«Henvisningen til § 6-8 første ledd innebærer at det gis avgiftsfritak for innførsel av personkjøretøy som bare bruker elektrisitet til fremdrift. Hybridbilene vil således falle utenfor fritaket.»",
+    "«Beløpsgrensen for fritak gjelder også ved innførsel. Avgiftsfritaket ved innførsel gjelder både nye og brukte kjøretøy.»"
+   ],
+   "limitations": "Definerer ikke målegrunnlaget for beløpsgrensen ved innførsel. Teksten nevner ikke 300 000 eksplisitt i dette avsnittet."
+  },
+  {
+   "id": "T63",
+   "title": "Lov om merverdiavgift (merverdiavgiftsloven), LOV-2009-06-19-58 (Lovdata)",
+   "publisher": "Lovdata / Finansdepartementet",
+   "url": "https://lovdata.no/dokument/NL/lov/2009-06-19-58",
+   "kind": "primary",
+   "documentType": "lov",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-VAT-003",
+    "R-DED-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/14_Merverdiavgiftsloven.html",
+   "repoFile": "docs/tax/primarkilder/econ004/14_Merverdiavgiftsloven.html",
+   "packageSha256": "92c8434cc371e07dd7a28f1464842e9e92fa7bf7c1002d1335b18c5a8723288c",
+   "retrievedAt": "2026-10-19T11:21:29.801438+00:00",
+   "publishedVersion": "Lovdata-visning hentet 2026-10-19",
+   "readSections": [
+    "§ 3-29",
+    "§ 4-2",
+    "§ 4-11",
+    "§ 6-8",
+    "§ 7-1",
+    "§ 8-1",
+    "§ 8-4",
+    "§ 11-1"
+   ],
+   "supportedClaims": [
+    "§ 3-29 (2): tollavgiftsloven § 2-2 om tidfesting gjelder tilsvarende for innførselsmva.",
+    "§ 4-11 (1): grunnlag ved innførsel = tollverdi etter vareførselsloven §§ 6-2 flg. + tollavgift og andre avgifter som beregnes ved innførsel",
+    "§ 4-2 (1) a: engangsavgift på motorvogner unntatt fra grunnlaget (omsetning)",
+    "§ 6-8 (1): omsetning av personkjøretøy som bare bruker elektrisitet fra ladbar batteripakke er fritatt for vederlag til og med 300 000 kr (endret ved lov 22.12.2025 nr. 121, i kraft 1.1.2026, overgangsregel i endringsloven del III)",
+    "§ 7-1 (1): ingen mva. ved innførsel av varer som nevnt i § 6-8 første ledd",
+    "§ 8-1: registrert avgiftssubjekt har rett til fradrag for inngående mva. på anskaffelser til bruk i virksomheten",
+    "§ 8-4 (1) a: fradragsrett for personkjøretøy til bruk som salgsvare"
+   ],
+   "limitations": "Lovdata-visning; lov 19.6.2026 nr. 41 og endringslovens overgangsregler er ikke lest. Ikke vurdert: forskrift (FMVA § 1-3-1 m.fl.), forholdsmessig fradrag, uttak/omdisponering."
+  },
+  {
+   "id": "T64",
+   "title": "Tolletaten: Fastsettelse av fraktkostnader for varer som innføres på egne hjul/egen kjøl",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/verktoy/regelverk/tollverdi/fastsettelse-av-tollverdi-sjablongsatser",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/15_Sjablongfrakt.html",
+   "repoFile": "docs/tax/primarkilder/econ004/15_Sjablongfrakt.html",
+   "packageSha256": "82aa9010332f419078e347ce8e77b11f87769676c7e276d5bd624864b4cd96d3",
+   "retrievedAt": "2026-10-19T11:21:29.816975+00:00",
+   "publishedVersion": "«Oppdatert: 27.11.2025»",
+   "readSections": [
+    "Hele siden"
+   ],
+   "supportedClaims": [
+    "Utgangspunktet er reelle fraktkostnader; deklarasjonspliktig oppgir fraktkostnadene",
+    "Sjablonger for varer på egne hjul/egen kjøl: Sverige NOK 500, Danmark NOK 1 500, Tyskland NOK 2 500",
+    "Andre land: ingen felles sjablong; beregning skal stå i forhold til de tre satsene",
+    "Importøren kan dokumentere reelle fraktkostnader"
+   ],
+   "limitations": "Sjablongene gjelder bare varer som ankommer på egne hjul/egen kjøl, ikke biler som fraktes på lastebil/tråler. Ikke en produktstandard."
+  },
+  {
+   "id": "T65",
+   "title": "Forskrift om endring i vareførselsforskriften, FOR-2026-08-21-1661 (Lovdata)",
+   "publisher": "Tolletaten / Lovdata",
+   "url": "https://lovdata.no/dokument/LTI/forskrift/2026-08-21-1661",
+   "kind": "primary",
+   "documentType": "forskrift (endringsforskrift)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/16_Endringsforskrift_2026-08-21-1661.html",
+   "repoFile": "docs/tax/primarkilder/econ004/16_Endringsforskrift_2026-08-21-1661.html",
+   "packageSha256": "6442c09a4a3c718a21e657dbb0081b5dff344373f76698411833c6f79c958688",
+   "retrievedAt": "2026-10-19T11:22:02.192086+00:00",
+   "publishedVersion": "Opprinnelig kunngjort versjon, kunngjort 24.08.2026 kl. 14.35",
+   "readSections": [
+    "§ 6-12-1 (ny lydelse)",
+    "Ikrafttredelse"
+   ],
+   "supportedClaims": [
+    "§ 6-12-1 (1): kurser fastsettes annenhver tirsdag på grunnlag av Norges Banks indikative markedskurser foregående virkedag; gjelder 14 dager fra tredje påfølgende torsdag; publiseres på toll.no; øvrige valutaer: Norges Banks daglige kurser",
+    "§ 6-12-1 (2): suspensjon ved mer enn 5 % avvik to påfølgende dager, med virkning fra påfølgende dag",
+    "§ 6-12-1 (3): ved omregning brukes tidspunktet for tidfesting av tollavgiftssats i tollavgiftsloven § 2-2",
+    "Ikrafttredelse 3.9.2026; hjemmel vareførselsloven § 6-12"
+   ],
+   "limitations": "Bare endringsforskriften. Ordinær gjeldende tekst står i T69.",
+   "effectiveDate": "2026-09-03"
+  },
+  {
+   "id": "T66",
+   "title": "Forskrift om inn- og utførsel av varer (vareførselsforskriften), FOR-2022-10-27-1901 — Lovdata navigasjons-/metadataside",
+   "publisher": "Lovdata",
+   "url": "https://lovdata.no/dokument/SF/forskrift/2022-10-27-1901",
+   "kind": "primary-metadata",
+   "documentType": "forskrift (kun metadata)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/17_Vareforselsforskriften.html",
+   "repoFile": "docs/tax/primarkilder/econ004/17_Vareforselsforskriften.html",
+   "packageSha256": "be4fe6540b22dc66384d3873d94abd8a2ef14d3a7a24d5df6dc2570577034e77",
+   "retrievedAt": "2026-10-19T11:22:02.254004+00:00",
+   "publishedVersion": "Lovdata navigasjonsutgave hentet 2026-10-19",
+   "readSections": [
+    "Metadata"
+   ],
+   "supportedClaims": [],
+   "limitations": "Ikke full forskriftstekst. Arkivert for sporbarhet; ingen kildepåstander registrert. Bruk T69 for kapittel 6."
+  },
+  {
+   "id": "T67",
+   "title": "Lov om inn- og utførsel av varer (vareførselsloven), LOV-2022-03-11-9 (Lovdata)",
+   "publisher": "Lovdata / Finansdepartementet",
+   "url": "https://lovdata.no/dokument/NL/lov/2022-03-11-9",
+   "kind": "primary",
+   "documentType": "lov",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001",
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/18_Vareforselsloven.html",
+   "repoFile": "docs/tax/primarkilder/econ004/18_Vareforselsloven.html",
+   "packageSha256": "6849f9ecf7bf7e2d7a1ade01419fc1dfaec988f4ea7e3007e6d133c0f38770db",
+   "retrievedAt": "2026-10-19T11:22:02.345145+00:00",
+   "publishedVersion": "Lovdata-visning hentet 2026-10-19",
+   "readSections": [
+    "§ 3-4",
+    "§ 6-10",
+    "§ 6-12"
+   ],
+   "supportedClaims": [
+    "§ 3-4: deklarasjon aksepteres når vilkårene i §§ 3-2 og 3-3 er oppfylt og varen er fremlagt for tollmyndighetene; tidspunktet for aksept legges til grunn for prosedyrens bestemmelser",
+    "§ 6-10 (1) e: transport- og forsikringskostnaden for varen til innførselsstedet legges til prisen",
+    "§ 6-10 (1) f: kostnader for lasting og håndtering forbundet med transporten legges til",
+    "§ 6-10 (2): tillegg bare på grunnlag av objektive og kvantifiserbare opplysninger",
+    "§ 6-12: omregning med den kursen tollmyndighetene til enhver tid har fastsatt",
+    "§ 3-3 (3): deklarasjonen kan leveres før varen legges frem; legges varen ikke frem senest 30 dager etter at deklarasjonen er levert, anses deklarasjonen som ikke levert"
+   ],
+   "limitations": "Lest er §§ 3-4, 6-10 og 6-12; §§ 6-2 til 6-9 (transaksjonsverdi og alternative metoder) er ikke gjennomgått for dette formålet."
+  },
+  {
+   "id": "T68",
+   "title": "Lov om tollavgift (tollavgiftsloven), LOV-2022-03-11-8 (Lovdata)",
+   "publisher": "Lovdata / Finansdepartementet",
+   "url": "https://lovdata.no/dokument/NL/lov/2022-03-11-8",
+   "kind": "primary",
+   "documentType": "lov",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/19_Tollavgiftsloven.html",
+   "repoFile": "docs/tax/primarkilder/econ004/19_Tollavgiftsloven.html",
+   "packageSha256": "5c4b5b0da0ae50c601caeaa7735f7e489b0288f3f569340ffb0205cf77a51a1f",
+   "retrievedAt": "2026-10-19T11:23:02.181200+00:00",
+   "publishedVersion": "Lovdata-visning hentet 2026-10-19",
+   "readSections": [
+    "§ 2-2",
+    "§ 3-3"
+   ],
+   "supportedClaims": [
+    "§ 2-2 (1): tollavgift beregnes etter reglene og satsene som gjelder på det tidspunktet tollmyndighetene aksepterer deklarasjonen etter vareførselsloven § 3-4",
+    "§ 2-2 (2)–(4): særtilfeller (brudd på vilkår, midlertidig innførsel, innenlands bearbeiding) har egne tidspunkter",
+    "§ 3-3 (4): når tollavgift beregnes på verdi, fastsettes verdien etter vareførselsloven §§ 6-2 flg."
+   ],
+   "limitations": "Tollsatser (tolltariffen) er ikke lest; tollsats for personbil er ikke dokumentert."
+  },
+  {
+   "id": "T69",
+   "title": "Vareførselsforskriften kapittel 6: Klassifisering og tollverdi (konsolidert, Lovdata)",
+   "publisher": "Tolletaten / Lovdata",
+   "url": "https://lovdata.no/dokument/SF/forskrift/2022-10-27-1901/KAPITTEL_6",
+   "kind": "primary",
+   "documentType": "forskrift",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001",
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 kildepakke «Merovo_ECON-004_primarkilder_2026», hentet 2026-10-19; manifest docs/tax/primarkilder/econ004/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004/20_Vareforselsforskriften_kap6.html",
+   "repoFile": "docs/tax/primarkilder/econ004/20_Vareforselsforskriften_kap6.html",
+   "packageSha256": "2721ebf9f40cb4327ca1986a587219a7a6c054b983308c0c946125172cd172c4",
+   "retrievedAt": "2026-10-19T11:23:33.522817+00:00",
+   "publishedVersion": "Konsolidert, «Endret ved forskrift 21 aug 2026 nr. 1661 (i kraft 3 sep 2026)»",
+   "readSections": [
+    "§ 6-10-4",
+    "§ 6-12-1"
+   ],
+   "supportedClaims": [
+    "§ 6-10-4 (1): innførselssted er det første sted hvor varen kunne ha vært losset",
+    "§ 6-10-4 (2): felles fakturert transport før og etter innførsel fordeles etter avstand, med mindre annen fordeling sannsynliggjøres",
+    "§ 6-10-4 (3): ved kjøperens egen transport beregnes fraktkostnaden ut fra vanlige fraktkostnader for tilsvarende transportmåte",
+    "§ 6-12-1 (1)–(3): se T65 (konsolidert tekst)"
+   ],
+   "limitations": "Bare kapittel 6; øvrige kapitler ikke lest. Lest paragrafer er 6-10-4 og 6-12-1.",
+   "effectiveDate": "2026-09-03"
+  },
+  {
+   "id": "T70",
+   "title": "Lov om særavgifter (særavgiftsloven), LOV-2026-06-19-41 (Lovdata, opprinnelig kunngjort versjon)",
+   "publisher": "Lovdata / Finansdepartementet",
+   "url": "https://lovdata.no/dokument/LTI/lov/2026-06-19-41",
+   "kind": "primary",
+   "documentType": "lov",
+   "whatToExtract": [],
+   "rules": [
+    "R-OTA-014",
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 tilleggskilder runde 2, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004b/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004b/01_Lov_2026-06-19-41.html",
+   "repoFile": "docs/tax/primarkilder/econ004b/01_Lov_2026-06-19-41.html",
+   "packageSha256": "c97728a4e8c9493b87c113dc97b5564864cb5764f34d5a6065431a38516bd2c1",
+   "retrievedAt": "2026-10-19T14:02:54.929142+00:00",
+   "publishedVersion": "Opprinnelig kunngjort versjon, kunngjort 19.06.2026 kl. 12.05; Prop. 55 L (2025–2026), Innst. 364 L, Lovvedtak 70",
+   "readSections": [
+    "Forside/metadata",
+    "§ 26-1 Ikrafttredelse",
+    "§ 26-2 Endringer i andre lover (nr. 5 skattebetalingsloven, nr. 7 merverdiavgiftsloven)"
+   ],
+   "supportedClaims": [
+    "Ny lov om særavgifter; ikrafttredelse «Kongen bestemmer» (§ 26-1); fra samme tidspunkt oppheves lov 19.5.1933 nr. 11 (særavgiftsloven), lov 19.6.1959 nr. 2 (motorkjøretøy- og båtavgiftsloven) og lov 12.12.1975 nr. 59 (dokumentavgiftsloven)",
+    "§ 26-2 nr. 5: skattebetalingsloven § 1-1 (2) bokstav h endres til «særavgifter etter særavgiftsloven, unntatt dokumentavgift» og bokstav i oppheves; bokstav g (merverdiavgift) og j (tollavgift) er ikke nevnt; § 10-4 er ikke nevnt",
+    "§ 26-2 nr. 5: nye §§ 10-30 til 10-32 (forfall for mva., særavgifter og tollavgift; mva. på innførsel forfaller samtidig med at avgiften skal beregnes, tollkreditt/månedsoppgjør den 18. i neste måned; engangsavgift forfaller ved første gangs registrering, ved kreditt den 18. i måneden etter); §§ 14-20 til 14-22; § 16-40; §§ 16-41 og 16-42 oppheves",
+    "§ 26-2 nr. 7: mval. § 6-7 første ledd andre punktum endres (fritaket for omregistreringsavgiftsvedtakets kjøretøy omfatter også lastebiler, trekkbiler, varebiler, kombinerte biler, campingbiler, beltebiler og busser ≥ 7 500 kg); mval. § 6-8, § 4-11, § 7-1, § 8-1 og § 8-4 er ikke nevnt",
+    "Siden viser «Gå til ajourført versjon» (lenke)"
+   ],
+   "limitations": "Opprinnelig kunngjort versjon: viser ikke om et senere ikraftsettingsvedtak finnes. Konsoliderte Lovdata-visninger av skattebetalingsloven (T49) og merverdiavgiftsloven (T63), hentet samme dag, viser fortsatt «Endres ved lov 19 juni 2026 nr. 41 (i kraft fra den tid Kongen bestemmer)». Ikke lest: kapittel 2–25 (materielle særavgiftsbestemmelser), forskriftsendringer. Ingen påstand om at loven er i kraft."
+  },
+  {
+   "id": "T71",
+   "title": "Lov om endringer i merverdiavgiftsloven, LOV-2025-12-22-121 (Lovdata, opprinnelig kunngjort versjon)",
+   "publisher": "Lovdata / Finansdepartementet",
+   "url": "https://lovdata.no/dokument/LTI/lov/2025-12-22-121",
+   "kind": "primary",
+   "documentType": "lov (endringslov)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-003"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 tilleggskilder runde 2, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004b/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004b/02_Lov_2025-12-22-121.html",
+   "repoFile": "docs/tax/primarkilder/econ004b/02_Lov_2025-12-22-121.html",
+   "packageSha256": "5f5cb145f2252856869c7113576ad2640f83f3dc4e28e2070037dc84de1cf037",
+   "retrievedAt": "2026-10-19T14:02:54.860170+00:00",
+   "publishedVersion": "Opprinnelig kunngjort versjon, kunngjort 22.12.2025 kl. 17.10; Prop. 1 LS (2025–2026), Innst. 4 L, Lovvedtak 14",
+   "readSections": [
+    "Del I (§ 4-7, § 6-8 første og annet ledd)",
+    "Del II",
+    "Del III (ikrafttredelse og overgang)"
+   ],
+   "supportedClaims": [
+    "Del I: mval. § 6-8 (1) og (2) får ny lydelse med 300 000 kroner (omsetning: «for vederlag til og med 300 000 kroner»; leasing: kostpris 300 000 eller lavere)",
+    "Del III: endringene under I trer i kraft 1. januar 2026; endringene under II trer i kraft 1. juli 2026",
+    "Del III, overgangsregel: «For kjøretøy som omfattes av § 6-8 annet ledd, og som er levert til leietakeren før 1. januar 2026» gjelder 500 000 kroner (leasing); gjelder også om leasingavtalen overføres til ny leietaker",
+    "Del III har ingen overgangsregel for § 6-8 første ledd (omsetning) eller for innførsel",
+    "Del III: for mva.-terminer i 2025 eller tidligere gjelder § 4-7 slik den lød til 1.1.2026"
+   ],
+   "limitations": "Lovteksten sier ingenting om innførsel eller målegrunnlag for 300 000-grensen. Ingen bestemmelser om 2027/2028.",
+   "effectiveDate": "2026-01-01"
+  },
+  {
+   "id": "T72",
+   "title": "Tolletaten: Innførselsdeklarasjon steg for steg (hjelp til utfylling)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/bedrift/import/deklarering-av-varer/hjelp-til-utfylling-av-innforseldeklarasjon/innforselsdeklarasjon-steg-for-steg",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-FX-001",
+    "R-IMP-VAT-002",
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 tilleggskilder runde 2, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004b/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004b/04_Deklarasjon_steg_for_steg.html",
+   "repoFile": "docs/tax/primarkilder/econ004b/04_Deklarasjon_steg_for_steg.html",
+   "packageSha256": "6142b5a8a4cabea7d1a2369af65bf2d3f99b8b5b337ce89cd5b5bf7979634f2f",
+   "retrievedAt": "2026-10-19T14:02:54.968079+00:00",
+   "publishedVersion": "«Oppdatert: 29.9.2026»",
+   "readSections": [
+    "Rubrikk 12, 20, 22, 23, 28, 43, 45, 46, 47, 48"
+   ],
+   "supportedClaims": [
+    "Rubrikk 12: fraktomkostninger (til norsk grense) for hele deklarasjonen oppgis i norske kroner når de ikke inngår i fakturaprisen",
+    "Rubrikk 22: fakturert valuta og totalbeløp",
+    "Rubrikk 23 Omregningskurs: kursene fastsettes av Tolletaten og kunngjøres på toll.no; valuta utenfor kunngjøringen: Norges Banks daglige markedskurser (vareførselsforskriften § 6-12-1 første ledd); «Det skal alltid nyttes den kurs som gjelder på det tidspunkt varene blir stilt til fri rådighet»",
+    "Rubrikk 45 Justeringer: tillegg som frakt til norsk grense, forsikringspremie, provisjon og royalty; fradrag som rabatter",
+    "Rubrikk 46 Statistisk verdi: «i de fleste tilfeller varens verdi ved grensen, dvs. innkjøpsverdi inklusive frakt, forsikring og andre sendingskostnader til norsk havn eller grensestasjon»",
+    "Rubrikk 47 Beregning av avgifter (per varepost): registrerte virksomheter skal ikke bruke rubrikken for mva.; de «skal fra 1.1.2017 beregne og innberette innførselsmerverdiavgiften i den nye skattemeldingen»; ikke registrerte (privatpersoner, utenlandske selskap) fyller ut rubrikken og betaler mva. til Tolletaten ved innførselen",
+    "Rubrikk 43: verdifastsettelseskode (vareførselsloven §§ 6-3 til 6-9)"
+   ],
+   "limitations": "Veiledning. «Fri rådighet» i rubrikk 23 avviker fra ordlyden i tollavgiftsloven § 2-2 (1) og vareførselsforskriften § 6-12-1 (3) («tidspunktet tollmyndighetene aksepterer deklarasjonen»); lov/forskrift går foran. Ingen regel om avrunding av beløp (bare vekt «uten desimaler» i rubrikk 35/38). Rubrikk 47: ingen omtale av beløpsformat."
+  },
+  {
+   "id": "T73",
+   "title": "Skatteetaten: Mva-meldingen — Spørsmål og svar (teknisk dokumentasjon, GitHub Pages)",
+   "publisher": "Skatteetaten",
+   "url": "https://skatteetaten.github.io/mva-meldingen/mvameldingen/faq/",
+   "kind": "primary",
+   "documentType": "teknisk veiledning/FAQ",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-DED-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 tilleggskilder runde 2, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004b/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004b/05_Mva_melding_FAQ.html",
+   "repoFile": "docs/tax/primarkilder/econ004b/05_Mva_melding_FAQ.html",
+   "packageSha256": "86c26608272f4267b6c713353c182951886f0354121c7a4e256daad84c012743",
+   "retrievedAt": "2026-10-19T14:02:54.994664+00:00",
+   "publishedVersion": "Hentet 2026-10-19; ny mva-melding lansert 1.1.2022 (side oppgir ikke egen revisjonsdato)",
+   "readSections": [
+    "«På hvilket aggregeringsnivå skal beløp oppgis i ny mva-melding?»",
+    "«Når man kutter desimaler på grunnlag og på mva-beløp … Vil dette slå ut på valideringen?»"
+   ],
+   "supportedClaims": [
+    "Aggregeringsnivå: «På samme nivå som før.» (ingen nærmere definisjon i FAQen)",
+    "Spørsmålet forutsetter at filere kutter desimaler på grunnlag og mva-beløp; svaret: valideringen har en toleranse på «+/-1kr x antall linjer, begrenset nedad til +/10 kroner» (3 linjer: ±10; 14 linjer: ±14)",
+    "Ny mva-melding lansert 1.1.2022; siste melding er alltid gjeldende (tilleggsmelding ikke lenger aktuelt)"
+   ],
+   "limitations": "Dette er en valideringstoleranse, ikke en avrundingsregel: den sier ikke at hver importberegning eller linjesum skal rundes ned, og den skiller ikke mellom nedkutt og nærmeste krone. Svaret på aggregeringsnivå er en henvisning («som før») uten innhold."
+  },
+  {
+   "id": "T74",
+   "title": "Skatteetaten: Mva-meldingen (GitHub Pages-hovedside; merket «SIDEN ER UTDATERT», flyttet til ny GitHub-side)",
+   "publisher": "Skatteetaten",
+   "url": "https://skatteetaten.github.io/mva-meldingen/",
+   "kind": "technical-documentation-outdated",
+   "documentType": "teknisk veiledning (utdatert)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 tilleggskilder runde 2, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004b/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004b/06_Mva_melding_hovedside.html",
+   "repoFile": "docs/tax/primarkilder/econ004b/06_Mva_melding_hovedside.html",
+   "packageSha256": "5334c1a4e44da04c64d7a2f346af552601c7fa29241d88b9650a7d3606f2faee",
+   "retrievedAt": "2026-10-19T14:02:54.964511+00:00",
+   "publishedVersion": "Hentet 2026-10-19; siden er merket utdatert",
+   "readSections": [
+    "Hele siden"
+   ],
+   "supportedClaims": [
+    "Mva-meldingen er kodebasert (Standard Tax Codes fra SAF-T), en dynamisk liste av spesifikasjonslinjer, «på et svært aggregert nivå»"
+   ],
+   "limitations": "Merket utdatert; brukes bare for proveniens til T73. Ingen regel."
+  },
+  {
+   "id": "T75",
+   "title": "Prop. 1 LS (2025–2026) Skatter, avgifter og toll 2026 — regjeringen.no leseversjon (kapittel 11)",
+   "publisher": "Finansdepartementet / regjeringen.no",
+   "url": "https://www.regjeringen.no/no/dokumenter/prop.-1-ls-20252026/id3124192/?ch=2",
+   "kind": "primary",
+   "documentType": "proposisjon (forarbeid/forslag, ikke vedtatt rett)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-003"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 tilleggskilder runde 2, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004b/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004b/07_Prop1LS_leseversjon.html",
+   "repoFile": "docs/tax/primarkilder/econ004b/07_Prop1LS_leseversjon.html",
+   "packageSha256": "7cbc5004af9368d7916d29b2345af3091a7cc51107c780e206f14ae8ba0c2454",
+   "retrievedAt": "2026-10-19T14:03:36.523630+00:00",
+   "publishedVersion": "Leseversjon hentet 2026-10-19 (samme dokument-ID id3124192 som T41, som er et 8-siders PDF-utdrag om engangsavgift)",
+   "readSections": [
+    "Punkt 11.2 (11.2.1–11.2.5)"
+   ],
+   "supportedClaims": [
+    "11.2.2: «Gjennom merverdiavgiftsloven § 7-1 er fritaket i § 6-8 første ledd gitt tilsvarende virkning for innførsel av elbiler.»",
+    "11.2.2: kravet om batteripakke som kan lades fra ekstern strømkilde avgrenser mot hydrogenbiler; mva.-fritaket for hydrogenbiler ble avviklet i 2024",
+    "11.2.1/11.2.3: forslag om å redusere beløpsgrensen fra 500 000 til 300 000 fra 1.1.2026; «Videre varsler regjeringen at fritaket vil bli foreslått avviklet fra 1. januar 2027»; videreføring utover 2026 krever ny ESA-godkjenning og er usikker (varsel/vurdering, ikke vedtatt regel)",
+    "11.2.5: «Ved innførsel er fortollingstidspunktet skjæringspunktet» for om 300 000 (ikke 500 000) gjelder; for personkjøretøy levert til kunde etter 31.12.2025 beregnes mva. av den delen av kjøpesummen som overstiger 300 000; overgangsordning (500 000) bare for leasingkontrakter inngått og kjøretøy levert før 1.1.2026",
+    "11.2 inneholder ingen omtale av tollverdi, frakt eller hva 300 000 måles mot ved innførsel (søk: «tollverdi» 0 treff, «frakt» 0 treff i 11.2)"
+   ],
+   "limitations": "Forarbeid/forslag: ikke bindende rett. Besvarer ikke målegrunnlaget ved innførsel. Teksten er proposisjonens forslag; vedtatt lovtekst er T71."
+  },
+  {
+   "id": "T76",
+   "title": "Stortinget: Vedtak 217 — Vedtak om merverdiavgift for 2026 (sak «Skatte- og avgiftsinntekter 2026», Prop. 1 S (2025–2026), Innst. 3 S (2025–2026))",
+   "publisher": "Stortinget",
+   "url": "https://www.stortinget.no/no/Saker-og-publikasjoner/Vedtak/Vedtak/Sak/?did=40035795&p=104911",
+   "kind": "primary",
+   "documentType": "stortingsvedtak (vedtatt primærtekst)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/01_Stortingsvedtak_217_MVA_2026.html",
+   "repoFile": "docs/tax/primarkilder/econ004c/01_Stortingsvedtak_217_MVA_2026.html",
+   "packageSha256": "d102de9c77b204539865e9f710f9c61dea5092594725aec01070425a333abd3d",
+   "retrievedAt": "2026-10-19T14:12:51.048028+00:00",
+   "publishedVersion": "Vedtak 217 slik det står på stortinget.no 2026-10-19; vedtatt 18.12.2025 (jf. T77)",
+   "readSections": [
+    "§§ 1–5"
+   ],
+   "supportedClaims": [
+    "§ 1: «Fra 1. januar 2026 beregnes merverdiavgift etter satsene i dette vedtaket og i samsvar med lov 19. juni 2009 nr. 58 om merverdiavgift.»",
+    "§ 2 Alminnelig sats: «Merverdiavgift beregnes med 25 pst. av avgiftspliktig omsetning, uttak og innførsel når ikke redusert sats skal anvendes etter bestemmelsene nedenfor.»",
+    "§§ 3–5: redusert sats 15 pst. (næringsmidler inkl. innførsel, vann/avløp), 12 pst. (nærmere angitte tjenester) og 11,11 pst. (viltlevende marine ressurser) — ikke relevant for personbil",
+    "Samme ordlyd som Lovtidends FOR-2025-12-18-2752 (T77) i §§ 1–5 (kontrollert ved normalisert tekstsammenligning)"
+   ],
+   "limitations": "Originalvedtak: dokumenterer ikke alene fravær av senere endringsvedtak. Ingen kontroll av eventuelle endringer (f.eks. i revidert budsjett). Gjelder satser, ikke beregningsgrunnlaget (mval. § 4-11).",
+   "effectiveDate": "2026-01-01"
+  },
+  {
+   "id": "T77",
+   "title": "Stortingsvedtak om merverdiavgift for 2026, FOR-2025-12-18-2752 (Lovdata, Norsk Lovtidend, opprinnelig kunngjort versjon)",
+   "publisher": "Stortinget / Lovdata",
+   "url": "https://lovdata.no/dokument/LTI/forskrift/2025-12-18-2752",
+   "kind": "primary",
+   "documentType": "stortingsvedtak (kunngjort versjon)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/02_MVA_vedtak_Lovtidend.html",
+   "repoFile": "docs/tax/primarkilder/econ004c/02_MVA_vedtak_Lovtidend.html",
+   "packageSha256": "86bbee3035766162d42e3db01c76e2ff7eede5f772c405885c39dcdde7fad330",
+   "retrievedAt": "2026-10-19T14:12:50.769045+00:00",
+   "publishedVersion": "Opprinnelig kunngjort versjon: vedtatt 18.12.2025, kunngjort 22.12.2025 kl. 11.30, ikrafttredelse «Budsjettåret 2026», hjemmel Grunnloven § 75 a, jf. mval.",
+   "readSections": [
+    "§§ 1–5",
+    "Metadata"
+   ],
+   "supportedClaims": [
+    "§ 1: «Fra 1. januar 2026 beregnes merverdiavgift etter satsene i dette vedtaket og i samsvar med lov 19. juni 2009 nr. 58 om merverdiavgift.»",
+    "§ 2 Alminnelig sats: «Merverdiavgift beregnes med 25 pst. av avgiftspliktig omsetning, uttak og innførsel når ikke redusert sats skal anvendes etter bestemmelsene nedenfor.»",
+    "§§ 3–5: redusert sats 15 pst. (næringsmidler inkl. innførsel, vann/avløp), 12 pst. (nærmere angitte tjenester) og 11,11 pst. (viltlevende marine ressurser) — ikke relevant for personbil",
+    "Samme dokument som T76 (Stortingets Vedtak 217): identisk ordlyd i §§ 1–5"
+   ],
+   "limitations": "Opprinnelig kunngjort versjon; siden viser «Gå til ajourført versjon» (ikke fulgt). Fravær av «Sist endret»-linje i metadata er ikke bevis for at ingen endringsvedtak finnes. Ajourført visning av samme dokument er hentet 2026-10-19 14:22 UTC og registrert som T80 (viser uendret § 2 med 25 %).",
+   "effectiveDate": "2026-01-01"
+  },
+  {
+   "id": "T78",
+   "title": "Skatteetaten: Information models, XSD and encoding — VAT return (mva-meldingen, informasjonsmodell)",
+   "publisher": "Skatteetaten",
+   "url": "https://skatteetaten.github.io/mva-meldingen/mvameldingen_eng/informasjonsmodell/",
+   "kind": "technical-documentation",
+   "documentType": "teknisk dokumentasjon (informasjonsmodell)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/03_Mva_informasjonsmodell.html",
+   "repoFile": "docs/tax/primarkilder/econ004c/03_Mva_informasjonsmodell.html",
+   "packageSha256": "67e44a2a64de53dfae30db526cc97e891eebf4f50496ecc5d6b1733c18e2b9ff",
+   "retrievedAt": "2026-10-19T14:12:50.959242+00:00",
+   "publishedVersion": "Hentet 2026-10-19; endringslogg på siden slutter 2022.12.08; omtaler «Version 1.0 of the XSD for the VAT return»",
+   "readSections": [
+    "Feltbeskrivelser for Skattegrunnlag og beregnet skatt og MvaSpesifikasjonslinje",
+    "Versjonsomtale/endringslogg"
+   ],
+   "supportedClaims": [
+    "Felt: `fastsattMerverdiavgift` = «Sum to pay / sum to be refunded» (periodenivå); per spesifikasjonslinje: `mvaKode`, `grunnlag` («The amount of which VAT is calculated. The field must not be filled in for input VAT»), `sats`, `merverdiavgift` («to show calculated VAT per line»)",
+    "Meldingen er kodebasert med spesifikasjonslinjer; flere linjer per mvaKode/spesifikasjon/internkode kan forekomme",
+    "Dokumentasjonen lenker til XSD v1.0 (no.skatteetaten.fastsetting.avgift.mva.skattemeldingformerverdiavgift.v1.0)"
+   ],
+   "limitations": "Teknisk dokumentasjon, ikke rettsregel. Nevner ingen avrundingsmetode. Siden dokumenterer ikke at v1.0 er siste versjon (endringsloggen slutter 2022.12.08, men det beviser ikke fravær av nyere modell)."
+  },
+  {
+   "id": "T79",
+   "title": "Skatteetaten: XSD skattemeldingformerverdiavgift v1.0 (raw.githubusercontent.com, master-gren)",
+   "publisher": "Skatteetaten",
+   "url": "https://raw.githubusercontent.com/Skatteetaten/mva-meldingen/master/docs/informasjonsmodell_filer/xsd/no.skatteetaten.fastsetting.avgift.mva.skattemeldingformerverdiavgift.v1.0.xsd",
+   "kind": "xsd-v1.0",
+   "documentType": "XSD (skjema)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 mva-vedtak og meldingsformat, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004c/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004c/04_Mva_melding_v1_0.xsd",
+   "repoFile": "docs/tax/primarkilder/econ004c/04_Mva_melding_v1_0.xsd",
+   "packageSha256": "f314fae8c0af547cccb3650f691cbc5229f6ed52971f5c5d2647c49e82031fcf",
+   "retrievedAt": "2026-10-19T14:12:50.909272+00:00",
+   "publishedVersion": "XSD versjon 1.0, `generertDato` 2022-11-28T17:25:30+0100; modellnavn «SkattemeldingForMerverdiavgift(inkl. VOEC)»; hentet fra master-gren 2026-10-19",
+   "readSections": [
+    "Typene Beloep, Desimaltall; elementene grunnlag, merverdiavgift, fastsattMerverdiavgift, sats"
+   ],
+   "supportedClaims": [
+    "`Beloep` er `xsd:restriction base=\"Desimaltall\"` og `Desimaltall` er `xsd:restriction base=\"xsd:decimal\"` — ingen `fractionDigits`/`totalDigits`-begrensning i disse typene",
+    "`grunnlag` (minOccurs=0), `merverdiavgift` og `fastsattMerverdiavgift` har type `Beloep` (skjemaet godtar desimaltall); `sats` har type `Sats` (xsd:string)",
+    "Elementbeskrivelser: `grunnlag` «grunnlag for merverdiavgift tilsvarende valgt mva-kode, typisk omsetning»; `merverdiavgift` «Bokført beløp for merverdiavgift»; `fastsattMerverdiavgift` «sum fastsatt merverdiavgift for perioden»"
+   ],
+   "limitations": "Skjemaformat, ikke rettsregel: avklarer at desimaltall aksepteres i skjemaet, ikke om rapportert beløp skal være avrundet, med hvilken metode eller når. Eventuelle strengere servervalideringer og nyere skjemaversjoner er ikke undersøkt; master-gren er bevegelig (hentet med hash)."
+  },
+  {
+   "id": "T80",
+   "title": "Stortingsvedtak om merverdiavgift for 2026, FOR-2025-12-18-2752 (Lovdata, ajourført visning, hentet 2026-10-19)",
+   "publisher": "Stortinget / Lovdata",
+   "url": "https://lovdata.no/dokument/STV/forskrift/2025-12-18-2752",
+   "kind": "primary",
+   "documentType": "stortingsvedtak (ajourført visning)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 ajourført mva-vedtak og bilimport, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004d/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004d/01_MVA_vedtak_ajourfort.html",
+   "repoFile": "docs/tax/primarkilder/econ004d/01_MVA_vedtak_ajourfort.html",
+   "packageSha256": "3c844ca87f358d18e64e6ec7793f6d7cb44bbb2c65806ce32f9d2f83097a0bdf",
+   "retrievedAt": "2026-10-19T14:22:24.751567+00:00",
+   "publishedVersion": "Ajourført visning hentet 2026-10-19T14:22:24Z (URL /dokument/STV/…). Metadata: Dato FOR-2025-12-18-2752, Departement Stortinget, Ikrafttredelse «Budsjettåret 2026», Hjemmel LOV-1814-05-17-§75 og LOV-2009-06-19-58, Kunngjort 22.12.2025 kl. 11.30. Siden har lenke «Gå til opprinnelig kunngjort versjon» (/LTI/…). Ingen «Endret ved»-/«Sist endret»-rad og ingen endringsnotis i den hentede HTML-en.",
+   "readSections": [
+    "§§ 1–5",
+    "Metadata",
+    "Lenke til opprinnelig versjon"
+   ],
+   "supportedClaims": [
+    "§ 2 (ajourført visning per hentedato): «Merverdiavgift beregnes med 25 pst. av avgiftspliktig omsetning, uttak og innførsel når ikke redusert sats skal anvendes etter bestemmelsene nedenfor.»",
+    "§ 1: «Fra 1. januar 2026 beregnes merverdiavgift etter satsene i dette vedtaket og i samsvar med lov 19. juni 2009 nr. 58 om merverdiavgift.»",
+    "Ordlyden i §§ 1–5 (blankt normalisert, HTML-nivå) er identisk med den opprinnelig kunngjorte versjonen (T77); § 1–2 også identisk med Stortingets vedtak 217 (T76).",
+    "Ikrafttredelse er «Budsjettåret 2026»: vedtaket dokumenterer ikke sats for 2027."
+   ],
+   "limitations": "Statusbelegg per hentetidspunkt (2026-10-19 14:22 UTC), ikke garanti for senere endringer og ikke et selvstendig vedtak om sluttdato. Fravær av endringsnotis i siden er ikke bevis for at ingen endringsvedtak vil komme; siden må hentes på nytt ved senere dato. Ikke full endringshistorikk.",
+   "note": "Samme dokumentidentitet som T76/T77 (FOR-2025-12-18-2752); ny hentet versjon av eksisterende dokument, ikke en ny kilde i rettslig forstand. URL-stien (STV) avviker fra T77 (LTI), men siden lenker eksplisitt til LTI-versjonen.",
+   "effectiveDate": null
+  },
+  {
+   "id": "T81",
+   "title": "Tolletaten: Import av bil og andre kjøretøy (hentet 2026-10-19)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning (privatperson)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002",
+    "R-IMP-REF-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 ajourført mva-vedtak og bilimport, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004d/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004d/02_Tolletaten_bilimport.html",
+   "repoFile": "docs/tax/primarkilder/econ004d/02_Tolletaten_bilimport.html",
+   "packageSha256": "a75ee10dc8f9cf8816d8b86616b0bf3effc1fee9359b8cff2a905bea300d0d4e",
+   "retrievedAt": "2026-10-19T14:22:24.944698+00:00",
+   "publishedVersion": "«Oppdatert: 5.2.2026» (lik publisert versjon i T21). Hentet 2026-10-19T14:22:24Z.",
+   "readSections": [
+    "Innledning",
+    "«Deklarer kjøretøyet til Tolletaten»",
+    "«Avgifter du må betale til Tolletaten»",
+    "Merk-boks om refusjon av utenlandsk mva.",
+    "«Betal engangsavgift hos Skatteetaten»",
+    "Utvidbart innhold i serialiserte sidedata («Dette betaler du avgift for», «Dokumenter du må ta med til Tolletaten»; arrayindeks 10999, 11034, 11047, 11054, 11068)"
+   ],
+   "supportedClaims": [
+    "Innledning: «Når du innfører et kjøretøy som privatperson, skal du først deklarere bilen og betale merverdiavgift til Tolletaten. Deretter betaler du en engangsavgift til Skatteetaten.»",
+    "«Du skal betale merverdiavgift for kjøretøyet.»",
+    "«Dersom du nettopp har kjøpt bilen i utlandet, beregnes avgiften ut fra kjøpesummen, frakt og forsikring.» (privatperson)",
+    "UTVIDBART INNHOLD I SERIALISERTE SIDEDATA (arrayindeks 11047): «For elbiler: Du betaler bare merverdiavgift hvis bilens pris, frakt- og forsikringskostnadene overstiger 300 000 kroner, og da kun på beløpet som overstiger 300 000 kroner.»",
+    "Indeks 11054: tollverdi = «Innkjøpspris + Fraktkostnader + Forsikringskostnader fram til norsk grense».",
+    "Indeks 11068: «Du må betale 25 prosent merverdiavgift for kjøretøy du importerer til Norge. Avgiften blir regnet på grunnlag av tollverdi til Norge.»",
+    "Indeks 11034: sjablongsatser for frakt fra Sverige, Danmark eller Tyskland (egen transport); indeks 10999: dokumenter å ta med: faktura/kjøpekontrakt med faktisk kjøpesum, fraktfaktura og dokumentasjon på andre utgifter (f.eks. forsikring), eventuelt takst.",
+    "Refusjon av utenlandsk mva. er «en sak mellom kjøper og selger»."
+   ],
+   "limitations": "Siden henvender seg til privatpersoner; betalingskanalen gjelder ikke registrerte importører. Nevner ikke tollsats, avrunding eller hvorvidt engangsavgift inngår i grunnlaget. «Frakt- og forsikringskostnadene» i elbilsetningen er ikke uttrykkelig «til norsk grense», men leses sammen med tollverdiformelen rett under (sammenstilling). Tolletatens «Oppdatert: 5.2.2026». T21-originalen er ikke arkivert i repoet, så tekstlikhet med T21 er bare kontrollert på URL og oppdateringsdato.",
+   "note": "Ny hentet versjon av dokumentidentiteten T21/T33 (samme URL, «Oppdatert: 5.2.2026»). T21 og T33 beholdes som tidligere proveniens.",
+   "effectiveDate": null,
+   "correction": "2026-10-19 (runde 32): den tidligere teksten i denne oppføringen og i kildevurdering 5 sa at siden ikke omtaler 300 000-grensen/elbilfritaket. Det var feil: innholdet lå i serialiserte sidedata (script-element) og ble utelatt av TXT-lesekopien. Kontrollert direkte i HTML-originalen ved JSON-parsing av strengen (ingen JavaScript kjørt), arrayindeks 11047/11054/11068. T81-filen (SHA-256 a75ee10d…) er uendret og identisk med fil 08 i econ004e."
+  },
+  {
+   "id": "T82",
+   "title": "Tolletaten: Betaling av merverdiavgift ved import av bil (hentet 2026-10-19)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport/betaling-av-avgifter",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning (betaling, privatperson)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 ajourført mva-vedtak og bilimport, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004d/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004d/03_Tolletaten_bilimport_betaling.html",
+   "repoFile": "docs/tax/primarkilder/econ004d/03_Tolletaten_bilimport_betaling.html",
+   "packageSha256": "4e5e73bac152fc093b5041227429eb23e87844f21900a933b09e3b98fb97e681",
+   "retrievedAt": "2026-10-19T14:22:24.943190+00:00",
+   "publishedVersion": "«Oppdatert: 26.1.2026», «Endringskommentar: Oppdatert beløpsgrense kredittkort.» Hentet 2026-10-19T14:22:24Z.",
+   "readSections": [
+    "Betalingsformer på tollkontoret",
+    "Avsnitt om frakt og sjablong",
+    "«Betaling av engangsavgift til Skatteetaten»"
+   ],
+   "supportedClaims": [
+    "«Du skal betale merverdiavgift av fraktkostnaden med å få bilen til Norge.»",
+    "«Har du fraktet bilen på egne hjul fra Sverige, Danmark eller Tyskland kan du bruke faste sjablongsatser.» (henvisning uten beløp; beløp er dokumentert i T64)",
+    "Betalingsformer og beløpsgrenser ved betaling på tollkontoret (debetkort vanligvis 100 000 kr per betaling; kredittkort gebyrfritt til 100 000 kr for privatpersoner; bedriftskort kan brukes over 100 000 kr mot 0,70 % gebyr fra første krone; remisse; kontanter).",
+    "Engangsavgift betales til Skatteetaten ved første gangs registrering."
+   ],
+   "limitations": "Betalingsside for tollkontor, rettet mot privatpersoner og betaling på tollstedet. Generaliserer ikke til mva.-registrerte importører, som etter T56/T72 rapporterer innførselsmva. i mva-meldingen. Betalingsmåte og kortgebyr er betalingskost, ikke avgiftsregel, og brukes ikke i landed-cost-kjernen. Dekker ikke de tre punktene T10 var ment å dekke (tollverdiformel, valutakursens dato, sjablongbeløp). Ingen tollsats, elbilgrense eller avrunding.",
+   "note": "Ny hentet versjon av dokumentidentiteten T10 (samme URL …/bilimport/betaling-av-avgifter). T10 (E2, aldri lest) beholdes som opprinnelig oppføring.",
+   "effectiveDate": null
+  },
+  {
+   "id": "T83",
+   "title": "Tolltariffen 2026 (Tolletaten) — PDF, 722 sider; lest PDF-side 501–502 (trykt 87-2/87-3)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/files/e9d43fc8a9d49f811d58e1aa47a752ff12b5560c.pdf",
+   "kind": "primary",
+   "documentType": "tolltariff (offisiell PDF)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 målrettet nettkontroll, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004e/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004e/01_Tolltariffen_2026.pdf",
+   "repoFile": "docs/tax/primarkilder/econ004e/01_Tolltariffen_2026.pdf",
+   "packageSha256": "10419b7fe4cfa937036ae00813fdc59fe51f4e95f02d50284db8fa7f85ce6cd5",
+   "retrievedAt": "2026-10-19T15:00:16.634557+00:00",
+   "publishedVersion": "«Tolltariff – med statistisk varefortegnelse – gjeldende fra 1. januar 2026», utarbeidet av Tolletaten i medhold av vareførselsloven § 6-1; PDF-metadata opprettet 2025-12-11; hentet 2026-10-19T15:00:16Z.",
+   "readSections": [
+    "PDF-side 501 (87-2): posisjon 87.03, kolonnene «Ordinær» og «Frihandelsavtaler»",
+    "PDF-side 502 (87-3): fortsettelse av 87.03, start 87.04",
+    "PDF-side 1–3 (omslag/gyldighet)"
+   ],
+   "supportedClaims": [
+    "Ordinær tollavgiftssats er 0 for alle underposisjoner under 87.03 som er trykt på siden: snøkjøretøy .1001, golfbaner .1002; stempeldrevet bensin .2102/.2109, .2202/.2209, .2302/.2309, .2402/.2409; diesel .3102/.3109, .3202/.3209, .3302/.3309; hybrid bensin (ikke ladbar) .4001/.4009; hybrid diesel (ikke ladbar) .5001/.5009; ladbar hybrid bensin .6001/.6009; ladbar hybrid diesel .7001/.7009; utelukkende elektrisk fremdriftsmotor .8001/.8009; ellers .9000 (nye/brukte).",
+    "Kolonnen «Frihandelsavtaler» er tom for alle disse linjene: nullsatsen er den ordinære satsen, ikke en preferansesats som må oppnås med opprinnelsesbevis.",
+    "Kontrollert både i PDF-ens tekstlag (pdftotext på side 501) og visuelt (side 501/502 som bilde)."
+   ],
+   "limitations": "Bare PDF-side 501–502 er lest (posisjon 87.03/start av 87.04). Utgaven gjelder fra 1.1.2026; endringer i tolltariffen etter 1.1.2026 («Endringer i tolltariffen 2026», lenke på T86) er ikke lest, så fravær av senere endring i 87.03 er ikke dokumentert. Klassifisering av det konkrete kjøretøyet, sanksjoner, særtiltak og uvanlige kjøretøy/prosedyrer er ikke vurdert. Ingen parametergodkjenning.",
+   "effectiveDate": null
+  },
+  {
+   "id": "T84",
+   "title": "Skatteetaten: Faglige avklaringer mv. knyttet til innførselsmerverdiavgiften (prinsipputtalelse)",
+   "publisher": "Skatteetaten",
+   "url": "https://www.skatteetaten.no/nn/rettskjelder/type/uttalelser/prinsipputtalelser/faglige-avklaringer-mv.-knyttet-til-innforselsmerverdiavgiften/",
+   "kind": "primary",
+   "documentType": "prinsipputtalelse",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001",
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 målrettet nettkontroll, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004e/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004e/02_Faglige_avklaringer_innforselsmva.html",
+   "repoFile": "docs/tax/primarkilder/econ004e/02_Faglige_avklaringer_innforselsmva.html",
+   "packageSha256": "b11f2dbda8a583947c637624eae57cd8c7b42349d791bb8975fee7c229b2704c",
+   "retrievedAt": "2026-10-19T15:00:16.378745+00:00",
+   "publishedVersion": "«Publisert: 25.05.2018, Avgitt 20.03.2018»; «oppdatert 25. september 2020 – Versjon 1.4». Hentet 2026-10-19T15:00:16Z.",
+   "readSections": [
+    "Beregning av innførselsmerverdiavgift – Generelt",
+    "Kunstverk/samleobjekter/tanntekniske produkter/gjeninnførsel (bare til avgrensning)"
+   ],
+   "supportedClaims": [
+    "Beregningsgrunnlaget er varens tollverdi med tillegg for toll og andre avgifter som oppkreves ved innførselen (mval. § 4-11 første ledd).",
+    "Toll og særavgifter som skal inngå i grunnlaget fremgår av tolldeklarasjonen rubrikk 47.",
+    "Tollverdien vil «ofte» være lik statistisk verdi (rubrikk 46); unntakene som nevnes er kunstverk, samleobjekter/antikviteter, tanntekniske arbeider og gjeninnførsel etter bearbeiding/reparasjon.",
+    "Avgifter i tolldeklarasjonen under 50 kr oppkreves ikke og inngår ikke i grunnlaget (skattebetalingsforskriften § 10-4-1)."
+   ],
+   "limitations": "Fra 2018/2020: bruker «tolloven» (kap. 7) og «ukentlige valutakurser», som ikke gjelder for 2026 (vareførselsloven/tollavgiftsloven og forskrift § 6-12-1). Disse delene brukes ikke som 2026-regel og overstyrer ikke T65/T67/T69. Ingen omtale av avrunding (søkt: «avrund»), elbilgrense, tollsats for personbil eller engangsavgift. Støttekilde, ikke regelkilde.",
+   "effectiveDate": null
+  },
+  {
+   "id": "T85",
+   "title": "Tolletaten: Import av bil og andre kjøretøy (fullside, hentet 2026-10-19 15:00 UTC, ?requestedLang=de)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/varer/bil-og-andre-kjoretoy/bilimport?requestedLang=de",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning (privatperson)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-004",
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 målrettet nettkontroll, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004e/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004e/03_Bilimport_fullside.html",
+   "repoFile": "docs/tax/primarkilder/econ004e/03_Bilimport_fullside.html",
+   "packageSha256": "fda63deab96b50f7088ce3da189c8950c73a1964862174161ee4dcd0cc41f5f2",
+   "retrievedAt": "2026-10-19T15:00:17.561794+00:00",
+   "publishedVersion": "«Oppdatert: 5.2.2026»; tysk språkvelger gir norsk innhold med tysk varsel «Diese Seite ist leider nicht auf Deutsch verfügbar». Hentet 2026-10-19T15:00:17Z.",
+   "readSections": [
+    "Innledning",
+    "Utvidbart innhold i serialiserte sidedata: «Dette betaler du avgift for»",
+    "Dokumenter du må ta med til Tolletaten"
+   ],
+   "supportedClaims": [
+    "Samme innhold som T81 (kontrollert: elbilsetningen, tollverdiformelen og 25 %-setningen finnes også i denne nye hentingen)."
+   ],
+   "limitations": "Samme dokumentidentitet som T21/T33/T81 (URL med språkparameter). Privatpersonside. Se T81 for dekning og begrensninger.",
+   "effectiveDate": null,
+   "note": "Ny hentet versjon av dokumentidentiteten T81; bekrefter innholdet ved fersk henting."
+  },
+  {
+   "id": "T86",
+   "title": "Tolletaten: Om tolltariffen (hentet 2026-10-19)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/bedrift/tolltariffen-og-klassifisering/om-tolltariffen",
+   "kind": "primary",
+   "documentType": "myndighetsveiledning (oversikt)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 målrettet nettkontroll, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004e/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004e/04_Om_tolltariffen.html",
+   "repoFile": "docs/tax/primarkilder/econ004e/04_Om_tolltariffen.html",
+   "packageSha256": "c586582754dc50daac69e60e98510ea2deb9885339c6bb4937e030e0d0eb3987",
+   "retrievedAt": "2026-10-19T15:00:17.545486+00:00",
+   "publishedVersion": "«Oppdatert: 26.6.2026». Hentet 2026-10-19T15:00:17Z.",
+   "readSections": [
+    "Innholdsliste med «Endringer i tolltariffen 2026», «Høring tolltariffen 2027», «Tidligere versjoner»"
+   ],
+   "supportedClaims": [
+    "Siden viser at det finnes en egen side «Endringer i tolltariffen 2026» og tidligere versjoner av tolltariffen."
+   ],
+   "limitations": "Oversiktsside; lenkene er ikke fulgt og innholdet i «Endringer i tolltariffen 2026» er ikke lest. Brukes bare til å avgrense T83 (utgave gjeldende fra 1.1.2026).",
+   "effectiveDate": null
+  },
+  {
+   "id": "T87",
+   "title": "Vareførselshåndboken § 6-10 «Poster som inngår i tollverdien fastsatt etter § 6-3» (Tolletaten)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/verktoy/regelverk/handboker/vareforselshandboken/6-10",
+   "kind": "primary",
+   "documentType": "håndbok (veiledning til vareførselsloven § 6-10)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-002"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 målrettet nettkontroll, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004e/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004e/05_Vareforselshandbok_6-10.html",
+   "repoFile": "docs/tax/primarkilder/econ004e/05_Vareforselshandbok_6-10.html",
+   "packageSha256": "373f710cf9d84a0a4803c3d9096f4fc2ca7cbd177f9b0f082ebc4415e37028a1",
+   "retrievedAt": "2026-10-19T15:02:19.080637+00:00",
+   "publishedVersion": "Ingen «Oppdatert»-dato funnet i den hentede siden. Hentet 2026-10-19T15:02:19Z.",
+   "readSections": [
+    "§ 6-10 (lovtekst gjengitt og kommentarer): tillegg til prisen",
+    "Transport- og forsikringskostnader",
+    "Provisjoner og meglersalær"
+   ],
+   "supportedClaims": [
+    "Vareførselsloven § 6-10 (2): tillegg skal bare gjøres på objektive og kvantifiserbare opplysninger, og «det skal ikke gjøres andre tillegg … enn de som er nevnt i første ledd»; håndboken: «Tilleggene reguleres altså uttømmende».",
+    "Tillegg: transport- og forsikringskostnaden til innførselsstedet (e) og kostnader for lasting og håndtering forbundet med transporten (f). Faktiske kostnader gjelder; for varer som selv er transportmidler (bil) og for egen transport kan alminnelig fraktrate legges til grunn (forskrift § 6-10-4 tredje ledd); sjablong for egne hjul.",
+    "Felles transport fordeles etter avstand før/etter innførselsstedet; annen fordeling kan legges til grunn når den sannsynliggjøres; kostnader til lossing på/etter innførselsstedet og ventetid etter ankomst tas ikke med; demurrage inngår; forsikringskostnader behandles som frakt.",
+    "Provisjoner og meglersalær legges til på visse vilkår, unntatt innkjøpsprovisjoner (forskrift § 6-10-1). Mellommannens rolle avgjør: innkjøpsprovisjon (for kjøperen) holdes utenfor, salgsprovisjon/meglersalær legges til; handler mellommannen for egen regning er hans vederlag prisen for varene."
+   ],
+   "limitations": "Håndbok (veiledning), ikke bindende rett. Gjelder tilleggene til prisen, ikke hva som er «pris». Nevner ikke bank-/valutagebyr som tillegg (ikke funnet i teksten); spørsmålet om slike gebyrer inngår i prisen er ikke besvart ordrett. Ingen avrunding.",
+   "effectiveDate": null
+  },
+  {
+   "id": "T88",
+   "title": "Vareførselshåndboken § 6-11 «Poster som ikke skal inngå i tollverdien fastsatt etter § 6-3» (Tolletaten)",
+   "publisher": "Tolletaten",
+   "url": "https://www.toll.no/no/verktoy/regelverk/handboker/vareforselshandboken/6-11",
+   "kind": "primary",
+   "documentType": "håndbok (veiledning til vareførselsloven § 6-11)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-002",
+    "R-IMP-REF-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 målrettet nettkontroll, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004e/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004e/06_Vareforselshandbok_6-11.html",
+   "repoFile": "docs/tax/primarkilder/econ004e/06_Vareforselshandbok_6-11.html",
+   "packageSha256": "52b083f3c05c191f1fd7c25d5c51fcc3a3d8852c653309144721cf31c73a83cc",
+   "retrievedAt": "2026-10-19T15:02:18.935936+00:00",
+   "publishedVersion": "Ingen «Oppdatert»-dato funnet i den hentede siden. Hentet 2026-10-19T15:02:18Z.",
+   "readSections": [
+    "§ 6-11 første ledd b, d, e og avgifter/refusjon av utenlandsk mva.",
+    "Eksempler med utenlandsk merverdiavgift ved bilkjøp"
+   ],
+   "supportedClaims": [
+    "Vederlag for transport og forsikring i Norge (etter innførselsstedet) kan holdes utenfor tollverdien selv om det inngår i prisen (§ 6-11 (1) b).",
+    "Innkjøpsprovisjon pålagt kjøperen og inkludert i prisen kan trekkes ut (§ 6-11 (1) e).",
+    "Renter etter skriftlig finansieringsordning kan holdes utenfor på vilkår (§ 6-11 (1) d).",
+    "Utenlandsk merverdiavgift er ikke del av prisen når kjøperen ikke endelig skal belastes den; vilkårene må være oppfylt ved overgang til fri disponering og kjøperen må sannsynliggjøre dette."
+   ],
+   "limitations": "Håndbok, ikke bindende rett. Gjelder fradrag fra prisen; bank-/valutagebyr omtales ikke. Eksemplene gjelder konkrete avtaleforhold og er ikke en generell regel om at utenlandsk mva. alltid kan trekkes ut.",
+   "effectiveDate": null
+  },
+  {
+   "id": "T89",
+   "title": "St.prp. nr. 1 (2003–2004) Finansdepartementet — kap. 1610 Toll- og avgiftsetaten (regjeringen.no), historisk omtale av omleggingen av engangsavgiften 1.4.2001",
+   "publisher": "Finansdepartementet / Regjeringen.no",
+   "url": "https://www.regjeringen.no/no/dokumenter/stprp-nr-1-2003-2004-/id138572/?ch=2",
+   "kind": "primary",
+   "documentType": "stortingsproposisjon (historisk forklaringsbelegg)",
+   "whatToExtract": [],
+   "rules": [
+    "R-IMP-VAT-001"
+   ],
+   "searchLeadDate": null,
+   "evidenceLevel": "E1",
+   "fetchStatus": "lest_lokalt_fra_kildepakke",
+   "directReadDate": "2026-10-19",
+   "retrievedBy": "Christian (ECON-004 målrettet nettkontroll, hentet 2026-10-19; manifest docs/tax/primarkilder/econ004e/PACK-MANIFEST.json, proveniens ACQUISITION.json)",
+   "packageFile": "primarkilder/econ004e/07_Engangsavgift_omlegging_2003.html",
+   "repoFile": "docs/tax/primarkilder/econ004e/07_Engangsavgift_omlegging_2003.html",
+   "packageSha256": "775676affe7131538a0e48b7d00be816170881cb79077a431e5243aa5e99b9e8",
+   "retrievedAt": "2026-10-19T15:02:18.894554+00:00",
+   "publishedVersion": "St.prp. nr. 1 (2003–2004), omtale under Toll- og avgiftsetatens inntekter 2002. Hentet 2026-10-19T15:02:18Z.",
+   "readSections": [
+    "Omtale av inntekter 2002 (avsnitt om merverdiavgift og engangsavgift)"
+   ],
+   "supportedClaims": [
+    "«omlegging av engangsavgiften per 1. april 2001 fra innførselsavgift til registreringsavgift, [medførte] at engangsavgiften ikke lenger er en del av beregningsgrunnlaget for merverdiavgiften.»"
+   ],
+   "limitations": "Historisk forklaring (budsjettomtale 2003), ikke dagens rettskilde og ikke en satsregel. Brukes bare som forklaringsbelegg sammen med lovtekst (§ 4-11, vedtakets § 1) og håndbok kap. 4 (T60).",
+   "effectiveDate": null
   }
  ],
  "accessAttempts": [

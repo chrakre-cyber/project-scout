@@ -1,0 +1,37 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { randomBytes, randomUUID } from "node:crypto";
+import { afterEach, expect, it, vi } from "vitest";
+
+afterEach(() => { vi.unstubAllEnvs(); vi.resetModules(); });
+
+it.each([
+  ["remote database", "postgres://test@db.example.invalid:5432/test", "http://127.0.0.1:54321"],
+  ["remote API", "postgres://test@127.0.0.1:54322/test", "https://api.example.invalid"],
+])("L4 rejects %s before opening a database connection or writing fixtures", async (_label, dbUrl, apiUrl) => {
+  vi.stubEnv("E2E_SUPABASE_MODE", "real");
+  vi.stubEnv("SUPABASE_TEST_DB_URL", dbUrl);
+  vi.stubEnv("SUPABASE_TEST_URL", apiUrl);
+  vi.stubEnv("SUPABASE_TEST_PUBLISHABLE_KEY", "test-key");
+  const { connectBackend } = await import("./e2e/support/backend.mjs");
+  const calls: string[] = [];
+  class FakeClient {
+    async connect() { calls.push("connect"); }
+    async query(sql: string) {
+      calls.push(sql.replace(/\s+/g, " ").trim());
+      return { rows: [{ id: "00000000-0000-4000-a000-000000000001" }] };
+    }
+  }
+  const source = readFileSync(join(__dirname, "e2e/l4-browser.e2e.mjs"), "utf8");
+  // Execute only the actual startup section, through connectBackend. Imports are
+  // injected and Client is fake: no browser, build, network or database is used.
+  const end = source.indexOf("\n", source.indexOf("const backend = await connectBackend("));
+  const startup = source.slice(0, end)
+    .replace(/^import[^\n]*\n/gm, "")
+    .replace(/^const require = createRequire\(import\.meta\.url\);\r?\n/m, "")
+    .replace(/^const \{ Client \} = require\(process\.env\.PG \?\? "pg"\);\r?\n/m, "");
+  const AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
+  const run = new AsyncFunction("Client", "connectBackend", "randomBytes", "randomUUID", startup);
+  await expect(run(FakeClient, connectBackend, randomBytes, randomUUID)).rejects.toThrow(/ikke-lokal/);
+  expect(calls, "local-only validation must precede connect() and all fixture writes").toEqual([]);
+});

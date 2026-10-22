@@ -1,0 +1,15 @@
+# ECON-004 — les kilder før regelendringer
+
+Gjenoppta ECON-004 fra 36731e2. ECON-005 skal ikke startes.
+
+1. Kontroller MANIFEST.json, byte og SHA-256. Les HTML-originalene; TXT er bare avledede lesekopier. acquisition.json dokumenterer URL, endelig URL og hentetid. Gjenbruk eksisterende kilde-ID der dokumentidentiteten er den samme. Pakken gir ikke automatisk E1 eller godkjenning.
+2. Avstem hver kilde mot U-003, U-008, U-013, R-IMP-VAT-002, R-IMP-VAT-003 og R-DED-001. Registrer presis ordlyd, bestemmelse, virkningstidspunkt og hvilke delpåstander som faktisk støttes. Behold uklarheter åpne. Skille lov/forskrift fra myndighetenes håndbok og veiledning.
+3. U-003: Ny håndbok oppdateres løpende; ikke krev en årsutgave 2026 som premiss. Sammenlign 2023-avsnittet om videresalg med gjeldende kapittel 8. Kontroller rettslige vilkår separat fra årgangsnavn og URL som inneholder MVA2025.
+4. U-008: Les endringsforskrift 2026-08-21-1661, kapittel 6 og tollavgiftsloven § 2-2 samlet. Skill kursfastsettelse, gyldighetsperiode, akseptering av deklarasjonen, innførsel og avgiftsmotorens registreringsdato. Kontroller overgang, suspensjon og enheter per valuta. JSON er et datert snapshot, ikke komplett historikk eller bevis for en bestemt casekurs.
+5. R-IMP-VAT-002/-003: Avklar frakt og forsikring frem til innførselsstedet, sjablongenes avgrensning, relevante avgifter og unntaket for engangsavgift. Skill faktisk transportkostnad fra tollverdiens sjablong. Les §§ 4-11, 6-8 og 7-1 samlet før elbilregelen løftes. Test under, på og over grensen.
+6. R-DED-001: Les lovens §§ 8-1 og 8-4 sammen med importveiledningen. Fradragsstatus må ikke utledes av annonse eller ordet forhandler alene. Hold regelvilkår, dokumentasjon og produktets opplysningspolicy adskilt.
+7. Viktig ny kontroll: Skatteetatens importveiledning skiller mellom mva-registrerte virksomheter som rapporterer innførselsmva. i mva-meldingen og andre som betaler ved import. Vurder om dagens kontantbehov beskriver faktisk betalingsbehov eller en brutto sum. Ikke anta at mva. alltid betales ved grensen og senere refunderes. Rapporter konsekvensen og foreslå avgrenset retting før noen endring av betydningen til eksisterende felt. Fradragsrett og betalingsmåte er ulike forhold.
+8. U-013 er ikke løst av denne pakken: identifiser særskilt avrunding av tollverdi, omregning, hver innførselsmva.-beregning og samlet krav/mva-melding. Ikke overfør engangsavgiftens sluttavrunding eller fixture half-up automatisk. Skill avrunding fra presentasjon med to desimaler. Ingen påstand om fravær av regel kan baseres bare på tekstsøk i disse filene.
+9. Lever først kildevurdering og konkret gap-/konsekvensrapport. Ikke sett de fire økonomiflaggene til true eller registrer parametergodkjenning uten Christians uttrykkelige beslutning. Ikke endre ECON-002s godkjenninger, klasse 1-definisjon eller ECON-003s literale forventninger for å få samsvar. ECON-004 forblir REVIEW inntil nødvendige beslutninger og review foreligger.
+
+Ingen kode eller hemmeligheter er inkludert i kildepakken.

@@ -1,0 +1,75 @@
+exit-kode fra orkestreringen: 1
+PASS  ingen falsk nøkkel/passord i stdout eller jobbsammendrag
+PASS  ingen JWT-/sb_secret-/tilkoblings-URL-mønster i utskriften
+PASS  rapporten er skrevet (stdout og sammendrag er like)
+PASS  L1 bestått i emuleringen
+PASS  L2 bestått i emuleringen
+PASS  L3a (stakken) FEILET i emuleringen uten Auth/PostgREST
+PASS  L3b rapporteres separat og BESTÅTT (ekte isolert klynge), merket IKKE Supabase
+PASS  L3 samlet regnes IKKE som bestått når L3a feiler, selv om L3b består
+PASS  samlet er IKKE FULLT BESTÅTT og exit-koden er ≠ 0
+PASS  L4b, L5a og L5b rapporteres hver for seg som IKKE KJØRT uten nettleser, og L5 samlet er ikke bestått
+PASS  hosted Supabase og L3c er oppført som åpne/utsatt
+PASS  L4a og L6 rapporteres som egne seksjoner og regnes ikke som bestått uten Auth/PostgREST
+
+# Lokal Supabase på GitHub-runner — L1–L3 og L7
+
+Kjørt mot en lokal Supabase-stakk i en container på runneren. IKKE hosted Supabase, ikke emulator, ikke pilotgodkjenning, ingen regel-/parametergodkjenning.
+
+- node v22.22.0
+- psql (PostgreSQL) 16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)
+- supabase CLI 0.0.0-emulated
+- OS Linux 6.18.44-fc-v140
+
+## L1 lokal Supabase fra tom database (start + db reset): BESTÅTT
+- 12 migrasjoner anvendt fra tom database og registrert i rekkefølge
+- PostgreSQL: PostgreSQL 16.14 (Ubuntu 16.14-0ubuntu0.24.04.1)
+- image: public.ecr.aws/supabase/gotrue:EMULATED
+- image: public.ecr.aws/supabase/postgres:EMULATED
+
+## L2 oppgraderingstester (qa:migrations): BESTÅTT
+- 50 PASS, 0 FAIL
+
+## L3a DB-suiten mot Supabase-stakken (ekte Auth/PostgREST; test-db.sh): FEILET
+- 542 tester: 252 bestått, 23 feilet, 267 hoppet over
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: passordinnlogging riktig passord gir en sesjon (access- og refresh-token, bruker-id), og tokenet gir tilgang til egne data via PostgREST
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: passordinnlogging feil passord og ukjent bruker gir identisk avvisning (status, feilkode, melding) — ingen informasjon om hvilke kontoer som finnes
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: passordinnlogging manglende e-post eller passord gir ingen sesjon
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: passordinnlogging åpen registrering er stengt: signup gir ingen sesjon og ingen ny bruker
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: passordinnlogging bruker uten firma kan logge inn, men ser ingen firma
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: tokenvalidering i PostgREST manglende token, tilfeldig streng og token med forfalsket signatur avvises (401) og gir ingen data
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: tokenvalidering i PostgREST utløpt token avvises mens samme token med fremtidig utløp godtas (kontroll: det er utløpet, ikke signeringen, som avviser)
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: tokenvalidering i PostgREST token signert med feil nøkkel avvises (kontroll mot samme claims signert riktig)
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: refresh og utlogging refresh gir ny sesjon med fungerende token; ugyldig refresh-token avvises
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: refresh og utlogging utlogging (global) ugyldiggjør refresh-token=[REDACTED] logout gir refresh ingen ny sesjon
+- FEIL tests/db/auth-gotrue.test.ts: L4 API: refresh og utlogging supabase-js: signInWithPassword/getUser/signOut fungerer mot ekte Auth (samme vei som appen bruker)
+- FEIL tests/db/qa-limit.test.ts: batch i ett kall kan ikke gi mer enn 10 aktive INSERT av 11 aktive rader i én forespørsel
+- FEIL tests/db/qa-limit.test.ts: batch i ett kall kan ikke gi mer enn 10 aktive INSERT av 10 + 1 i separate kall gir 10 og avvisning
+- FEIL tests/db/qa-limit.test.ts: batch i ett kall kan ikke gi mer enn 10 aktive UPDATE av 11 pausede agenter til aktiv i én forespørsel
+- FEIL tests/db/qa-limit.test.ts: batch i ett kall kan ikke gi mer enn 10 aktive UPDATE via bred filter (alle firmaets agenter) kan ikke aktivere flere enn 10
+- FEIL tests/db/qa-limit.test.ts: batch i ett kall kan ikke gi mer enn 10 aktive UPSERT kan ikke brukes til å omgå grensen (insert og update-gren)
+- FEIL tests/db/qa-limit.test.ts: samtidighet 24 samtidige aktiveringer fra 4 sesjoner (2 brukere i samme firma) gir nøyaktig 10, 3 runder
+- FEIL tests/db/qa-limit.test.ts: samtidighet blandet samtidig INSERT og UPDATE mot siste ledige plasser gir aldri mer enn 10
+- FEIL tests/db/qa-limit.test.ts: samtidighet grensen er per firma: to firma aktiverer 10 hver samtidig uten å blokkere hverandre
+- FEIL tests/db/qa-limit.test.ts: samtidighet pause og aktivering i samme øyeblikk: aldri over 10, og en pauset plass kan gjenbrukes
+- 6 av de 6 navngitte oppgraderingstestene er hoppet over her (krever isolert klynge, SCOUT_DB_ISOLATED) — regnes IKKE som bestått i L3a; de kan bare dekkes av L3b
+- 261 UVENTET hoppet over (ikke blant de navngitte seks) — undersøk
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S01 Smalt søk: merke, modell, variant og al…
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S02 Bare merke (modell = alle)
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S03 Avklart bredt søk: uten merke, bekrefte…
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S04 Bredt søk uten bekreftelse
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S05 Bekreftet, men helt åpent («alle» på al…
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S06 Grenseverdier: samme år, 1 km, 0,01 i p…
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S07 Største trygge beløp (2^53-1 øre)
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S08 Ukjente forutsetninger: filtre ok, pris…
+- HOPPET tests/db/agents.test.ts: 10 representative oppsett: databasen er enig med domenet S09 Pris i annen støttet valuta (CHF), reta…
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: år snudd
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: år som tekst
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: år utenfor
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: modell uten merke
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: variant uten modell
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: tomt merke
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: merke med mellomrom
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: merke over 60 tegn
+- HOPPET tests/db/agents.test.ts: ugyldige agenter avvises av databasen også ved direkte API-kall filters: 0 km
+ORKESTRERING (EMULERT): ALLE KONTROLLER BESTÅTT

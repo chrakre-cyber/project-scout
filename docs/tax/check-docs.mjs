@@ -42,6 +42,13 @@ for (const s of sources.sources) {
   if (s.externalVerification && s.evidenceLevel !== "E1") err(`kilde ${s.id}: externalVerification er bare for E1-kilder (E1X bruker egne felt)`);
   for (const r of s.rules ?? []) if (!ruleIds.has(r)) err(`kilde ${s.id}: ukjent regel ${r}`);
 }
+// ---- kildefiler i repoet (ECON-002): SHA-256 av faktiske filbytes må stemme med registeret
+for (const s of sources.sources) if (s.repoFile) {
+  const p = join(dir, "..", "..", s.repoFile);
+  if (!existsSync(p)) { err(`kilde ${s.id}: repoFile mangler (${s.repoFile})`); continue; }
+  const h = createHash("sha256").update(readFileSync(p)).digest("hex");
+  if (h !== s.packageSha256) err(`kilde ${s.id}: SHA-256 for ${s.repoFile} er ${h}, registrert ${s.packageSha256}`);
+}
 // ---- begrepsvern (F1): vrakpantutbetaling er ikke vrakpantavgift
 for (const s of sources.sources) {
   if (/scrap-deposit/.test(s.url)) for (const rid of s.rules ?? []) if (!/^utenfor_beregning/.test(ruleById.get(rid)?.status ?? "")) err(`kilde ${s.id} (vrakpant-UTBETALING) brukes som grunnlag for beregningsregel ${rid}`);
@@ -92,7 +99,8 @@ for (const r of rules.rules) {
     let prev = -1;
     for (const b of dp.bands ?? []) { if (b.fromGramKm <= prev && prev !== -1) err(`regel ${r.id}: bånd ikke stigende i ${dp.id}`); prev = b.fromGramKm; if (!(b.rate > 0)) err(`regel ${r.id}: bånd uten sats i ${dp.id}`); }
     if (r.validity?.from && dp.from < r.validity.from && r.validity.from !== dp.from) err(`regel ${r.id}: validity.from ${r.validity.from} etter datedParameter`);
-    if (r.usableAsRuleParameter) err(`regel ${r.id}: datert parameter kan ikke godkjennes uten E1 og klasse 1`);
+    // Godkjenning av regel med datert parameter krever E1-evidens på parameteren OG et klasse 1-tilfelle som dekker regelen (uendret krav; tidligere en blanket-sperre uavhengig av oppfyllelse).
+    if (r.usableAsRuleParameter && (dp.evidence !== "E1" || !refs.cases.some((c) => c.evidenceClass === 1 && c.ruleIds.includes(r.id)))) err(`regel ${r.id}: datert parameter ${dp.id} kan ikke godkjennes uten E1 og klasse 1`);
   }
   // godkjent parameter krever eksplisitte vilkår
   if (r.usableAsRuleParameter || r.parameterApproval?.approved) {

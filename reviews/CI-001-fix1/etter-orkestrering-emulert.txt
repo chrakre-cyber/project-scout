@@ -1,0 +1,10 @@
+exit-kode fra orkestreringen: 1
+PASS  ingen falsk nøkkel/passord i stdout eller jobbsammendrag
+PASS  ingen JWT-/sb_secret-/tilkoblings-URL-mønster i utskriften
+PASS  rapporten er skrevet (stdout og sammendrag er like)
+PASS  L1 bestått i emuleringen
+PASS  L2 bestått i emuleringen
+PASS  L3 regnes IKKE som bestått uten Auth/PostgREST
+PASS  samlet er IKKE FULLT BESTÅTT og exit-koden er ≠ 0
+PASS  åpne kontroller L4–L6 og hosted er oppført som ÅPEN
+ORKESTRERING (EMULERT): ALLE KONTROLLER BESTÅTT

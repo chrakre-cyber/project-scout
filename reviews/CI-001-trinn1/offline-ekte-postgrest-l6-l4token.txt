@@ -1,0 +1,5 @@
+OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret 
+21/Oct/2026:10:24:53 +0000: Starting PostgREST 12.2.12...
+21/Oct/2026:10:24:53 +0000: Successfully connected to PostgreSQL 16.14  13.3.0, 64-bit
+ Test Files  2 passed 
+      Tests  17 passed | 8 skipped 

@@ -1,0 +1,152 @@
+AVLEDET LESEKOPI AV BRØDTEKST. Kan mangle utvidbart innhold som er lagret i scripts. Se egen JSON-lesekopi og HTML-original.
+
+§ 6-10 Poster som inngår i tollverdien fastsatt etter § 6-3 - Tolletaten
+Hopp til hovedinnhold
+PRIVATBEDRIFT
+NO
+English
+Norsk
+Deutsch
+MENY
+Hjem
+Verktøy
+Regelverk
+Håndbøker
+Vareførselshåndboken
+§ 6-10 Poster som inngår i tollverdien fastsatt etter § 6-3
+§ 6-10 Poster som inngår i tollverdien fastsatt etter § 6-3
+§ 6-10. Poster som inngår i tollverdien fastsatt etter § 6-3
+(1) Ved fastsetting av tollverdien etter § 6-3 skal det til prisen som faktisk er betalt eller skal betales for den innførte varen, legges
+a. følgende kostnader, i den utstrekning de er pålagt kjøperen, men ikke er tatt med i prisen som faktisk er betalt eller skal betales for varen
+provisjoner og meglersalær, unntatt innkjøpsprovisjoner
+kostnader for emballasje, i den utstrekning emballasjen tollmessig anses som del av varen og
+innpakningskostnader, både for arbeid og materialer
+b. verdien av følgende varer og tjenester, når kjøperen har levert dem direkte eller indirekte, gratis eller til redusert kostnad, til bruk i forbindelse med produksjonen og salget for eksport av varen
+materialer, komponenter, deler og lignende artikler som inngår i den innførte varen
+verktøy, matriser, former og lignende artikler som er brukt i produksjonen av varen
+materialer som er medgått i produksjonen av varen
+konstruksjonsarbeid, utviklingsarbeid, kunstnerisk arbeid, formgiving, tegninger og skisser utført annensteds enn i Norge, og som er nødvendige for produksjonen av varen
+c. vederlag for immaterialrettigheter som er knyttet til varen som skal verdifastsettes og som kjøperen må yte, direkte eller indirekte, som en betingelse for salget. Ytes vederlaget for immaterialrettigheten til en annen enn selger, skal vederlaget også legges til dersom det ytes til en person som står i et avhengighetsforhold til selgerend. verdien av utbyttet ved et videresalg, rådighet over eller bruk av den innførte varen, som direkte eller indirekte tilfaller selgerene. transport- og forsikringskostnaden for varen til innførselsstedetf. kostnader for lasting og håndtering som er forbundet med transporten av varen.
+(2) Tillegg etter første ledd skal bare gjøres når dette kan baseres på grunnlag av objektive og kvantifiserbare opplysninger. Det skal ikke gjøres andre tillegg til prisen som faktisk er betalt eller skal betales, enn de som er nevnt i første ledd.
+(3) Departementet kan gi forskrift om kostnader som inngår i tollverdien etter denne paragrafen.
+Innholdsfortegnelse
+Provisjonen og meglersalær
+Emballasje- og innpakningskostnader
+Kjøperbidrag (assists)
+Vederlag for immaterielle rettigheter
+Utbytte ved videresalg
+Transport- og forsikringskostnader
+Bestemmelsen viderefører tolloven § 7-17.
+Vareførselsloven § 6-10 omhandler elementer som på visse vilkår skal legges til prisen for varene i § 6-3 for å komme frem til transaksjonsverdien. Mens § 6-10 dreier seg om eventuelle tillegg til prisen, omhandler § 6-11 stort sett elementer som skal trekkes ut av prisen. Justeringene etter §§ 6-10 og 6-11 har som formål at varer av samme faktiske verdi får tilnærmet samme tollverdi, uavhengig av hvordan kjøpet av varene organiseres.
+Elementene i § 6-10 har ulike betegnelser. Felles for alle er at det dreier seg om verdien av ytelser som har forbindelse med kjøpet av varene, og som kjøperen på en eller annen måte må yte vederlag for. Elementene kan deles inn i to kategorier. I den ene gruppen faller elementer som er nødvendige for produksjon og salg av varene (bokstav a til d). Den andre gruppen omfatter ytelser som har med transporten av varene å gjøre (bokstav e og f).
+Tillegg skal baseres på objektive og målbare oppgaver, se § 6-10 annet ledd første punktum. Noen stor praktisk betydning har ikke denne delen av bestemmelsen, men det kan være aktuelt f.eks. hvis det ikke er avklart hvor mye royalty som skal betales. I slike tilfeller er ikke problemstillingen om det skal gjøres tillegg eller ikke, men at verdifastsettelsen må gjøres etter en annen metode enn § 6-3. Eventuelt kan fastsettelsen utsettes etter vareførselsforskriften § 4-1-3.
+Vareførselsloven § 6-10 annet ledd setter en skranke for hva som skal legges til prisen. Tilleggene reguleres altså uttømmende i § 6-10. Det er mange ytelser som har slektskap med § 6-10-elementene, men som ikke skal legges til prisen.
+Les mer om elementene som skal legges til:
+Provisjoner og meglersalær
+Emballasje og innpakning
+Kjøperbidrag (assists)
+Vederlag for immaterialrettigheter
+Utbytte ved videresalg
+Transport- og forsikringskostnader
+Provisjonen og meglersalær
+Provisjoner og meglersalær skal på visse vilkår legges til prisen for varene etter § 6-3 for å komme frem til tollverdien, jf. vareførselsloven § 6-10 første ledd bokstav a nr. 1, jf. vareførselsforskriften § 6-10-1.
+Provisjoner og meglersalær er vederlag for tjenester som vanligvis utføres av mellommenn. Mellommenn knytter kontakt mellom kjøper og selger, og kan opptre i ulike roller. De kan opptre enten på vegne av kjøperen (og da yte bistand ved innkjøpet), eller som en agent for selgeren med sikte på å fremme salget av varene. Mellommannen kan også opptre på mer selvstendig basis, ved å opptre i en slags meglerrolle uten å ha blitt kontaktet på forhånd av en av partene i kjøpet.
+Forutsetningen for at det skal være aktuelt å vurdere tillegg for provisjon etter § 6-10 er at mellommannen handler varene for fremmed regning. Handler han varene for egen regning anses han for å være selger av varene, og hans vederlag blir da prisen for varene. I et slikt tilfelle vil vederlaget inngå i tollverdien som prisen for varene etter § 6-3.
+Handler mellommannen for fremmed regning, blir neste skritt å avklare om vederlaget anses som innkjøpsprovisjon. Bakgrunnen for at innkjøpsprovisjon er unntatt, er at dette er vederlag for arbeid som kjøperen vanligvis utfører selv, og som i et slikt tilfelle ikke vil inngå i prisen for varene. Salgsprovisjon vil motsatt være vederlag for arbeid som selgeren vanligvis utfører, og som han derfor vanligvis kalkulerer inn i prisen for varene.
+Det sentrale spørsmålet er om mellommannen har handlet på vegne av kjøperen. Har han bistått kjøperen, er utgangspunktet at vederlaget er innkjøpsprovisjon. Handler han på vegne av selgeren eller seg selv, blir utgangspunktet det motsatte. Er rollen uklar, for eksempel at mellommannen har hatt en mer selvstendig meklerrolle, kan vederlaget vanskelig karakteriseres som innkjøpsprovisjon.
+Emballasje- og innpakningskostnader
+I de aller fleste tilfeller vil vederlaget for emballasjen være inkludert i varenes pris, og tillegg etter § 6-10 første ledd bokstav a nr. 2 og 3 vil da ikke være aktuelt. Hvis kjøperen har forsynt selgeren med emballasjen, enten direkte eller indirekte (kjøpt og levert fra tredjemann), skal imidlertid verdien av emballasjen legges til.
+Anses emballasjen og de innførte varer tollmessig som én vare (for eksempel øl på flasker), skal verdien av emballasjen legges til prisen for varene etter § 6-3 for å beregne tollverdien. Blir emballasjen ansett som selvstendig vare, må emballasjen behandles som selvstendig vare og tollverdifastsettes individuelt.
+I likhet med kostnadene for emballasje er som regel også innpakking inkludert i varenes pris. Dette kan være selve arbeidet med innpakking og materialer som medgår. Tillegg etter § 6-10 kan likevel være aktuelt hvis en annen enn selgeren har utført og fakturerer kjøperen for innpakningen av varene.
+Kjøperbidrag (assists)
+Hvis kjøperen har bidratt med ytelser til varene som skal innføres, skal disse bidragene på visse vilkår legges til prisen for varene etter § 6-3 for å komme frem til tollverdien, jf. vareførselsloven § 6-10 første ledd bokstav b, jf. vareførselsforskriften § 6-10-2.
+Kjøperbidrag kan leveres vederlagsfritt, til redusert vederlag eller fullt vederlag. Leveres ytelsene som et salg (dvs. fullt vederlag), vil selgeren kalkulere kostnadene inn i prisen han krever, og ytelsen skal derfor ikke legges til etter § 6-10. Tillegg etter § 6-10 er altså bare aktuelt der ytelsene leveres vederlagsfritt eller til redusert vederlag.
+Varer som leveres som kjøperbidrag
+Verdien av varer som leveres skal legges til prisen uansett hvor varene er produsert eller leveres fra. Varene kan deles inn i tre kategorier:
+varer som inngår i de innførte varene
+varer som er brukt i produksjonen av de innførte varene
+varer som er medgått i produksjonen av de innførte varene
+Den første kategorien omfatter materialer (deler og lignende) som inkorporeres i varene, og som således er en del av varene som innføres. Et eksempel er glidelås innmontert i klær. Den andre kategorien gjelder varer som blir benyttet under produksjonen, men som ikke inngår i varene. Typisk er støpeformer og verktøy som er nødvendige for produksjonen, og som produsenten måtte ha skaffet seg på annen måte. Siste kategori er materialer som medgår i produksjonen, det vil si at de blir forbrukt. Typisk gjelder dette væsker og lignende som fordamper eller forbrennes, men også avfall og skrap faller inn under denne kategorien.
+Det er viktig å merke seg at varene som leveres som kjøperbidrag må være brukt i forbindelse med produksjonen eller salget av de varene som innføres. Innsatsmaterialer som ikke benyttes, skal ikke legges til. Disse vil eventuelt legges til ved innførsel av senere innførte varer.
+Selve verdifastsettelsen av kjøperbidragene avhenger av omstendighetene. Har kjøperen kjøpt innsatsmaterialer fra tredjemann og sistnevnte har levert materialene direkte til selgeren, er det prisen som betales til tredjemann som skal legges til. Inngår frakt i denne prisen, skal den være med. Leveres varene EXW og kjøperen (importøren) selv bekoster frakten, skal frakten ikke legges til (§ 6-10 første ledd bokstav e omfatter bare frakt for de varer som innføres, ikke innsatsmaterialer). Har kjøperen selv produsert kjøperbidragene, skal verdien settes til selvkost (eksklusiv fortjeneste). Heller ikke her skal frakt til produsent legges til.
+Tjenester som leveres som kjøperbidrag
+Verdien av tjenester som leveres av kjøperen skal bare legges til såfremt tjenestene er utført andre steder enn i Norge.
+Tjenestene det er snakk om er opplistet i selve bestemmelsen, og er typiske tjenester som utføres før selve produksjonsprosessen av varene igangsettes. Det kan nok i tillegg forekomme at slike tjenester ytes under produksjonen, mens avslutningen av produksjonsprosessen vil være et naturlig tidspunkt for når det ikke er aktuelt å legge til verdien av slike typer tjenester.
+Verdsettelsen av tjenestene går etter de samme prinsippene som for varer levert fra kjøperen. Leveres tjenestene fra tredjemann, vil det være det kjøperen (importøren) betaler som skal legges til. Har kjøperen (importøren) produsert tjenesten selv, vil det være selvkost som skal legges til.
+Fordeling av kjøperbidrag på de produserte varene
+Verdien av varer og tjenester som kjøperen leverer må fordeles på (tilordnes) de varene som produseres. Er det snakk om levering av varer som faktisk inngår i eller medgår i produksjonen av de innførte varene, er det den faktiske andelen som skal legges til (dvs. hvor stor del av innsatsmaterialene som er "brukt"). Skrap og avfall behandles etter samme prinsipp, slik at verdien som er "forsvunnet" fordeles på varene selv om kanskje innsatsvaren i kvantitet er den samme som før bruken. Et eksempel her er salt som etter saltingen kasseres.
+For varer som brukes (§ 6-10 første ledd bokstav b nr. 2) blir situasjonen en annen. Disse varene vil i utgangspunktet være intakt etter produksjonen, f.eks. støpeformer, klisjeer, mastertaper og lignende. Verdien av disse varene må fordeles på de varer som produseres.
+Leverer kjøper en master som det lages 100 kopier av, må verdien av masteren fordeles på alle 100, selv om ikke alle innføres til Norge. Er det på innførselstidspunktet uklart hvor mange kopier som skal lages, kan en løsning være å fordele ut fra de tall som er kjent. Importøren vil da ha tatt med hele masterens verdi i tollverdien, og således "gjort seg ferdig med den".
+For tjenester som leveres blir prinsippet for fordeling tilsvarende som for varer. Gjelder tjenesten en enkelt vare (eller et vareparti), tilordnes hele tjenestens verdi denne varen. Er det snakk om mer løpende tjenesteytelser som er vanskelig å knytte til produksjonen av enkelte varer, må det foretas en fordeling hvor de enkelte produkter tilordnes en forholdsmessig andel.
+Vederlag for immaterielle rettigheter
+Innehavere av immaterielle rettigheter krever som regel et vederlag hvis andre ønsker å benytte rettighetene. Det kan være rett til et varemerke, et patent, et navn osv. Dette vederlaget kalles ofte royalty eller lisensgebyr, og skal i utgangspunktet legges til prisen for varene etter § 6-3 for å beregne tollverdien. Ofte er verdien av slike rettigheter inkludert i prisen for varene, men i noen tilfeller er det aktuelt å betale til en annen enn den som selger varene. Det er (verdien av) vederlaget som kjøperen må betale for rettigheten som eventuelt skal legges til, jf. vareførselsloven § 6-10 første ledd bokstav c, jf. vareførselsforskriften § 6-10-3.
+I tillegg til at vederlaget må være for en immateriell rettighet, er det flere vilkår som må være oppfylt for at vederlaget skal legges til prisen for varene. Vilkårene er kumulative, dvs. at alle må være oppfylt. Vederlaget må:
+ikke være tatt med i prisen
+være knyttet til varene
+være en betingelse for salget
+Vilkår 1 (ikke tatt med i prisen)
+Dette vilkåret har liten praktisk betydning. Er vederlag for immaterielle rettigheter inkludert i prisen for varene, vil sjelden problemstillingen om å legge dem til aktualiseres.
+Vilkår 2 (tilknytningsvilkåret)
+Vederlaget må være knyttet til de varer som innføres. I dette ligger at det må være en sammenheng mellom betalingen for rettighetene og varene. Vederlag for immaterielle rettigheter skal legges til prisen for å skape nøytralitet mellom de tilfeller hvor vederlag for vare og immaterialrettighet kreves under ett, og de tilfeller hvor partene har innrettet seg slik at kravet om vederlag for vare og immaterialrettighet fremmes av to ulike personer, men likevel har en sammenheng. Ofte vil det være åpenbart at kravet om tilknytning er oppfylt, f.eks. når betaling av royalty utløses ved videresalget av de innførte varer.
+Betaling for rettigheter kan også gjelde kjøperens virksomhet som sådan (dvs. at betalingen for rettigheten ikke har noe med de innførte varene å gjøre) eller andre varer (enn de innførte), og i slike tilfeller er ikke vilkåret om tilknytning oppfylt.
+Ettersom vederlaget betales for en immateriell rettighet, kan man stille seg spørsmålet om hva rettigheten gjelder. Gjelder rettigheten for eksempel en patentert produksjonsprosess hos kjøper, gjelder ikke rettigheten de innførte varene.
+Vilkår 3 (betingelsesvilkåret)
+Betalingen av vederlaget for rettighetene må være en betingelse for salget av varene.
+I noen tilfeller kan vilkåret avklares ved å stille spørsmålet om selgeren ville solgt varene uten at kjøperen betalte også for rettighetene til innehaveren av disse. Er svaret nei, er betingelsesvilkåret oppfylt.
+I andre tilfeller er det ikke så enkelt å avgjøre om betingelsesvilkåret er oppfylt. Årsaken kan være at partene rett og slett ikke har regulert en slik situasjon i kontraktene seg imellom. Som regel har kjøperen inngått separate kontrakter med selgeren og rettighetsinnehaver, og så lenge partene forholder seg til det avtalte, kommer ikke spørsmålet på spissen.
+En problemstilling som må vurderes er at rettighetsinnehaveren ikke nødvendigvis har noen kontroll over selgeren av varene. Selv om et varemerke er beskyttet i Norge og i en del andre land, trenger det ikke være slik overalt. Produseres merkevarer i et land hvor lovgivningen ikke beskytter registrerte varemerker (eller myndighetene ikke håndhever loven) er det vanskelig for innehaveren av rettighetene til varemerket å hindre produksjonen. I en slik situasjon kan han vanskelig stille noe vilkår for selve salget, men derimot konsentrere seg om utnyttelsen i kjøperens land. Er han ikke i posisjon til å stille vilkår om betingelse for salget (eller at selgeren gjør det), er ikke betingelsesvilkåret oppfylt.
+Er selgeren og rettighetsinnehaveren i samme konsern, er det sjelden noe behov for å kontraktfeste at selgeren ikke skal selge til kjøperen hvis sistnevnte ikke betaler royalty. Konsernets styring over de enkelte subjekter vil gjøre at salget kan stoppes, selv om det muligens ikke fremgår eksplisitt av kontraktene at royalty er en betingelse for salget. I § 6-10 første ledd bokstav c annet punktum er det lovfestet at vederlaget skal legges til hvis det betales til en person som står i avhengighetsforhold til selgeren. Dette vil bl.a. gjelde i konsernforhold.
+Avhengighetsvilkåret anses også oppfylt hvis selgeren produserer varer på lisens fra rettighetsinnehaveren. Dette fremgår av vareførselsforskriften § 6-10-3 fjerde ledd. Bakgrunnen for regelen er at rettighetsinnehaverens mulighet til å si opp lisensavtalen i realiteten gjør at selgeren står i et avhengighetsforhold til innehaveren av rettigheten.
+Utbytte ved videresalg
+Hvis verdien av utbyttet av et videresalg tilfaller selgeren, skal dette legges til prisen for varene når tollverdien skal regnes ut. Denne bestemmelsen (§ 6-10 første ledd bokstav d) har liten praktisk betydning. Har selgeren satt som vilkår at han skal ha en viss andel av utbyttet av et videresalg, vil dette fort bli ansett som å være en del av prisen etter § 6-3. Prisen skal omfatte alle vederlag selgeren krever for varen.
+Kommer man derimot til at en slik betingelse ikke anses som en del av prisen, kan bestemmelsen komme til anvendelse. Er omfanget av utbyttet ikke kjent (for eksempel fastsatt som prosentandel), kan det vanligvis ikke bli snakk om å fastsette tollverdien etter § 6-3. Dette følger av § 6-3 første ledd bokstav b og c og § 6-10 annet ledd.
+Transport- og forsikringskostnader
+Etter § 6-10 første ledd bokstav e og f skal transportrelaterte kostnader som påløper frem til innførselsstedet inngå i tollverdien. Forutsetningen for at de skal legges til er selvfølgelig at transportkostnader mv. ikke allerede inngår i prisen for varene.
+Transportrelaterte kostnader gjelder for det første alle kostnader til lasting og håndtering av varene på det stedet hvor transporten startes opp. Dette vil typisk være innlasting i skip eller andre transportmidler, og annen håndtering av varene i denne forbindelse. Lagring av varene som ikke har med selve transporten å gjøre skal ikke legges til etter denne bestemmelsen (men slike elementer kan muligens inngå i prisen for varen etter § 6-3).
+For det andre skal kostnader som vedrører selve transporten/frakten av varene inngå. Dette gjelder selve frakten, men også lossing, håndtering, lagring og lasting som har sammenheng med selve transporten av varene. Blir innlastingen forsinket og transporten dermed dyrere (demurrage), skal også dette inngå i tollverdien. "Demurrage" er betalingen for den liggetid som befrakter bruker utover den tillatte tid.
+Kostnader til lossing på innførselsstedet skal ikke tas med. Heller ikke betaling for ventetid i forbindelse med lossingen skal tas med, såfremt denne påløper etter ankomsten til innførselsstedet.
+Kostnader frem til innførselsstedet
+Tollverdien skal bare omfatte de ovennevnte kostnader frem til innførselsstedet. Som innførselssted anses det første stedet hvor varen faktisk kunne blitt losset, jf. vareførselsforskriften § 6-10-4 første ledd. Det er ikke nok med en rent teoretisk mulighet; det må faktisk ha vært praktisk mulig under normale omstendigheter å losse varene. Varene trenger imidlertid ikke faktisk å ha blitt losset.
+For varer som kommer med skip anses det første stedet skipet anløper som innførselsstedet. Det må være en reell mulighet for å losse varene, dvs. at skipet må ha lagt til kai og de nødvendige fasiliteter må være til stede. For varer som transporteres med fly anses det første stedet flyet lander som innførselsstedet. Transporteres varene med jernbane er innførselsstedet det første sted toget stopper, forutsatt at varene kunne ha blitt losset der. For veitransport er det innpasseringsstedet ved grensen som anses som innførselsstedet.
+Omfatter fraktkostnaden både transporten frem til innførselsstedet og videre inn i landet, skal kostnadene fordeles ut fra avstanden før og etter innførselsstedet. Blir annen fordeling sannsynliggjort, kan denne legges til grunn.
+Faktiske fraktkostnader og alminnelig fraktrate
+Det er som hovedregel de faktiske kostnadene til transport og forsikring som skal inngå i tollverdien. Hva som er den alminnelige fraktraten har som regel ikke betydning, det avgjørende er hva som faktisk blir krevd. Det finnes imidlertid en del unntak fra og presiseringer til ovennevnte hovedregel om at det er de faktiske kostnadene som skal inngå i tollverdien.
+For varer som selv er transportmidler (bil, båt, fly) kan alminnelig fraktrate legges til grunn, og det samme er tilfelle hvis importøren frakter varene på sitt eget transportmiddel. Det siste fremgår av vareførselsforskriften § 6-10-4 tredje ledd. For import av personbiler som innføres på egne hjul fra visse områder har Tolletaten fastsatt "sjablongsatser" for frakt.
+Forsikringskostnader
+Forsikringskostnader omfattes også av § 6-10 første ledd bokstav e. Dette gjelder transportrelatert forsikring frem til innførselsstedet. Eventuell fordeling av forsikringskostnader før og etter innførselsstedet gjøres som for frakt.
+Vareførselsloven § 6-10
+(åpner i ny fane)
+Vareførselsforskriften §§ 6-10-1 til 6-10-4
+(åpner i ny fane)
+Forarbeider
+Prop. 237 L (2020-2021) punkt 9.6
+Tidligere bestemmelser og forarbeider
+Tolloven 2007 § 7-17
+Ot.prp. nr. 58 (2006-2007)
+Tolltariffens innledende bestemmelser § 8
+St.prp. nr. 1 (1994-1995)
+Tolltariffens innledende bestemmelser § 5
+St.prp. nr. 1 (1980-1981)
+St.prp. nr. 25 (1979-1980)
+Forskrift 3. desember 1980 nr. 4917 § 9
+Innholdsfortegnelse
+Innledning til Vareførselshåndboken Henvisninger i vareførselshåndboken
+Skriv ut
+Kontakt oss
+Kontakt oss
+Tollsteder
+Nettredaksjonen
+Tips oss anonymt
+Jobb i Tolletaten
+Ledige stillinger(åpner i ny fane)
+Hva gjør vi?
+Om Tolletaten
+Om oss
+Aktuelt fra Tolletaten
+Tolletatens nyhetsbrev
+Nyheter for næringslivet
+Om nettstedet
+Personvern og informasjonskapsler
+Administrer informasjonskapsler
+Driftsstatus (alle systemer)(åpner i ny fane)
+Tilgjengelighet(åpner i ny fane)

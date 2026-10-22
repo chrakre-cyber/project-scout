@@ -7,6 +7,7 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Client } from "pg";
+import { hostedDbConfig, parseHostedTarget } from "../../scripts/hosted/target.mjs";
 
 export const env = {
   url: process.env.SUPABASE_TEST_URL ?? "",
@@ -22,8 +23,20 @@ export function assertLocal() {
   }
 }
 
+/**
+ * HOST-001 (forberedelse; ikke kjørt mot hosted): mål-sperre for testene som kan kjøres mot ETT hosted TESTPROSJEKT (tests/db/auth-gotrue.test.ts og rest-isolation.test.ts).
+ * Standard er uendret: uten SCOUT_HOSTED_TESTS=1 gjelder `assertLocal()` (kun 127.0.0.1/localhost). Hosted-modus er separat og uttrykkelig: mål, bekreftelse, modus og trinn
+ * (SCOUT_HOSTED_STAGE=h3-api) valideres mot samme prosjekt, ellers kastes en feil uten å skrive ut adresser eller nøkler. `assertLocal()` er ikke endret.
+ */
+export function assertTarget() {
+  if (process.env.SCOUT_HOSTED_TESTS !== "1") return assertLocal();
+  if (!env.url || !env.key || !env.dbUrl) throw new Error("Mangler SUPABASE_TEST_* for hosted-modus.");
+  parseHostedTarget(process.env, { stage: "h3-api" });
+}
+
 export async function adminDb(): Promise<Client> {
-  const c = new Client({ connectionString: env.dbUrl });
+  // Hosted-modus (HOST-001): eksplisitt konfigurasjon fra den validerte adressen — alltid TLS med sertifikatkontroll, aldri bare connectionString. Lokalt er uendret.
+  const c = new Client(process.env.SCOUT_HOSTED_TESTS === "1" ? hostedDbConfig(process.env, { stage: "h3-api" }) : { connectionString: env.dbUrl });
   await c.connect();
   return c;
 }
@@ -76,6 +89,8 @@ export function anonClient(): SupabaseClient {
 }
 
 export async function cleanup(db: Client, firmIds: string[], users: TestUser[]) {
+  await db.query("delete from public.dealer_economics_inputs where dealership_id = any($1::uuid[])", [firmIds]);
+  await db.query("delete from public.dealer_economics_profiles where dealership_id = any($1::uuid[])", [firmIds]);
   await db.query("delete from public.search_drafts where dealership_id = any($1::uuid[])", [firmIds]);
   await db.query("delete from public.search_run_results where dealership_id = any($1::uuid[])", [firmIds]);
   await db.query("delete from public.search_runs where dealership_id = any($1::uuid[])", [firmIds]);
@@ -108,6 +123,7 @@ export const READY = {
  * testen aktiverer innlogging med et tilfeldig engangspassord (som databaseeier) og slår den av igjen ved close().
  */
 export async function connectIngest(db: Client): Promise<{ ingest: Client; close: () => Promise<void> }> {
+  if (process.env.SCOUT_HOSTED_TESTS === "1") throw new Error("connectIngest er ikke støttet i hosted-modus.");
   const pw = randomBytes(18).toString("hex");
   await db.query(`alter role scout_ingest login password '${pw}'`);
   const u = new URL(env.dbUrl);

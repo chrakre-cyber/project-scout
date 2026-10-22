@@ -50,6 +50,7 @@ export const DEMO_MODELS: Readonly<Record<string, readonly CatalogModel[]>> = {
   "bmw": [
     { key: "3-serie", label: "3-serie", variants: ["320d xDrive","330e"] },
     { key: "5-serie", label: "5-serie", variants: ["520d xDrive","530e"] },
+    { key: "ix3", label: "iX3", variants: ["iX3 Inspiring","iX3 Impressive"] },   // DEMO-RESULTS-001: demomodell for det syntetiske iX3-søket
     { key: "x3", label: "X3", variants: ["xDrive20d","xDrive30e"] },
     { key: "x5", label: "X5", variants: ["xDrive30d","xDrive45e"] },
   ],

@@ -54,6 +54,7 @@ export function canonicalPermissions(p: ProviderRightsProfile): string {
     storage: { retentionSeconds: p.storage.retentionSeconds, cacheSeconds: p.storage.cacheSeconds, historyRetentionSeconds: p.storage.historyRetentionSeconds, storable: sorted(p.storage.storable) },
     usage: sorted(p.usage), geography: { unrestricted: p.geography.unrestricted, countries: [...p.geography.countries].sort() },
     attribution: p.attribution, deepLinkRequired: p.deepLinkRequired, onRevocation: p.onRevocation, providerName: p.providerName,
+    derivedEconomics: { allow: sorted(p.derivedEconomics.allow), display: p.derivedEconomics.display },
   });
 }
 

@@ -1,0 +1,3 @@
+FEIL J2: skjemaet har introduksjon (tomt = ikke oppgitt), annonsens påstander merket «ikke dokumentasjon», og er helt tomt (ingenting forhåndsutfylt) — 
+FEIL lekkasje: rå SSR-respons (inkl. RSC-nyttelast) for skjemasiden har ingen kandidat-id eller revisjonsavtrykk — kandidat-id (<lengde>:synthetic-demo/…), kilde/annonse-id
+EXIT=1

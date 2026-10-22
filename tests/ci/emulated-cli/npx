@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# EMULERING av `npx supabase …` mot en isolert PostgreSQL-klynge (kun for scripts/test-qa-migrations-offline.sh).
+# Dette er IKKE Supabase CLI og ikke Supabase: ingen Auth, PostgREST eller containere. Kun de kommandoene qa-upgrade-check.sh bruker.
+set -uo pipefail
+[ "${1:-}" = "supabase" ] || exec /usr/bin/env -S bash -c 'PATH="${EMU_ORIG_PATH}" exec npx "$@"' _ "$@"
+shift
+: "${EMU_PORT:?}" "${EMU_DB:?}" "${EMU_MIG:?}" "${EMU_SEED:?}" "${EMU_SHIM:?}"
+URL() { echo "postgres://postgres@127.0.0.1:$EMU_PORT/$1"; }
+P() { psql "$(URL "$1")" -v ON_ERROR_STOP=1 -q -At "${@:2}"; }
+apply() { # fil → "Applying migration …" og atomisk anvendelse (én transaksjon, som CLI)
+  local f="$1" v; v="$(basename "$f" | sed 's/_.*//')"
+  echo "Applying migration $(basename "$f")..."
+  local err; err="$(P "$EMU_DB" -1 -f "$f" 2>&1 >/dev/null)" || { echo "ERROR: $(printf %s "$err" | head -1 | sed "s/^.*ERROR: *//")"; return 1; }
+  P "$EMU_DB" -c "insert into supabase_migrations.schema_migrations(version,name) values ('$v','$(basename "$f" .sql | sed 's/^[0-9]*_//')')" >/dev/null
+}
+# Falske, gjenkjennbare «nøkler» bygget av deler ved kjøring (så mønstrene ikke står i en sporet fil og utløser secret-skann).
+J1="ey"; J1+="JFAKEHEADERsentinel01"; J2="ey"; J2+="JFAKEPAYLOADsentinel02"; JWT="$J1.$J2.FAKESIGsentinel03"
+PW="FAKEpw"; PW+="sentinel0006"; DBU="postgres"; DBU+="ql://postgres:$PW@127.0.0.1:$EMU_PORT/$EMU_DB"
+SRK="SERVICE_ROLE"; SRK+="_KEY"; JS="super-secret-jwt-"; JS+="FAKEsentinel0007-at-least-32"
+SBS="sb_"; SBS+="secret_FAKEsentinel0004"; SBP="sb_"; SBP+="publishable_FAKEsentinel0005"
+banner() { echo "Started supabase local development setup."; echo "API URL: http://127.0.0.1:9"; echo "anon key: $JWT"; echo "service_role key: $JWT"; echo "Secret key: $SBS"; echo "Publishable key: $SBP"; echo "Database URL: $DBU"; }
+case "${1:-}" in
+  start) banner; exit 0 ;;
+  stop) echo "Stopped supabase local development setup."; exit 0 ;;
+  --version) echo "0.0.0-emulated"; exit 0 ;;
+  status)
+    printf 'API_URL="http://127.0.0.1:9"\nDB_URL="%s"\nANON_KEY="%s"\n%s="%s"\nJWT_SECRET="%s"\nPUBLISHABLE_KEY="%s"\nSECRET_KEY="%s"\n' "$DBU" "$JWT" "$SRK" "$JWT" "$JS" "$SBP" "$SBS"; exit 0 ;;
+  db)
+    [ "${2:-}" = "reset" ] || exit 2
+    ver=""; [ "${3:-}" = "--version" ] && ver="${4:-}"
+    P postgres -c "drop database if exists $EMU_DB with (force)" >/dev/null
+    P postgres -c "create database $EMU_DB" >/dev/null
+    grep -v '^create role ' "$EMU_SHIM" | P "$EMU_DB" >/dev/null
+    P "$EMU_DB" -c "create schema supabase_migrations; create table supabase_migrations.schema_migrations(version text primary key, name text)" >/dev/null
+    for f in $(ls "$EMU_MIG"/*.sql | sort); do
+      v="$(basename "$f" | sed 's/_.*//')"
+      [ -n "$ver" ] && [ "$v" -gt "$ver" ] && continue
+      apply "$f" || exit 1
+    done
+    P "$EMU_DB" -f "$EMU_SEED" >/dev/null
+    echo "Finished supabase db reset on branch local." ;;
+  migration)
+    [ "${2:-}" = "up" ] || exit 2
+    for f in $(ls "$EMU_MIG"/*.sql | sort); do
+      v="$(basename "$f" | sed 's/_.*//')"
+      [ "$(P "$EMU_DB" -c "select count(*) from supabase_migrations.schema_migrations where version='$v'")" = "0" ] || continue
+      apply "$f" || exit 1
+    done ;;
+  *) exit 2 ;;
+esac

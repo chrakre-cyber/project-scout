@@ -3,6 +3,10 @@ import Link from "next/link";
 import { MerovoAccount } from "@/components/merovo/MerovoAccount";
 import { MerovoNav } from "@/components/merovo/MerovoNav";
 import { SYNTHETIC_SOURCE_LABEL } from "@/lib/search-labels";
+import { syntheticGeneratedLabel } from "@/server/synthetic-label";
+
+// Merkingen avhenger av serverens miljø (SCOUT_SYNTHETIC_EPOCH) og klokka; aldri forhåndsrendret ved bygging.
+export const dynamic = "force-dynamic";
 
 /**
  * Merovo-skall for hele søkeflyten (SEARCH-005, DEV-006D): eget topplinje, merkevarelinje og fast etikett for syntetiske data.
@@ -10,6 +14,7 @@ import { SYNTHETIC_SOURCE_LABEL } from "@/lib/search-labels";
  * søkeopplevelsen. Etiketten er alltid synlig og er den samme sikkerhetsmeldingen som banneret ga: annonsene er syntetiske.
  */
 export default function SearchesLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const generated = syntheticGeneratedLabel();
   return (
     <div className="merovo-scope min-h-screen bg-cream text-ink">
       <header className="border-b border-sand bg-paper">
@@ -31,6 +36,7 @@ export default function SearchesLayout({ children }: Readonly<{ children: React.
           </div>
           <p role="status" className="rounded-full border border-rust bg-paper px-3 py-1 text-xs font-bold text-rust-dark" data-testid="layout-source-label">
             <span aria-hidden="true">◇ </span>{SYNTHETIC_SOURCE_LABEL}
+            {generated && <span data-testid="layout-generated-label"> · {generated}</span>}
           </p>
         </div>
       </div>

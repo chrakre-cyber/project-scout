@@ -11,7 +11,7 @@
 import type { FormValues } from "./search-form";
 import { emptyFormValues } from "./search-form";
 
-export type ExampleId = "gls" | "demo-bmw";
+export type ExampleId = "gls" | "demo-bmw" | "demo-ix3";
 
 export interface ExampleInfo {
   id: ExampleId;
@@ -51,6 +51,29 @@ function demoBmw(): FormValues {
   };
 }
 
+/**
+ * DEMO-RESULTS-001: demosøk for det kuraterte, SYNTETISKE iX3-resultatsettet (`dix3-*`, se fixtures/demo-ix3.ts). Kravene er bare de demokilden kan oppgi
+ * (merke/modell, drivstoff, girkasse, karosseri, førstegangsregistrering, kilometerstand). Utstyr, interiørfarge og farge er ØNSKER («ønskelig»): demokilden kan
+ * ikke vurdere utstyr/interiør (ukjent for alle), og ønsker påvirker aldri kravstatusen. Hjuldrift og batterihelse er ikke tatt med: hjuldrift ville vært et krav som
+ * kilden ikke kan vurdere (alle biler ville blitt «Må kontrolleres»), og batterihelse finnes ikke i søkemodellen.
+ */
+function demoIx3(): FormValues {
+  return {
+    ...emptyFormValues(),
+    name: "Demo: BMW iX3 elektrisk",
+    brand: "bmw", model: "ix3",
+    regFrom: "2023-03",
+    maxMileageKm: "40 000",
+    fuels: ["electric"], transmissions: ["automatic"], bodyTypes: ["suv"],
+    exteriorColors: ["grey"], exteriorColorsPriority: "nice",
+    interiorColors: ["black"], interiorColorsPriority: "nice",
+    "eq:panoramic_roof": "nice", "eq:camera_360": "nice", "eq:park_front": "nice", "eq:park_rear": "nice",
+    plannedRegistration: "passenger",
+    budgetMax: "450 000", budgetDeviation: "10",
+    "cost.transport.use": "true", "cost.transport.currency": "NOK", "cost.transport.amount": "8 000", "cost.transport.vat": "excl", "cost.transport.included": "true",
+  };
+}
+
 export const EXAMPLES: readonly ExampleInfo[] = [
   {
     id: "gls",
@@ -63,6 +86,12 @@ export const EXAMPLES: readonly ExampleInfo[] = [
     title: "Demosøk som gir treff (BMW 3-serie)",
     note: "Bruker bare opplysninger demokilden har. Her finnes både biler som oppfyller kravene og biler som ikke gjør det, så du kan prøve forklaringene.",
     values: demoBmw,
+  },
+  {
+    id: "demo-ix3",
+    title: "Demosøk BMW iX3 (syntetiske resultater)",
+    note: "Syntetiske demodata — ikke ekte annonser og ikke hentet fra noen leverandør. Kravene er det demokilden kan oppgi; utstyr, interiørfarge og farge er ønsker. Demokilden kan ikke vurdere utstyr og interiør, så de vises som «ikke oppgitt». Her finnes biler som oppfyller kravene, biler som må kontrolleres og biler som ikke oppfyller dem.",
+    values: demoIx3,
   },
 ];
 

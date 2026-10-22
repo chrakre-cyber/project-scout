@@ -1,0 +1,16 @@
+{
+  "workflow": "Supabase lokal kontroll (L1–L3, L7)",
+  "workflow_fil": ".github/workflows/supabase-local.yml (grenens versjon; filen på main er den eldre kopien fra PR #4, uendret)",
+  "kjoring": { "url": "https://github.com/chrakre-cyber/project-scout/actions/runs/39629190050", "run_id": 39629190050, "run_number": 5, "run_attempt": 1, "event": "workflow_dispatch", "utlost_av": "chrakre-cyber", "jobb_id": 119322441247 },
+  "kjort_commit": "c2dd683136181100e010e889412f46fc76151112",
+  "gren": "claude/wonderful-bardeen-yussx3",
+  "kode_mot_reviewet_ca15928": "identisk i alt unntatt DECISIONS.md, MVP_BACKLOG.md og reviews/CI-001-FIX7-review-ca15928.md (kontrollert med git diff før start)",
+  "status": "completed",
+  "konklusjon": "success",
+  "sammendrag_i_loggen": "Samlet: PASS — alle åtte kontroller (L1, L2, L3, L4a, L4b, L5, L6, L7) bestått; L3a hoppet over 6 navngitte tester som dekkes separat av L3b (separat PostgreSQL-klynge, ikke Supabase)",
+  "tidspunkter_utc": { "run_opprettet": "2026-10-21T15:49:41Z", "jobb_startet": "2026-10-21T15:49:50Z", "orkestreringssteg_start": "2026-10-21T15:50:11Z", "orkestreringssteg_slutt": "2026-10-21T16:01:15Z", "jobb_ferdig": "2026-10-21T16:01:17Z" },
+  "varighet_observert": { "run_totalt": "ca. 11 min 36 s", "jobb": "ca. 11 min 27 s", "orkestreringssteg": "ca. 11 min 4 s", "merknad": "Observert for denne ene kjøringen. Ikke en garanti for senere kjøringer." },
+  "runner": { "label": "ubuntu-latest", "image": "ubuntu-24.04 (versjon 20261012.334.1)", "token_rettigheter": "Contents: read, Metadata: read (fra jobbloggens oppstart i tidligere kjøringer; ikke gjengitt fra denne kjøringens loggtopp)" },
+  "artefakter": "ingen",
+  "hentet": "21.10.2026 fra GitHub Actions API (run, jobb, steg) og den offentlige jobblogg; ingen rå statusfiler eller credentials"
+}

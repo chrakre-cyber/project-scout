@@ -1,0 +1,84 @@
+{
+  "files": [
+    {
+      "path": "docs/tax/primarkilder/01_Lov_2026-06-19-41.html",
+      "bytes": 221369,
+      "sha256": "c97728a4e8c9493b87c113dc97b5564864cb5764f34d5a6065431a38516bd2c1"
+    },
+    {
+      "path": "docs/tax/primarkilder/01_Lov_2026-06-19-41.txt",
+      "bytes": 50301,
+      "sha256": "51100d5b7f9d7812d1a3fe6dcd35865dedff1eb0296fd8532f79338f0210a337"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Lov_2025-12-22-121.html",
+      "bytes": 39253,
+      "sha256": "5f5cb145f2252856869c7113576ad2640f83f3dc4e28e2070037dc84de1cf037"
+    },
+    {
+      "path": "docs/tax/primarkilder/02_Lov_2025-12-22-121.txt",
+      "bytes": 6462,
+      "sha256": "646e3d9abcf891d5d5af603b25000ac76e879645422082cddd0709633178b692"
+    },
+    {
+      "path": "docs/tax/primarkilder/04_Deklarasjon_steg_for_steg.html",
+      "bytes": 1119625,
+      "sha256": "6142b5a8a4cabea7d1a2369af65bf2d3f99b8b5b337ce89cd5b5bf7979634f2f"
+    },
+    {
+      "path": "docs/tax/primarkilder/04_Deklarasjon_steg_for_steg.txt",
+      "bytes": 12698,
+      "sha256": "07c618eb06077d23160df462229391332355a59326a470af6e0a2ccec84d03af"
+    },
+    {
+      "path": "docs/tax/primarkilder/05_Mva_melding_FAQ.html",
+      "bytes": 67259,
+      "sha256": "86c26608272f4267b6c713353c182951886f0354121c7a4e256daad84c012743"
+    },
+    {
+      "path": "docs/tax/primarkilder/05_Mva_melding_FAQ.txt",
+      "bytes": 11232,
+      "sha256": "917b856551a216ee3921e6f4fb7b666212353846ccbd8219cbed3b32ef6bf693"
+    },
+    {
+      "path": "docs/tax/primarkilder/06_Mva_melding_hovedside.html",
+      "bytes": 30788,
+      "sha256": "5334c1a4e44da04c64d7a2f346af552601c7fa29241d88b9650a7d3606f2faee"
+    },
+    {
+      "path": "docs/tax/primarkilder/06_Mva_melding_hovedside.txt",
+      "bytes": 3587,
+      "sha256": "84b4efd21bd62df37a325e4571f1001787fb588bac80d5cae20e6b094ed9dc0f"
+    },
+    {
+      "path": "docs/tax/primarkilder/07_Prop1LS_leseversjon.html",
+      "bytes": 1190248,
+      "sha256": "7cbc5004af9368d7916d29b2345af3091a7cc51107c780e206f14ae8ba0c2454"
+    },
+    {
+      "path": "docs/tax/primarkilder/07_Prop1LS_leseversjon.txt",
+      "bytes": 845638,
+      "sha256": "cdf46ace41f2e7d00aac3546d5dd4d1ff449ba2840403ad5ca36b1e29525ea6d"
+    },
+    {
+      "path": "docs/tax/primarkilder/MANIFEST.md",
+      "bytes": 5204,
+      "sha256": "d2a87f26d2f748716a37dde85a09c225a80fd5f0f52daa3bb9d57c710e5d2703"
+    },
+    {
+      "path": "ACQUISITION.json",
+      "bytes": 2626,
+      "sha256": "4f3b5cac83168162177615b0cf5401a3ed27f15f0a8ffb5334c60c7e1ca87ad8"
+    },
+    {
+      "path": "LES-MEG.md",
+      "bytes": 2176,
+      "sha256": "f81c6cd5e339f81a33bcf750833fa1f14b62bb9e3967f30a6dddee0ee422eab3"
+    },
+    {
+      "path": "CLAUDE_INSTRUCTIONS.md",
+      "bytes": 2069,
+      "sha256": "b8bdde8f95a8073f06b0fb7e243957e3ee2e8a19e3d0d83ccca94877d6e09a76"
+    }
+  ]
+}

@@ -8,6 +8,7 @@ import { REGISTERED_PROFILES, SYNTHETIC_RIGHTS_PROFILE, type ProviderRightsProfi
 import type { NormalizedListing } from "@/domain/types";
 import { ResultCard } from "@/components/search/ResultCard";
 import type { MarketplaceProvider } from "@/providers/marketplace";
+import { syntheticRawListings } from "@/providers/marketplace/synthetic/fixtures";
 import { SyntheticMarketplaceProvider } from "@/providers/marketplace/synthetic/provider";
 import { PublicIdKeyMissingError, derivePublicId, profileDigest, publicIdFor, publicIdKey } from "@/server/public-ids";
 import { detailForDisplay, previewForDisplay, previewInternal } from "@/server/search-display";
@@ -24,7 +25,7 @@ const spec = () => {
   return r.spec;
 };
 const providerAt = (at: Date, listings?: NormalizedListing[]): MarketplaceProvider => {
-  if (!listings) return new SyntheticMarketplaceProvider({ now: () => at });
+  if (!listings) return new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => at });
   return {
     source: "synthetic-demo",
     search: async () => ({ items: listings, nextPage: null, sourceTotal: listings.length, truncated: false, fetchedAt: at.toISOString(), rejected: [] }),
@@ -147,7 +148,7 @@ describe("DATA-002C: proveniens (server-internt)", () => {
   it("proveniens og avtrykk når aldri UI: DisplayItem har bare listing/assessment/unknowns og ingen proveniensnøkler", async () => {
     const out = await previewForDisplay(spec(), { provider: providerAt(NOW), now: () => NOW });
     if (!out.ok) throw new Error("kilden feilet");
-    for (const i of out.items) expect(Object.keys(i).sort()).toEqual(["assessment", "listing", "unknowns"]);
+    for (const i of out.items) expect(Object.keys(i).sort()).toEqual(["assessment", "economics", "enrichment", "listing", "media", "unknowns"]); // ECON-005d: + økonomi som ferdig visningsmodell
     const text = json(out.items.slice(0, 30));
     for (const k of ["rightsProfile", "digest", "correlationId", "retrievedAt", "schemaVersion", "sourceExpiresAt", "sourceUrlRef"]) expect(text, k).not.toContain(`"${k}"`);
   });
@@ -208,7 +209,7 @@ describe("DATA-002C: lukket feil ved ugyldig proveniens", () => {
 
   it("gjennom serverlaget: utløpt kildedata (leverandøren leverer gammel hentetid) skjules i liste og blokkeres i detalj — med egen årsak", async () => {
     const stale = new Date("2026-10-01T00:00:00Z"); // 15 dager gammel; retensjon 7 dager
-    const provider = new SyntheticMarketplaceProvider({ now: () => stale });
+    const provider = new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => stale });
     const prof = [SYNTHETIC_RIGHTS_PROFILE];
     const out = await previewForDisplay(spec(), { provider, now: () => NOW, profiles: prof });
     if (!out.ok) throw new Error("kilden feilet");

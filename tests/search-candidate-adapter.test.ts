@@ -61,11 +61,12 @@ const codes = (r: CandidateResult) => (r.ok ? [] : r.issues.map((i) => `${i.path
 // DVAR og testes for seg, slik at tallene om DEV-003-datasettet ikke endres av demoposter.
 const LISTINGS: NormalizedListing[] = [];
 const DVAR: NormalizedListing[] = [];
+const DIX3: NormalizedListing[] = []; // DEMO-RESULTS-001 («dix3-»), testes i demo-results-001.test.ts
 beforeAll(async () => {
   const p = new SyntheticMarketplaceProvider();
   for (let page = 1; page < 50; page++) {
     const r = await p.search(EMPTY_QUERY, { page, pageSize: 100 });
-    for (const l of r.items) (l.sourceListingId.startsWith("dvar-") ? DVAR : LISTINGS).push(l);
+    for (const l of r.items) (l.sourceListingId.startsWith("dix3-") ? DIX3 : l.sourceListingId.startsWith("dvar-") ? DVAR : LISTINGS).push(l);
     expect(r.rejected).toEqual([]);
     if (!r.nextPage) break;
   }
@@ -119,14 +120,14 @@ describe("mappingkontrakt", () => {
     expect(issueCodes(bad((m) => { m.models[0].target = "a99"; }))).toContain("models[0].target:unknown_target");
     expect(issueCodes(bad((m) => { m.models[0].target = "golf"; }))).toContain("models[0].target:unknown_target"); // golf finnes, men ikke under audi
     expect(issueCodes(bad((m) => { m.exteriorColors[0].target = "plaid"; }))).toContain("exteriorColors[0].target:unknown_target");
-    expect(issueCodes(bad((m) => { m.models.push({ brand: "land-rover", source: "Defender", target: "defender" }); }))).toContain("models[9].brand:model_for_unmapped_brand");
-    expect(issueCodes(bad((m) => { m.models.push({ brand: "nope", source: "X", target: "y" }); }))).toContain("models[9].brand:unknown_target");
+    expect(issueCodes(bad((m) => { m.models.push({ brand: "land-rover", source: "Defender", target: "defender" }); }))).toContain(`models[${SYNTHETIC_MAPPING_DATA.models.length}].brand:model_for_unmapped_brand`);
+    expect(issueCodes(bad((m) => { m.models.push({ brand: "nope", source: "X", target: "y" }); }))).toContain(`models[${SYNTHETIC_MAPPING_DATA.models.length}].brand:unknown_target`);
   });
 
   it("kollisjoner etter normalisering avvises (også med like mål), også for modeller under samme merke", () => {
     expect(issueCodes(bad((m) => { m.brands.push({ source: "  AUDI ", target: "audi" }); }))).toContain("brands[6].source:ambiguous_source");
     expect(issueCodes(bad((m) => { m.brands.push({ source: "audi", target: "bmw" }); }))).toContain("brands[6].source:ambiguous_source");
-    expect(issueCodes(bad((m) => { m.models.push({ brand: "audi", source: "q5", target: "q7" }); }))).toContain("models[9].source:ambiguous_source");
+    expect(issueCodes(bad((m) => { m.models.push({ brand: "audi", source: "q5", target: "q7" }); }))).toContain(`models[${SYNTHETIC_MAPPING_DATA.models.length}].source:ambiguous_source`);
     expect(issueCodes(bad((m) => { m.exteriorColors.push({ source: "SVART", target: "grey" }); }))).toContain("exteriorColors[6].source:ambiguous_source");
     expect(issueCodes(bad((m) => { m.exteriorColors.push({ source: "Svärt", target: "black" }); }))).toEqual([]); // ulik bokstav (a + trema) ≠ «Svart»
   });

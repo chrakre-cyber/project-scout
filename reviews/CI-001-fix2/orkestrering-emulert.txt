@@ -1,0 +1,17 @@
+exit-kode fra orkestreringen: 1
+PASS  ingen falsk nøkkel/passord i stdout eller jobbsammendrag
+PASS  ingen JWT-/sb_secret-/tilkoblings-URL-mønster i utskriften
+PASS  rapporten er skrevet (stdout og sammendrag er like)
+PASS  L1 bestått i emuleringen
+PASS  L2 bestått i emuleringen
+PASS  L3a (stakken) FEILET i emuleringen uten Auth/PostgREST
+PASS  L3b rapporteres separat og BESTÅTT (ekte isolert klynge), merket IKKE Supabase
+PASS  L3 samlet regnes IKKE som bestått når L3a feiler, selv om L3b består
+PASS  samlet er IKKE FULLT BESTÅTT og exit-koden er ≠ 0
+PASS  åpne kontroller L4–L6 og hosted er oppført som ÅPEN
+## L1 lokal Supabase fra tom database (start + db reset): BESTÅTT
+## L2 oppgraderingstester (qa:migrations): BESTÅTT
+## L3a DB-suiten mot Supabase-stakken (ekte Auth/PostgREST; test-db.sh): FEILET
+## L3b seks navngitte oppgraderingstester i SEPARAT midlertidig PostgreSQL-klynge (IKKE Supabase): BESTÅTT
+## L3 samlet (L3a + L3b): FEILET
+ORKESTRERING (EMULERT): ALLE KONTROLLER BESTÅTT

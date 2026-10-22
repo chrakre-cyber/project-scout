@@ -1,0 +1,15 @@
+MODUS: EMULATOR (mini-supabase over isolert PostgreSQL) — IKKE Supabase
+HOPP gjenbruk av gammel sesjon etter utlogging avvises (server-side revokering) — emulatoren validerer bare JWT-signatur/utløp og har ingen sesjonsrevokering; krever ekte GoTrue
+OK   anonym: beskyttet side sender bort fra siden til /searches som viser «Logg inn», og ingen sesjonscookie settes
+OK   feil passord og ukjent bruker: samme generelle feilmelding, ingen sesjonscookie, ingen kontoinformasjon
+OK   riktig passord: sendes til /searches og kontoen vises i skallet (e-post og firma)
+OK   sesjonscookie finnes (sb-…-auth-token), Path=/ og SameSite=Lax; passordet ligger ikke i cookien
+OK   sesjonen overlever reload og ny navigasjon (fortsatt innlogget)
+OK   utløpt tid i sesjonen + gyldig refresh-token: sesjonen fornyes (fortsatt innlogget, nytt utløp i fremtiden)
+OK   ødelagt sesjonscookie: behandles som utlogget (beskyttet side nektes, «Logg inn» vises), ingen krasj
+OK   utlogging: sendes til /login og sesjonscookiene er fjernet
+OK   etter utlogging: beskyttet side nektes (anonym landing med «Logg inn»)
+HOPP gjenbruk av gammel sesjon etter utlogging avvises (server-side revokering) — emulatoren validerer bare JWT-signatur/utløp og har ingen sesjonsrevokering; krever ekte GoTrue
+OK   bruker uten firma: kan logge inn, vises som «ikke knyttet til firma», og ser ingen data fra andre firma
+OK   ingen JavaScript-feil i konsollen under hele flyten
+11/12 sjekker OK, 1 HOPPET (regnes IKKE som bestått — delvis dekning) [modus: emulator]

@@ -2,7 +2,7 @@
 // (SEARCH-005) i et miljø uten Docker. Alle datakall kjøres mot en ISOLERT testdatabase som rolle `authenticated` med JWT-claims,
 // så RLS, rettigheter, constraints og triggere er PostgreSQLs egne. Emulatoren validerer IKKE noe på vegne av appen:
 //   * autorisasjon = databasens RLS (emulatoren gir aldri service-role og setter aldri firma);
-//   * den støtter kun tabellene og filterne som er listet under, og avviser alt annet.
+//   * den støtter kun tabellene og filterne som er listet under, og avviser alt annet (ECON-006c la til dealer_economics_inputs/-profiles).
 // Hva dette IKKE beviser: at ekte Supabase Auth/PostgREST oppfører seg likt (GoTrue, JWT-nøkler, PostgREST-feilkoder).
 // Bruk bare mot localhost/127.0.0.1. Passord er tilfeldige engangsverdier laget av testen.
 import { createHmac, randomUUID } from "node:crypto";
@@ -11,7 +11,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 
-const TABLES = new Set(["dealership_members", "search_drafts", "search_agents"]);
+const TABLES = new Set(["dealership_members", "search_drafts", "search_agents", "dealer_economics_inputs", "dealer_economics_profiles"]);
 const IDENT = /^[a-z_][a-z0-9_]{0,40}$/;
 const b64 = (o) => Buffer.from(typeof o === "string" ? o : JSON.stringify(o)).toString("base64url");
 

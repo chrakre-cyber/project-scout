@@ -1,0 +1,46 @@
+migrasjon anvendt: 20261005090000_dev002_tenancy_and_agents.sql
+migrasjon anvendt: 20261006090000_dev004_agent_validation.sql
+migrasjon anvendt: 20261006100000_qa001_fix_active_limit_trigger.sql
+migrasjon anvendt: 20261007090000_dev005_search_runs.sql
+migrasjon anvendt: 20261008090000_dev005b0_rights_retention.sql
+migrasjon anvendt: 20261009090000_dev005b0_rights_visibility.sql
+migrasjon anvendt: 20261016090000_data002b_rights_profile_model.sql
+migrasjon anvendt: 20261016100000_data002c_profile_delete_guard.sql
+migrasjon anvendt: 20261021090000_econ005b_derived_economics_rights.sql
+migrasjon anvendt: 20261022090000_data002d_rights_field_map_validator.sql
+migrasjon anvendt: 20261015090000_search005_search_drafts.sql
+migrasjon anvendt: 20261023090000_econ005c_dealer_economics_inputs.sql
+OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret (eebc35a9915763efc650a615bb7e39b9)
+MODUS: EMULATOR (mini-supabase over isolert PostgreSQL) — IKKE Supabase
+bygger uendret app mot valgt backend (NEXT_PUBLIC_*-verdier legges inn ved bygging; ikke gjenbruk en eldre .next) …
+starter hovedløpet (uendret app, SCOUT_SYNTHETIC_EPOCH=2026-10-21T10:16:13Z) …
+bygger kopi uten registrert rettighetsprofil …
+bygger kopi der rettighetsprofilen bare er et utkast …
+OK   oppsett: tre søk — personbil, uspesifisert og varebil — lagret i firma A
+OK   J5 diesel (fradragsstatus «ukjent»): status = scenarioer, aldri ett enkelt tall; positivt budsjett false
+OK   J5 diesel: kontantbehov (brutto utlegg) er ÉN verdi 830 583 kr, uavhengig av fradragsstatus
+OK   J5 diesel: økonomisk kost = to scenarioer 731 211 kr (hvis fradragsberettiget) og 830 583 kr (hvis ikke) — merket med fradragsstatus
+OK   J5 diesel: scenarioene nevner IKKE elbilfritak (det er en annen usikkerhet)
+OK   J5 diesel: «Hva mangler?» nevner fradragsstatus med lenke til skjemaet og IKKE elbilkvalifisering
+OK   BEV (fradrag KJENT, elbilkvalifisering ukjent): to scenarioer 384 727 kr / 459 727 kr merket med elbilfritak — ikke fradrag
+OK   BEV (fradrag kjent): mangelen er elbilkvalifisering — «kan ikke registreres ennå» — og fradragsstatus mangler IKKE
+OK   BEV med BEGGE ukjente: fire kombinasjoner, alle merket med både elbilfritak og fradragsstatus, alle ulike; positivt false
+OK   BEV med begge ukjente: brutto utlegg vises som «Fra … (scenarier)» (laveste = med elbilfritak), ikke som ett tall, og er ikke merket med fradragsstatus; økonomisk-kost-listen inneholder begge kontantverdiene
+OK   B1 (etter 2026: 2027-01-05): aldri estimat — status not_calculated; positivt false; ingen punktestimat-tall
+OK   B1 (2027-01-05): årsaken «Akseptdatoen ligger utenfor dokumentert periode.» vises, og tolldato er et registrerbart manglende felt med lenke
+OK   B1 (før 2026: 2025-12-31): aldri estimat — status not_calculated; positivt false; ingen punktestimat-tall
+OK   B1 (2025-12-31): årsaken «Akseptdatoen ligger utenfor dokumentert periode.» vises, og tolldato er et registrerbart manglende felt med lenke
+OK   B1 kontroll: samme input med akseptdato i perioden gir «Estimat — ikke validert: 825 247 kr» (så avslaget skyldes datoen)
+OK   ukjent profil (planlagt registrering «uspesifisert»): «Ikke beregnet» med årsak «støttes ikke (bare personbil)», ingen tall
+OK   ukjent profil (planlagt registrering «varebil»): «Ikke beregnet» med årsak «støttes ikke (bare personbil)», ingen tall
+OK   ukjent profil: selv med fullt bekreftet forhandlerinput forblir uspesifisert registrering «Ikke beregnet» (opplysningene kan ikke gjøre en ikke-støttet profil beregnbar)
+OK   ukjent drivlinje: aldri estimat eller scenarioer; drivlinje står som manglende, registrerbart felt med lenke; positivt false
+OK   ukjent rettighetsprofil (ingen profil registrert): resultatlisten viser ingen annonser, ingen økonomi og ingen estimat/nedre grense
+OK   ukjent rettighetsprofil (ingen profil registrert): detaljsiden gir «ikke funnet» — ingen økonomi, ingen skjema, ingen tall
+OK   ukjent rettighetsprofil (ingen profil registrert): forhandlerskjemaet gir «ikke funnet» — ingen økonomi, ingen skjema, ingen tall
+OK   ukjent rettighetsprofil (profilen er bare et utkast (ikke verifisert)): resultatlisten viser ingen annonser, ingen økonomi og ingen estimat/nedre grense
+OK   ukjent rettighetsprofil (profilen er bare et utkast (ikke verifisert)): detaljsiden er blokkert med forklaring — ingen økonomi, ingen skjema, ingen tall
+OK   ukjent rettighetsprofil (profilen er bare et utkast (ikke verifisert)): forhandlerskjemaet er blokkert med forklaring — ingen økonomi, ingen skjema, ingen tall
+OK   ingen JavaScript-feil i konsollen under hele flyten
+
+26/26 sjekker OK [modus: emulator]

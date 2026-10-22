@@ -3511,6 +3511,368 @@
     "T31"
    ],
    "notes": "Datosplitt gruppe b: til og med 2026-08-31 / fra 2026-09-01 (E1X)."
+  },
+  {
+   "id": "C1-GR-20261018-02",
+   "evidenceClass": 1,
+   "classLabel": "uavhengig kontrollert referanse",
+   "title": "Elbil personbil, brukt, registrert i utlandet 01.08.2023, 2 185 kg, pris 350 000 → avgift 16 748",
+   "profileId": "PB-BEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-007",
+    "R-OTA-010",
+    "R-IMP-OTH-001",
+    "R-OTA-014"
+   ],
+   "inputs": {
+    "personbiltype": "Elbil - personbil",
+    "brukt": "Ja",
+    "registrertIUtlandet": "01.08.2023",
+    "innkjøpspris": "350 000 NOK",
+    "egenvekt": "2 185 kg",
+    "alternativBeregning": "ikke utfylt",
+    "norskRegistreringsdato": "2026-10-18 (kalkulatorens dagsdato)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "16748",
+    "unit": "NOK",
+    "rounding": "slik kalkulatoren viste totalen i avgifter (hele kroner); delposter vist med to desimaler"
+   },
+   "requiredToUpgrade": [],
+   "sources": [
+    "T47",
+    "T05",
+    "T07",
+    "T03"
+   ],
+   "independentReference": {
+    "tool": "Skatteetatens importkalkulator (S07; oppgitt av bruker, tittel synlig i EV-inputbildet)",
+    "runDate": "2026-10-18",
+    "runDateProvenance": "user_confirmed",
+    "norwegianRegistrationDateUsed": "2026-10-18 (kalkulatorens automatiske dagsdato; user_confirmed)",
+    "output": "Avgift 16 748,00 (innkjøpspris 350 000,00, mva. 12 500,00, sum 379 248,00); bilder 01_resultat_pris_350000 og 02_input_pris_350000",
+    "files": [
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/02_EV/01_resultat_pris_350000.png",
+      "sha256": "c5b0b890ca64fd372f0d97f72922ce1916497bb694c9e7a3e2ca422c8207101d",
+      "bytes": 59608
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/02_EV/02_input_pris_350000.png",
+      "sha256": "fa4f7906c85055e997761aeff2ee23d36a80347c40fc0a78ae63c9b2845a304e",
+      "bytes": 59385
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/02_EV/03_nedbrytning_pris_300000.png",
+      "sha256": "61fc7f86f67b4d0882dc78e96f40cc5831ac3373a83a90aeb1e17000628a5e44",
+      "bytes": 56858
+     }
+    ],
+    "referenceScope": "explicit_inputs"
+   },
+   "notes": "explicit_inputs: dokumenterer kalkulatorens resultat for disse inputene, ikke bilen. Bare input/resultat-bildene ved oppgitt pris inngår; nedbrytningsbilder med andre priser er separate observasjoner (calculatorObservations). Se docs/tax/golden-runs/2026-10-18/REGISTRERING.md."
+  },
+  {
+   "id": "C1-GR-20261018-03",
+   "evidenceClass": 1,
+   "classLabel": "uavhengig kontrollert referanse",
+   "title": "Diesel personbil, brukt, registrert i utlandet 01.11.2023, 1 976 kg, 179 g/km WLTP, pris 350 000 → avgift 333 723",
+   "profileId": "PB-DIE",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-010",
+    "R-IMP-OTH-001",
+    "R-OTA-014"
+   ],
+   "inputs": {
+    "personbiltype": "Bensin/dieselbil",
+    "brukt": "Ja",
+    "registrertIUtlandet": "01.11.2023",
+    "co2": "Ja, 179 g/km, WLTP",
+    "innkjøpspris": "350 000 NOK",
+    "drivstoff": "Diesel",
+    "egenvekt": "1 976 kg",
+    "alternativBeregning": "ikke utfylt",
+    "norskRegistreringsdato": "2026-10-18 (kalkulatorens dagsdato)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "333723",
+    "unit": "NOK",
+    "rounding": "slik kalkulatoren viste totalen i avgifter (hele kroner); delposter vist med to desimaler"
+   },
+   "requiredToUpgrade": [],
+   "sources": [
+    "T47",
+    "T05",
+    "T07",
+    "T03"
+   ],
+   "independentReference": {
+    "tool": "Skatteetatens importkalkulator (S07; oppgitt av bruker, tittel synlig i EV-inputbildet)",
+    "runDate": "2026-10-18",
+    "runDateProvenance": "user_confirmed",
+    "norwegianRegistrationDateUsed": "2026-10-18 (kalkulatorens automatiske dagsdato; user_confirmed)",
+    "output": "Avgift 333 723,00 (innkjøpspris 350 000,00, mva. 87 500,00, sum 771 223,00); bilder 01_resultat_pris_350000, 02_input_pris_350000 og 03_nedbrytning_pris_350000",
+    "files": [
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/01_resultat_pris_350000.png",
+      "sha256": "5741720423d549572d5449964fff8752d89eeb3159c2e1c5e7b95fc6f676b37b",
+      "bytes": 58507
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/02_input_pris_350000.png",
+      "sha256": "5801f85928a803efbc6d982f36fed896d9b7e1e023d282cdd3df7049f02367f1",
+      "bytes": 42648
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/03_nedbrytning_pris_350000.png",
+      "sha256": "9d44331d14bf5a99e6b244a9dbdf056c8768907e37d7feae4b8c35d59c51efc5",
+      "bytes": 40504
+     }
+    ],
+    "referenceScope": "explicit_inputs"
+   },
+   "notes": "explicit_inputs: dokumenterer kalkulatorens resultat for disse inputene, ikke bilen. Bare input/resultat-bildene ved oppgitt pris inngår; nedbrytningsbilder med andre priser er separate observasjoner (calculatorObservations). Se docs/tax/golden-runs/2026-10-18/REGISTRERING.md."
+  },
+  {
+   "id": "C1-GR-20261018-01",
+   "evidenceClass": 1,
+   "classLabel": "uavhengig kontrollert referanse",
+   "title": "Ladbar hybrid personbil, brukt, registrert i utlandet 01.09.2026, 2 610 kg, 140 g/km WLTP, pris 600 000 → avgift 529 069",
+   "profileId": "PB-PHEV",
+   "ruleIds": [
+    "R-OTA-001",
+    "R-OTA-002",
+    "R-OTA-005",
+    "R-OTA-010",
+    "R-IMP-OTH-001",
+    "R-OTA-014"
+   ],
+   "inputs": {
+    "personbiltype": "Ladbar hybridbil",
+    "brukt": "Ja",
+    "registrertIUtlandet": "01.09.2026",
+    "co2": "Ja, 140 g/km, WLTP",
+    "innkjøpspris": "600 000 NOK",
+    "drivstoff": "Bensin",
+    "egenvekt": "2 610 kg",
+    "alternativBeregning": "ikke utfylt (brukerbekreftet; ikke synlig i bildene)",
+    "norskRegistreringsdato": "2026-10-18 (kalkulatorens dagsdato; brukerbekreftet)"
+   },
+   "expected": {
+    "kind": "value",
+    "value": "529069",
+    "unit": "NOK",
+    "rounding": "slik kalkulatoren viste totalen i avgifter (hele kroner)"
+   },
+   "requiredToUpgrade": [],
+   "sources": [
+    "T47",
+    "T05",
+    "T07",
+    "T03"
+   ],
+   "independentReference": {
+    "tool": "Skatteetatens importkalkulator (S07; oppgitt av bruker, tittel synlig i EV-inputbildet)",
+    "runDate": "2026-10-18",
+    "runDateProvenance": "user_confirmed",
+    "norwegianRegistrationDateUsed": "2026-10-18 (kalkulatorens automatiske dagsdato; user_confirmed)",
+    "output": "Avgift 529 069,00 (innkjøpspris 600 000,00, mva. 150 000,00, sum 1 279 069,00); bilder 01_resultat_pris_600000 og 02_input_pris_600000",
+    "files": [
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/01_resultat_pris_600000.png",
+      "sha256": "c0ce1d9779ef863652bf19593d29472afac510ca182b9d63281fbcc92462fd44",
+      "bytes": 53339
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/02_input_pris_600000.png",
+      "sha256": "f3a48cce0d2262112de0755e5146a3c8ebb06f3aa2cadee740b10ee4f3d8e0d5",
+      "bytes": 42609
+     },
+     {
+      "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/03_nedbrytning_pris_2600000.png",
+      "sha256": "bd1fcf4033bf372f042975e9541464075a69a0c05bf9c76abdefdb3c24347b89",
+      "bytes": 45259
+     }
+    ],
+    "referenceScope": "explicit_inputs",
+    "userConfirmedInputs": [
+     "Steg 11 «Alternativ beregning (valgfritt)» sto tomt i kjøringen ved pris 600 000 (brukerbekreftet 18.10.2026; ikke synlig i bildene)"
+    ],
+    "assumptionNotObserved": "CO₂-målemetode «vektet kombinert» er en motorantakelse; observert input er 140 g/km + «WLTP»"
+   },
+   "notes": "explicit_inputs. Bare input/resultat-bildene ved pris 600 000 inngår; nedbrytningsbildet ved 2 600 000 er en separat observasjon. CO₂-metoden «vektet kombinert» er motorantakelse, ikke observert input. Se docs/tax/golden-runs/2026-10-18/REGISTRERING.md."
   }
- ]
+ ],
+ "calculatorObservations": [
+  {
+   "id": "GR-20261018-01",
+   "label": "PHEV (testetikett Urus)",
+   "referenceScope": "explicit_inputs",
+   "evidenceClass": 1,
+   "profileId": "NO-OTA-2026-A-PB",
+   "tool": "Skatteetatens importkalkulator (oppgitt av bruker)",
+   "runDate": "2026-10-18",
+   "runDateProvenance": "user_confirmed (ikke synlig i bildene)",
+   "runTime": null,
+   "norwegianRegistrationDateUsed": "2026-10-18",
+   "norwegianRegistrationDateProvenance": "user_confirmed: kalkulatoren bruker dagens dato automatisk; feltet kan ikke velges (ikke synlig i bildene)",
+   "observedTotalAvgiftNok": 529069,
+   "priceVersions": [
+    {
+     "priceNok": 600000,
+     "role": "input+resultat",
+     "fullInputDocumented": false,
+     "note": "inputbildet slutter ved egenvekt (steg 10); steg 11 alternativ beregning ikke synlig"
+    },
+    {
+     "priceNok": 2600000,
+     "role": "nedbrytning",
+     "fullInputDocumented": false,
+     "note": "eget inputbilde finnes ikke; ikke anta at bare pris ble endret"
+    }
+   ],
+   "files": [
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/01_resultat_pris_600000.png",
+     "sha256": "c0ce1d9779ef863652bf19593d29472afac510ca182b9d63281fbcc92462fd44",
+     "bytes": 53339
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/02_input_pris_600000.png",
+     "sha256": "f3a48cce0d2262112de0755e5146a3c8ebb06f3aa2cadee740b10ee4f3d8e0d5",
+     "bytes": 42609
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/01_PHEV/03_nedbrytning_pris_2600000.png",
+     "sha256": "bd1fcf4033bf372f042975e9541464075a69a0c05bf9c76abdefdb3c24347b89",
+     "bytes": 45259
+    }
+   ],
+   "engineComparison": "totalen 529 069 stemmer; motoren er ikke kalibrert",
+   "stillMissing": [],
+   "classConclusion": "oppfyller eksisterende klasse 1-krav (referanse-sak C1-GR-20261018-01) etter brukerbekreftelse av steg 11",
+   "notRequiredByGoverningDefinition": [
+    "klokkeslett",
+    "URL/kalkulatorversjon",
+    "bruksfradragsprosent",
+    "teknisk kjøretøydokumentasjon",
+    "fullt input for nedbrytningsbildet ved pris 2 600 000 (separat observasjon)"
+   ],
+   "co2MethodAssumption": "Kalkulatorens input er CO₂ 140 g/km + målemetode «WLTP» (observert). «Vektet kombinert» er en MOTORANTAKELSE (testintensjon), ikke observert input; motoren blokkerer ellers PHEV. Numerisk samsvar gjør den ikke til observert input.",
+   "referenceCaseId": "C1-GR-20261018-01",
+   "userConfirmed": [
+    "steg 11 «Alternativ beregning (valgfritt)» var tomt (18.10.2026)"
+   ]
+  },
+  {
+   "id": "GR-20261018-02",
+   "label": "Elbil (testetikett iX3)",
+   "referenceScope": "explicit_inputs",
+   "evidenceClass": 1,
+   "profileId": "NO-OTA-2026-A-PB",
+   "tool": "Skatteetatens importkalkulator (oppgitt av bruker)",
+   "runDate": "2026-10-18",
+   "runDateProvenance": "user_confirmed (ikke synlig i bildene)",
+   "runTime": null,
+   "norwegianRegistrationDateUsed": "2026-10-18",
+   "norwegianRegistrationDateProvenance": "user_confirmed: kalkulatoren bruker dagens dato automatisk; feltet kan ikke velges (ikke synlig i bildene)",
+   "observedTotalAvgiftNok": 16748,
+   "priceVersions": [
+    {
+     "priceNok": 350000,
+     "role": "input+resultat",
+     "fullInputDocumented": true,
+     "note": "alle syv steg synlige; alternativ beregning uten verdi"
+    },
+    {
+     "priceNok": 300000,
+     "role": "nedbrytning",
+     "fullInputDocumented": false,
+     "note": "eget inputbilde finnes ikke; ikke anta at bare pris ble endret"
+    }
+   ],
+   "files": [
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/02_EV/01_resultat_pris_350000.png",
+     "sha256": "c5b0b890ca64fd372f0d97f72922ce1916497bb694c9e7a3e2ca422c8207101d",
+     "bytes": 59608
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/02_EV/02_input_pris_350000.png",
+     "sha256": "fa4f7906c85055e997761aeff2ee23d36a80347c40fc0a78ae63c9b2845a304e",
+     "bytes": 59385
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/02_EV/03_nedbrytning_pris_300000.png",
+     "sha256": "61fc7f86f67b4d0882dc78e96f40cc5831ac3373a83a90aeb1e17000628a5e44",
+     "bytes": 56858
+    }
+   ],
+   "engineComparison": "totalen 16 748 stemmer; motoren er ikke kalibrert; CO₂ er ikke observert for elbil",
+   "stillMissing": [],
+   "classConclusion": "oppfyller eksisterende klasse 1-krav (referanse-sak C1-GR-20261018-02)",
+   "referenceCaseId": "C1-GR-20261018-02",
+   "notRequiredByGoverningDefinition": [
+    "klokkeslett",
+    "URL/kalkulatorversjon",
+    "bruksfradragsprosent (lenken «Engangsavgiften består av» åpnet)",
+    "teknisk kjøretøydokumentasjon (gjelder bare vehicle_specific)"
+   ]
+  },
+  {
+   "id": "GR-20261018-03",
+   "label": "Diesel (testetikett E 400 d)",
+   "referenceScope": "explicit_inputs",
+   "evidenceClass": 1,
+   "profileId": "NO-OTA-2026-A-PB",
+   "tool": "Skatteetatens importkalkulator (oppgitt av bruker)",
+   "runDate": "2026-10-18",
+   "runDateProvenance": "user_confirmed (ikke synlig i bildene)",
+   "runTime": null,
+   "norwegianRegistrationDateUsed": "2026-10-18",
+   "norwegianRegistrationDateProvenance": "user_confirmed: kalkulatoren bruker dagens dato automatisk; feltet kan ikke velges (ikke synlig i bildene)",
+   "observedTotalAvgiftNok": 333723,
+   "priceVersions": [
+    {
+     "priceNok": 350000,
+     "role": "input+resultat+nedbrytning",
+     "fullInputDocumented": true,
+     "note": "steg 1–10 i inputbildet; steg 11 (uten verdi) i resultatbildet; samme pris i alle tre bilder"
+    }
+   ],
+   "files": [
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/01_resultat_pris_350000.png",
+     "sha256": "5741720423d549572d5449964fff8752d89eeb3159c2e1c5e7b95fc6f676b37b",
+     "bytes": 58507
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/02_input_pris_350000.png",
+     "sha256": "5801f85928a803efbc6d982f36fed896d9b7e1e023d282cdd3df7049f02367f1",
+     "bytes": 42648
+    },
+    {
+     "file": "docs/tax/golden-runs/2026-10-18/03_DIESEL/03_nedbrytning_pris_350000.png",
+     "sha256": "9d44331d14bf5a99e6b244a9dbdf056c8768907e37d7feae4b8c35d59c51efc5",
+     "bytes": 40504
+    }
+   ],
+   "engineComparison": "totalen 333 723 stemmer; motoren er ikke kalibrert",
+   "stillMissing": [],
+   "classConclusion": "oppfyller eksisterende klasse 1-krav (referanse-sak C1-GR-20261018-03)",
+   "referenceCaseId": "C1-GR-20261018-03",
+   "notRequiredByGoverningDefinition": [
+    "klokkeslett",
+    "URL/kalkulatorversjon",
+    "bruksfradragsprosent (lenken «Engangsavgiften består av» åpnet)",
+    "teknisk kjøretøydokumentasjon (gjelder bare vehicle_specific)"
+   ]
+  }
+ ],
+ "calculatorObservationsNote": "Mottatte kalkulatorobservasjoner (18.10.2026) med klassekonklusjon per referanse; klasse 1 er registrert som egne tilfeller (`C1-GR-20261018-01`, `-02`, `-03`) etter eksisterende definisjon, se docs/tax/golden-runs/2026-10-18/REGISTRERING.md §4. Nedbrytningsbilder med andre priser er separate observasjoner. Ingen parametere er godkjent."
 }

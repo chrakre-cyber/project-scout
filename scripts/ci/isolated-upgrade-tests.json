@@ -1,0 +1,26 @@
+[
+ {
+  "file": "tests/db/data002d-field-map.test.ts",
+  "fullName": "DATA-002D: oppgradering fra eldre tilstand gyldige eksisterende rader: migrasjonen går gjennom, radene er byte-for-byte uendret, og `{}` avvises etterpå"
+ },
+ {
+  "file": "tests/db/data002d-field-map.test.ts",
+  "fullName": "DATA-002D: oppgradering fra eldre tilstand ugyldig eksisterende rad (display_fields): migrasjonen STOPPER med presis forklaring, ingenting endres (ingen antatte rettigheter, ingen omgåelse av immutabilitet)"
+ },
+ {
+  "file": "tests/db/data002d-field-map.test.ts",
+  "fullName": "DATA-002D: oppgradering fra eldre tilstand ugyldig eksisterende rad (matching_fields): migrasjonen STOPPER med presis forklaring, ingenting endres (ingen antatte rettigheter, ingen omgåelse av immutabilitet)"
+ },
+ {
+  "file": "tests/db/data002d-field-map.test.ts",
+  "fullName": "DATA-002D: oppgradering fra eldre tilstand ugyldig eksisterende rad (begge): migrasjonen STOPPER med presis forklaring, ingenting endres (ingen antatte rettigheter, ingen omgåelse av immutabilitet)"
+ },
+ {
+  "file": "tests/db/data002d-field-map.test.ts",
+  "fullName": "DATA-002D: oppgradering fra eldre tilstand kartlegging: meldingen nevner bare ugyldige rader (provider@versjon) og skiller display/matching"
+ },
+ {
+  "file": "tests/db/econ005b-rights.test.ts",
+  "fullName": "ECON-005b: oppgradering — eksisterende ikke-syntetiske profiler får ingenting scratch-database bygges til og med DATA-002C, legacy-profiler legges inn, ECON-005b anvendes: bare synthetic-demo v1 får true"
+ }
+]

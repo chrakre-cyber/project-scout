@@ -4,17 +4,22 @@
  * Rå annonse, kandidat, leverandørens annonse-id og `InternalProvenance` forlater aldri denne modulen: proveniens brukes her til å
  * FEILE LUKKET (ukjent/endret/utløpt/trukket profil, utløpte kildedata) og til å lage den opake offentlige id-en.
  */
+import { demoEnrichmentFor, demoMediaFor, type ListingEnrichment, type ListingMedia } from "@/server/demo-media";
 import type { DisplayableListing, DisplayPolicy } from "@/domain/display-policy";
 import { applyDisplayPolicy } from "@/domain/display-policy";
 import { buildProvenance, evaluateProvenance } from "@/domain/provenance";
 import type { InternalProvenance, ProvenanceStatus } from "@/domain/provenance";
 import { REGISTERED_PROFILES, matchingRights, policyForSource, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
-import type { ProviderRightsProfile } from "@/domain/provider-rights";
+import type { ProviderRightsProfile, ResolvedRights } from "@/domain/provider-rights";
+import type { DealerProfileV1, EconomicsView, StoredDealerInput } from "@/domain/search-economics";
 import type { CandidateAssessment, SearchSpec } from "@/domain/search-v2/types";
 import type { NormalizedListing } from "@/domain/types";
 import { EMPTY_QUERY, MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
 import type { MarketplaceProvider } from "@/providers/marketplace";
+import { storedKey } from "./dealer-economics";
+import { toDisplayEconomics, toDisplayEconomicsWithoutContext } from "./economics-view";
 import { PublicIdKeyMissingError, profileDigest, publicIdFor } from "./public-ids";
+import { assessEconomics } from "./search-economics";
 import { assessListing, previewSearch } from "./search-preview";
 import type { PreviewItem, PreviewOutcome } from "./search-preview";
 
@@ -23,6 +28,24 @@ export interface DisplayItem {
   assessment: CandidateAssessment;
   /** Hvilke kandidatfelt kilden ikke kunne oppgi (felt-id + årsakskode). Aldri kildens verdi. */
   unknowns: { field: string; code: string }[];
+  /**
+   * Avledet økonomi (ECON-005d) som ferdig visningsmodell: status, fast etikettnøkkel, beløp som tekst og koder. Passerer rettighetsgrensen (beregnings- og visningsrett,
+   * visningsrett for pris); aldri kjerneresultat, forhandlerinput eller annonseverdier. Gir aldri budsjettutfall; lagres ikke.
+   */
+  economics: EconomicsView;
+  /** DEMO-RESULTS-001: lokale demo-bilder (aldri leverandørmedia); `null` = ingen bilder. */
+  media: ListingMedia | null;
+  /** DEMO-RESULTS-001: demoberiket info (ikke søkekriterier); `null` = ingen. */
+  enrichment: ListingEnrichment | null;
+}
+
+/** Forhandlerkontekst for økonomivisning. Firma og søk kommer fra serverens validerte sesjon/utkast — aldri fra klienten. Lest fra firmabundet lagring av kalleren. */
+export interface EconomicsContext {
+  dealershipId: string;
+  searchId: string;
+  /** Bekreftet forhandlerinput for søket, indeksert med `storedKey(kandidat-id, revisjon)`. */
+  storedInputs: ReadonlyMap<string, StoredDealerInput>;
+  profile: DealerProfileV1 | null;
 }
 
 /** Server-internt: visningsmodell + proveniens. Eksporteres bare for tester og fremtidig lagring; UI får aldri denne typen. */
@@ -49,6 +72,8 @@ export interface DisplayOptions {
   policyFor?: (source: string, now: Date) => DisplayPolicy;
   /** Verdi av SCOUT_PUBLIC_ID_KEY (injiserbar i tester). */
   publicIdKey?: string;
+  /** ECON-005d: forhandlerkontekst. Uten kontekst vises økonomi som «ikke beregnet» (ingen oppslag, ingen tall). */
+  economics?: EconomicsContext;
   correlationId?: string;
 }
 
@@ -58,8 +83,11 @@ function matchingPrepare(profiles: readonly ProviderRightsProfile[], now: () => 
 }
 
 /** Projiserer en rå, vurdert annonse til en visningstrygg modell. Eksportert for tester. */
-export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Date, publicId: string): DisplayItem {
+export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Date, publicId: string, economics: EconomicsView): DisplayItem {
   return {
+    economics,
+    media: demoMediaFor(item.listing),
+    enrichment: demoEnrichmentFor(item.listing),
     listing: applyDisplayPolicy(item.listing, policy, now, { publicId }),
     assessment: item.assessment,
     unknowns: item.meta.explanations.map((e) => ({ field: String(e.field), code: e.code })),
@@ -70,7 +98,7 @@ export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Dat
  * Bygger visningsmodell og proveniens for en vurdert annonse, og evaluerer proveniensen. Gir `null` med årsak hvis annonsen ikke kan vises
  * (ingen profil i kraft, id-nøkkel mangler, endret/utløpt/trukket profil, utløpte kildedata) — feiler lukket.
  */
-function internalItem(item: PreviewItem, o: Required<Pick<DisplayOptions, "profiles">> & DisplayOptions, now: Date): { ok: true; value: InternalItem } | { ok: false; reason: Exclude<ProvenanceStatus, "valid"> } {
+function internalItem(item: PreviewItem, o: Required<Pick<DisplayOptions, "profiles">> & DisplayOptions, now: Date, spec: SearchSpec): { ok: true; value: InternalItem } | { ok: false; reason: Exclude<ProvenanceStatus, "valid"> } {
   const source = item.listing.source;
   const rights = rightsForSource(source, now, o.profiles);
   if (!rights.inForce) return { ok: false, reason: rights.reason === "revoked" ? "rights_revoked" : rights.reason === "expired" ? "rights_expired" : "rights_unknown" };
@@ -84,7 +112,13 @@ function internalItem(item: PreviewItem, o: Required<Pick<DisplayOptions, "profi
   const status = evaluateProvenance(provenance, { profiles: o.profiles, now, digestOf: profileDigest });
   if (status !== "valid") return { ok: false, reason: status };
   const policy = (o.policyFor ?? ((s: string, at: Date) => policyForSource(s, at, o.profiles)))(source, now);
-  return { ok: true, value: { display: toDisplayItem(item, policy, now, publicId), provenance } };
+  // ECON-005d: økonomi vurderes først ETTER at rettigheter og proveniens er gyldige, og vises bare gjennom rettighets- og feltvisningsgrensen.
+  const ec = o.economics;
+  const economics = ec === undefined ? toDisplayEconomicsWithoutContext(rights, policy) : toDisplayEconomics(assessEconomics({
+    dealershipId: ec.dealershipId, searchId: ec.searchId, listing: item.listing, candidate: item.candidate, spec,
+    stored: ec.storedInputs.get(storedKey(item.candidate.id, item.candidate.version)) ?? null, profile: ec.profile, profiles: o.profiles, now,
+  }), policy);
+  return { ok: true, value: { display: toDisplayItem(item, policy, now, publicId, economics), provenance } };
 }
 
 /** Server-internt: som `previewForDisplay`, men med proveniens. UI bruker aldri denne. */
@@ -99,7 +133,7 @@ export async function previewInternal(spec: SearchSpec, opts: DisplayOptions = {
   const items: InternalItem[] = [];
   let withheld = 0;
   for (const i of outcome.items) {
-    const r = internalItem(i, { ...opts, profiles }, t);
+    const r = internalItem(i, { ...opts, profiles }, t, spec);
     if (r.ok) items.push(r.value); else withheld++;
   }
   return { ok: true, items, outcome, withheldByProvenance: withheld };
@@ -146,7 +180,12 @@ async function resolvePublicId(provider: MarketplaceProvider, publicId: string, 
   return null;
 }
 
-export async function detailForDisplay(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DisplayDetailOutcome> {
+/** Server-internt: som `detailForDisplay`, men med kandidatidentiteten og de gjeldende rettighetene (bare til forhandlerinput-flyten; UI får aldri disse). */
+export type DealerTarget =
+  | { kind: "ok"; item: DisplayItem; candidate: { id: string; version: string }; rights: ResolvedRights }
+  | Exclude<DisplayDetailOutcome, { kind: "ok" }>;
+
+export async function resolveDealerTarget(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DealerTarget> {
   const now = opts.now ?? (() => new Date());
   const profiles = opts.profiles ?? REGISTERED_PROFILES;
   const o = { ...opts, profiles };
@@ -161,7 +200,12 @@ export async function detailForDisplay(spec: SearchSpec, publicId: string, opts:
   if (!rights.inForce) return { kind: "blocked", reason: rights.reason === "revoked" ? "rights_revoked" : rights.reason === "expired" ? "rights_expired" : "rights_unknown" };
   const item = assessListing(spec, found.listing, now, matchingPrepare(profiles, now), found.fetchedAt);
   if (!item) return { kind: "not_assessable" };
-  const r = internalItem(item, o, now());
+  const r = internalItem(item, o, now(), spec);
   if (!r.ok) return { kind: "blocked", reason: r.reason };
-  return { kind: "ok", item: r.value.display };
+  return { kind: "ok", item: r.value.display, candidate: { id: item.candidate.id, version: item.candidate.version }, rights };
+}
+
+export async function detailForDisplay(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DisplayDetailOutcome> {
+  const t = await resolveDealerTarget(spec, publicId, opts);
+  return t.kind === "ok" ? { kind: "ok", item: t.item } : t;
 }

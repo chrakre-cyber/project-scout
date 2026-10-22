@@ -1,0 +1,89 @@
+AVLEDET LESEKOPI. Kontroller sitater i HTML-originalen.
+
+Valutakursar - Tolletaten
+Hopp til hovedinnhold
+PRIVATBEDRIFT
+NO
+English
+Norsk
+Deutsch
+MENY
+Hjem
+Verktøy
+Valutakursar
+Valutakursar
+Her finn du Tolletaten sine valutakursar og valutakalkulatoren vår.
+Valutakursane blir oppdaterte og fastsette annakvar tysdag. Dei nye kursane gjeld i to kalenderveker frå og med den tredje påfølgjande torsdagen. Standard ISO 4217. Rubrikk 23 i deklarasjonen.
+Du finn datasett over gjeldane valutakursar i formata XML, XSD og JSON her(åpner i ny fane)
+Du finn datasett med historiske valutakursar i formata XML, XSD og JSON her(åpner i ny fane)
+Du finn også historiske kursar ved å klikke på boksen nedst på sida.
+Valutakalkulator
+Beløp
+ValutaVelg valutaAustralske dollar (AUD)Kanadiske dollar (CAD)Sveitsiske franc (CHF)Kinesiske yuan (CNY)Tsjekkiske koruna (CZK)Danske kroner (DKK)Euro (EUR)Britiske pund (GBP)Hong kong dollar (HKD)Ungarske forint (HUF)Indiske rupees (INR)Japanske yen (JPY)Sørkoreanske won (KRW)Norske kroner (NOK)New zealand dollar (NZD)Pakistansk rupi (PKR)Polske zloty (PLN)Rumenske leu (RON)Svenske kroner (SEK)Singapore dollar (SGD)Thailandsk baht (THB)Amerikanske dollar (USD)Sør-afrika rep. rand (ZAR)
+ValutaValutakodeF.o.m datoT.o.m datoMyntenhetNOK
+Australske dollarAUD15.10.202628.10.202616,677
+Australske dollarAUD29.10.202611.11.202616,671
+Kanadiske dollarCAD15.10.202628.10.202616,711
+Kanadiske dollarCAD29.10.202611.11.202616,707
+Sveitsiske francCHF15.10.202628.10.20261001 142,960
+Sveitsiske francCHF29.10.202611.11.20261001 148,570
+Kinesiske yuanCNY15.10.202628.10.2026100141,670
+Kinesiske yuanCNY29.10.202611.11.2026100142,930
+Tsjekkiske korunaCZK15.10.202628.10.202610044,337
+Tsjekkiske korunaCZK29.10.202611.11.202610043,850
+Danske kronerDKK15.10.202628.10.2026100144,710
+Danske kronerDKK29.10.202611.11.2026100143,090
+EuroEUR15.10.202628.10.2026110,817
+EuroEUR29.10.202611.11.2026110,695
+Britiske pundGBP15.10.202628.10.2026112,609
+Britiske pundGBP29.10.202611.11.2026112,660
+Hong kong dollarHKD15.10.202628.10.202611,211
+Hong kong dollarHKD29.10.202611.11.202611,219
+Ungarske forintHUF15.10.202628.10.20261002,946
+Ungarske forintHUF29.10.202611.11.20261002,929
+Indiske rupeesINR15.10.202628.10.20261009,905
+Indiske rupeesINR29.10.202611.11.20261009,988
+Japanske yenJPY15.10.202628.10.20261006,059
+Japanske yenJPY29.10.202611.11.20261006,031
+Sørkoreanske wonKRW15.10.202628.10.20261000,700
+Sørkoreanske wonKRW29.10.202611.11.20261000,717
+Norske kronerNOK01.01.1993100100,000
+New zealand dollarNZD15.10.202628.10.202615,389
+New zealand dollarNZD29.10.202611.11.202615,356
+Pakistansk rupiPKR15.10.202628.10.20261003,431
+Pakistansk rupiPKR29.10.202611.11.20261003,455
+Polske zlotyPLN15.10.202628.10.202612,473
+Polske zlotyPLN29.10.202611.11.202612,439
+Rumenske leuRON15.10.202628.10.2026100204,930
+Rumenske leuRON29.10.202611.11.2026100200,400
+Svenske kronerSEK15.10.202628.10.202610095,550
+Svenske kronerSEK29.10.202611.11.202610095,530
+Singapore dollarSGD15.10.202628.10.202617,440
+Singapore dollarSGD29.10.202611.11.202617,472
+Thailandsk bahtTHB15.10.202628.10.202610028,320
+Thailandsk bahtTHB29.10.202611.11.202610028,457
+Amerikanske dollarUSD15.10.202628.10.202619,506
+Amerikanske dollarUSD29.10.202611.11.202619,565
+Sør-afrika rep. randZAR15.10.202628.10.202610,580
+Sør-afrika rep. randZAR29.10.202611.11.202610,578
+Finn historiske kursar
+Oppdatert: 14.9.2026
+Skriv ut
+Kontakt oss
+Kontakt oss
+Tollsteder
+Nettredaksjonen
+Tips oss anonymt
+Jobb i Tolletaten
+Ledige stillinger(åpner i ny fane)
+Hva gjør vi?
+Om Tolletaten
+Om oss
+Aktuelt fra Tolletaten
+Tolletatens nyhetsbrev
+Nyheter for næringslivet
+Om nettstedet
+Personvern og informasjonskapsler
+Administrer informasjonskapsler
+Driftsstatus (alle systemer)(åpner i ny fane)
+Tilgjengelighet(åpner i ny fane)

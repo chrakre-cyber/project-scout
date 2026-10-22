@@ -1,0 +1,18 @@
+MODUS: EMULATOR (mini-supabase over isolert PostgreSQL) — IKKE Supabase
+FEIL J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen) — [["dealership_id","search_id","candidate_id","candidate_version","input_schema_version","payload","context"]]
+FEIL alle action-svar (alle brukere og bygg) er fri for kandidat-id-format og revisjonsavtrykk — 10 svar
+FEIL J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen) — dealership_id i kroppen til 13 av 19 skrivekall: POST dealer_economics_inputs [candidate_id,candidate_version,context,dealership_id,input_schema_version,payload,search_id]; POST dealer_economics_inputs [candidate_id,candidate_version,context,dealership_id,input_schema_version,payload,search_id]; POST dealer_econ
+OK   J3 diesel: «Estimat — ikke validert: 830 583 kr» (B-Merovo/fixturekonvensjon), positivt budsjett false
+OK   J3: lagringsmelding vises, og budsjettnotatet er uendret (ikke beregnet)
+OK   J3: to summer (brutto utlegg og økonomisk kostnad) med forklaring av at brutto utlegg ikke nødvendigvis er kontantbetaling ved grensen
+OK   J3: nedbrytningen stemmer med uavhengig utledede referanser (kjøpesum, mva.) og summerer til brutto utlegg
+OK   J3: forutsetninger viser kurs med kilde/dato og «Testkurs/forhandleroppgitt», regler ikke godkjent for validering, og ikke-rådgivning står i tillegg til usikkerhet
+OK   J3: dokumentasjonsdekning er en konkret teller uten score, og annonsepåstand/forhandleroppgitt teller ikke som dokumentert
+OK   J3: ingen positivt budsjettspråk i estimatet
+OK   J3 lagring: én rad bundet til firma A fra sesjon, kun forhandlerinput (ingen avledede tall), kandidat-id/revisjon utledet av serveren
+FEIL J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen) — [["dealership_id","search_id","candidate_id","candidate_version","input_schema_version","payload","context"]]
+OK   J3: ingen rå identitet i detalj-HTML (kandidat-id/revisjon) eller i serverens action-svar
+FEIL alle action-svar (alle brukere og bygg) er fri for kandidat-id-format og revisjonsavtrykk — 10 svar
+FEIL J3: appen sendte aldri dealership_id i skrivekall for forhandlerinput (firma settes av databasen) — dealership_id i kroppen til 13 av 19 skrivekall: POST dealer_economics_inputs [candidate_id,candidate_version,context,dealership_id,input_schema_version,payload,search_id]; POST dealer_economics_inputs [candidate_id,candidate_version,context,dealership_id,input_schema_version,payload,search_id]; POST dealer_econ
+92/95 sjekker OK, 3 FEIL [modus: emulator]
+rc=1

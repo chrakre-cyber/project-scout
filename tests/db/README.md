@@ -17,6 +17,8 @@ Oppsett (brukere med tilfeldige passord, firma, medlemskap) gjøres som database
 | `qa-isolation.test.ts` | QA-001 | Symmetrisk A→B / B→A: embeds, filtertriks, JWT-forfalskning, metadata, RPC/skjema, anon, sesjon |
 | `qa-limit.test.ts` | QA-001 | Batch >10 i ett kall, samtidighet på tvers av klienter/brukere, transaksjonsisolasjon (F1, F2 som `it.fails`) |
 | `qa-validation.test.ts` | QA-001 | Differensialtest domene↔database (400 utkast), NULL-sikkerhet, pengegrensen per felt |
+| `econ005b-rights.test.ts`, `data002d-field-map.test.ts`, `econ005b-empty-map-review.test.ts` | ECON-005b / DATA-002D | Rettigheter for avledet økonomi, total feltkartvalidator (isolert klynge) |
+| `econ005c-dealer-inputs.test.ts` | ECON-005c | Forhandlerinput og firmaprofil: RLS, FK, nøkkel, struktur, TS↔SQL (isolert klynge) |
 | `qa-catalog.test.ts` | QA-001 | Katalogrevisjon: RLS, rettigheter, funksjoner, constraints, triggere, konfig; vakt for fremtidige tabeller |
 
 `it.fails` brukes for åpne funn (se `reviews/QA-001-gate-G1.md`): testen er grønn så lenge funnet er åpent og blir rød når det rettes, da fjernes `.fails`.

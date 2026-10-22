@@ -1,0 +1,12 @@
+      3      × rekkefølgen i kildeteksten: preflightTargets() står før `new Client` og før connectBackend
+      3      × emulatormodus: ikke-lokal eller manglende database avvises også uten DB-kall
+      3      × ekte modus, ugyldig database ⇒ avslag med null kall (ingen new Client, connect eller spørring)
+      3      × ekte modus, ugyldig API ⇒ avslag med null kall (ingen new Client, connect eller spørring)
+      3      × ekte modus, manglende nøkkel ⇒ avslag med null kall (ingen new Client, connect eller spørring)
+      3      × ekte modus, manglende database ⇒ avslag med null kall (ingen new Client, connect eller spørring)
+      3      × ekte modus, manglende API ⇒ avslag med null kall (ingen new Client, connect eller spørring)
+      3      × ekte modus, ikke-lokal database ⇒ avslag med null kall (ingen new Client, connect eller spørring)
+      3      × ekte modus, ikke-lokal API ⇒ avslag med null kall (ingen new Client, connect eller spørring)
+      1 ⎯⎯⎯⎯⎯⎯ Failed Tests 30 ⎯⎯⎯⎯⎯⎯⎯
+      1  Test Files  2 failed (2)
+      1    × L4 rejects remote database before opening a database connection or writing fixtures

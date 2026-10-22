@@ -10,3 +10,7 @@ next-env.d.ts
 !.env.example
 .DS_Store
 npm-debug.log*
+
+# HOST-001: lokale hosted-belegg (fingeravtrykk, tall) og miljøfil — aldri i git
+.hosted/
+.env.hosted.local

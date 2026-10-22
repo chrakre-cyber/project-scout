@@ -1,0 +1,42 @@
+AVLEDET LESEKOPI. Innhold dekodet fra en JSON-streng i original HTML, deretter fra JSON-listen i strengen. Ingen JavaScript er kjørt. Arrayindeksene nedenfor gjelder den indre listen.
+Original: tidligere levert fil 02_Tolletaten_bilimport.html i tilleggskilder-4 (T81-versjon)
+SHA-256: a75ee10dc8f9cf8816d8b86616b0bf3effc1fee9359b8cff2a905bea300d0d4e
+
+[
+  {
+    "arrayIndex": 2602,
+    "text": "Tollverdi og NUF (Norskregistrert utenlandsk foretak)"
+  },
+  {
+    "arrayIndex": 3605,
+    "text": "Fastsettelse av fraktkostnader for varer som innføres på egne hjul/egen kjøl"
+  },
+  {
+    "arrayIndex": 3750,
+    "text": "§ 6-7 Tollverdi fastsatt med utgangspunkt i salgspris i Norge"
+  },
+  {
+    "arrayIndex": 3766,
+    "text": "§ 6-10 Poster som inngår i tollverdien fastsatt etter § 6-3"
+  },
+  {
+    "arrayIndex": 5912,
+    "text": "§ 6-11 Poster som ikke skal inngå i tollverdien fastsatt etter § 6-3"
+  },
+  {
+    "arrayIndex": 11034,
+    "text": "Dersom du frakter bilen selv fra Sverige, Danmark eller Tyskland, kan du bruke fastsatte sjablongsatser for frakt.\n\nSjablongsatser er faste beløp som Tolletaten bruker som standard for fraktkostnader når du importerer kjøretøy – istedenfor at du må dokumentere den faktiske fraktprisen selv.\n"
+  },
+  {
+    "arrayIndex": 11047,
+    "text": "For elbiler: Du betaler bare merverdiavgift hvis bilens pris, frakt- og forsikringskostnadene overstiger 300 000 kroner, og da kun på beløpet som overstiger 300 000 kroner."
+  },
+  {
+    "arrayIndex": 11054,
+    "text": "   Innkjøpspris \n+ Fraktkostnader\n+ Forsikringskostnader fram til norsk grense\n=Tollverdi"
+  },
+  {
+    "arrayIndex": 11068,
+    "text": "Du må betale 25 prosent merverdiavgift for kjøretøy du importerer til Norge. Avgiften blir regnet på grunnlag av tollverdi til Norge."
+  }
+]

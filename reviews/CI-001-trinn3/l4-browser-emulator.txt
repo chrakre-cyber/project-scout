@@ -1,0 +1,29 @@
+migrasjon anvendt: 20261005090000_dev002_tenancy_and_agents.sql
+migrasjon anvendt: 20261006090000_dev004_agent_validation.sql
+migrasjon anvendt: 20261006100000_qa001_fix_active_limit_trigger.sql
+migrasjon anvendt: 20261007090000_dev005_search_runs.sql
+migrasjon anvendt: 20261008090000_dev005b0_rights_retention.sql
+migrasjon anvendt: 20261009090000_dev005b0_rights_visibility.sql
+migrasjon anvendt: 20261016090000_data002b_rights_profile_model.sql
+migrasjon anvendt: 20261016100000_data002c_profile_delete_guard.sql
+migrasjon anvendt: 20261021090000_econ005b_derived_economics_rights.sql
+migrasjon anvendt: 20261022090000_data002d_rights_field_map_validator.sql
+migrasjon anvendt: 20261015090000_search005_search_drafts.sql
+migrasjon anvendt: 20261023090000_econ005c_dealer_economics_inputs.sql
+OPPGRADERING OK: eksisterende agenter, kjøringer, constraints, triggere, policyer, rettigheter og funksjoner er uendret (1e88996208aa91975dc360fca32d7b99)
+MODUS: EMULATOR (mini-supabase over isolert PostgreSQL) — IKKE Supabase
+bygger uendret app mot valgt backend …
+OK   anonym: beskyttet side sender bort fra siden til /searches som viser «Logg inn», og ingen sesjonscookie settes
+OK   feil passord og ukjent bruker: samme generelle feilmelding, ingen sesjonscookie, ingen kontoinformasjon
+OK   riktig passord: sendes til /searches og kontoen vises i skallet (e-post og firma)
+OK   sesjonscookie finnes (sb-…-auth-token), Path=/ og SameSite=Lax; passordet ligger ikke i cookien
+OK   sesjonen overlever reload og ny navigasjon (fortsatt innlogget)
+OK   utløpt tid i sesjonen + gyldig refresh-token: sesjonen fornyes (fortsatt innlogget, nytt utløp i fremtiden)
+OK   ødelagt sesjonscookie: behandles som utlogget (beskyttet side nektes, «Logg inn» vises), ingen krasj
+OK   utlogging: sendes til /login og sesjonscookiene er fjernet
+OK   etter utlogging: beskyttet side nektes (anonym landing med «Logg inn»)
+HOPP gjenbruk av gammel sesjon etter utlogging avvises av GoTrue (sesjonen er revokert server-side) — emulatoren validerer bare JWT-signatur/utløp og har ingen sesjonsrevokering; krever ekte GoTrue
+OK   bruker uten firma: kan logge inn, vises som «ikke knyttet til firma», og ser ingen data fra andre firma
+OK   ingen JavaScript-feil i konsollen under hele flyten
+
+11/12 sjekker OK, 1 HOPPET (regnes IKKE som bestått — delvis dekning) [modus: emulator]

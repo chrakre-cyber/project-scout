@@ -1,6 +1,7 @@
 /** SyntheticMarketplaceProvider: kontrakt, paginering, revisjoner, filtre og feil. */
 import { describe, expect, it } from "vitest";
 import { MarketplaceError, MARKETPLACE_ERROR_CODES } from "@/providers/marketplace/errors";
+import { syntheticRawListings } from "@/providers/marketplace/synthetic/fixtures";
 import { EMPTY_QUERY, SyntheticMarketplaceProvider } from "@/providers/marketplace/synthetic/provider";
 import { fetchAll, raw } from "./helpers";
 
@@ -59,7 +60,7 @@ describe("search og getListing", () => {
   });
 
   it("bruker injisert klokke for fetchedAt", async () => {
-    const p = new SyntheticMarketplaceProvider({ now: () => new Date("2026-10-05T08:00:00Z") });
+    const p = new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => new Date("2026-10-05T08:00:00Z") });
     expect((await p.search(EMPTY_QUERY, {})).fetchedAt).toBe("2026-10-05T08:00:00.000Z");
   });
 });
