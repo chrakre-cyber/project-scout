@@ -277,3 +277,4 @@ Foreslått rekkefølge: SEARCH-001A (lokal skjermforhåndsvisning, feltmodell og
 - 22.10.2026: HOST-001-FIX2 (Windows-kompatibel prosessoppstart uten shell; .gitattributes *.sh eol=lf; selvtest) levert til uavhengig review (`reviews/HOST-001-FIX2-retting.md`). Ikke kjørt på Windows; ingen hosted handling. HOST-001 forblir REVIEW.
 - 22.10.2026: HOST-001-FIX2-review (54bd269) registrert med reviewers faktiske Windows-kontroll (selvtest: alt bestått bortsett fra manglende Git Bash); P3 (testportabilitet) rettet. HOST-001 forblir REVIEW.
 - 22.10.2026: DEMO-RESULTS-001 → REVIEW. Syntetisk iX3-sett (125 annonser totalt); 2113 enhetstester grønne, typecheck, lint. Ingen ekte leverandørdata. Rapport: `reviews/DEMO-RESULTS-001.md`.
+- DEMO-RESULTS-001 runde 2 (22.10.2026): lokale demo-bilder (8 JPEG i `public/demo/vehicles/bmw-ix3/`), galleri og demoberiket info for dix3-001; ikke søkekriterier, ingen provider-media. 2120 tester, build OK; ingen nettleserkontroll.

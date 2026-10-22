@@ -5,6 +5,8 @@ import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { StatusBadge, SyntheticChip } from "@/components/merovo/StatusBadge";
 import { EconomicsNote } from "@/components/search/EconomicsNote";
 import { Explanation } from "@/components/search/Explanation";
+import { DemoEnrichment } from "@/components/search/DemoEnrichment";
+import { ListingGallery } from "@/components/search/ListingGallery";
 import { ListingFacts } from "@/components/search/ListingFacts";
 import { PUBLIC_ID_PATTERN } from "@/domain/display-policy";
 import { fieldValue } from "@/lib/display-text";
@@ -42,7 +44,7 @@ export default async function ListingDetailPage({ params, searchParams }: { para
   }
   if (detail.kind === "not_assessable") return <div className="space-y-3"><p role="alert" className="rounded-lg bg-[#fbeae5] p-3 text-danger">Annonsen kunne ikke vurderes. {back}</p></div>;
 
-  const { listing, assessment, unknowns, economics } = detail.item;
+  const { listing, assessment, unknowns, economics, media, enrichment } = detail.item;
   const status = assessment.vehicle.status;
   const title = listing.title.state === "value"
     ? `${listing.title.value.make} ${listing.title.value.model}${listing.title.value.variant ? ` · ${listing.title.value.variant}` : ""}`
@@ -55,7 +57,9 @@ export default async function ListingDetailPage({ params, searchParams }: { para
         <strong className="text-forest">Kildeannonse</strong> (syntetisk demoannonse) → <strong className="text-forest">Selger</strong> (ikke tilkoblet i demoen).
       </p>
       <div className="grid gap-4 md:grid-cols-[14rem_1fr]">
-        <CarPlaceholder variant="merovo" seed={listing.listingId} bodyType={fieldValue(listing.specs.bodyType)} className="h-44" />
+        {media && media.images.length > 0
+          ? <ListingGallery media={media} />
+          : <CarPlaceholder variant="merovo" seed={listing.listingId} bodyType={fieldValue(listing.specs.bodyType)} className="h-44" />}
         <div className="space-y-2">
           <h1 className="text-3xl font-bold tracking-tight text-forest">{title}</h1>
           <p className="text-sm text-muted">{listing.policy.environment === "synthetic" ? `Syntetisk demoannonse. Ikke en ekte annonse.` : listing.attribution}</p>
@@ -75,6 +79,7 @@ export default async function ListingDetailPage({ params, searchParams }: { para
         <h2 id="facts" className="mb-2 text-lg font-bold">Opplysninger fra annonsen</h2>
         <ListingFacts listing={listing} />
       </section>
+      {enrichment && <DemoEnrichment info={enrichment} />}
       <section className="rounded-2xl border border-sand bg-paper p-4 sm:p-5" aria-labelledby="why">
         <h2 id="why" className="mb-2 text-lg font-bold">Hvorfor {VEHICLE_STATUS_LABEL[status].toLowerCase()}?</h2>
         <Explanation vehicle={assessment.vehicle} />

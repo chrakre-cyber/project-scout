@@ -36,7 +36,7 @@ export const demoIx3RawListings: SyntheticRawListing[] = [
   {
     id: "dix3-001", ...base(1), price: price("36950"),
     vehicle: { ...ix3, variant: "Inspiring", firstRegistration: "2024-03", mileage: { value: 22_000, unit: "KM" }, color: "Grå" },
-    description: `${NOTE} Oppgitt i demoteksten: bakhjulsdrift, svart interiør, panoramatak, 360-kamera, parkeringssensorer foran og bak. Batterihelse 96,3 % (demodata, ikke et søkekriterium).`,
+    description: `${NOTE} Oppgitt i demoteksten: 210 kW (286 hk), 78 kWh batteri, bakhjulsdrift, 1 eier, sophistograu metallic, svart interiør, panoramatak, 360-kamera, parkeringssensorer foran og bak, hengerfeste. Batterihelse 96,3 % (demodata, ikke et søkekriterium).`,
   },
   // 002 — oppfyller kravene; nøyaktig 40 000 km (grensen er «høyst», så akkurat på grensen er oppfylt). Svart utvendig: fargeønsket (grå) er kjent og ikke oppfylt — ønsker utelukker aldri.
   { id: "dix3-002", ...base(2), price: price("34900"), vehicle: { ...ix3, variant: "Inspiring", firstRegistration: "2023-11", mileage: { value: 40_000, unit: "KM" }, color: "Svart" }, description: `${NOTE} Batterihelse 94,1 % (demodata).` },

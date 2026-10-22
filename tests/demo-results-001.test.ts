@@ -2,6 +2,8 @@
  * DEMO-RESULTS-001: det kuraterte syntetiske BMW iX3-resultatsettet. Klassifiseringen skal komme fra evaluatoren (samme vei som søkesiden);
  * testene fester hvilke annonser som havner hvor og hvorfor, og at ukjent forblir ukjent. Alle data er syntetiske demodata.
  */
+import { existsSync, readFileSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { DEMO_CATALOG } from "@/adapters/search-catalog/demo-catalog";
 import { demoIx3RawListings } from "@/providers/marketplace/synthetic/fixtures/demo-ix3";
@@ -12,6 +14,10 @@ import { orderForPresentation } from "@/lib/search-explain";
 import { EXAMPLES } from "@/server/search-examples";
 import { parseSearchFormValues } from "@/server/search-form";
 import { previewSearch } from "@/server/search-preview";
+import { detailForDisplay, previewForDisplay } from "@/server/search-display";
+import { IX3_DEMO_IMAGES } from "@/server/demo-media";
+import { publicIdFor } from "@/server/public-ids";
+import { VEHICLE_STATUS_LABEL as LABEL } from "@/lib/search-labels";
 
 let seq = 0;
 const ids = () => (seq++).toString(16).padStart(12, "0");
@@ -84,5 +90,81 @@ describe("DEMO-RESULTS-001: syntetisk BMW iX3-sett", () => {
   it("iX3-postene endrer ikke øvrige datasett: ingen andre poster er iX3", () => {
     const others = syntheticRawListings.filter((l) => !l.id.startsWith("dix3-"));
     expect(others.some((l) => l.vehicle.model === "iX3")).toBe(false);
+  });
+
+  it("budsjettet i demosøket er 450 000 NOK med 8 000 NOK transport ekskl. mva. som inngår", () => {
+    expect(spec.budget.maxTotalNokMinor).toBe(45_000_000n);
+    expect(spec.budget.costs).toEqual([expect.objectContaining({ kind: "transport", currency: "NOK", amountMinor: 800_000n, vatBasis: "excl", includedInBudget: true })]);
+  });
+});
+
+describe("DEMO-RESULTS-001: lokale demo-assets og berikelse", () => {
+  const ROOT = join(__dirname, "..");
+  const pid = (id: string) => publicIdFor("synthetic-demo", id, "synthetic");
+  const EXPECTED = [
+    "fd2067ac-7084-4171-809f-68ed2478385a", "8f28cf3f-953c-41f9-ae50-35397f3598d5", "d3aa8613-dc57-4661-bd9d-b71244ce70c6", "266b1dd3-7737-42c7-8266-cdd51de47372",
+    "6b7d602a-b44e-4d37-8b20-8e7213f369ca", "0184fcc1-8bd6-4ce6-a766-d91071135c7d", "bace29ac-7d45-4db3-8f3f-cf2128a0b904", "39633f28-0749-4357-88af-14b7fc737e09",
+  ];
+
+  it("resultatkortet for BMW iX3 har hovedbildet som lokal asset; resten av iX3-postene har ingen bilder (ingen gjenbruk)", async () => {
+    const out = await previewForDisplay(spec, { now: () => new Date() });
+    if (!out.ok) throw new Error("feilet");
+    const withMedia = out.items.filter((i) => i.media !== null);
+    expect(withMedia).toHaveLength(1);
+    expect(withMedia[0]!.media!.images[0]!.src).toBe("/demo/vehicles/bmw-ix3/fd2067ac-7084-4171-809f-68ed2478385a.jpg");
+    expect(withMedia[0]!.listing.listingId).toBe(pid("dix3-001"));
+    expect(withMedia[0]!.assessment.vehicle.status).toBe("match"); // fra evaluatoren
+    expect(out.items.filter((i) => i.enrichment !== null)).toHaveLength(1);
+  });
+
+  it("detaljen har galleriet i riktig rekkefølge; alle filer finnes lokalt og er ikke eksterne URL-er", async () => {
+    const d = await detailForDisplay(spec, pid("dix3-001"), { now: () => new Date() });
+    if (d.kind !== "ok") throw new Error(d.kind);
+    const m = d.item.media!;
+    expect(m.origin).toBe("local_demo_asset");
+    expect(m.images.map((i) => i.src)).toEqual(EXPECTED.map((id) => `/demo/vehicles/bmw-ix3/${id}.jpg`));
+    expect(m.images.map((i) => i.group)).toEqual(["exterior", "exterior", "exterior", "exterior", "interior", "interior", "interior", "detail"]);
+    expect(new Set(m.images.map((i) => i.src)).size).toBe(8);
+    for (const i of IX3_DEMO_IMAGES) {
+      expect(i.src).toMatch(/^\/demo\/vehicles\/bmw-ix3\/[0-9a-f-]+\.jpg$/);
+      expect(existsSync(join(ROOT, "public", i.src)), i.src).toBe(true);
+      expect(readFileSync(join(ROOT, "public", i.src)).subarray(0, 2).toString("hex")).toBe("ffd8"); // faktisk JPEG
+      expect(i.alt).toMatch(/^Demobilde/);
+    }
+    expect(d.item.listing.attribution).toBeTruthy(); // eksisterende syntetisk-merking beholdes
+  });
+
+  it("berikelsen (batteristatus 96,3 %, 78 kWh, hengerfeste) vises, men er ikke krav og endrer ikke vurderingen", async () => {
+    const d = await detailForDisplay(spec, pid("dix3-001"), { now: () => new Date() });
+    if (d.kind !== "ok") throw new Error(d.kind);
+    expect(d.item.enrichment).toMatchObject({ origin: "demo_enrichment", batteryHealthPct: 96.3, batteryCapacityKwh: 78, powerHp: 286, owners: 1 });
+    expect(d.item.enrichment!.knownEquipment).toContain("Hengerfeste");
+    // schemaet har ikke hengerfeste/batterihelse: søket endres ikke
+    expect(JSON.stringify(spec, (_k, v) => (typeof v === "bigint" ? v.toString() : v))).not.toMatch(/tow|henger|batter/i);
+    expect(d.item.assessment.vehicle.status).toBe("match");
+    expect(LABEL[d.item.assessment.vehicle.status]).toBe("Oppfyller kravene");
+  });
+
+  it("evaluatoren ser fortsatt utstyr som ukjent (berikelsen når ikke kandidaten): ønskene er «ikke oppgitt»", async () => {
+    const out = await run();
+    const top = out.items.find((i) => idOf(i) === "dix3-001")!;
+    expect(top.candidate.equipment).toBeNull();
+    expect(top.candidate.interiorColor).toBeNull();
+  });
+
+  it("andre annonser enn dix3-001 har ingen berikelse eller bilder", async () => {
+    for (const n of ["002", "004", "007"]) {
+      const d = await detailForDisplay(spec, pid(`dix3-${n}`), { now: () => new Date() });
+      if (d.kind !== "ok") throw new Error(d.kind);
+      expect(d.item.media).toBeNull();
+      expect(d.item.enrichment).toBeNull();
+    }
+  });
+
+  it("ingen live provider-kall: demo-media, galleri og berikelse har ingen nettverk, miljøvariabler eller eksterne adresser", () => {
+    for (const f of ["src/server/demo-media.ts", "src/components/search/ListingGallery.tsx", "src/components/search/DemoEnrichment.tsx"]) {
+      const t = readFileSync(join(ROOT, f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
+      expect(t, f).not.toMatch(/fetch\(|process\.env|https?:\/\/|XMLHttpRequest/i);
+    }
   });
 });

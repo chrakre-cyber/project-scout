@@ -20,7 +20,10 @@ export function ResultCard({ item, draftId, version, expanded = false }: { item:
   return (
     <li className="overflow-hidden rounded-2xl border border-sand bg-paper shadow-sm" data-listing={l.listingId} data-status={status}>
       <div className="grid gap-0 md:grid-cols-[12rem_1fr]">
-        <CarPlaceholder variant="merovo" seed={l.listingId} bodyType={fieldValue(l.specs.bodyType)} className="h-36 md:h-full" />
+        {item.media?.images[0]
+          // eslint-disable-next-line @next/next/no-img-element
+          ? <img src={item.media.images[0].src} alt={item.media.images[0].alt} className="h-36 w-full object-cover md:h-full" data-testid="card-thumb" />
+          : <CarPlaceholder variant="merovo" seed={l.listingId} bodyType={fieldValue(l.specs.bodyType)} className="h-36 md:h-full" />}
         <div className="space-y-3 p-4">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <h3 className="text-xl font-bold tracking-tight text-forest">{title}</h3>

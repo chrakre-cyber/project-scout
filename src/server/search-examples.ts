@@ -69,8 +69,8 @@ function demoIx3(): FormValues {
     interiorColors: ["black"], interiorColorsPriority: "nice",
     "eq:panoramic_roof": "nice", "eq:camera_360": "nice", "eq:park_front": "nice", "eq:park_rear": "nice",
     plannedRegistration: "passenger",
-    budgetMax: "550 000", budgetDeviation: "10",
-    "cost.transport.use": "true", "cost.transport.currency": "EUR", "cost.transport.amount": "", "cost.transport.vat": "", "cost.transport.included": "true",
+    budgetMax: "450 000", budgetDeviation: "10",
+    "cost.transport.use": "true", "cost.transport.currency": "NOK", "cost.transport.amount": "8 000", "cost.transport.vat": "excl", "cost.transport.included": "true",
   };
 }
 

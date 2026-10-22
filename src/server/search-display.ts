@@ -4,6 +4,7 @@
  * Rå annonse, kandidat, leverandørens annonse-id og `InternalProvenance` forlater aldri denne modulen: proveniens brukes her til å
  * FEILE LUKKET (ukjent/endret/utløpt/trukket profil, utløpte kildedata) og til å lage den opake offentlige id-en.
  */
+import { demoEnrichmentFor, demoMediaFor, type ListingEnrichment, type ListingMedia } from "@/server/demo-media";
 import type { DisplayableListing, DisplayPolicy } from "@/domain/display-policy";
 import { applyDisplayPolicy } from "@/domain/display-policy";
 import { buildProvenance, evaluateProvenance } from "@/domain/provenance";
@@ -32,6 +33,10 @@ export interface DisplayItem {
    * visningsrett for pris); aldri kjerneresultat, forhandlerinput eller annonseverdier. Gir aldri budsjettutfall; lagres ikke.
    */
   economics: EconomicsView;
+  /** DEMO-RESULTS-001: lokale demo-bilder (aldri leverandørmedia); `null` = ingen bilder. */
+  media: ListingMedia | null;
+  /** DEMO-RESULTS-001: demoberiket info (ikke søkekriterier); `null` = ingen. */
+  enrichment: ListingEnrichment | null;
 }
 
 /** Forhandlerkontekst for økonomivisning. Firma og søk kommer fra serverens validerte sesjon/utkast — aldri fra klienten. Lest fra firmabundet lagring av kalleren. */
@@ -81,6 +86,8 @@ function matchingPrepare(profiles: readonly ProviderRightsProfile[], now: () => 
 export function toDisplayItem(item: PreviewItem, policy: DisplayPolicy, now: Date, publicId: string, economics: EconomicsView): DisplayItem {
   return {
     economics,
+    media: demoMediaFor(item.listing),
+    enrichment: demoEnrichmentFor(item.listing),
     listing: applyDisplayPolicy(item.listing, policy, now, { publicId }),
     assessment: item.assessment,
     unknowns: item.meta.explanations.map((e) => ({ field: String(e.field), code: e.code })),
