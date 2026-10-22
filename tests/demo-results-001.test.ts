@@ -118,6 +118,17 @@ describe("DEMO-RESULTS-001: lokale demo-assets og berikelse", () => {
     expect(out.items.filter((i) => i.enrichment !== null)).toHaveLength(1);
   });
 
+  it("faktisk runtime-vei (/searches → previewForDisplay → getMarketplaceProvider): 125 av 125 vurderes, og iX3-postene fordeles 3/3/4 av evaluatoren", async () => {
+    const out = await previewForDisplay(spec); // ingen injisert provider: samme vei som resultatsiden
+    if (!out.ok) throw new Error("feilet");
+    expect(out.coverage).toMatchObject({ evaluated: 125, sourceTotal: 125, truncated: false, rejectedBySource: 0, notAdapted: 0, withheldByProvenance: 0 });
+    const modelMatches = out.items.filter((i) => i.assessment.vehicle.criteria.some((c) => c.criterion === "model" && c.status === "fulfilled"));
+    expect(modelMatches).toHaveLength(10);
+    const n = (st: string) => modelMatches.filter((i) => i.assessment.vehicle.status === st).length;
+    expect([n("match"), n("needs_review"), n("excluded")]).toEqual([3, 3, 4]);
+    expect(out.counts).toEqual({ match: 3, needsReview: 3, excluded: 119 }); // de 115 øvrige demoannonsene er uendret og utelukkes av modellkravet
+  });
+
   it("detaljen har galleriet i riktig rekkefølge; alle filer finnes lokalt og er ikke eksterne URL-er", async () => {
     const d = await detailForDisplay(spec, pid("dix3-001"), { now: () => new Date() });
     if (d.kind !== "ok") throw new Error(d.kind);
