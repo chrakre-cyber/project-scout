@@ -1,6 +1,6 @@
 # DEMO-RESULTS-001 — kuratert syntetisk BMW iX3-demosett
 
-**Status:** REVIEW. Alle data er syntetiske demodata; ingen live scraping, ingen leverandørkall, ingen endring i rettighets-/produksjonslogikk.
+**Status:** DONE (22.10.2026, etter Christians beslutning under). Alle data er syntetiske demodata; ingen live scraping, ingen leverandørkall, ingen endring i rettighets-/produksjonslogikk.
 
 ## Avvik fra oppdraget
 Oppdraget refererte til et «eksisterende BMW iX3-demosøk». Repoet hadde bare eksemplene `gls` og `demo-bmw` (3er). Jeg la derfor til eksempelet `demo-ix3` («Demosøk BMW iX3 (syntetiske resultater)») i eksisterende maskineri og noterte avviket i DECISIONS (runde 91). Ingen nye produkter eller kilder.
@@ -48,6 +48,12 @@ Jeg har ikke tilgang til det lagrede søket i din Merovo-database; verifiseringe
 **Minste riktige rettelse (valg for deg):**
 - A (ingen kode): fjern «Bakhjulsdrift» fra det lagrede demosøket (eller bruk `demo-ix3`). Da er 001 «Oppfyller kravene», og RWD vises som demoberiket info.
 - B (egen oppgave, schema-/kildeutvidelse): la den syntetiske kilden oppgi hjuldrift (råfelt, normalisering, kandidatadapter, `driveTrains: true` i kapabiliteter, mapping/revisjon, baseline). Da blir 001 «Oppfyller kravene» med RWD-krav, og de andre iX3-postene må få hjuldrift (noen ikke-RWD) for å gi ærlige utfall. Ikke gjort her.
+
+## Beslutning (Christian, 22.10.2026): alternativ A
+- «Bakhjulsdrift» er **ikke** et krav i BMW iX3-demosøket. Hjuldrift vises fortsatt som demoberiket informasjon på `dix3-001`.
+- Den syntetiske kildemodellen utvides **ikke** med hjuldrift nå. Begrunnelse: RWD er ikke viktig nok i demohistorien til å forsvare utvidelsen; evaluator-input skal ikke endres eller berikes for å få ønsket klassifisering; unknown/null beholdes. Strukturell hjuldrift kan tas inn senere som del av reell provider-mapping hvis datakilden støtter det.
+- Konsekvens: `demo-ix3` (uten RWD-krav) gir 3 «Oppfyller kravene» / 3 «Må kontrolleres» / 4 «Oppfyller ikke kravene», med `dix3-001` øverst. Et lagret søk som likevel setter RWD som krav gir «Må kontrolleres» (verifisert og festet av regresjonstest); det søket må justeres i UI, ikke koden.
+- Ingen kodeendring i denne runden. DONE settes på Christians aksept; ingen kjente blokkere. Merk: en separat uavhengig kodereview av runde 1–2 er ikke registrert som egen fil; akseptert av Christian.
 
 ## Kontroller (faktisk kjørt)
 - `npx vitest run`: 94 filer / 2120 tester grønne (inkl. 13 i `tests/demo-results-001.test.ts`: iX3-resultat, miniatyr, galleri i rekkefølge og filer finnes, berikelse ikke krav, ukjent = null, ingen nettverk i demo-koden).
