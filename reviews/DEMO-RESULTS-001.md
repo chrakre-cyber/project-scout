@@ -35,6 +35,20 @@ Råformatet/kandidatadapteren har ikke utstyr, interiørfarge, hjuldrift eller b
 
 **Ikke gjort:** ingen visuell nettleserkontroll av sidene (kun build og komponent-/datatester).
 
+## Avklaring: «Bakhjulsdrift» som krav i det lagrede UI-søket
+Jeg har ikke tilgang til det lagrede søket i din Merovo-database; verifiseringen bruker samme vei som UI-lagringen (skjema → `parseSearchFormValues` → `specToJson` → JSON → `specFromJson` → `previewSearch`) med `driveTrains: ["rwd"]` lagt på `demo-ix3`-verdiene. Eksempelet `demo-ix3` i koden har ikke hjuldrift som krav; det gjør det lagrede søket ditt.
+
+1. **Sendes kravet inn i evaluatoren? Ja.** `driveTrains` overlever skjema, serialisering og tilbakelesing og blir `must` i `evaluateCandidate` (`evaluation.ts`: `if (r.driveTrains.length) push("driveTrains", "must", …)`). Schemaet har ingen ønskeprioritet for hjuldrift, bare krav. Forhåndsvisningen lister dessuten `driveTrains` under «kilden kan ikke oppgi».
+2. **Klassifisering av `dix3-001`:** kandidatens `driveTrain` er `null` (kilden har ikke feltet; berikelsen leses ikke), så kravet er `unknown / candidate_value_missing`, `unknownMust: ["driveTrains"]`, og status blir **«Må kontrolleres»**. Ukjent krav gir aldri «Oppfyller kravene».
+3. (Gjelder ikke: kravet ignoreres ikke.)
+4. **Med nøyaktig denne spesen havner `dix3-001` IKKE i «Oppfyller kravene».** Resultat for iX3-postene: 001–006 «Må kontrolleres» (001, 002 og 003 fordi hjuldrift er ukjent; 004–006 av egne årsaker), 007–010 «Oppfyller ikke kravene», 0 som oppfyller. Uten RWD-kravet (`demo-ix3` som levert) er resultatet 3/3/4 som tidligere rapportert. Min tidligere rapport var riktig for `demo-ix3` som levert, men gjelder ikke det lagrede søket med RWD-krav — det skulle jeg ha sagt eksplisitt.
+
+**Ingen produktlogikk er endret.** Regresjonstest lagt til i `tests/demo-results-001.test.ts` («søk med Bakhjulsdrift som krav») som fester dette.
+
+**Minste riktige rettelse (valg for deg):**
+- A (ingen kode): fjern «Bakhjulsdrift» fra det lagrede demosøket (eller bruk `demo-ix3`). Da er 001 «Oppfyller kravene», og RWD vises som demoberiket info.
+- B (egen oppgave, schema-/kildeutvidelse): la den syntetiske kilden oppgi hjuldrift (råfelt, normalisering, kandidatadapter, `driveTrains: true` i kapabiliteter, mapping/revisjon, baseline). Da blir 001 «Oppfyller kravene» med RWD-krav, og de andre iX3-postene må få hjuldrift (noen ikke-RWD) for å gi ærlige utfall. Ikke gjort her.
+
 ## Kontroller (faktisk kjørt)
 - `npx vitest run`: 94 filer / 2120 tester grønne (inkl. 13 i `tests/demo-results-001.test.ts`: iX3-resultat, miniatyr, galleri i rekkefølge og filer finnes, berikelse ikke krav, ukjent = null, ingen nettverk i demo-koden).
 - `npx next build`: OK.

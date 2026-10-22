@@ -13,6 +13,7 @@ import { VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { orderForPresentation } from "@/lib/search-explain";
 import { EXAMPLES } from "@/server/search-examples";
 import { parseSearchFormValues } from "@/server/search-form";
+import { specFromJson, specToJson } from "@/domain/search-v2/serialization";
 import { previewSearch } from "@/server/search-preview";
 import { detailForDisplay, previewForDisplay } from "@/server/search-display";
 import { IX3_DEMO_IMAGES } from "@/server/demo-media";
@@ -166,5 +167,34 @@ describe("DEMO-RESULTS-001: lokale demo-assets og berikelse", () => {
       const t = readFileSync(join(ROOT, f), "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/(^|[^:])\/\/.*$/gm, "$1");
       expect(t, f).not.toMatch(/fetch\(|process\.env|https?:\/\/|XMLHttpRequest/i);
     }
+  });
+});
+
+describe("DEMO-RESULTS-001: søk med «Bakhjulsdrift» som krav (slik BMW iX3-søket kan være lagret i UI)", () => {
+  // Samme semantikk som det lagrede søket: skjema → validert spec → lagret JSON → spec lest tilbake → forhåndsvisning.
+  // Hjuldrift er et KRAV (ingen ønskeprioritet i schemaet), og den syntetiske kilden kan ikke oppgi hjuldrift.
+  const stored = () => {
+    const r = parseSearchFormValues({ ...example.values(), driveTrains: ["rwd"] }, DEMO_CATALOG, { newCostId: ids });
+    if (!r.ok || !r.spec) throw new Error(JSON.stringify([r.errors, r.general]));
+    const j = specToJson(r.spec, DEMO_CATALOG);
+    if (!j.ok) throw new Error("kunne ikke serialiseres");
+    const back = specFromJson(JSON.parse(JSON.stringify(j.value)), DEMO_CATALOG);
+    if (!back.ok) throw new Error("kunne ikke leses tilbake");
+    return back.value;
+  };
+
+  it("kravet når evaluatoren; ukjent hjuldrift gir «Må kontrolleres» for dix3-001 (ikke «Oppfyller kravene»), og ingen annonse oppfyller kravene", async () => {
+    const s = stored();
+    expect(s.requirements.driveTrains).toEqual(["rwd"]);
+    const out = await previewSearch(s, new SyntheticMarketplaceProvider());
+    if (!out.ok) throw new Error(out.code);
+    expect(out.sourceCannotSupply).toContain("driveTrains");
+    const top = out.items.find((i) => idOf(i) === "dix3-001")!;
+    expect(top.candidate.driveTrain).toBeNull(); // berikelsen når aldri kandidaten
+    expect(top.assessment.vehicle.status).toBe("needs_review");
+    expect(top.assessment.vehicle.unknownMust).toEqual(["driveTrains"]);
+    expect(top.assessment.vehicle.criteria.find((c) => c.criterion === "driveTrains")).toMatchObject({ priority: "must", status: "unknown", reason: "candidate_value_missing" });
+    expect(out.items.filter((i) => idOf(i).startsWith("dix3-") && i.assessment.vehicle.status === "match")).toEqual([]);
+    expect(out.counts.match).toBe(0);
   });
 });
