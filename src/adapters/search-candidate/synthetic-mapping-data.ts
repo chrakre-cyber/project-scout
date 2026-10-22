@@ -23,6 +23,7 @@ export const SYNTHETIC_MAPPING_DATA: CandidateMappingData = {
     { brand: "audi", source: "A6", target: "a6" },
     { brand: "audi", source: "Q5", target: "q5" },
     { brand: "bmw", source: "3er", target: "3-serie" },
+    { brand: "bmw", source: "iX3", target: "ix3" },
     { brand: "bmw", source: "X3", target: "x3" },
     { brand: "mercedes-benz", source: "C-Klasse", target: "c-klasse" },
     { brand: "mercedes-benz", source: "E-Klasse", target: "e-klasse" },

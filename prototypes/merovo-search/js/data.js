@@ -26,6 +26,7 @@
     bmw: [
       { v: "3-serie", l: "3-serie", variants: ["320d xDrive", "330e"], packages: ["M Sport"] },
       { v: "5-serie", l: "5-serie", variants: ["520d xDrive", "530e"], packages: ["M Sport"] },
+      { v: "ix3", l: "iX3", variants: ["iX3 Inspiring", "iX3 Impressive"], packages: ["M Sport"] },
       { v: "x3", l: "X3", variants: ["xDrive20d", "xDrive30e"], packages: ["M Sport"] },
       { v: "x5", l: "X5", variants: ["xDrive30d", "xDrive45e"], packages: ["M Sport"] },
     ],

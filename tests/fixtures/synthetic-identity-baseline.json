@@ -63,6 +63,76 @@
   "version": "rev1:d47300803c9283eb8120d56118474a83803165b9e14e873156b347c41a36854c"
  },
  {
+  "id": "dix3-001",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-001",
+  "version": "rev1:da0f3cb7b7af246645d330e995af90262daca47eabf5655b5df669ae270f2929"
+ },
+ {
+  "id": "dix3-002",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-002",
+  "version": "rev1:f86c5239b7b534531094d9cf2b2b9e7f61b456f2a5d55e30d33283a9857a8c92"
+ },
+ {
+  "id": "dix3-003",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-003",
+  "version": "rev1:c98712c9d89cbd42ba35e0f0dceac41d6ade83a58466406dd9923434051f3d15"
+ },
+ {
+  "id": "dix3-004",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-004",
+  "version": "rev1:f280cc47c9fe453610c8dee0a995c78d902ace9d8f25ab8cf9cddacd0561e966"
+ },
+ {
+  "id": "dix3-005",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-005",
+  "version": "rev1:46850537c7f85362c50d19ebc5b0fefcbd18718a68f2d2402d5514535a464deb"
+ },
+ {
+  "id": "dix3-006",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-006",
+  "version": "rev1:747a9073fc50e82bd5f47834045a0891b6edbec956375ad73c2231ea45211314"
+ },
+ {
+  "id": "dix3-007",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-007",
+  "version": "rev1:00ac805036898d9f545a7c3fee27938ebb6d730d8d389d354d1fbf17168ce86e"
+ },
+ {
+  "id": "dix3-008",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-008",
+  "version": "rev1:3f5eb8c071bce70fa34e4d1c2ae6ed6f937db0ff687a3c11b21f8f00af40a58f"
+ },
+ {
+  "id": "dix3-009",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-009",
+  "version": "rev1:430f93bf257003a5ff8bc4ebfba149be428b63059acfede0511c56949ab4144b"
+ },
+ {
+  "id": "dix3-010",
+  "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
+  "ok": true,
+  "candidateId": "14:synthetic-demo/dix3-010",
+  "version": "rev1:a053fa931a9e9b3fad559eb6c7f4fe20e76b884e77e9633c469c7a3a10720c5f"
+ },
+ {
   "id": "dvar-001",
   "sourceModifiedAt": "2026-10-05T09:00:00.000Z",
   "ok": true,
