@@ -231,9 +231,11 @@ describe("6. den vanlige forhandlerveien er uendret og autoritativ", () => {
     expect(out.items[0]!.economics).toMatchObject({ status: "not_calculated", reasons: ["no_dealer_context"] });
   });
 
-  it("utløpt observasjon eller avgiftsprofil feiler fortsatt lukket for demoen (ingen foreldet demoestimat)", async () => {
-    const late = new Date("2026-10-30T12:00:00Z"); // observasjonen (12.10.) + 7 dager er passert
-    const all = await items(undefined, late);
+  it("PILOT-003: observasjonsalder utløper ikke den kuraterte demoen, men en utløpt avgiftsprofil feiler fortsatt lukket (ingen foreldet demoestimat)", async () => {
+    const late = new Date("2026-10-30T12:00:00Z"); // observasjonen (12.10.) + 7 dager er passert — demoens egen policy (curated_public_demo_static) gjelder
+    expect(top(await items(undefined, late))).toHaveLength(1);
+    const expiredTax = new Date("2027-01-15T12:00:00Z"); // utenfor avgiftsprofilens dokumenterte periode (slutt 2026-12-31)
+    const all = await items(undefined, expiredTax);
     expect(top(all)).toHaveLength(0);
     const i = all.find((x) => x.economics.status === "not_calculated" && x.listing.title.state === "value" && x.listing.title.value.model === "iX3");
     expect(i).toBeDefined();

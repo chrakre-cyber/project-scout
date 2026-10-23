@@ -51,6 +51,9 @@ Test uavhengige invariants og offisielle grenser; ikke bare kopier samme formel 
 - `tests/synthetic-epoch.test.ts`: epoke ≤ nå uten toleranse (eksakt nåtid ok, +1 s avvist), format, gulv (profil/datasett), vindu 0–48 t, monoton avbildning, uendret innhold/`modifiedAt`, uendret kandidat-id/revisjon mot baseline (`tests/fixtures/synthetic-identity-baseline.json`), uendret retensjon (utløp i [epoke+5 d, epoke+7 d]), fail-lukket ved ugyldig/fremtidig epoke, ingen rullering (ulik klokke, statisk skann).
 - Nettleser (`scripts/test-e2e-econ006.sh`, `…006d.sh`): den uendrede appen med `SCOUT_SYNTHETIC_EPOCH`; negative løp: utløpt epoke, fremtidig epoke, ugyldig format, uten variabel (forventning utledet fra standardepoken). Emulator ≠ Supabase.
 
+## Kuratert demo: gyldighet mot kildealder (PILOT-003)
+- `tests/pilot-003-demo-validity.test.ts`: den kuraterte iX3-demoen har uendret økonomi (484 214 – 559 214 kr) også etter det gamle 7-døgnsvinduet (klokker 23.10.–31.12.2026, ekte pipeline med fornyet epoke); observasjonstiden flyttes ikke; generisk syntetisk annonse, sandbox/leverandør/live og «ser ut som demobilen» beholder kildegrensen (`source_data`); rettighetsprofilens lagringstid uendret; utløpt avgiftsprofil (fra 2027-01-01) feiler lukket; globale friskhetskonstanter uendret og policyen er koblet inn bare i orkestreringen.
+
 ## CI for lokal Supabase (CI-001)
 - `tests/ci-workflow.test.ts` (rammer: kun `workflow_dispatch`, `contents: read`, ingen secrets/actions/artefakter/hosted, ingen lekkasjekommandoer), `tests/ci-sanitize.test.ts`, `tests/ci-evaluate.test.ts` (feil/hoppet over/ikke kjørt ≠ bestått; ingen hemmeligheter i rapport).
 - Emulerte tørrkjøringer uten Docker: `bash scripts/test-qa-migrations-offline.sh` (L2-logikk), `bash scripts/test-ci-orchestrator-offline.sh` (orkestrering). De er IKKE L1–L3/L7 mot ekte Supabase.

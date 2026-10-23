@@ -16,11 +16,10 @@ import { DEALER_INPUT_SCHEMA_VERSION } from "@/domain/search-economics";
 import type { DealerInputV1, StoredDealerInput } from "@/domain/search-economics";
 import type { ResolvedRights } from "@/domain/provider-rights";
 import type { CandidateV2, SearchSpec } from "@/domain/search-v2/types";
-import type { NormalizedListing } from "@/domain/types";
+import { DEMO_VEHICLE, isCuratedDemoVehicle } from "./curated-demo";
 import { bindingFor, confirmationContextFor } from "./search-economics";
 
-/** Den kuraterte demobilen (DEMO-RESULTS-001). */
-export const DEMO_VEHICLE = Object.freeze({ source: "synthetic-demo", sourceListingId: "dix3-001", make: "BMW", model: "iX3", variant: "Inspiring", firstRegistration: { year: 2024, month: 3 }, netPriceEur: "36950" } as const);
+export { DEMO_VEHICLE, isCuratedDemoVehicle };
 
 /**
  * Demokursen: gjenbrukt fra den dokumenterte syntetiske presentasjonsserien (`docs/tax/demo-series.json` → `fxNokPerEur`: «11.50 (SYNTETISK, dato 2026-10-15; ikke Tolletatens kurs)»).
@@ -33,18 +32,6 @@ const FX_LABEL = "Syntetisk demokurs (docs/tax/demo-series.json) — ikke en mar
 export const DEMO_DEALERSHIP_ID = "demo-fixture";
 export const DEMO_SEARCH_ID = "demo-fixture";
 export const DEMO_CONFIRMED_BY = "demo-fixture";
-
-/**
- * Er dette den kuraterte syntetiske demobilen, og kan den få demoforutsetninger? Strengt og lukket: kilde, proveniens, miljø, id OG at annonsens fakta stemmer med forutsetningene.
- */
-export function isCuratedDemoVehicle(listing: NormalizedListing, rights: ResolvedRights): boolean {
-  if (!rights.inForce || rights.profile.environment !== "synthetic" || rights.profile.providerId !== DEMO_VEHICLE.source) return false;
-  if (listing.source !== DEMO_VEHICLE.source || listing.sourceListingId !== DEMO_VEHICLE.sourceListingId || listing.provenance.kind !== "synthetic") return false;
-  const p = listing.price, s = listing.specs, fr = s.firstRegistration;
-  if (p === null || p.stated.currency !== "EUR" || p.stated.amount !== DEMO_VEHICLE.netPriceEur || p.basis !== "net" || !p.basisEvidence) return false;
-  if (s.make !== DEMO_VEHICLE.make || s.model !== DEMO_VEHICLE.model || s.variant !== DEMO_VEHICLE.variant || s.fuel !== "electric") return false;
-  return fr !== null && fr.precision === "month" && fr.year === DEMO_VEHICLE.firstRegistration.year && fr.month === DEMO_VEHICLE.firstRegistration.month;
-}
 
 const day = (d: Date): string => d.toISOString().slice(0, 10);
 const plusDays = (d: Date, n: number): string => day(new Date(d.getTime() + n * 86_400_000));
