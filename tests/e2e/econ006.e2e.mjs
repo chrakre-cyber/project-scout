@@ -155,7 +155,13 @@ async function econ(page) {
   const el = page.locator('[data-testid="economics"]').first();
   await el.waitFor({ timeout: 20000 });
   const attrs = await el.evaluate((e) => ({ status: e.getAttribute("data-economics-status"), label: e.getAttribute("data-economics-label"), positive: e.getAttribute("data-positive-budget") }));
-  const headline = nb(await page.locator('[data-testid="economics-headline"]').first().innerText().catch(() => ""));
+  // PILOT-004A: sammendraget er den primære økonomiflaten; den gamle overskriften («Estimat — ikke validert: X») er fjernet fra detaljen. «headline» utledes nå av sammendraget: «Estimat: <total>».
+  let headline = nb(await page.locator('[data-testid="economics-headline"]').first().innerText().catch(() => ""));
+  if (headline === "") {
+    const acq = await page.locator('[data-testid="acq-summary"]').first().getAttribute("data-acq-state").catch(() => null);
+    const total = acq === "estimate" || acq === "partial" ? nb(await page.locator('[data-testid="acq-total"]').first().innerText()) : "";
+    headline = acq === "estimate" ? `Estimat: ${total}` : acq === "partial" ? `Minst ${total} (ufullstendig)` : ""; // delsum ⇔ nedre grense (samme tall, samme betydning)
+  }
   return { ...attrs, headline, text: nb(await el.innerText()) };
 }
 const dbInputs = async (firm) => (await db.query("select * from public.dealer_economics_inputs where dealership_id=$1 order by created_at", [firm])).rows;
@@ -275,15 +281,16 @@ try {
   const exD = expected("diesel");
   await saveForm(pA, fullValues("diesel"));
   e = await econ(pA);
-  check(`J3 diesel: «Estimat — ikke validert: ${nok(exD.cash)}» (B-Merovo/fixturekonvensjon), positivt budsjett false`, e.status === "estimate" && e.label === "estimate_not_validated" && e.positive === "false" && e.headline === `Estimat — ikke validert: ${nok(exD.cash)}`, `${e.status} | ${e.headline}`);
+  check(`J3 diesel: «Estimat — ikke validert: ${nok(exD.cash)}» (B-Merovo/fixturekonvensjon), positivt budsjett false`, e.status === "estimate" && e.label === "estimate_not_validated" && e.positive === "false" && e.headline === `Estimat: ${nok(exD.cash)}`, `${e.status} | ${e.headline}`);
   { // ECON-003-2: når et beløp vises, må notisen ikke påstå «innkjøpskostnad ikke beregnet»; budsjettvurderingen er fortsatt ikke gjort
     const note = await pA.locator('[data-testid="budget-note"]').innerText();
     // Sjekknavnet er en CI-identitet (tests/ci-e2e-producers) og er beholdt uendret; betingelsen er oppdatert til den nye, ikke-motstridende notisen.
     check("J3: lagringsmelding vises, og budsjettnotatet er uendret (ikke beregnet)", (await pA.locator('[data-testid="econ-saved"]').count()) === 1 && note.includes("Budsjettvurdering er ikke gjort") && !note.includes("Innkjøpskostnad til Norge er ikke beregnet"));
   }
   if (e.status !== "estimate") console.error("J3 DEBUG:", e.text.slice(0, 1500));
-  const sums = nb(await pA.locator('[data-testid="economics-sums"]').innerText({ timeout: 3000 }).catch(() => ""));
-  check("J3: to summer (brutto utlegg og økonomisk kostnad) med forklaring av at brutto utlegg ikke nødvendigvis er kontantbetaling ved grensen", sums.includes(nok(exD.cash)) && /ikke nødvendigvis/i.test(await pA.locator('[data-testid="economics-gross-explain"]').innerText()) && (await pA.locator('[data-testid="economics-cost-explain"]').count()) === 1);
+  // PILOT-004A: totalen står én gang (sammendraget); forklaringen om kontantbetaling beholdes; «kostnad etter mva.-fradrag» vises bare når den avviker fra totalen.
+  const acqTotal = nb(await pA.locator('[data-testid="acq-total"]').first().innerText({ timeout: 3000 }).catch(() => ""));
+  check("J3: to summer (brutto utlegg og økonomisk kostnad) med forklaring av at brutto utlegg ikke nødvendigvis er kontantbetaling ved grensen", acqTotal.includes(nok(exD.cash)) && /ikke nødvendigvis/i.test(await pA.locator('[data-testid="economics-gross-explain"]').innerText()) && (await pA.locator('[data-testid="economics-cost-explain"]').count()) <= 1);
   check("J3: nedbrytningen stemmer med uavhengig utledede referanser (kjøpesum, mva.) og summerer til brutto utlegg",
     num(await rowNok(pA, "purchase")) === exD.purchase && num(await rowNok(pA, "import_vat")) === exD.vat
     && num(await rowNok(pA, "transport_to_border")) === BigInt(TRANSPORT_NOK)
@@ -292,7 +299,7 @@ try {
     JSON.stringify({ p: await rowNok(pA, "purchase"), v: await rowNok(pA, "import_vat") }));
   const ass = nb(await pA.locator('[data-testid="economics-assumptions"]').innerText());
   check("J3: forutsetninger viser kurs med kilde/dato og «Testkurs/forhandleroppgitt», regler ikke godkjent for validering, og ikke-rådgivning står i tillegg til usikkerhet",
-    ass.includes("E2E-testkilde") && /ikke godkjent/i.test(await pA.locator('[data-testid="economics-assumptions"]').innerText()) && (await pA.locator('[data-testid="economics-uncertainty"]').count()) === 1 && (await pA.locator('[data-testid="economics-not-advice"]').count()) === 1);
+    ass.includes("E2E-testkilde") && /må kontrolleres før kjøp/i.test(await pA.locator('[data-testid="economics-assumptions"]').innerText()) && (await pA.locator('[data-testid="economics-uncertainty"]').count()) === 1 && (await pA.locator('[data-testid="economics-not-advice"]').count()) === 1);
   check("J3: dokumentasjonsdekning er en konkret teller uten score, og annonsepåstand/forhandleroppgitt teller ikke som dokumentert", /0 av \d+/.test(nb(await pA.locator('[data-testid="economics-coverage"]').innerText())) && !/\d\s?%/.test(nb(await pA.locator('[data-testid="economics-basis-summary"]').innerText())));
   const dText = await body(pA);
   check("J3: ingen positivt budsjettspråk i estimatet", !POSITIVE_WORDS.test(scrub(dText)));
@@ -323,14 +330,16 @@ try {
   await pA.goto(urls(MAIN, S1, 1, D.phev).form); await must(pA, '[data-testid="dealer-form"]');
   await saveForm(pA, fullValues("phev"));
   e = await econ(pA);
-  check(`J9 PHEV: «Estimat — ikke validert: ${nok(exP.cash)}» (CASE-001-avgifter, fixturekonvensjon), positivt false`, e.status === "estimate" && e.headline === `Estimat — ikke validert: ${nok(exP.cash)}` && e.positive === "false", `${e.status} | ${e.headline}`);
+  check(`J9 PHEV: «Estimat — ikke validert: ${nok(exP.cash)}» (CASE-001-avgifter, fixturekonvensjon), positivt false`, e.status === "estimate" && e.headline === `Estimat: ${nok(exP.cash)}` && e.positive === "false", `${e.status} | ${e.headline}`);
   check("J9 PHEV: kjøpesum og mva. stemmer med uavhengig utledning", num(await rowNok(pA, "purchase")) === exP.purchase && num(await rowNok(pA, "import_vat")) === exP.vat);
   await shot(pA, "07-detalj-phev-estimat");
   const exB = expected("bev");
   await pA.goto(urls(MAIN, S1, 1, D.bev).form); await must(pA, '[data-testid="dealer-form"]');
   await saveForm(pA, fullValues("bev"));
   e = await econ(pA);
-  const bevList = nb(await pA.locator('[data-testid="economics-scenarios"]').innerText().catch(() => ""));
+  // PILOT-004A: scenariolisten står i sammendraget når «kostnad etter mva.-fradrag» er identisk med den (ellers i den separate listen).
+  const bevLegacy = nb(await pA.locator('[data-testid="economics-scenarios"]').innerText().catch(() => ""));
+  const bevList = bevLegacy !== "" ? bevLegacy : nb(await pA.locator('[data-testid="acq-scenarios"]').innerText().catch(() => ""));
   check(`J9 BEV: to merkede scenarioer (med/uten elbilfritak: ${nok(exB.cashWithExemption)} / ${nok(exB.cash)}), ikke ett tall; positivt false`, e.status === "scenarios" && e.positive === "false" && bevList.includes(nok(exB.cashWithExemption)) && bevList.includes(nok(exB.cash)), `${e.status} | ${bevList}`);
   const missB = await pA.locator('[data-testid="economics-missing-fields"]').innerText().catch(() => "");
   check("J9 BEV: EV-kvalifisering er ikke innsamlet og vises som «kan ikke registreres ennå» (ingen utvidelse av kjøretøyomfang), uten lenke", /EV|elbil/i.test(missB) && /kan ikke registreres ennå/.test(missB));
@@ -340,7 +349,7 @@ try {
   await pA.goto(urls(MAIN, S1, 1, D.diesel).preview); await must(pA, `li[data-listing="${D.diesel}"]`);
   const cardStates = await pA.locator("li[data-listing] [data-testid='economics']").evaluateAll((els) => els.map((x) => ({ s: x.getAttribute("data-economics-status"), p: x.getAttribute("data-positive-budget") })));
   const dieselCard = nb(await pA.locator(`li[data-listing="${D.diesel}"]`).evaluate((x) => x.textContent ?? ""));
-  check("preview: kortene viser estimat/scenarier/ikke beregnet — ingen med positivt budsjettutfall; diesel-kortet viser estimatet merket «ikke validert»", cardStates.length >= 100 && cardStates.every((c) => c.p === "false") && cardStates.some((c) => c.s === "estimate") && cardStates.some((c) => c.s === "scenarios") && dieselCard.includes(`Estimat — ikke validert: ${nok(exD.cash)}`));
+  check("preview: kortene viser estimat/scenarier/ikke beregnet — ingen med positivt budsjettutfall; diesel-kortet viser estimatet merket «ikke validert»", cardStates.length >= 100 && cardStates.every((c) => c.p === "false") && cardStates.some((c) => c.s === "estimate") && cardStates.some((c) => c.s === "scenarios") && dieselCard.includes(nok(exD.cash)) && !/ikke validert/.test(dieselCard));
   const prev2 = await body(pA);
   check("preview: budsjettvurderingen er fortsatt «ikke beregnet» og uten positivt språk/varsel", prev2.includes("innkjøpskostnad til Norge: ikke beregnet") && !POSITIVE_WORDS.test(scrub(prev2)));
   await shot(pA, "09-preview-med-estimater");
@@ -378,7 +387,7 @@ try {
   await shot(pA, "11-skjema-utløpt-kurs");
   await saveForm(pA, { fxA_validUntil: DATES.later });
   e = await econ(pA);
-  check("J6: aktiv ny bekreftelse med gyldig kurs gir estimat igjen", e.status === "estimate" && e.headline === `Estimat — ikke validert: ${nok(expected("diesel3").cash)}`, `${e.status} | ${e.headline}`);
+  check("J6: aktiv ny bekreftelse med gyldig kurs gir estimat igjen", e.status === "estimate" && e.headline === `Estimat: ${nok(expected("diesel3").cash)}`, `${e.status} | ${e.headline}`);
 
   // =============================================================== avrundingslikhet (diesel2): uavklart regel U-013 ⇒ nedre grense, aldri punktestimat
   {
@@ -408,7 +417,7 @@ try {
   check("J7: skjemaet viser årsaken, er forhåndsutfylt og krever aktiv ny bekreftelse", /kostnadslinjene i søket er endret/.test(nb(await pA.locator('[data-testid="dealer-form-stale"]').innerText())) && (await pA.inputValue('[name="tb_amount"]')) === "8000" && (await pA.locator('[data-testid="confirm"]').isChecked()) === false);
   await saveForm(pA, {});
   e = await econ(pA);
-  check("J7: etter aktiv ny bekreftelse er estimatet tilbake (søkets tilleggslinje påvirker ikke kjernens tall)", e.status === "estimate" && e.headline === `Estimat — ikke validert: ${nok(exD.cash)}`, `${e.status} | ${e.headline}`);
+  check("J7: etter aktiv ny bekreftelse er estimatet tilbake (søkets tilleggslinje påvirker ikke kjernens tall)", e.status === "estimate" && e.headline === `Estimat: ${nok(exD.cash)}`, `${e.status} | ${e.headline}`);
 
   // simulert foreldelse (endring i testdatabasen — IKKE en brukerhandling): endrede rettigheter og ny annonserevisjon
   const row = (await dbInputs(firmA)).find((r) => r.candidate_id.includes(LISTINGS.phev.providerId));

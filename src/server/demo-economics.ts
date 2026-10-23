@@ -26,7 +26,7 @@ export { DEMO_VEHICLE, isCuratedDemoVehicle };
  * Ikke en markedskurs, ikke Tolletatens kurs, ikke live. En test holder verdien lik dokumentet.
  */
 export const DEMO_FX_NOK_PER_EUR = "11.50";
-const FX_LABEL = "Syntetisk demokurs (docs/tax/demo-series.json) — ikke en markedskurs";
+const FX_LABEL = "Syntetisk demokurs — ikke en markedskurs";
 
 /** Eksplisitte demo-id-er for tilfellet uten forhandlerkontekst (bindingen sammenlignes bare for likhet; ingen firmadata). */
 export const DEMO_DEALERSHIP_ID = "demo-fixture";

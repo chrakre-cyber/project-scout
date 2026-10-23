@@ -248,9 +248,10 @@ describe("gjennom rettighetsgrensen med demodata (diesel, PHEV, BEV) — forvent
 // ------------------------------------------------------------------ visning (ren statisk markup)
 const html = (e: EconomicsView, compact = false) => renderToStaticMarkup(createElement(EconomicsNote, { economics: e, compact }));
 describe("visning: hovedmerking, usikkerhet, brutto utlegg ≠ kontantbetaling, ikke rådgivning erstatter ikke forklaring", () => {
-  it("estimat: «Estimat — ikke validert», brutto utlegg og økonomisk kostnad, forklaring av brutto utlegg, rader, forutsetninger, usikkerhet og dekning", async () => {
+  it("estimat (uten sammendrag): «Estimat», brutto utlegg og kostnad etter mva.-fradrag, forklaring av brutto utlegg, rader, forutsetninger, usikkerhet og dekning", async () => {
     const h = html(await runCase(2));
-    expect(h).toContain("Estimat — ikke validert");
+    expect(h).toContain("Estimat");
+    expect(h).not.toContain("ikke validert");
     for (const id of ["economics-sums", "economics-gross-explain", "economics-cost-explain", "economics-breakdown", "economics-assumptions", "economics-uncertainty", "economics-not-advice"]) expect(h).toContain(`data-testid="${id}"`);
     expect(h).toContain(L.GROSS_OUTLAY_EXPLAIN);
     expect(L.GROSS_OUTLAY_EXPLAIN).toMatch(/ikke nødvendigvis/i);
