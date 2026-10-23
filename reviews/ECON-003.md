@@ -41,3 +41,46 @@ Ingen som hindrer REVIEW. Åpent for ECON-004: U-013, U-003, U-008, R-IMP-VAT-00
 
 **Sluttstatus: DONE (avgrenset fixture-/aritmetikkleveranse).**
 
+
+---
+
+# ECON-003-2 — anslått innkjøpskostnad til Norge i søkeresultatene (23.10.2026)
+
+**Merking.** Id-en «ECON-003» er brukt én gang tidligere (gyldne fixturer og aritmetikktester, DONE ved `398710a`; §1–§7 over, uendret). Denne leveransen — å løfte innkjøpsøkonomi frem i resultatflyten — merkes **ECON-003-2** i review og backlog, på samme måte som DATA-002D-2. Filnavnet `reviews/ECON-003.md` er beholdt og historikken er ikke skrevet om; denne delen er lagt til nederst.
+**Status: pre-implementasjon (§A–§F committet FØR kode).** Resultat, tester og gjenstående legges til i §G–§K etter implementasjonen. Startpunkt: `origin/main` = `faee6d3` (ECON-002 og DATA-002D-2 er merget). Grenen `claude/charming-cannon-zwevp6` er restartet fra den.
+
+## A. Hva som faktisk finnes og hva forhandleren ser i dag (lest, ikke antatt)
+Økonomikjernen er **allerede koblet inn** i resultatflyten (ECON-004/005/006): annonse → `assessEconomics` (rettighetskontroll → adapter → `calculateEconomics` med registerprofilen → 005a-mapper) → `toDisplayEconomics` (rettighetsgrensen) → `DisplayItem.economics` (`EconomicsView`) → `EconomicsNote`/`EconomicsExplanation`. Beregningen er rent deterministisk og uavhengig av UI/provider.
+| Flate | I dag |
+|---|---|
+| Resultatkort (`ResultCard`) | Ett kompakt avsnitt: «Anslått innkjøpskostnad til Norge: <overskrift>» + «Dette er ikke en budsjettvurdering». Overskriften er `Estimat — ikke validert: X kr`, `Minst X kr (ufullstendig)`, «Scenarier — fradragsstatus er ukjent» eller «Ikke beregnet». Ingen nedbrytning, ingen årsak til «ikke beregnet». Over den står en fast tekst: «Innkjøpskostnad til Norge er ikke beregnet …». |
+| Detaljside | Full `EconomicsExplanation`: «Brutto utlegg» og «Økonomisk kostnad» (med scenarier ved ukjent fradragsstatus), nedbrytningstabell, forutsetninger (begge kurser), usikkerhet, manglende felt med lenker til forhandlerskjemaet. Korrekt og forklarende, men teknisk («brutto utlegg», «økonomisk kostnad», «ikke godkjent for validering»). |
+**Dataflyt som avgjør hva som kan vises.** Adapteren er bevisst konservativ: drivlinje, avgiftsvekt, CO₂-metode, norsk registreringsdato, akseptdato, kurser (anskaffelses- og tollkurs, begge `dealer_entered`), transport/forsikring og fradrag/mva.-håndtering kommer **bare** fra forhandlerens bekreftede input (eller firmaprofilen) — annonsens drivstoff brukes ikke, annonsevekt blir `reference_listing`, og transportstandard settes ikke. Det finnes **ingen** kurskilde i systemet (ingen live-kurs, ingen standardkurs). Uten bekreftet forhandlerinput gir en annonse derfor «Ikke beregnet» — korrekt fail-safe-oppførsel, men uten forklaring på kortet.
+
+## B. Funn som påvirker oppdraget
+1. **Den offentlige BMW iX3-demoen viser i dag ikke noe tall** (uten forhandlerinput: «Ikke beregnet»). Den syntetiske råposten har netto EUR 36 950 (type NET, belegg «Exportpreis netto»), effekt og første registrering, men **verken vekt, CO₂, brutto 43 970, kurs eller drivlinjegrunnlag** (råformatet kan ikke oppgi dem; kandidatadapteren utleder ikke slikt fra fritekst).
+2. **Referansetallene i oppdraget finnes ikke i repoet.** Søk etter 2 260 kg, 18 058, 435 558, 445 558, 394 000 og 43 970 gir ingen treff i kode, fixturer eller dokumenter (bare netto 36 950 og 03/2024 finnes). Jeg kan derfor ikke «gjenskape» dem fra eksisterende konfigurasjon; jeg kjører i stedet den ekte motoren på iX3-inputene fra oppdraget i en test og rapporterer avviket åpent (se §H).
+3. **Demoens transport 8 000 NOK (ekskl. mva.) er en søke-kostnadslinje**, ikke motorinput. Eksisterende 005a-policy behandler `excl`-linjer som `unsupported` («mva.-grunnlag ekskl.: brutto ukjent») — de teller ikke i noen total. Motorens transport kommer bare fra forhandlerskjemaet. Å endre den policyen er en regelendring og ligger utenfor dette oppdraget; jeg endrer den ikke.
+4. **Kortet motsier seg selv når et estimat finnes**: den faste teksten sier «Innkjøpskostnad til Norge er ikke beregnet» rett over «Estimat — ikke validert: X kr».
+5. **Kontrakten mot eksisterende tester:** overskriften `economics-headline`, `data-economics-*`-attributtene og etikettene (`Estimat — ikke validert` m.fl.) er hevdet av vitest og av e2e-skriptene `econ006`/`econ006d`. De kan ikke erstattes uten å bryte fundamentet jeg skal bevare.
+6. **Intern terminologi i dagens visning** («ikke validert», «reglene er ikke godkjent for validering») ligger i den eksisterende forklaringen. Jeg rører ikke eksisterende forklaringstekster; den nye sammendragsflaten bruker vanlig språk.
+
+## C. Hva som mangler
+En **forhandlervennlig sammendragsflate**: kjøpesum → engangsavgift → mva. → transport (bare hvis oppgitt) → estimert total til Norge, på kort (kompakt) og detalj (fullere), med kurs (begge roller, adskilt), kort forklaring og tydelig «mangler»-tilstand med årsak i klartekst. Alt dette finnes allerede som data i `EconomicsView` (+ `Explanation.breakdown`, `assumptions.fx`, `missing`); det mangler en presentasjonsmodell og komponent.
+
+## D. Foreslått minimal implementasjon
+1. **Presentasjonsmodell (ren, domenelag):** `toAcquisitionSummary(view: EconomicsView): AcquisitionSummary` i `src/domain/search-economics/`. Bare en avledning av eksisterende visningsmodell — **ingen** avgifts-, mva.- eller kursberegning, ingen kall til kjernen. Tilstander: `estimate` (total kjent), `partial` (bare delsum > 0, tydelig merket, aldri «total»), `unavailable` (ikke beregnet, med årsak og manglende felt), `hidden` (rettighet ikke gitt). Linjer: kjøpesum, engangsavgift (inkl. vrakpant), mva., transport, øvrige poster, hver med tilstand (`known`/`unknown`); ukjent vises aldri som 0. Kurs: `acquisition` og `customs` adskilt. Totalen er motorens `importCashRequirement` («brutto utlegg» = Skatteetatens «sum»), ikke økonomisk kostnad.
+2. **Tekster** i `src/lib/search-labels.ts` (norsk, som resten av UI): «Estimert total til Norge», «Kjøpesum», «Engangsavgift», «MVA», «Transport», «Estimert innkjøpskostnad til Norge», og klarspråk-årsaker. Ingen «Minst 0 kr», ingen «0 kr» som plassholder, ingen intern terminologi.
+3. **Komponent** `AcquisitionSummary` (`compact` for kort, full for detalj). Kortet: primærlinje (estimert total) + én sekundærlinje (kjøpesum · engangsavgift · mva. · transport, bare kjente) eller ikke-beregnet-årsak. Detalj: tabell med linjer, kurser, «hva mangler» med lenke til det eksisterende forhandlerskjemaet. Komponenten mottar kun `AcquisitionSummary` (ingen beregning i JSX).
+4. **Integrasjon:** `ResultCard` og detaljsiden. Den eksisterende `EconomicsNote` (overskrift, attributter, etiketter, forklaring) beholdes uendret for kontraktsstabilitet; sammendraget legges til som primærflate over den. Den motstridende fasttekst-notisen på kortet byttes mot en kortere, ikke-motstridende variant **bare når** et beløp vises; ellers uendret.
+5. **Ikke endret:** `src/domain/economics`, `src/domain/tax`, adapter, mapper, `assessEconomics`, rettighetsgrensen, kurslogikk, 005a-kostnadslinjepolicy, migrasjoner.
+
+## E. Tolkninger og beslutninger (flagget, ikke avgjort av kilde)
+- «Estimated total into Norway» = motorens brutto utlegg (kjøpesum + avgifter + import-mva. + oppgitte kostnader), uavhengig av fradragsrett. Økonomisk kostnad (mva.-fradrag) vises fortsatt bare i den eksisterende detaljforklaringen.
+- Engangsavgift vist = `one_off_tax` + `scrappage_deposit` (Skatteetatens «Avgift» inkluderer vrakpant 2 400); summeres bare når begge er kjente heltall, ellers vises avgiften som ukjent. Ren addisjon av motorens egne rader.
+- Alt vises som «estimert»; ingenting merkes eksakt eller offisielt.
+- UI-språket er norsk; oppdragets engelske nøkkelord er brukt som begrep, ikke som visningstekst.
+
+## F. Migrasjon, sikkerhet, bakoverkompatibilitet
+Ingen migrasjon, ingen nye miljøvariabler, ingen nye data. Presentasjonsmodellen leser bare `EconomicsView`, som allerede har passert rettighetsgrensen (DATA-002D-2-lasting uendret); `unavailable` bærer aldri tall og gir ingen sammendragstall. Ingen rå leverandør-id eller kjerneinternt går inn i modellen. Risiko: moderat bredde i eksisterende tester (kort/detalj-rendering) — mitigert ved å beholde `EconomicsNote` uendret og ved å kjøre hele suiten og e2e-skriptene.
+**Åpent spørsmål til produkteier (blokkerer ikke):** skal den offentlige iX3-demoen vise tall uten at forhandleren fyller skjemaet? Det krever en eksplisitt, merket syntetisk «demo-forhandlerinput» som omgår dagens eksplisitte bekreftelse — en arkitekturbeslutning jeg ikke tar her. Jeg bygger den eksisterende veien (skjema → tall) og viser tydelig hva som mangler til den.
