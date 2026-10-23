@@ -13,6 +13,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 import { DEMO_CATALOG } from "@/adapters/search-catalog/demo-catalog";
 import { AcquisitionSummary } from "@/components/search/AcquisitionSummary";
+import { EconomicsNote } from "@/components/search/EconomicsNote";
 import { ResultCard } from "@/components/search/ResultCard";
 import { REGISTERED_PROFILES, rightsForSource, type ProviderRightsProfile } from "@/domain/provider-rights";
 import { DEMO_INPUTS_NOTE, parseDealerInput, toAcquisitionSummary } from "@/domain/search-economics";
@@ -253,6 +254,110 @@ describe("sammendraget lister bare det som faktisk påvirker totalen", () => {
     // heller ikke i «ikke beregnet»-tilstanden (ingen input): bilens tekniske data og kurs vises, ikke fradrag/mva.-håndtering
     const none = toAcquisitionSummary((await items(undefined, NOW)).find((x) => toAcquisitionSummary(x.economics).state === "unavailable")!.economics);
     if (none.state === "unavailable") { expect(none.missing).not.toContain("deduction"); expect(none.missing).not.toContain("vat_handling"); }
+  });
+});
+
+/** Forhandlerens EGEN fullstendige input for en EUR/BEV-annonse (datoer relative til NOW). */
+const ownInput = () => dealerInput({
+  propulsion: { pistonCombustionEngine: false, externallyChargeable: true, combustionFuel: null, hybridization: null, basis: "type_approval" },
+  taxWeight: { kg: 2260, basis: "vehicle_register" }, co2: { gramsPerKm: 0, method: "wltp_combined" }, firstRegistration: { precision: "month", value: "2024-03", basis: "vehicle_register" },
+  fx: {
+    acquisition: { pair: "EUR/NOK", rate: "10.66", sourceLabel: "Forhandlerens bank", effectiveAt: "2026-10-14", quotedAt: "2026-10-14", validUntil: "2026-10-31" },
+    customs: { pair: "EUR/NOK", rate: "10.66", sourceLabel: "Forhandlerens bank", quotedAt: "2026-10-13", validFrom: "2026-10-13", validTo: "2026-10-31" },
+  },
+  customsDate: { date: "2026-10-14", kind: "expected_scenario" }, transportToBorder: { amount: "8000" },
+  foreignVat: { treatment: "excluded_documented", evidence: "dealer_entered" }, // forhandlerens egen påstand (samme art som demoens, men uten demomerking)
+});
+const withOwn = async (id: string): Promise<DisplayItem> => {
+  const l = (await synth().getListing(id))!;
+  const cand = candidateFor(l);
+  const ctx: EconomicsContext = { dealershipId: FIRM_A, searchId: SEARCH_1, storedInputs: new Map([[storedKey(cand.id, cand.version), stored({ rights: rightsNow, spec: demoSpec(), cand, input: ownInput(), confirmedAt: NOW.toISOString() })]]), profile: null };
+  const all = await items(ctx);
+  const hit = all.find((i) => i.economics.status !== "unavailable" && i.economics.status !== "not_calculated" && "dealerInput" in i.economics && i.economics.dealerInput.state === "in_use");
+  if (!hit) throw new Error(`ingen beregnet ${id}`);
+  return hit;
+};
+const explainText = (i: DisplayItem) => text(renderToStaticMarkup(createElement(EconomicsNote, { economics: i.economics, dealerFormHref: "/f" })));
+const DEALER_WORDING = /forhandleroppgitt|oppgitt av forhandler/i;
+
+describe("etiketter: demoens antakelser er syntetiske, forhandlerens egne er forhandleroppgitt", () => {
+  it("1. BMW iX3-demoen: forklaringen kaller antakelsene «syntetiske demoantakelser» — ingen steder «forhandleroppgitt»/«oppgitt av forhandler»", async () => {
+    const i = top(await items())[0]!;
+    const e = i.economics;
+    if (e.status === "unavailable" || e.status === "not_calculated" || e.explanation === null) throw new Error("forventet beregnet");
+    // modellen (kilden til etikettene): demonøkler, ingen forhandlernøkler
+    expect(e.explanation.demoInputs).toBe(true);
+    expect(e.explanation.basisSummary).toBe("demo_assumptions");
+    expect(e.explanation.breakdown.some((r) => r.basis === "dealer_entered")).toBe(false);
+    expect(e.explanation.breakdown.filter((r) => r.basis === "demo_assumption").map((r) => r.id)).toEqual(expect.arrayContaining(["transport_to_border", "insurance"]));
+    expect(e.explanation.assumptions.fx.map((f) => f.sourceKind)).toEqual(["demo_assumption", "demo_assumption"]);
+    expect(e.explanation.uncertainty.map((u) => u.code)).toContain("foreign_vat_exclusion_demo_assumed");
+    expect(e.explanation.uncertainty.map((u) => u.code)).not.toContain("foreign_vat_exclusion_dealer_stated");
+    // visningen
+    const t = explainText(i);
+    expect(t).toContain("Syntetisk demoantakelse");
+    expect(t).toContain("Beløpene bygger på annonsepris og syntetiske demoantakelser.");
+    expect(t).toContain("Utenlandsk mva. er en syntetisk demoantakelse.");
+    expect(t).toContain("Opplysninger som er annonsepåstander eller syntetiske demoantakelser");
+    expect(t).toMatch(/Kurs for kjøpesum:\s*EUR\/NOK 11\.5 — Syntetisk demokurs — ikke en markedskurs/);
+    expect(t).toMatch(/Tollkurs:\s*EUR\/NOK 11\.5 — Syntetisk demokurs — ikke en markedskurs/);
+    expect(t).not.toMatch(DEALER_WORDING);
+    expect(t).toContain("syntetiske demoforutsetninger — ikke bekreftede forhandleropplysninger");
+    // sammendraget (kort/detalj) har samme kilde
+    const sum = text(renderToStaticMarkup(createElement(AcquisitionSummary, { summary: toAcquisitionSummary(i.economics), formHref: "/f" })));
+    expect(sum).not.toMatch(DEALER_WORDING);
+    expect(sum).toContain("Syntetisk demokurs — ikke en markedskurs");
+  });
+
+  it("tall og scenarier er uendret av etikettendringen (kun merking)", async () => {
+    const i = top(await items())[0]!;
+    expect(scen(i)).toEqual({ with_exemption__basis_customs_value: "484214", no_exemption: "559214" });
+  });
+
+  it("2. forhandlerens egen input (samme iX3-annonse): forklaringen sier fortsatt «forhandleroppgitt» — uten noe demoord", async () => {
+    const i = await withOwn("dix3-001");
+    const e = i.economics;
+    if (e.status === "unavailable" || e.status === "not_calculated" || e.explanation === null) throw new Error("forventet beregnet");
+    expect(e.explanation).not.toHaveProperty("demoInputs");
+    expect(JSON.stringify(e)).not.toMatch(/demo_assumption|demo_economics_inputs|demo_fixture|demoInputs/);
+    expect(e.explanation.breakdown.some((r) => r.basis === "dealer_entered")).toBe(true);
+    expect(e.explanation.assumptions.fx.map((f) => f.sourceKind)).toEqual(["dealer_entered", "dealer_entered"]);
+    const t = explainText(i);
+    expect(t).toContain("Oppgitt av forhandler");
+    expect(t).toContain("Forhandleroppgitt kurs — estimat");
+    expect(t).toContain("Utenlandsk mva. er oppgitt av forhandler.");
+    expect(t).toContain("Beløpene bygger på forhandleroppgitte opplysninger.");
+    expect(t).toContain("Opplysninger som er påstander eller forhandleroppgitt");
+    expect(t).not.toMatch(/demoantakelse|demokurs|Demo-estimat/i);
+  });
+
+  it("3. andre syntetiske annonser (dix3-002) med forhandlerens input arver aldri demoordlyden", async () => {
+    const i = await withOwn("dix3-002");
+    const e = i.economics;
+    if (e.status === "unavailable" || e.status === "not_calculated" || e.explanation === null) throw new Error("forventet beregnet");
+    expect(JSON.stringify(e)).not.toMatch(/demo_assumption|demo_economics_inputs|demo_fixture|demoInputs/);
+    const t = explainText(i);
+    expect(t).toContain("Oppgitt av forhandler");
+    expect(t).toContain("Forhandleroppgitt kurs — estimat");
+    expect(t).not.toMatch(/demoantakelse|demokurs|Demo-estimat/i);
+    expect(html(i)).not.toContain("Demo-estimat");
+  });
+
+  it("3b. generisk syntetisk annonse og diesel med forhandlerinput: dealerordlyd, ingen demonøkler; ingen annonse uten demofixtur får demoordlyd", async () => {
+    const l = listing();
+    const cand = candidateFor(l);
+    const map = new Map([[storedKey(cand.id, cand.version), stored({ rights: rightsForSource("synthetic-demo", new Date("2026-10-20T10:00:00Z"), REGISTERED_PROFILES), spec: specOf(), cand, input: dealerInput({}) })]]);
+    const out = await previewForDisplay(specOf(), {
+      provider: { source: "synthetic-demo", search: async () => ({ items: [l], nextPage: null, sourceTotal: 1, truncated: false, fetchedAt: "2026-10-20T10:00:00Z", rejected: [] }), getListing: async () => l },
+      now: () => new Date("2026-10-20T10:00:00Z"), economics: { dealershipId: FIRM_A, searchId: SEARCH_1, storedInputs: map, profile: null },
+    });
+    if (!out.ok) throw new Error("x");
+    const e = out.items[0]!.economics;
+    if (e.status === "unavailable" || e.status === "not_calculated" || e.explanation === null) throw new Error("forventet beregnet");
+    expect(JSON.stringify(e)).not.toMatch(/demo_assumption|demo_economics_inputs|demo_fixture|demoInputs/);
+    expect(explainText(out.items[0]!)).toContain("Oppgitt av forhandler");
+    // alle andre demoannonser uten fixtur: ingen demoordlyd noe sted
+    for (const x of (await items()).filter((y) => top([y]).length === 0)) expect(JSON.stringify(x.economics)).not.toMatch(/demo_assumption|demo_economics_inputs|demoInputs/);
   });
 });
 

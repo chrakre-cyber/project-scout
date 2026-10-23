@@ -1,6 +1,6 @@
 import type { AcquisitionSummary as Summary, FormFieldKey, SummaryLine } from "@/domain/search-economics";
 import {
-  FIELD_ANCHOR, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, SUMMARY_DEMO_FX_SOURCE, SUMMARY_DEMO_LABEL, SUMMARY_DEMO_NOTE, SUMMARY_ESTIMATE_NOTE, SUMMARY_FX_NONE, SUMMARY_FX_TITLE, SUMMARY_LINE_ASSUMED, SUMMARY_LINE_LABEL, SUMMARY_LINE_UNKNOWN,
+  FIELD_ANCHOR, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, SUMMARY_DEMO_LABEL, SUMMARY_DEMO_NOTE, SUMMARY_ESTIMATE_NOTE, SUMMARY_FX_NONE, SUMMARY_FX_TITLE, SUMMARY_LINE_ASSUMED, SUMMARY_LINE_LABEL, SUMMARY_LINE_UNKNOWN,
   SUMMARY_MISSING_DETAIL_TITLE, SUMMARY_MISSING_INTRO, SUMMARY_MISSING_REFINE_TITLE, SUMMARY_MISSING_MORE, SUMMARY_PARTIAL_LABEL, SUMMARY_PARTIAL_NOTE, SUMMARY_PRICE_CLAIM_NOTE, SUMMARY_SCENARIO_EV_NOTE, SUMMARY_SCENARIO_GENERIC_NOTE, SUMMARY_TITLE, SUMMARY_TOTAL_LABEL,
   SUMMARY_TOTAL_SCOPE, SUMMARY_TRANSPORT_NOTE, SUMMARY_UNAVAILABLE_HEADLINE, SUMMARY_UNAVAILABLE_LEAD, SUMMARY_VAT_SCOPE_NOTE, DF_FIX_LINK, economicsReasonText, formatNokExact, formatNokString,
 } from "@/lib/search-labels";
@@ -42,7 +42,7 @@ function Fx({ s }: { s: Calc }) {
       <p className="font-semibold">{SUMMARY_FX_TITLE}</p>
       {s.fx.length === 0 ? <p className="text-muted">{SUMMARY_FX_NONE}</p> : (
         <ul className="list-disc pl-5">{s.fx.map((f) => (
-          <li key={f.role} data-fx-role={f.role}><strong>{FX_ROLE_LABEL[f.role]}:</strong> {f.rate && f.pair ? `${f.pair} ${f.rate}` : "kurs mangler"} — {s.demoInputs ? SUMMARY_DEMO_FX_SOURCE : FX_SOURCE_LABEL[f.sourceKind]}</li>
+          <li key={f.role} data-fx-role={f.role}><strong>{FX_ROLE_LABEL[f.role]}:</strong> {f.rate && f.pair ? `${f.pair} ${f.rate}` : "kurs mangler"} — {FX_SOURCE_LABEL[f.sourceKind]}</li>
         ))}</ul>
       )}
     </div>

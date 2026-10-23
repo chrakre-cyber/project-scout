@@ -10,6 +10,7 @@
  *  - kun desimalstrenger i NOK (ingen bigint/flyttall i utdata).
  */
 import type { CostMeta, EconomicsResult } from "@/domain/economics";
+import { DEMO_INPUTS_NOTE } from "./acquisition-summary";
 import type { CostLineTreatment, MappingOutcome } from "./types";
 
 export type RowId =
@@ -18,7 +19,9 @@ export type RowId =
   | "customs_value" | "customs_duty" | "import_vat_base";
 export type RowState = "known" | "assumed" | "unknown" | "lower_bound" | "not_applicable" | "excluded_by_scenario";
 export type BasisKey =
-  | "listing_claim" | "dealer_entered" | "document" | "assumed" | "stated_input" | "engine_estimate" | "computed" | "ordinary_rate_unapproved" | "unresolved";
+  | "listing_claim" | "dealer_entered" | "document" | "assumed" | "stated_input" | "engine_estimate" | "computed" | "ordinary_rate_unapproved" | "unresolved"
+  /** ECON-003-2: syntetisk demoantakelse (bare den kuraterte demoen; aldri for forhandlerinput eller leverandørdata). */
+  | "demo_assumption";
 
 export interface BreakdownRow {
   id: RowId;
@@ -34,7 +37,7 @@ export interface BreakdownRow {
   original?: { amount: string; currency: string };
 }
 
-export type FxSourceKey = "official_customs" | "bank" | "dealer_entered" | "fixture" | "none";
+export type FxSourceKey = "official_customs" | "bank" | "dealer_entered" | "fixture" | "none" | "demo_assumption";
 export interface FxAssumption {
   role: "acquisition" | "customs";
   status: "used" | "assumed_from_acquisition" | "not_calculated";
@@ -73,7 +76,7 @@ export interface MissingField {
 }
 
 export interface DocumentationCoverage { documented: number; knownCostItems: number }
-export type BasisSummaryKey = "listing_claim_only" | "dealer_stated" | "partly_documented";
+export type BasisSummaryKey = "listing_claim_only" | "dealer_stated" | "partly_documented" | "demo_assumptions";
 
 export interface SearchCostRow { id: string; label: string; treatment: CostLineTreatment["treatment"]; counted: boolean; amountNok: string | null }
 
@@ -86,13 +89,15 @@ export interface Explanation {
   missing: MissingField[];
   coverage: DocumentationCoverage;
   basisSummary: BasisSummaryKey;
+  /** ECON-003-2: forutsetningene er syntetiske demoantakelser (kuratert demo), ikke forhandleroppgitt. Utelatt ellers. */
+  demoInputs?: true;
   /** Kontantbehovet er et brutto utlegg, ikke nødvendigvis kontantbetaling ved grensen (fast forklaring i etikettene). */
   grossOutlayIsNotCashAtBorder: true;
 }
 
 // ---------------------------------------------------------------- kode → kategori / felt
 const RULE = new Set(["vat_rules_unapproved", "rounding_unconfirmed", "customs_fx_rule_unconfirmed", "deduction_rule_unapproved", "tax_profile_not_approved", "customs_duty_ordinary_rate_unapproved", "tax_estimate", "ev_threshold_components_unconfirmed", "customs_fx_suspension_unverified"]);
-const INPUT_BASIS = new Set(["purchase_price_listing_claim", "deduction_status_dealer_stated", "foreign_vat_exclusion_dealer_stated", "ev_qualification_stated", "customs_acceptance_date_expected", "customs_fx_fallback_acquisition_rate", "purchase_commission_deduction_unverified"]);
+const INPUT_BASIS = new Set(["purchase_price_listing_claim", "deduction_status_dealer_stated", "foreign_vat_exclusion_dealer_stated", "foreign_vat_exclusion_demo_assumed", "ev_qualification_stated", "customs_acceptance_date_expected", "customs_fx_fallback_acquisition_rate", "purchase_commission_deduction_unverified"]);
 const ASSUMPTION = new Set(["transport_default_assumed", "assumed_default_amount", "amount_scenario_assumption", "charges_excluded_by_scenario", "fx_dates_missing"]);
 export const uncertaintyCategory = (code: string, kind: "estimate" | "incomplete" | "note"): UncertaintyCategory =>
   RULE.has(code) ? "rule" : INPUT_BASIS.has(code) ? "input_basis" : ASSUMPTION.has(code) ? "assumption" : code.endsWith("_not_collected") ? "not_collected" : kind === "incomplete" ? "missing" : "other";
@@ -122,6 +127,8 @@ const FIELD_OF: Record<string, FormFieldKey | null> = {
 };
 /** Felt som ikke er en del av dagens forhandlerinput (005c): kan ikke registreres. */
 const NOT_COLLECTABLE = new Set<FormFieldKey>(["ev_qualification", "commission", "payment_costs", "import_levies", "listing_price_basis"]);
+/** Kjernekoder som sier «oppgitt av forhandler» får en demovariant når forutsetningene er syntetiske demoantakelser. */
+const DEMO_CODE: Readonly<Record<string, string>> = { foreign_vat_exclusion_dealer_stated: "foreign_vat_exclusion_demo_assumed", deduction_status_dealer_stated: "deduction_status_demo_assumed" };
 export const fieldOfCode = (code: string): FormFieldKey | null | undefined => (code in FIELD_OF ? FIELD_OF[code] : undefined);
 
 // ---------------------------------------------------------------- bygging
@@ -150,6 +157,9 @@ function basisOfAmount(b: string | null | undefined): { basis: BasisKey; assumed
 
 export function explainEconomics(a: { result: EconomicsResult; outcome: MappingOutcome | null; notes: readonly string[] }): Explanation {
   const r = a.result;
+  // ECON-003-2: kuratert syntetisk demo — forutsetningene er syntetiske demoantakelser, ikke «oppgitt av forhandler». Notekoden settes bare av demofixturen; forhandlerveien når aldri denne grenen.
+  const demo = a.notes.includes(DEMO_INPUTS_NOTE);
+  const demoCode = (c: string): string => (demo ? DEMO_CODE[c] ?? c : c);
   const rows: BreakdownRow[] = [];
   const row = (id: RowId, state: RowState, amount: bigint | null, basis: BasisKey, inGross: boolean, original?: BreakdownRow["original"]) => {
     const x: BreakdownRow = { id, state: amount === null && (state === "known" || state === "assumed") ? "unknown" : state, amountNok: s(amount), basis, inGrossOutlay: inGross };
@@ -225,7 +235,7 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
     if (f.status === "not_needed") return null;
     const kind = f.source?.kind;
     return {
-      role, status: f.status, pair: f.pair, rate: f.rate, sourceKind: kind === "official_customs" || kind === "bank" || kind === "dealer_entered" || kind === "fixture" ? kind : "none",
+      role, status: f.status, pair: f.pair, rate: f.rate, sourceKind: kind === "dealer_entered" && demo ? "demo_assumption" : kind === "official_customs" || kind === "bank" || kind === "dealer_entered" || kind === "fixture" ? kind : "none",
       sourceLabel: f.source?.ref ?? null, effectiveAt: f.effectiveAt, quotedAt: f.quotedAt, validFrom: f.validFrom, validTo: f.validTo,
     };
   };
@@ -243,8 +253,8 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   const cashMissing = r.importCashRequirement.kind === "lower_bound" ? r.importCashRequirement.missing : [];
   const incomplete = [...new Set([...r.incompleteReasons, ...landedMissing, ...cashMissing])];
   const uncertainty: UncertaintyItem[] = [
-    ...r.estimateReasons.map((code) => ({ category: uncertaintyCategory(code, "estimate"), code })),
-    ...incomplete.map((code) => ({ category: uncertaintyCategory(code, "incomplete"), code })),
+    ...r.estimateReasons.map((c) => demoCode(c)).map((code) => ({ category: uncertaintyCategory(code, "estimate"), code })),
+    ...incomplete.map((c) => demoCode(c)).map((code) => ({ category: uncertaintyCategory(code, "incomplete"), code })),
     ...a.notes.map((code) => ({ category: uncertaintyCategory(code, "note"), code })),
   ];
   const seen = new Set<string>();
@@ -264,7 +274,9 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   const basisSummary: BasisSummaryKey = documented > 0 ? "partly_documented" : known.some((x) => x.id === "purchase" && x.basis === "listing_claim") && !known.some((x) => x.basis === "dealer_entered") ? "listing_claim_only" : "dealer_stated";
 
   return {
-    breakdown: rows, searchCosts, assumptions, uncertainty: uncertaintyUnique, missing: [...fields.values()],
-    coverage: { documented, knownCostItems: known.length }, basisSummary, grossOutlayIsNotCashAtBorder: true,
+    breakdown: demo ? rows.map((x) => (x.basis === "dealer_entered" ? { ...x, basis: "demo_assumption" as const } : x)) : rows,
+    searchCosts, assumptions, uncertainty: uncertaintyUnique, missing: [...fields.values()],
+    coverage: { documented, knownCostItems: known.length }, basisSummary: demo && basisSummary === "dealer_stated" ? "demo_assumptions" : basisSummary, grossOutlayIsNotCashAtBorder: true,
+    ...(demo ? { demoInputs: true as const } : {}),
   };
 }

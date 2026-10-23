@@ -2,7 +2,7 @@ import type { Explanation, EconomicsView, ViewAmount } from "@/domain/search-eco
 import {
   ASSUMPTIONS_TITLE, ASSUMPTION_SOURCE_LABEL, BASIS_LABEL, BASIS_SUMMARY_LABEL, BREAKDOWN_BASIS_NOTE, BREAKDOWN_CAPTION, BREAKDOWN_TITLE, COVERAGE_DISCLAIMER, CUSTOMS_DATE_KIND_LABEL,
   DEALER_FORM_NOT_AVAILABLE, DF_FIX_LINK, FIELD_ANCHOR, ECONOMIC_COST_EXPLAIN, ECONOMIC_COST_TITLE, ECONOMICS_NOT_ADVICE, ECONOMICS_UNCERTAINTY_INTRO, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, GROSS_OUTLAY_EXPLAIN, GROSS_OUTLAY_TITLE,
-  LINE_TREATMENT_TEXT, MISSING_TITLE, NOT_COLLECTABLE_TEXT, REGISTRATION_DATE_KIND_LABEL, ROW_LABEL, RULES_NOT_APPROVED, SEARCH_COSTS_NOTE, SEARCH_COSTS_TITLE, STATE_LABEL, UNCERTAINTY_GROUP_TITLE,
+  LINE_TREATMENT_TEXT, MISSING_TITLE, NOT_COLLECTABLE_TEXT, REGISTRATION_DATE_KIND_LABEL, ROW_LABEL, RULES_NOT_APPROVED, SEARCH_COSTS_NOTE, SEARCH_COSTS_TITLE, STATE_LABEL, UNCERTAINTY_GROUP_TITLE, UNCERTAINTY_INPUT_BASIS_DEMO_TITLE,
   VAT_HANDLING_LABEL, VAT_RECOVERABILITY_LABEL, coverageText, economicsNoteText, economicsReasonText, formatNokExact, formatNokString,
 } from "@/lib/search-labels";
 
@@ -90,7 +90,7 @@ function Uncertainty({ x }: { x: Explanation }) {
       <h3 className="font-bold">{ECONOMICS_UNCERTAINTY_INTRO}</h3>
       {groups.map(([c, list]) => (
         <div key={c} data-uncertainty={c}>
-          <p className="text-sm font-semibold">{UNCERTAINTY_GROUP_TITLE[c]}</p>
+          <p className="text-sm font-semibold">{x.demoInputs && c === "input_basis" ? UNCERTAINTY_INPUT_BASIS_DEMO_TITLE : UNCERTAINTY_GROUP_TITLE[c]}</p>
           <ul className="list-disc pl-5">{list.map((u) => <li key={u.code}>{c === "not_collected" || u.code.endsWith("_unknown_no_dealer_basis") || u.code.endsWith("_defaulted_to_as_of") ? economicsNoteText(u.code) : economicsReasonText(u.code)}</li>)}</ul>
         </div>
       ))}
