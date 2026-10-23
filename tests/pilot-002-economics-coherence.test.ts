@@ -212,11 +212,11 @@ describe("10. ikke beregnet: ingen legacy-nedbrytning med kroneverdier (sluttreg
   const note = (e: EconomicsView, s = toAcquisitionSummary(e)) => text(renderToStaticMarkup(createElement(EconomicsNote, { economics: e, summary: s, dealerFormHref: "/f" })));
   const transportRows = [{ id: "c1", kind: "transport", label: "Transport", treatment: "unsupported" as const, counted: false, amountNok: "8000" }];
 
-  it("1–3. utløpt demo (ekte pipeline, klokke etter profilens retensjon): ingen kroneverdier fra nedbrytningen, ingen transportlinje, men årsak + «dette mangler» + skjemalenke", async () => {
-    const LATE = new Date(NOW.getTime() + 9 * 86_400_000);
+  it("1–3. utløpt demo (ekte pipeline, klokke etter avgiftsprofilens periode): ingen kroneverdier fra nedbrytningen, ingen transportlinje, men årsak + «dette mangler» + skjemalenke", async () => {
+    const LATE = new Date("2027-01-15T12:00:00Z"); // utenfor avgiftsprofilens periode (PILOT-003: observasjonsalder utløper ikke lenger den kuraterte demoen)
     const out = await previewForDisplay(demoSpec(), { provider: new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => LATE }), now: () => LATE });
     if (!out.ok) throw new Error("demo feilet");
-    const pick = out.items.find((i) => i.economics.status === "not_calculated" && i.economics.explanation !== null); // den kuraterte demobilen, nå utløpt (9 dager > profilens 7)
+    const pick = out.items.find((i) => i.economics.status === "not_calculated" && i.economics.explanation !== null); // den kuraterte demobilen, nå «ikke beregnet» fordi avgiftsprofilens periode er utløpt
     if (!pick) throw new Error("fant ingen ikke-beregnet annonse med forklaring");
     const s = toAcquisitionSummary(pick.economics);
     expect(s.state).toBe("unavailable");

@@ -29,6 +29,7 @@ import type { BudgetClassification, CandidateV2, SearchSpec } from "@/domain/sea
 import type { NormalizedListing } from "@/domain/types";
 import type { CandidateAdapter } from "@/adapters/search-candidate/candidate";
 import { verifyCandidatePair } from "./candidate-pairing";
+import { sourceDataValidityLimit } from "./curated-demo";
 
 const TRANSIENT_FRESH_MS = 5 * 60 * 1000; // samme som proveniens: uten lagringsrett er kildedata ferske i fem minutter
 
@@ -145,7 +146,8 @@ export function assessEconomics(req: EconomicsRequest): EconomicsAssessment {
     result, spec: req.spec, candidate: { id: req.candidate.id, version: req.candidate.version }, now: nowIso,
     profileRef: `${result.tax.vehicleProfile ?? "no-vehicle-profile"}@economics-registry`,
     rightsLimit: { label: "rights_profile", untilExclusive: profile?.validUntil ?? null },
-    sourceDataLimit: { label: "source_data", untilExclusive: sourceUntil },
+    // PILOT-003: standard = observasjon + lagringstid. Bare den KURATERTE syntetiske demobilen har demoens egen policy (ingen kildedatagrense); leverandør/sandbox/live og alle andre annonser får standarden uendret.
+    sourceDataLimit: sourceDataValidityLimit(req.listing, rights, sourceUntil),
     extraLimits: inputStatus.status === "fresh" ? inputStatus.expiryLimits : [],
     lineScopes: adapted.lineScopes,
   });

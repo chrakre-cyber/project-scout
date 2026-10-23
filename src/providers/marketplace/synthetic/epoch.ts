@@ -1,7 +1,7 @@
 /**
  * Datasettepoke for de SYNTETISKE demodataene (ECON-006e).
  *
- * Fixturene har faste, absolutte observasjonstider og blir derfor utløpt for økonomi (rettighetsprofilens lagringstid, 7 døgn).
+ * Fixturene har faste, absolutte observasjonstider og blir derfor utløpt for økonomi (rettighetsprofilens lagringstid, 7 døgn) — UNNTATT den kuraterte offentlige iX3-demoen, som har sin egen gyldighetspolicy (PILOT-003, `src/server/curated-demo.ts`).
  * Fornyelsen er en bevisst, dokumentert handling — ikke en rullering: tidene flyttes bare til et vindu på 0–48 timer FØR en
  * eksplisitt, validert epoke. Epoken er en fast konstant i koden (`SYNTHETIC_DEFAULT_EPOCH`, satt ved siste fornyelse) og kan
  * overstyres server-side med `SCOUT_SYNTHETIC_EPOCH`. Uten ny fornyelse blir dataene utløpt igjen: utløpskontrollen
