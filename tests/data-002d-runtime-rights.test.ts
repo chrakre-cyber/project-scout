@@ -1,5 +1,5 @@
 /**
- * DATA-002D — kjøretidslasting av rettigheter, typede resultat-handles og samlet tilgangsvurdering.
+ * DATA-002D-2 (id DATA-002D gjenbrukt; se reviews/DATA-002D.md) — kjøretidslasting av rettigheter, typede resultat-handles og samlet tilgangsvurdering.
  * Alle profiler for «leverandører» her er HYPOTETISK testdata (ingen leverandør har gitt noen av rettighetene). Ingen leverandør er koblet til.
  */
 import { describe, expect, it } from "vitest";
@@ -299,13 +299,22 @@ describe("samlet tilgangsvurdering (visning, felt, lenke, lagring, oppdatering, 
     expect(evalAt(capped, rights([rowOf(capped)]), minutes(1))).toMatchObject({ mayRetain: true, retainUntil: "2026-10-23T12:30:00.000Z" });
   });
 
-  it("må oppdateres før visning: cache 0 ⇒ etter det transiente vinduet; cache > 0 ⇒ etter cache-tiden (tolkning, se review)", () => {
+  it("må oppdateres før visning: cacheSeconds = 0 (ingen cache-rett) ⇒ alltid ny henting, uten oppfunnet varighet; cache > 0 ⇒ profilens egen varighet", () => {
     const stored = (cache: number) => provider({ storage: { ...P.storage, retentionSeconds: 7200, cacheSeconds: cache }, geography: { unrestricted: true, countries: [] } });
     const c0 = stored(0), c10 = stored(600);
-    expect(evalAt(c0, rights([rowOf(c0)]), minutes(4))).toMatchObject({ canDisplay: true, mustRefreshBeforeDisplay: false, refreshAfter: minutes(5).toISOString() });
-    expect(evalAt(c0, rights([rowOf(c0)]), minutes(6))).toMatchObject({ canDisplay: true, mustRefreshBeforeDisplay: true });
+    const rt0 = rights([rowOf(c0)]);
+    // 0: ingen tidsfrist finnes — hverken etter 0, 4, 6 eller 90 minutter blir svaret et annet (ingen skjult 5-minuttersgrense)
+    for (const m of [0, 4, 6, 90]) expect(evalAt(c0, rt0, minutes(m))).toMatchObject({ canDisplay: true, mustRefreshBeforeDisplay: true, refreshAfter: null });
+    // > 0: bare profilens egen oppgitte varighet
     expect(evalAt(c10, rights([rowOf(c10)]), minutes(9))).toMatchObject({ mustRefreshBeforeDisplay: false, refreshAfter: minutes(10).toISOString() });
-    expect(evalAt(c10, rights([rowOf(c10)]), minutes(11))).toMatchObject({ mustRefreshBeforeDisplay: true });
+    expect(evalAt(c10, rights([rowOf(c10)]), minutes(11))).toMatchObject({ mustRefreshBeforeDisplay: true, refreshAfter: minutes(10).toISOString() });
+  });
+
+  it("denied-utfall oppgir ingen oppdateringsfrist; lagringsretten (retentionSeconds) er uavhengig av cacheSeconds", () => {
+    const d = deniedAccess("expired");
+    expect(d).toMatchObject({ mustRefreshBeforeDisplay: false, refreshAfter: null });
+    const noCacheButStored = provider({ storage: { ...P.storage, retentionSeconds: 7200, cacheSeconds: 0 }, geography: { unrestricted: true, countries: [] } });
+    expect(evalAt(noCacheButStored, rights([rowOf(noCacheButStored)]), minutes(1))).toMatchObject({ mayRetain: true, retentionSeconds: 7200, mustRefreshBeforeDisplay: true });
   });
 
   it("geografi: begrenset leverandør tillater bare oppgitt land; ukjent land (null) nektes; ubegrenset tillater alt", () => {

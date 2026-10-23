@@ -9,7 +9,7 @@
  * Ikke representert i modellen (og derfor ikke vurdert, ikke antatt tillatt): publikum/«kun profesjonelle brukere». Se reviews/DATA-002D.md.
  */
 import type { InternalProvenance } from "./provenance";
-import { TRANSIENT_FRESH_MS, evaluateProvenance } from "./provenance";
+import { evaluateProvenance } from "./provenance";
 import type { FieldRights, ProviderRightsProfile } from "./provider-rights";
 import { geographyAllows, noRights, retentionExpiresAt } from "./provider-rights";
 import type { HashFn, ProviderResultHandle } from "./result-handle";
@@ -43,9 +43,9 @@ export interface ResultAccessDecision {
   /** Når en lagret kopi senest må slettes/skjules (ISO), ellers null. */
   readonly retainUntil: string | null;
   readonly storable: Readonly<{ price: boolean; specs: boolean; text: boolean; images: boolean; sellerData: boolean }>;
-  /** Må kildedata hentes på nytt før de vises? (Se tolkning i reviews/DATA-002D.md §3.) */
+  /** Må kildedata hentes på nytt før de vises? `cacheSeconds = 0` (ingen cache-rett) ⇒ alltid ja, uten tidsfrist. Ingen oppfunnet varighet (reviews/DATA-002D.md §3). */
   readonly mustRefreshBeforeDisplay: boolean;
-  /** Tidspunkt (ISO) etter hvilket data ikke lenger kan vises uten ny henting, ellers null. */
+  /** Tidspunkt (ISO) etter hvilket data ikke lenger kan vises uten ny henting — bare når profilen selv oppgir en cache-varighet (> 0); ellers null. */
   readonly refreshAfter: string | null;
   /** Geografi er vurdert og tillatt for den oppgitte konteksten. */
   readonly geographyAllowed: boolean;
@@ -78,10 +78,15 @@ export interface AccessContext {
   listingAvailable?: boolean;
 }
 
-/** Profilens `cacheSeconds` = 0 betyr at kildedata ikke kan serveres fra cache: de må oppdateres når de er eldre enn det transiente vinduet. */
-function refreshPolicy(profile: ProviderRightsProfile, retrievedAt: Date, now: Date): { must: boolean; after: Date } {
-  const windowMs = profile.storage.cacheSeconds > 0 ? profile.storage.cacheSeconds * 1000 : TRANSIENT_FRESH_MS;
-  const after = new Date(retrievedAt.getTime() + windowMs);
+/**
+ * Oppdatering før visning, uten oppfunnet varighet. Modellen definerer ikke `cacheSeconds = 0` utover «default-deny» (kolonnen er `default 0`, alle nye rettigheter er nei),
+ * og ingen kilde gir en varighet. Derfor: 0 ⇒ INGEN cache-rett er gitt ⇒ kildedata må hentes på nytt før hver visning (`must = true`, ingen tidsfrist: `after = null`).
+ * > 0 ⇒ profilens egen oppgitte cache-varighet gjelder (`after = hentet + cacheSeconds`). Ingen standardvarighet finnes.
+ * (Lagringsretten er en egen rett: `retentionSeconds`, der 0 uttrykkelig betyr ingen persistent lagring. Den påvirkes ikke av dette.)
+ */
+function refreshPolicy(profile: ProviderRightsProfile, retrievedAt: Date, now: Date): { must: boolean; after: Date | null } {
+  if (profile.storage.cacheSeconds === 0) return { must: true, after: null };
+  const after = new Date(retrievedAt.getTime() + profile.storage.cacheSeconds * 1000);
   return { must: !(now.getTime() < after.getTime()), after };
 }
 
@@ -123,7 +128,7 @@ export function evaluateResultAccess(handle: ProviderResultHandle, provenance: I
     retainUntil: retainUntil?.toISOString() ?? null,
     storable: Object.freeze({ ...profile.storage.storable }),
     mustRefreshBeforeDisplay: refresh.must,
-    refreshAfter: refresh.after.toISOString(),
+    refreshAfter: refresh.after?.toISOString() ?? null,
     geographyAllowed: true,
   });
 }

@@ -1,9 +1,11 @@
-# DATA-002D — kjøretidslasting av rettigheter og stabile resultat-handles (23.10.2026)
+# DATA-002D-2 — kjøretidslasting av rettigheter og stabile resultat-handles (23.10.2026)
+
+> **Merking:** denne leveransen heter **DATA-002D-2** i review og backlog (id-en DATA-002D er gjenbrukt; det historiske DATA-002D er uendret). Filnavnet `reviews/DATA-002D.md`, migrasjonen og kodefilene er bevisst ikke omdøpt.
 
 **Status: REVIEW** (implementert og testet; ikke DONE før uavhengig review og produkteiers aksept). §1–§6 (vurdering) ble committet FØR kode (`54bd7ae`); §7–§11 er lagt til etterpå.
 Startpunkt: `origin/main` = `ca715da` (PR #6 merget), grenen `claude/charming-cannon-zwevp6` restartet fra den. Rent arbeidstre; baseline `npx vitest run` = 95 filer / 2 141 tester grønne.
 
-**Navnekollisjon (viktig for sporing).** Id-en «DATA-002D» er allerede brukt én gang: `reviews/DATA-002D-{retting,review-c4bf382,avslutning}.md` og migrasjon `20261022090000_data002d_rights_field_map_validator.sql` gjelder den *smale* validatorrettingen (`rights_field_map_valid` skal gi true/false), akseptert som DONE 20.10.2026. Denne oppgaven («runtime rights loading + provider result handles») er en annen leveranse og er nøyaktig det DATA-002C §4.8 pkt. 3–4 la igjen som blokkere («profiler lastes ikke fra databasen … lagret handle/proveniens»). De eksisterende filene er uendret; denne rapporten er `reviews/DATA-002D.md` uten suffiks. Ny migrasjon får egen tidsstempel/navn (`…_data002d_runtime_rights_read`). Anbefaling til produkteier: registrer oppgaven som DATA-002D-2 i backloggen (jeg endrer ikke id-en selv).
+**Navnekollisjon (viktig for sporing).** Id-en «DATA-002D» er allerede brukt én gang: `reviews/DATA-002D-{retting,review-c4bf382,avslutning}.md` og migrasjon `20261022090000_data002d_rights_field_map_validator.sql` gjelder den *smale* validatorrettingen (`rights_field_map_valid` skal gi true/false), akseptert som DONE 20.10.2026. Denne oppgaven («runtime rights loading + provider result handles») er en annen leveranse og er nøyaktig det DATA-002C §4.8 pkt. 3–4 la igjen som blokkere («profiler lastes ikke fra databasen … lagret handle/proveniens»). De eksisterende filene er uendret; denne rapporten er `reviews/DATA-002D.md` uten suffiks. Ny migrasjon får egen tidsstempel/navn (`…_data002d_runtime_rights_read`). Besluttet 23.10.2026: denne oppgaven merkes **DATA-002D-2** i review/backlog; ingen omdøping av historikk, filer eller migrasjoner.
 
 ## 1. Nåværende arkitektur (lest, ikke antatt)
 
@@ -39,8 +41,8 @@ Startpunkt: `origin/main` = `ca715da` (PR #6 merget), grenen `claude/charming-ca
 ### Publikum / «kun profesjonelle brukere» — IKKE representert i modellen
 Profilen har **ingen** felt for publikum/brukertype (profesjonell vs. privat). Oppgaven sier «der det allerede er representert». Det er det ikke, så jeg **oppfinner ikke** et. Evaluatoren tar ikke imot en publikumsparameter som kunne tolkes som tillatelse; spørsmålet dokumenteres som åpent punkt (krever beslutning + migrasjon + kontraktsgrunnlag). Geografi er representert (`geography.countries`), men *hvilket* land profilens liste gjelder (forhandlerens marked, annonsens opprinnelse, bruker) er ikke spesifisert i modellen eller DATA-002B; evaluatoren tar imot et eksplisitt `geographyCountry` og behandler ukjent som nektet når leverandøren er begrenset. Semantikken markeres som uavklart i §7.
 
-### «Må oppdateres før visning» — tolkning (flagges, ikke avgjort av kilde)
-Ingen eksisterende kode bruker `cacheSeconds`. Konservativ tolkning som er konsistent med `evaluateProvenance` og default-deny: `cacheSeconds = 0` ⇒ data kan ikke serveres fra cache ⇒ `mustRefreshBeforeDisplay = true` når alderen overstiger det transiente vinduet (`TRANSIENT_FRESH_MS`, 5 min); `cacheSeconds > 0` ⇒ `refreshAfter = retrievedAt + cacheSeconds`. Dette er en implementasjonskonklusjon, ikke en leverandørrett; tolkningen noteres som uavklart.
+### «Må oppdateres før visning» — uten oppfunnet varighet (korrigert 23.10.2026, se §12)
+Modellen definerer ikke `cacheSeconds = 0` utover default-deny (kolonnen er `default 0`; DATA-002B: «alle default-deny»), og ingen kilde oppgir en varighet. Derfor: `cacheSeconds = 0` ⇒ ingen cache-rett er gitt ⇒ `mustRefreshBeforeDisplay = true` uten tidsfrist (`refreshAfter = null`); `cacheSeconds > 0` ⇒ profilens egen oppgitte varighet (`refreshAfter = retrievedAt + cacheSeconds`). Ingen standardvarighet.
 
 ## 4. Migrasjonspåvirkning
 Én ny, additiv, skrivebeskyttet migrasjon (funksjon + grants). Ingen tabellendring, ingen data endres, ingen constraint/trigger/RLS berørt. `tests/db/qa-catalog.test.ts` pinner listen over `SECURITY DEFINER`-funksjoner og `scout_ingest`-rettigheter og må utvides med den nye funksjonen (det er hensikten med vakten). **Ikke anvendt i noe hostet miljø**; hosted utrulling krever egen godkjenning og miljøkontroll.
@@ -95,7 +97,7 @@ Uendret og testet: uten `SCOUT_INGEST_DATABASE_URL` er profilsettet identisk med
 ## 9. Tester faktisk kjørt (23.10.2026)
 | Kontroll | Resultat |
 |---|---|
-| `npx vitest run` (baseline før endring: 95 filer / 2 141) | **96 filer / 2 204 bestått** (+63 nye i `tests/data-002d-runtime-rights.test.ts`) |
+| `npx vitest run` (baseline før endring: 95 filer / 2 141) | **96 filer / 2 205 bestått** (+64 nye i `tests/data-002d-runtime-rights.test.ts`; sist kjørt etter cache-korreksjonen i §12) |
 | `bash scripts/test-db-isolated.sh` på `data002d-runtime-rights-read`, `qa-catalog`, `data002d-field-map`, `rights-profile-model`, `econ005b-rights`, `econ005b-empty-map-review` (isolert PostgreSQL 16, ikke Supabase) | **6 filer / 151 bestått**; «OPPGRADERING OK» (SEARCH-005-øyeblikksbildet uendret) |
 | `npx tsc --noEmit`, `npx eslint .`, `node docs/tax/check-docs.mjs` | rene / OK |
 | `npm run build` | OK |
@@ -111,11 +113,21 @@ Uendret og testet: uten `SCOUT_INGEST_DATABASE_URL` er profilsettet identisk med
 ## 11. Gjenstående og uavklart (ingenting her er løst eller oppfunnet)
 1. **Publikum / «kun profesjonelle brukere» er ikke representert i modellen** og er derfor ikke vurdert (evaluatoren har ingen slik parameter som kunne tolkes som tillatelse). Krever beslutning, kontraktsgrunnlag og migrasjon.
 2. **Geografiens landsemantikk er uspesifisert** (forhandlerens marked, annonsens opprinnelse eller bruker). Evaluatoren tar imot et eksplisitt `geographyCountry` fra kalleren; ingen produktkode kaller den ennå.
-3. **Tolkningen av `cacheSeconds`** (0 ⇒ ikke servert fra cache ⇒ oppdater etter 5 min; > 0 ⇒ oppdater etter cache-tiden) er min konservative implementasjonskonklusjon, ikke en leverandørrett eller kildebelagt regel.
+3. **`cacheSeconds = 0`** er ikke definert i modellen utover default-deny; evaluatoren behandler det som «ingen cache-rett ⇒ ny henting før visning», uten varighet (§12). Hva en leverandør faktisk tillater i cache må komme fra en verifisert profil/avtale, ikke fra kode.
 4. **Eksisterende oppførsel, uendret og verifisert:** en *trukket nyere* versjon undertrykker ikke en eldre, fortsatt gyldig versjon (`resolveRights` og DB-funksjonen `rights_profile_in_force` velger høyeste versjon *i kraft*). Hvis tilbakekalling av en leverandør skal gjelde alle versjoner, må det besluttes og modelleres. Den nye lasteren skjerper bare *defekte* rader (blokkerer leverandøren), ikke trukne.
 5. **Evaluatoren er ikke koblet til UI/visningsflyten** utover at `handle` bygges på `InternalItem`; `applyDisplayPolicy` er fortsatt eneste vei til UI (bevisst: ingen UI-endring). Å la `search-display` konsultere `evaluateResultAccess` per felt er et senere steg.
 6. **Stateløst id-oppslag** (`resolvePublicId` blar gjennom leverandørens sider) og lagret, tenant-avgrenset handle-/proveniens-tabell med utløp er fortsatt åpent (DATA-002C §4.8 pkt. 4) — ikke i dette omfanget.
 7. Håndheving av cache/historikk/varsler/purge (`on_revocation`) er fortsatt bare modell; evaluatoren *rapporterer* verdiene.
 8. Ytelse: ingen cache av profiler (tilsiktet); måles først når en ekte leverandør er koblet til.
-9. Navnekollisjon på DATA-002D (se toppen): anbefalt id DATA-002D-2.
+9. Merking: oppgaven er DATA-002D-2 (se toppen); historisk DATA-002D er uendret.
 10. Én eksisterende e2e-feil (`DEV-006C`, se §9) er ikke undersøkt.
+
+## 12. Korreksjon 23.10.2026: `cacheSeconds = 0` har ingen oppfunnet varighet
+**Hvorfor:** den opprinnelige tolkningen («0 ⇒ oppdater etter 5 min») var min egen konklusjon, ikke en kildebelagt leverandørregel. Merovos rettighetslag skal ikke oppfinne kontraktsemantikk.
+**Undersøkt:** modellen definerer 0 ikke entydig for `cacheSeconds` (bare default-deny, kolonnen `default 0`); den eneste uttrykkelige 0-definisjonen gjelder `retentionSeconds` (0 = ingen persistent lagring), som er en annen rett og er uendret.
+**Endring (`src/domain/result-access.ts`):** `cacheSeconds === 0` ⇒ `mustRefreshBeforeDisplay = true`, `refreshAfter = null` (ingen tidsfrist, ingen standardvarighet). `cacheSeconds > 0` ⇒ uendret: `refreshAfter = retrievedAt + cacheSeconds` (profilens egen oppgitte varighet). Avslåtte utfall: `false`/`null` som før. Importen av `TRANSIENT_FRESH_MS` er fjernet fra evaluatoren; ingen ny konstant er innført.
+**Konsekvens:** for `synthetic-demo` (cache 0) rapporterer evaluatoren nå at data må hentes på nytt før visning. Dagens visningsflyt henter og viser innenfor samme forespørsel og konsulterer ikke evaluatoren, så demoen er upåvirket.
+**Uendret og må ikke forveksles:** `evaluateProvenance` (DATA-002C) har en eksisterende `TRANSIENT_FRESH_MS` = 5 min for data som *ikke* kan lagres (retensjon 0), gjengitt som avslaget `transient_data_stale`. Den er ikke min, ikke en tolkning av `cacheSeconds`, og er ikke endret; men den er også en intern varighet uten leverandørkilde og bør vurderes av produkteier sammen med punkt 3.
+**Tester endret:** den ene refresh-testen i `tests/data-002d-runtime-rights.test.ts` er omskrevet (cache 0 ⇒ alltid `true`/`null`, også etter 0, 4, 6 og 90 min — ingen skjult 5-minuttersgrense; cache 600 ⇒ profilens egen frist) og en ny test låser at avslag ikke oppgir frist og at lagringsretten er uavhengig av `cacheSeconds`. Ellers uendret.
+**Dokumentasjon:** denne rapporten (tittel, §2-merking, §3, §11 pkt. 3 og 9), `MVP_BACKLOG.md`, `DECISIONS.md` (runde 94), `DATABASE_SCHEMA.md`: merket DATA-002D-2.
+**Kontroller kjørt på nytt etter korreksjonen (23.10.2026):** `tsc --noEmit` ren, `eslint .` ren, `check-docs` OK, fokuserte tester (data-002d-runtime-rights, architecture, provenance, provider-rights) 4 filer / 143 bestått, full `vitest run` 96 filer / 2 205 bestått, isolerte DB-tester 6 filer / 151 bestått («OPPGRADERING OK»), secret-skann ingen funn. Mutasjon: gjeninnføring av et 5-minuttersvindu for `cacheSeconds = 0` feiler testene. Ikke kjørt på nytt: build, e2e, demo-/partner-QA (ingen kode utenfor `result-access.ts` er endret siden de ble kjørt; evaluatoren konsulteres ikke av visningsflyten).

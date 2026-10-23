@@ -9,7 +9,7 @@
 | Trinn | Innhold | Bestått når |
 |---|---|---|
 | H1 | nytt tomt hosted testprosjekt, opprettet av eier | prosjektet finnes; region/plan notert; ingen data |
-| H2 | `supabase db push --dry-run`, deretter alle 13 migrasjoner. **DATA-002D-kartleggingen kjøres først mot målet; anvendelsen stoppes hvis ugyldige rader finnes** (fire migrasjoner er aldri anvendt hostet: `20261021090000`, `20261022090000`, `20261023090000`, og den skrivebeskyttede rettighetslesevegen `20261024090000` fra DATA-002D-2) | dry-run og anvendelse uten feil; versjoner notert |
+| H2 | `supabase db push --dry-run`, deretter alle 13 migrasjoner. **DATA-002D-kartleggingen kjøres først mot målet; anvendelsen stoppes hvis ugyldige rader finnes** (fire migrasjoner er aldri anvendt hostet: `20261021090000`, `20261022090000`, `20261023090000`, og den skrivebeskyttede rettighetslesevegen `20261024090000` fra DATA-002D-2, kjøretidsrettigheter) | dry-run og anvendelse uten feil; versjoner notert |
 | H3 | L4–L7 mot hosted URL med testbrukere (samme kontroller som lokalt) | som lokalt, med hosted-spesifikke funn rapportert |
 | H4 | rapport med versjoner og rydding (slett testprosjektet/data) | rapport + bekreftet rydding |
 
