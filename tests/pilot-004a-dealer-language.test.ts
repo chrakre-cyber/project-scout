@@ -214,3 +214,20 @@ describe("9–12. tallene er uendret", () => {
     if (sum.state === "partial") { expect(sum.amountNok).toBe("433723"); expect(sum.missing).toContain("transport_to_border"); }
   });
 });
+
+describe("skjult statusnode på kortet: ingen tilgjengelighetseksponering, ingen legacy-tekst", () => {
+  it("noden er `hidden` (display:none ⇒ utenfor tilgjengelighetstreet), har ingen tekstbarn og ingen aria/rolle — bare data-*-attributter for kontroller", async () => {
+    for (const [name, i] of Object.entries(await states())) {
+      const html = card(i);
+      const nodes = html.match(/<[a-z]+[^>]*data-testid="economics"[^>]*>(?:<\/[a-z]+>)?/g) ?? [];
+      expect(nodes.length, name).toBe(1);
+      const n = nodes[0]!;
+      expect(n, name).toMatch(/^<span hidden=""/);
+      expect(n, name).not.toMatch(/aria-|role=|tabindex/);
+      expect(n, name).toMatch(/^<span[^>]*><\/span>$/); // ingen innhold
+      expect(n, name).toContain("data-economics-status=");
+      // all synlig/tilgjengelig tekst er utenfor noden: fjernes noden, endres ikke teksten
+      expect(text(html.replace(n, "")), name).toBe(text(html));
+    }
+  });
+});

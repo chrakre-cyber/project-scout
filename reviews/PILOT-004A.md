@@ -82,4 +82,16 @@ Kort (resultatliste) i nettleser: ingen legacy-statuslinje; 0 «ikke validert/go
 2. **Intern valideringsterminologi (F-2/F-3/F-4):** ja for det som er angitt i oppdraget («Estimat — ikke validert», «ikke godkjent (for validering)», «Regelmotor», «Ikke løst», «Beregningsgrunnlag», filsti). Ikke helt «finished»: andre regelformuleringer («Regelen for tollkurs er ikke bekreftet» m.fl.) og tabellspråk gjenstår til 004B.
 3. **Feil årsak ved utløpt avgiftsprofil (F-5):** ja for årsaken og «Registrer»-lenken. Overlappende mangler-lister er ikke deduplisert (004B).
 
-Klar for PR etter review.
+
+## 9. Sluttsjekk: skjult statusnode på kortet (tilgjengelighet)
+
+**Spørsmål:** er det skjulte legacy-statuselementet (`<span hidden data-testid="economics" …>`) eksponert for forhandleren via tilgjengelighetstreet eller skjermleser?
+**Svar: nei — ingen kodeendring nødvendig.**
+- Elementet har ingen tekst og ingen barn (tom `<span>`): ingen gammel/intern ordlyd finnes i DOM-en som innhold. Det bærer bare `data-economics-status`, `data-economics-label`, `data-positive-budget` (ikke eksponert for hjelpemidler).
+- `hidden`-attributtet gir `display: none` (ingen CSS overstyrer `[hidden]`) ⇒ elementet er utelatt fra tilgjengelighetstreet og leses ikke opp.
+- Det lager ingen duplisert økonomiinformasjon: totalen står én gang i tilgjengelighetstreet.
+- **Nettleserverifisering (ekte app, Playwright):** alle 125 noder på resultatsiden: `hidden` = ja, computed `display` = `none`, `textContent` og `innerText` = tomme, ingen `aria-*`/`role`. `ariaSnapshot()` av første kort og hele siden inneholder ikke «ikke validert», «Estimat —», «Anslått innkjøpskostnad» eller noen `economics`-referanse; «Estimert total til Norge» forekommer **én** gang. 0 JS-/konsollfeil.
+- **Tester avhenger ikke av gammel synlig ordlyd:** e2e leser `data-*`-attributtene; «headline» utledes av sammendragets nye, synlige tekst («Estimat: <total>»), ikke av legacy-ordlyd. Ny enhetstest låser at noden er `hidden`, tom, uten aria/rolle/tabindex, og at fjerning av den ikke endrer siden tekst.
+- Merknad: attributtverdien `data-economics-label="estimate_not_validated"` er en intern nøkkel (ikke brukersynlig, ikke tilgjengelighetseksponert). Den beholdes fordi e2e/typer bruker den; omdøping hører til en senere oppryddingsrunde, ikke dette.
+
+Tester etter sluttsjekken: `tests/pilot-004a-dealer-language.test.ts` 13/13; typecheck og lint OK. Se PR for full vitest-resultat.
