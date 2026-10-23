@@ -10,7 +10,7 @@
  * eller en stille erstatning — de gir et eget avslag. Leverandørens annonse-id er ikke globalt unik: identiteten er (leverandør, id).
  */
 import type { ProviderEnvironment, ProviderRightsProfile } from "./provider-rights";
-import { resolveRights, retentionExpiresAt } from "./provider-rights";
+import { resolveRights, retentionExpiresAt, revokedVersionAtOrAfter } from "./provider-rights";
 import type { NormalizedListing } from "./types";
 
 /** Hvor lenge ikke-lagret (transient) kildedata regnes ferske. Gjelder profiler uten persistent lagring (retensjon 0). */
@@ -100,6 +100,7 @@ export interface EvaluateContext {
 export function evaluateProvenance(prov: InternalProvenance, ctx: EvaluateContext): ProvenanceStatus {
   const profile = ctx.profiles.find((p) => p.providerId === prov.providerId && p.version === prov.rightsProfile.version);
   if (!profile) return "rights_unknown";
+  if (revokedVersionAtOrAfter(prov.providerId, prov.rightsProfile.version, ctx.profiles) !== null) return "rights_revoked"; // en trukket versjon (≥ den resultatet ble hentet under) nekter også eldre resultater (DATA-002D-2)
   if (ctx.digestOf(profile) !== prov.rightsProfile.digest) return "rights_changed";
   const r = resolveRights(profile.providerId, [profile], ctx.now);
   if (!r.inForce) {

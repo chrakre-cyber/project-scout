@@ -129,12 +129,31 @@ function stateOf(p: ProviderRightsProfile, now: Date): "in_force" | Exclude<Righ
   return "in_force";
 }
 
-/** Profilen som gjelder for leverandøren nå (høyeste versjon i kraft), ellers avslag med årsak. Default-deny. */
+/**
+ * Finnes det en uttrykkelig trukket (`status = "revoked"`) profilversjon med versjon ≥ `fromVersion`? Brukes der bare ÉN versjon vurderes (proveniens). Bare uttrykkelig status
+ * teller (ikke utløp, utkast eller strukturfeil). Historiske profiler beholdes; de slettes og skrives aldri om.
+ */
+export function revokedVersionAtOrAfter(providerId: string, fromVersion: number, profiles: readonly ProviderRightsProfile[]): ProviderRightsProfile | null {
+  let hit: ProviderRightsProfile | null = null;
+  for (const p of profiles) if (p.providerId === providerId && p.status === "revoked" && p.version >= fromVersion && (hit === null || p.version > hit.version)) hit = p;
+  return hit;
+}
+
+/**
+ * Profilen som gjelder for leverandøren nå, ellers avslag med årsak. Default-deny. Regel (nyeste versjon først):
+ *  1. Ingen profil ⇒ `unknown_provider`.
+ *  2. En uttrykkelig `revoked` versjon stopper oppløsningen: leverandøren nektes (`revoked`). Det finnes INGEN stille tilbakefall til en eldre versjon forbi en trukket
+ *     versjon — ny tilgang krever en uttrykkelig nyere versjon som selv er i kraft (DATA-002D-2).
+ *  3. En versjon som er i kraft gjelder (høyeste først). Nyere versjoner som er utkast, ikke begynt eller utløpt hoppes over som før (de trekker ikke tilbake en eldre som er i kraft).
+ *  4. Ingen i kraft og ingen trukket ⇒ avslag med årsaken til den nyeste versjonen.
+ */
 export function resolveRights(providerId: string, profiles: readonly ProviderRightsProfile[], now: Date): ResolvedRights {
   const mine = profiles.filter((p) => p.providerId === providerId).sort((a, b) => b.version - a.version);
   if (mine.length === 0) return { inForce: false, reason: "unknown_provider", providerId, profileVersion: 0 };
-  const active = mine.find((p) => stateOf(p, now) === "in_force");
-  if (active) return { inForce: true, profile: active };
+  for (const p of mine) {
+    if (p.status === "revoked") return { inForce: false, reason: "revoked", providerId, profileVersion: p.version };
+    if (stateOf(p, now) === "in_force") return { inForce: true, profile: p };
+  }
   const top = mine[0]!;
   return { inForce: false, reason: stateOf(top, now) as RightsDenialReason, providerId, profileVersion: top.version };
 }

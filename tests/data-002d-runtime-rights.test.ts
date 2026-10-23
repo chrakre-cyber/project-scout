@@ -4,8 +4,8 @@
  */
 import { describe, expect, it } from "vitest";
 import { DEMO_CATALOG } from "@/adapters/search-catalog/demo-catalog";
-import { buildProvenance, canonicalPermissions, type InternalProvenance } from "@/domain/provenance";
-import { REGISTERED_PROFILES, SYNTHETIC_RIGHTS_PROFILE, noRights, type ProviderRightsProfile } from "@/domain/provider-rights";
+import { buildProvenance, canonicalPermissions, evaluateProvenance, type InternalProvenance } from "@/domain/provenance";
+import { REGISTERED_PROFILES, SYNTHETIC_RIGHTS_PROFILE, noRights, resolveRights, type ProviderRightsProfile } from "@/domain/provider-rights";
 import { deniedAccess, evaluateResultAccess, type AccessContext } from "@/domain/result-access";
 import { createResultHandle, parseResultHandle, provenanceReference, verifyHandle, type ProviderResultHandle } from "@/domain/result-handle";
 import { buildRuntimeRights, profileFromRow, resolveRuntimeRights, type RuntimeRights } from "@/domain/rights-runtime";
@@ -345,6 +345,91 @@ describe("samlet tilgangsvurdering (visning, felt, lenke, lagring, oppdatering, 
     const m = profileFromRow(rowOf(P));
     expect(m.ok && canonicalPermissions(m.profile)).toBe(canonicalPermissions(P));
     expect(noRights()).toMatchObject({ price: false });
+  });
+});
+
+// ------------------------------------------------------------------------------------------------ 3b. versjoner og tilbakekalling
+
+describe("tilbakekalling stopper oppløsningen: ingen stille tilbakefall til en eldre versjon (DATA-002D-2)", () => {
+  const v = (version: number, over: Partial<ProviderRightsProfile> = {}) => provider({ version, geography: { unrestricted: true, countries: [] }, ...over });
+  const REVOKED = { status: "revoked" } as const;
+  const DRAFT = { status: "draft", verifiedBy: null, verifiedAt: null } as const;
+  const EXPIRED = { validUntil: "2026-10-23T00:00:00Z" } as const; // eksklusiv slutt før T0
+  const at = (profiles: ProviderRightsProfile[]) => resolveRights("test-provider", profiles, T0);
+  const version = (r: ReturnType<typeof at>) => (r.inForce ? r.profile.version : r.profileVersion);
+
+  it("1. v1 verifisert + v2 trukket ⇒ leverandøren nektes (revoked, versjon 2); ingen tilbakefall til v1", () => {
+    const r = at([v(1), v(2, REVOKED)]);
+    expect(r).toMatchObject({ inForce: false, reason: "revoked", profileVersion: 2 });
+    expect(at([v(2, REVOKED), v(1)])).toMatchObject({ inForce: false, reason: "revoked", profileVersion: 2 }); // rekkefølgen i listen er uten betydning
+  });
+
+  it("1b. også gjennom databaseraden → lasteren → samlet vurdering: v1-resultat nektes med årsak revoked og alle evner false", () => {
+    const rt = rights([rowOf(v(1)), rowOf(v(2, REVOKED))]);
+    expect(rt.profiles).toHaveLength(3); // synthetic-demo + v1 + v2: historikken beholdes, ingenting slettes eller skrives om
+    expect(resolveRuntimeRights(rt, "test-provider", T0)).toMatchObject({ inForce: false, reason: "revoked", profileVersion: 2 });
+    const d = evalAt(v(1), rt, minutes(1));
+    expect(d.reason).toBe("revoked");
+    allDenied(d);
+  });
+
+  it("1c. en trukket versjon som i tillegg er strukturelt ugyldig nekter fortsatt (uttrykkelig status avgjør, ikke gyldighet)", () => {
+    const badRevoked = { ...v(2, REVOKED), display: {} } as unknown as ProviderRightsProfile;
+    expect(at([v(1), badRevoked])).toMatchObject({ inForce: false, reason: "revoked", profileVersion: 2 });
+  });
+
+  it("1d. proveniens for et resultat hentet under v1 feiler lukket når v2 er trukket (evaluateProvenance alene, uten å gå via resolveRights)", () => {
+    const { prov } = resultFor(v(1));
+    const ctx1 = { now: minutes(1), digestOf: profileDigest };
+    expect(evaluateProvenance(prov, { ...ctx1, profiles: [v(1)] })).toBe("valid");
+    expect(evaluateProvenance(prov, { ...ctx1, profiles: [v(1), v(2, REVOKED)] })).toBe("rights_revoked");
+    // og en trukket versjon som er ELDRE enn resultatets versjon berører det ikke
+    const { prov: prov2 } = resultFor(v(2));
+    expect(evaluateProvenance(prov2, { ...ctx1, profiles: [v(1, REVOKED), v(2)] })).toBe("valid");
+  });
+
+  it("2. v1 verifisert + v2 utløpt ⇒ uendret utløpssemantikk: v2 hoppes over, v1 gjelder; er også v1 utløpt avslås med årsaken til den nyeste (expired)", () => {
+    expect(version(at([v(1), v(2, EXPIRED)]))).toBe(1);
+    expect(at([v(1), v(2, EXPIRED)]).inForce).toBe(true);
+    expect(at([v(1, EXPIRED), v(2, EXPIRED)])).toMatchObject({ inForce: false, reason: "expired", profileVersion: 2 });
+  });
+
+  it("3. v1 verifisert + v2 utkast ⇒ uendret semantikk: et utkast er ikke en tilbakekalling og ikke i kraft, så v1 gjelder; ingen NYTT tilbakefall er innført. Bare utkast ⇒ not_verified", () => {
+    expect(version(at([v(1), v(2, DRAFT)]))).toBe(1);
+    expect(at([v(1), v(2, DRAFT)]).inForce).toBe(true);
+    expect(at([v(2, DRAFT)])).toMatchObject({ inForce: false, reason: "not_verified", profileVersion: 2 });
+  });
+
+  it("4. en senere, uttrykkelig gyldig versjon gjenoppretter tilgang — og det er v3 som gjelder, ikke v1", () => {
+    const r = at([v(1), v(2, REVOKED), v(3)]);
+    expect(r.inForce).toBe(true);
+    expect(version(r)).toBe(3);
+    // gjennom lasteren og den samlede vurderingen: resultat hentet under v3 kan vises, resultat hentet under v1 kan ikke (hentet under en erstattet profil)
+    const rt = rights([rowOf(v(1)), rowOf(v(2, REVOKED)), rowOf(v(3))]);
+    expect(evalAt(v(3), rt, minutes(1))).toMatchObject({ canDisplay: true, reason: null });
+    expect(evalAt(v(1), rt, minutes(1))).toMatchObject({ canDisplay: false });
+  });
+
+  it("4b. en eldre versjon kan ikke gjenopprettes implisitt: v2 trukket + v3 utkast / utløpt / ikke begynt ⇒ fortsatt nektet (ikke v1)", () => {
+    for (const later of [DRAFT, EXPIRED, { validFrom: "2026-11-01T00:00:00Z" }] as Partial<ProviderRightsProfile>[]) {
+      expect(at([v(1), v(2, REVOKED), v(3, later)]), JSON.stringify(later)).toMatchObject({ inForce: false, reason: "revoked", profileVersion: 2 });
+    }
+    // v3 var i kraft og utløper senere: da faller oppløsningen til den trukne v2 (nektet), ikke til v1
+    const v3 = v(3, { validUntil: "2026-10-24T00:00:00Z" });
+    expect(resolveRights("test-provider", [v(1), v(2, REVOKED), v3], T0).inForce).toBe(true);
+    expect(resolveRights("test-provider", [v(1), v(2, REVOKED), v3], new Date("2026-10-25T00:00:00Z"))).toMatchObject({ inForce: false, reason: "revoked", profileVersion: 2 });
+  });
+
+  it("en trukket ELDRE versjon påvirker ikke en nyere som er i kraft; trukket eneste versjon ⇒ revoked", () => {
+    expect(version(at([v(1, REVOKED), v(2)]))).toBe(2);
+    expect(at([v(1, REVOKED)])).toMatchObject({ inForce: false, reason: "revoked", profileVersion: 1 });
+  });
+
+  it("5. syntetisk/demo er uendret: én verifisert versjon gjelder; trukket sandbox-leverandør påvirker ikke synthetic-demo; DB-lasting beholder syntetisk", () => {
+    expect(resolveRights("synthetic-demo", REGISTERED_PROFILES, T0).inForce).toBe(true);
+    const rt = rights([rowOf(v(1)), rowOf(v(2, REVOKED)), rowOf(SYNTHETIC_RIGHTS_PROFILE)]);
+    expect(resolveRuntimeRights(rt, "synthetic-demo", T0).inForce).toBe(true);
+    expect(resolveRuntimeRights(rt, "test-provider", T0)).toMatchObject({ inForce: false, reason: "revoked" });
   });
 });
 
