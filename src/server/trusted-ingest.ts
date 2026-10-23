@@ -84,6 +84,15 @@ export async function trustedRunPolicy(dealershipId: string, runId: string): Pro
   };
 }
 
+/**
+ * Alle rettighetsprofiler fra den autoritative tabellen (DATA-002D), uansett status — slik at trukket/utkast gir riktig avslagsårsak i stedet for «ukjent».
+ * `null` = den betrodde veien er ikke konfigurert (demo/CI). Rådata returneres uvalidert; tolkning og fail-closed ligger i domenet (`profileFromRow`).
+ */
+export async function trustedRightsProfiles(): Promise<Record<string, unknown>[] | null> {
+  if (!isTrustedPathConfigured()) return null;
+  return call<Record<string, unknown>>("select * from private.trusted_rights_profiles()", []);
+}
+
 export async function trustedStoreResults(dealershipId: string, runId: string, rows: ResultRow[]): Promise<number> {
   const payload = rows.map((r) => ({
     source: r.source, source_listing_id: r.sourceListingId, content_hash: r.contentHash, rank: r.rank,

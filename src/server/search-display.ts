@@ -9,7 +9,7 @@ import type { DisplayableListing, DisplayPolicy } from "@/domain/display-policy"
 import { applyDisplayPolicy } from "@/domain/display-policy";
 import { buildProvenance, evaluateProvenance } from "@/domain/provenance";
 import type { InternalProvenance, ProvenanceStatus } from "@/domain/provenance";
-import { REGISTERED_PROFILES, matchingRights, policyForSource, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
+import { matchingRights, policyForSource, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
 import type { ProviderRightsProfile, ResolvedRights } from "@/domain/provider-rights";
 import type { DealerProfileV1, EconomicsView, StoredDealerInput } from "@/domain/search-economics";
 import type { CandidateAssessment, SearchSpec } from "@/domain/search-v2/types";
@@ -19,6 +19,9 @@ import type { MarketplaceProvider } from "@/providers/marketplace";
 import { storedKey } from "./dealer-economics";
 import { toDisplayEconomics, toDisplayEconomicsWithoutContext } from "./economics-view";
 import { PublicIdKeyMissingError, profileDigest, publicIdFor } from "./public-ids";
+import { handleFor } from "./result-handles";
+import { loadRuntimeProfiles } from "./rights-runtime";
+import type { ProviderResultHandle } from "@/domain/result-handle";
 import { assessEconomics } from "./search-economics";
 import { assessListing, previewSearch } from "./search-preview";
 import type { PreviewItem, PreviewOutcome } from "./search-preview";
@@ -49,7 +52,7 @@ export interface EconomicsContext {
 }
 
 /** Server-internt: visningsmodell + proveniens. Eksporteres bare for tester og fremtidig lagring; UI får aldri denne typen. */
-export interface InternalItem { display: DisplayItem; provenance: InternalProvenance }
+export interface InternalItem { display: DisplayItem; provenance: InternalProvenance; /** DATA-002D: minimal, typet referanse (ingen rå leverandør-id eller nyttelast). */ handle: ProviderResultHandle }
 
 type PreviewOk = Extract<PreviewOutcome, { ok: true }>;
 export type DisplayPreviewOutcome =
@@ -66,7 +69,7 @@ export type DisplayDetailOutcome =
 export interface DisplayOptions {
   provider?: MarketplaceProvider;
   now?: () => Date;
-  /** Rettighetsprofiler (standard: de registrerte; i dag bare den syntetiske). */
+  /** Rettighetsprofiler. Standard: lastes ved kjøring fra den autoritative tabellen (DATA-002D) + syntetiske kodeprofiler; uten databasevei er det bare den syntetiske. */
   profiles?: readonly ProviderRightsProfile[];
   /** Overstyrer visningspolicyen (tester). Matching og proveniens styres fortsatt av profilene. */
   policyFor?: (source: string, now: Date) => DisplayPolicy;
@@ -118,7 +121,7 @@ function internalItem(item: PreviewItem, o: Required<Pick<DisplayOptions, "profi
     dealershipId: ec.dealershipId, searchId: ec.searchId, listing: item.listing, candidate: item.candidate, spec,
     stored: ec.storedInputs.get(storedKey(item.candidate.id, item.candidate.version)) ?? null, profile: ec.profile, profiles: o.profiles, now,
   }), policy);
-  return { ok: true, value: { display: toDisplayItem(item, policy, now, publicId, economics), provenance } };
+  return { ok: true, value: { display: toDisplayItem(item, policy, now, publicId, economics), provenance, handle: handleFor(provenance) } };
 }
 
 /** Server-internt: som `previewForDisplay`, men med proveniens. UI bruker aldri denne. */
@@ -126,7 +129,7 @@ export async function previewInternal(spec: SearchSpec, opts: DisplayOptions = {
   { ok: true; items: InternalItem[]; outcome: PreviewOk; withheldByProvenance: number } | Extract<PreviewOutcome, { ok: false }>
 > {
   const now = opts.now ?? (() => new Date());
-  const profiles = opts.profiles ?? REGISTERED_PROFILES;
+  const profiles = opts.profiles ?? await loadRuntimeProfiles();
   const outcome = await previewSearch(spec, opts.provider ?? getMarketplaceProvider(), now, matchingPrepare(profiles, now));
   if (!outcome.ok) return outcome;
   const t = now();
@@ -187,7 +190,7 @@ export type DealerTarget =
 
 export async function resolveDealerTarget(spec: SearchSpec, publicId: string, opts: DisplayOptions = {}): Promise<DealerTarget> {
   const now = opts.now ?? (() => new Date());
-  const profiles = opts.profiles ?? REGISTERED_PROFILES;
+  const profiles = opts.profiles ?? await loadRuntimeProfiles();
   const o = { ...opts, profiles };
   let found: { listing: NormalizedListing; fetchedAt: string } | null = null;
   try { found = await resolvePublicId(opts.provider ?? getMarketplaceProvider(), publicId, o); } catch (e) {
