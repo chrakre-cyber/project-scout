@@ -1,6 +1,6 @@
 # ECON-002 — norsk avgiftsruntime for personbil 2026 (oppdatert 18.10.2026, runde 5: §15)
 
-**Status: DONE innen avtalt omfang (PB-DIE, PB-BEV, PB-PHEV) per 2026-10-19, runde 20 (§30); TAX-fundamentet forblir REVIEW.** *(Tidligere statuslinje:)* REVIEW (2026-10-19, runde 17: sju regler godkjent av Christian innen avgrenset omfang; ikke DONE — se §27).** **Runde 14 (§24): R-OTA-014 er E1 for sluttkravet (forarbeid T50, omnummerering T52); alle anvendte regler er E1; ingen parameter godkjent.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for PHEV, EV og diesel (runde 9–10, §19–§20); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
+**Runde 21 (§31, 23.10.2026): revalidering av de tre EUR-casene gjennom produksjonsmotorene; ingen runtime-endring, ingen avvik.** **Status: DONE innen avtalt omfang (PB-DIE, PB-BEV, PB-PHEV) per 2026-10-19, runde 20 (§30); TAX-fundamentet forblir REVIEW.** *(Tidligere statuslinje:)* REVIEW (2026-10-19, runde 17: sju regler godkjent av Christian innen avgrenset omfang; ikke DONE — se §27).** **Runde 14 (§24): R-OTA-014 er E1 for sluttkravet (forarbeid T50, omnummerering T52); alle anvendte regler er E1; ingen parameter godkjent.** **Runde 8 (§18, 18.10.2026): tre kalkulatorkjøringer mottatt og registrert som `explicit_inputs`; motoren stemmer på sluttbeløp; klasse 1 registrert for PHEV, EV og diesel (runde 9–10, §19–§20); ingen parameter godkjent.** **Runde 5 (§15: kontroll av commit `3db380d`) og runde 4 (§14) overstyrer alle utsagn om U-010/U-011, avrunding, gyldighet og godkjenningsmatrise i §1–§13** (tilleggspakke med endelig stortingsvedtak og avrundingskilder lest; U-010 og U-011 lukket med forbehold). Runde 3 (§13): kilde- og valideringshull kartlagt; **ingen regel-, sats- eller parameterendring**, fordi endelig stortingsvedtak fortsatt ikke er tilgjengelig (nettverk blokkert, ingen ny fil). Ikke DONE; ECON-003 er ikke startet. TAX-foundation er fortsatt **REVIEW** (0 godkjente parametere, 0 klasse 1-referanser). Ingen parameter er godkjent av Claude; oversikten i §9 viser bare hva som er klart for *din* godkjenning.
 
 **Fire nivåer holdes adskilt gjennom dokumentet:**
 - **Kildebelagt** = regelen står i en lest kildefil (E1/E1P i `docs/tax`).
@@ -740,3 +740,73 @@ Uavhengig review er gjennomført uten åpne funn (rapport for 5967fc2 ligger i `
 
 **Sluttstatus: DONE innen avtalt omfang; TAX-fundamentet REVIEW.**
 
+
+## 31. Runde 21 — revalidering mot de tre EUR-referansecasene (23.10.2026)
+
+Oppdrag: «ECON-002 — Norwegian acquisition-cost engine: evidence, validation and completion». Ingen UI-, provider- eller scrapingarbeid. Ingen runtime-/regelendring var nødvendig; leveransen er én ny test og denne seksjonen.
+
+### 31.1 Vurdering FØR implementering (gjort før noen filer ble endret)
+**Hva som finnes.** (a) Avgiftsmotor `src/domain/tax/` (ECON-002, runde 1–20): ren desimalmotor, profil `NO-OTA-2026-A-PB` (validFrom 2026-01-01, intern sperre 2026-12-31, `ratesVerifiedAsOf` 2026-10-18), regelregister `docs/tax/rules.json` med E1-kilder og SHA-256 i `docs/tax/primarkilder/`. (b) Landed-cost-kjerne `src/domain/economics/` (ECON-004): EUR→NOK, tollverdi, import-mva., elbilfritak, kontantbehov/økonomisk kost, separate `fx.acquisition`/`fx.customs`. (c) Fixturer `tests/fixtures/{tax-golden,econ-golden,econ-arithmetic}.ts` og 2122 eksisterende tester (94 filer; kjørt grønne før endring).
+
+**De tre oppdragscasene er de eksisterende CASE-001/002/003** (samme EUR-priser, kjøretøydata og forventede sluttall i `tests/fixtures/tax-golden.ts`; PHEV 2 610 kg/140 g/km, EV 2 185 kg, diesel 1 976 kg/179 g/km). Ikke case-spesifikk kode funnet: motoren bygger på satstabell + generelle regler, og ingen forventet verdi leses av produksjonskoden.
+
+**Hva som er riktig.** Motoren ga allerede 529 069 / 16 748 / 333 723 (Avgift) og 3 890 629 / 400 077 / 848 087 (Sum) for transport 0. Kilder: R-OTA-001/-002/-005/-007/-010, R-IMP-OTH-001 og R-OTA-014 er E1 og uttrykkelig godkjent av Christian 2026-10-19 (innen PB-DIE/PB-BEV/PB-PHEV); alle tre profiler har egen klasse 1-referanse (kalkulatorkjøring 18.10.2026).
+
+**Hva som var utilstrekkelig (grunnen til denne runden).**
+1. De EUR-baserte casene var ikke kjørt ende-til-ende gjennom *produksjonsmotorene* ved transport 0 for alle tre: A-reproduksjonen i `economics-core.test.ts` dekket bare CASE-003; CASE-001/002 ble kontrollert med testorakelet (`econ-arithmetic.ts`), og motoren ble testet for dem først ved transport 8 000 (B-scenario). Mellomverdiene (komponenter, trinn, grunnlag) var ikke asserted per case mot håndregnet forklaring.
+2. Ingen test låste at brutto annonsepris ikke blir kjøpsgrunnlag, at manglende tollkurs ikke stilltiende blir anskaffelseskurs, eller datofølsomheten (bruksfradragstrinn) og vektfølsomheten i tall.
+3. Normalisert dato `2026-09-01` osv. var brukt som *månedspresisjon* i fixturene; dag-presisjon var ikke dekket for de tre casene.
+
+**Hvor antakelser gjenstår (uendret av denne runden, dokumentert for fullstendighet).** Se §31.5.
+
+### 31.2 Beregningsmodell (rekkefølge og avrunding, slik produksjonskoden faktisk gjør det)
+| # | Trinn | Regel/kilde | Avrunding |
+|---|---|---|---|
+| 1 | Kjøpsgrunnlag: bare netto (`priceBasis = net`) løser grunnlaget. Brutto/ukjent ⇒ `purchaseBasisResolved = false`, ingen sum. Annonsepåstand = estimat (`purchase_price_listing_claim`) | PRODUCT/CLAUDE.md pkt. 4; R-IMP-VAT-002, R-IMP-REF-001 (E1P) | – |
+| 2 | Anskaffelseskurs (`fx.acquisition`): kjøpesum NOK = netto EUR × rate | ECON-001 §4; U-013 | én gang til hele NOK (halvt opp, `UNCONFIRMED_HALF_UP`, ikke godkjent) |
+| 3 | Tollkurs (`fx.customs`): tollverdi = netto EUR × tollrate + transport til grensen + forsikring + lasting. Mangler tollkurs ⇒ ikke beregnet (fallback til anskaffelseskurs bare uttrykkelig og nedgradert) | R-IMP-FX-001 (E1P), U-008 | hver post til hele NOK |
+| 4 | Import-mva. 25 % av (tollverdi + tollavgift + avgifter beregnet ved innførsel); **engangsavgiften inngår ikke**. Elbil (CASE-002): grunnlag over 300 000 målt mot tollverdi | R-IMP-VAT-001/-003/-004 (E1P) | mva.-beløpet til hele NOK; likhet (x,5) ⇒ `rounding_tie_unresolved` (ikke gjetting) |
+| 5 | Engangsavgift (uavhengig av pris/FX/UI): vektkomponent generell (kg−500)×12,71; forbrenningstillegg (kg−1200)×260 (ICE/PHEV); CO₂ marginale bånd 800/1600/3200/5000 pr g/km (ICE/PHEV, WLTP, hele g/km); BEV = bare generell vekt; PHEV: CO₂ «vektet kombinert»; vektfradraget for elektrisk rekkevidde er opphevet 1.1.2024 (rundskriv 3.3.11, T03) og brukes ikke — CASE-001s oppgitte 60 km rekkevidde har derfor ingen effekt | R-OTA-001/-002/-005/-007 (E1) | **ingen** mellomavrunding (U-012 åpen) |
+| 6 | Bruksfradrag: prosent fra trinntabell etter hele måneder mellom første registrering og norsk registreringsdato, på engangsavgiften før vrakpant | R-OTA-010 (E1, avgrenset) | – |
+| 7 | Vrakpant 2 400 legges til etter fradraget (reduseres ikke av bruksfradrag). «Avgift» i referansen = engangsavgift + vrakpant | R-IMP-OTH-001 (E1) | – |
+| 8 | Sluttkrav avrundes ned til hele kroner | R-OTA-014 (E1, sluttkravet) | `floor` |
+| 9 | Sum (brutto utlegg) = kjøpesum + transport etc. + import-mva. + Avgift. Økonomisk kost og kontantbehov er adskilt; ukjent fradragsrett ⇒ to scenarier | R-DED-001 (E1P) | – |
+
+**Datoer (adskilt):** `asOf` (beregning), tolldeklarasjonens akseptdato (styrer tollkurs), norsk registreringsdato (styrer profilgyldighet og bruksfradrag). Testene sender alle tre eksplisitt; ingen systemklokke. Profil utenfor `[2026-01-01, 2026-12-31]` blokkerer (`profile_internal_limit_exceeded`/`no_profile_for_date`).
+
+### 31.3 Implementasjon
+Ny fil: `tests/econ-002-eur-golden-end-to-end.test.ts` (19 tester). Ingen endring i `src/`. Forventede mellomverdier er håndregnet fra satstabellene og stått i testens topptekst; de er ikke kopiert fra motorens output. Dekker: per case (avgiftsmotor: komponenter, bruksfradrag-%, måneder, vrakpant, eksakt sum, sluttavrunding; landed cost: kjøp rå/avrundet, FX-roller, tollverdi, mva.-grunnlag/råverdi/avrundet, Avgift, Sum, estimatårsaker); brutto aldri som grunnlag; anskaffelseskurs vs tollkurs (syntetisk tollkurs 10,6000, ingen avrundingslikhet); manglende tollkurs; manglende CO₂/vekt ⇒ blokkert, ikke 0; utløpt/ikke-startet profil ⇒ blokkert; bruksfradragstrinn over datogrense; månedspresisjon vs dag; vektfølsomhet. **Mutasjonskontroll:** satsen 12,71→12,72 feilet 11 tester; intern sperre 2026-12-31→2028-12-31 feilet 2 tester; begge reversert (git viser kun den nye testfilen).
+
+### 31.4 Golden-resultater (produksjonsmotor, transport 0, fixturekurs 10,6709 for begge roller, norsk registreringsdato 2026-10-18)
+| | CASE-001 Urus PHEV | CASE-002 iX3 EV | CASE-003 E400d |
+|---|---:|---:|---:|
+| Netto EUR → rå NOK | 252 017 → 2 689 248,2053 | 34 361 → 366 662,7949 | 38 562 → 411 491,2458 |
+| Innkjøp (hele NOK) | 2 689 248 | 366 663 | 411 491 |
+| Vektkomp. generell / forbrenning | 26 818,10 / 366 600 | 21 416,35 / – | 18 759,96 / 201 760 |
+| CO₂-komponent | 144 000 (140 g/km) | – (BEV) | 252 800 (179 g/km) |
+| Før bruksfradrag | 537 418,10 | 21 416,35 | 473 319,96 |
+| Bruksfradrag | 2 % (1 mnd) | 33 % (38 mnd) | 30 % (35 mnd) |
+| Engangsavgift eksakt | 526 669,738 | 14 348,9545 | 331 323,972 |
+| + Vrakpant | 2 400 | 2 400 | 2 400 |
+| **Avgift (floor)** | **529 069** ✔ | **16 748** ✔ | **333 723** ✔ |
+| MVA-grunnlag / rå MVA | 2 689 248 / 672 312,00 | 366 663 (−300 000) / 16 665,75 | 411 491 / 102 872,75 |
+| **MVA** | **672 312** ✔ | **16 666** ✔ | **102 873** ✔ |
+| **Sum** | **3 890 629** ✔ | **400 077** ✔ | **848 087** ✔ |
+Motorstatus: avgift `calculated_unverified` / `estimate_not_approved` (vekt forhandleroppgitt), landed cost `estimate`. **Ingen avvik** mot de oppgitte referansetallene; ingen kalibrering, ingen tilpasset forventning.
+
+### 31.5 Kilde-/evidensstatus og gjenstående forbehold
+- **Avgift (steg 5–8): sterkest.** E1-regler (primærkilder i `docs/tax/primarkilder/`, hash i MANIFEST), godkjent profil, klasse 1-kalkulatorreferanse per kjøretøyprofil — **men** klasse 1-kjøringene (18.10.2026) brukte NOK-innkjøpspriser (600 000/2 600 000, 350 000/300 000, 350 000) med samme avgiftsinput; de oppgitte EUR-sluttallene (Innkjøp/MVA/Sum) er `stated_not_documented` (ingen skjermbilder). Avgiften er altså klasse 1-dekket for inputene, mens kjedet EUR→kurs→mva.→sum bare er dekket av Christians oppgitte tall + intern aritmetikk.
+- **Vekt (viktigste inputusikkerhet).** «Temporary/reference weight» er ikke dokumentert fra typegodkjenning/register ⇒ estimat. Kvantifisert: CASE-003 med annonsevekt 2 015 kg i stedet for 1 976 kg gir Avgift 341 168 (**+7 445**); marginalt ≈ 0,7 × 272,71 kr/kg for ICE/PHEV-forbrenningsvekt. Bruk av annonsevekt hadde altså ikke reprodusert referansen; at 1 976 kg gjør det er forenlig med at kalkulatorens vekt ≠ annonsevekt, men det er *ikke* bevist hva 1 976 kg er (definisjon/kilde ukjent).
+- **Dato.** Referansekjøringene brukte 2026-10-18 (brukerbekreftet). CASE-003 ligger 2 uker fra fradragsgrensen (36 mnd fra 2026-11-01: 33 % ⇒ 319 524, −14 199). Resultatene er korrekte *for datoen*; en kjøring i november gir et annet, riktig tall. Første registrering er måned oppgitt av annonsen; dag 1 er normalisering, ikke belegg.
+- **Åpne (uendret, ikke løst her):** U-013 (EUR→NOK- og mva.-avrunding: kildene hverken bekrefter eller avviser «hele NOK, halvt opp»; dataene utelukker `floor` for CASE-002 og `ceil` for CASE-003 men skiller ikke halvt-opp/halvt-par fordi ingen likhet forekommer); U-012 (mellomavrunding av avgift); U-008 (hvilken tollkurs/dato — 10,6709 er fixture, ikke Tolletatens kurs; `customs_fx_rule_unconfirmed`); R-IMP-VAT-001/-002/-003/-004 og R-DED-001 er E1P (ikke godkjent); elbilfritaket (CASE-002) er betinget av EV-kvalifikasjon som er forhandleroppgitt; utenlandsk mva.-fritak er testforutsetning (`excluded_documented`); NEDC/desimal-CO₂ (R-OTA-015), dag 29–31 (R-OTA-016), 20 år+ (R-OTA-011), bensin/HEV og varebil er blokkert/utenfor omfang; lov 19.6.2026 nr. 41 og endringer etter 2026-10-18 er ikke kontrollert; profilen utløper for registrering etter 2026-12-31 (intern sperre — 2027-satser kreves).
+- **Transport/import-poster** (frakt, forsikring, lasting, tollavgift 0) er scenario-/forhandlerinput; golden-sammenligningen bruker 0 (som kalkulatoren). Merovo-standarden 8 000 er `assumed_default` og påvirker ikke referansene (B-tester, uendret).
+
+### 31.6 Kontroller faktisk kjørt (23.10.2026, lokalt, Node via `npm ci`)
+- `npx vitest run` før endring: **94 filer / 2122 tester bestått**.
+- `npx vitest run tests/econ-002-eur-golden-end-to-end.test.ts`: **19/19 bestått** (+ to mutasjonskjøringer som feilet som forventet, deretter reversert).
+- `npx vitest run` etter endring: **95 filer / 2141 tester bestått**.
+- `node docs/tax/check-docs.mjs`: OK. `npx tsc --noEmit`: ren. `npx eslint` på den nye testfilen: ren.
+- **Ikke kjørt:** `npm run build`, e2e, DB-/RLS-tester (`test:db`), Playwright, hostede kjøringer — ikke relevant for en ren testtilføyelse uten `src/`-endring.
+
+### 31.7 Status
+Akseptkriteriene er oppfylt innen eksisterende avgrensning: tre deterministiske ende-til-ende-tester (1), ingen case-spesifikk logikk (2; mutasjonskontroll), regler knyttet til versjonerte kilder (3; §31.2/§31.5), ukjent ≠ 0 (4), eksplisitte datoer (5), adskilte `acquisition_fx`/`customs_fx` (6), inspiserbare mellomverdier (7), review-dokument (8), kun kjørte tester rapportert (9), ingen UI/provider (10). **TAX-fundamentet forblir REVIEW** og de E1P-reglene over er ikke godkjent; dette er en revalidering, ikke en ny godkjenning. Neste oppgave er ikke startet.
