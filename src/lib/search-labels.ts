@@ -158,6 +158,7 @@ const GENERIC_REASON = "Forutsetning mangler eller er ikke dokumentert.";
 export const ECONOMICS_REASON_TEXT: Record<string, string> = {
   // estimat
   purchase_price_listing_claim: "Kjøpesummen er en annonsepåstand, ikke bekreftet kjøpsgrunnlag.",
+  demo_economics_inputs: "Beregnet med syntetiske demoforutsetninger (ikke forhandlerens egne opplysninger).",
   vat_rules_unapproved: "Mva.-reglene er ikke godkjent for validering.",
   rounding_unconfirmed: "Avrundingsregelen er ikke bekreftet.",
   customs_fx_rule_unconfirmed: "Regelen for tollkurs er ikke bekreftet.",
@@ -166,6 +167,8 @@ export const ECONOMICS_REASON_TEXT: Record<string, string> = {
   deduction_status_dealer_stated: "Fradragsstatus er oppgitt av forhandler.",
   deduction_rule_unapproved: "Fradragsregelen er ikke godkjent.",
   foreign_vat_exclusion_dealer_stated: "Utenlandsk mva. er oppgitt av forhandler.",
+  foreign_vat_exclusion_demo_assumed: "Utenlandsk mva. er en syntetisk demoantakelse.",
+  deduction_status_demo_assumed: "Fradragsstatus er en syntetisk demoantakelse.",
   tax_estimate: "Engangsavgiften er et estimat.",
   tax_profile_not_approved: "Avgiftsprofilen er ikke godkjent.",
   transport_default_assumed: "Transport er en antakelse.",
@@ -223,6 +226,7 @@ export function economicsReasonText(code: string): string {
 
 /** Forhandleropplysninger: tilstand → tekst. */
 export const DEALER_INPUT_TEXT = {
+  demo_fixture: "Beregnet med syntetiske demoforutsetninger — ikke bekreftede forhandleropplysninger. Registrer egne opplysninger for å erstatte dem.",
   none: "Ingen bekreftede forhandleropplysninger for denne annonsen.",
   in_use: "Beregnet med bekreftede forhandleropplysninger.",
   needs_reconfirmation: "Forhandleropplysningene må bekreftes på nytt og er ikke brukt.",
@@ -277,14 +281,16 @@ export const ROW_LABEL: Record<RowId, string> = {
 };
 export const STATE_LABEL: Record<RowState, string> = { known: "oppgitt eller beregnet", assumed: "antakelse", unknown: "ukjent", lower_bound: "nedre grense", not_applicable: "ikke relevant", excluded_by_scenario: "utelatt etter scenarioantakelse (regnet som 0)" };
 export const BASIS_LABEL: Record<BasisKey, string> = {
-  listing_claim: "Annonsepåstand — ikke dokumentasjon", dealer_entered: "Oppgitt av forhandler", document: "Tilbud eller dokument", assumed: "Antakelse (standardverdi eller scenario)",
+  listing_claim: "Annonsepåstand — ikke dokumentasjon", dealer_entered: "Oppgitt av forhandler", demo_assumption: "Syntetisk demoantakelse", document: "Tilbud eller dokument", assumed: "Antakelse (standardverdi eller scenario)",
   stated_input: "Oppgitt i beregningen", engine_estimate: "Regelmotor — estimat (regler ikke godkjent)", computed: "Beregnet av regelmotoren", ordinary_rate_unapproved: "Ordinær sats fra tolltariffen (ikke godkjent)", unresolved: "Ikke løst",
 };
 export const BASIS_SUMMARY_LABEL: Record<BasisSummaryKey, string> = {
-  listing_claim_only: "Beløpene bygger på annonsepåstander.", dealer_stated: "Beløpene bygger på forhandleroppgitte opplysninger.", partly_documented: "Noen kostnadsposter bygger på tilbud eller dokumenter.",
+  listing_claim_only: "Beløpene bygger på annonsepåstander.", dealer_stated: "Beløpene bygger på forhandleroppgitte opplysninger.", demo_assumptions: "Beløpene bygger på annonsepris og syntetiske demoantakelser.", partly_documented: "Noen kostnadsposter bygger på tilbud eller dokumenter.",
 };
 export const coverageText = (documented: number, known: number): string =>
   `Dokumentasjonsdekning: ${documented} av ${known} kjente kostnadsposter har tilbud eller dokument som grunnlag.`;
+/** Gruppetittel for demoens syntetiske antakelser (ECON-003-2). */
+export const UNCERTAINTY_INPUT_BASIS_DEMO_TITLE = "Opplysninger som er annonsepåstander eller syntetiske demoantakelser";
 export const UNCERTAINTY_GROUP_TITLE: Record<UncertaintyCategory, string> = {
   rule: "Regler som ikke er godkjent for validering", input_basis: "Opplysninger som er påstander eller forhandleroppgitt", assumption: "Antakelser",
   missing: "Mangler (gir nedre grense eller ikke beregnet)", not_collected: "Ikke innsamlet i appen ennå", other: "Annet",
@@ -298,7 +304,7 @@ export const FIELD_LABEL: Record<FormFieldKey, string> = {
 };
 export const FX_ROLE_LABEL = { acquisition: "Kurs for kjøpesum", customs: "Tollkurs" } as const;
 export const FX_SOURCE_LABEL = {
-  official_customs: "Tolletatens kurs", bank: "Bankkurs", dealer_entered: "Forhandleroppgitt kurs — estimat", fixture: "Testkurs — ikke en offisiell kurs", none: "Kilde ikke oppgitt",
+  official_customs: "Tolletatens kurs", bank: "Bankkurs", dealer_entered: "Forhandleroppgitt kurs — estimat", demo_assumption: "Syntetisk demokurs — ikke en markedskurs", fixture: "Testkurs — ikke en offisiell kurs", none: "Kilde ikke oppgitt",
 } as const;
 export const CUSTOMS_DATE_KIND_LABEL = { actual_acceptance: "faktisk akseptdato", expected_scenario: "forventet akseptdato (scenario)", unknown: "ukjent" } as const;
 export const REGISTRATION_DATE_KIND_LABEL: Record<string, string> = { expected: "forventet", actual: "faktisk" };
@@ -408,3 +414,35 @@ export const FIELD_ANCHOR: Record<FormFieldKey, string> = {
   fx_acquisition: "fxAcq", fx_customs: "fxCust", transport_to_border: "tb_amount", transport_after_border: "transportAfterBorder", insurance: "ins_amount", loading_handling: "loadingHandling",
   deduction: "vat", vat_handling: "vat", listing_price_basis: "costs", ev_qualification: "costs", commission: "costs", payment_costs: "costs", import_levies: "costs",
 };
+
+// ---------------------------------------------------------------- ECON-003-2: anslått innkjøpskostnad til Norge (sammendrag)
+// Norsk UI-språk. Alt er et estimat; ingen intern terminologi, ingen «0 kr» som plassholder, ingen «Minst 0 kr».
+export const SUMMARY_TITLE = "Estimert innkjøpskostnad til Norge";
+export const SUMMARY_TOTAL_LABEL = "Estimert total til Norge";
+export const SUMMARY_TOTAL_SCOPE = "inkl. engangsavgift og mva.";
+export const SUMMARY_PARTIAL_LABEL = "Foreløpig delsum — ufullstendig";
+export const SUMMARY_PARTIAL_NOTE = "Ikke en total: opplysninger mangler.";
+export const SUMMARY_LINE_LABEL: Record<"purchase" | "registration_tax" | "vat" | "transport" | "other", string> = {
+  purchase: "Kjøpesum", registration_tax: "Engangsavgift", vat: "MVA", transport: "Transport", other: "Øvrige poster",
+};
+export const SUMMARY_LINE_UNKNOWN = "ikke beregnet";
+export const SUMMARY_LINE_ASSUMED = "antatt";
+export const SUMMARY_ESTIMATE_NOTE = "Estimat basert på annonsepris og forhandlerens opplysninger. Ikke en offisiell avgiftsberegning.";
+export const SUMMARY_PRICE_CLAIM_NOTE = "Kjøpesummen er annonsepris (ikke bekreftet tilbud).";
+export const SUMMARY_VAT_SCOPE_NOTE = "Fradragsrett for mva. er ikke lagt til grunn i totalen.";
+export const SUMMARY_TRANSPORT_NOTE = "Transport er bare med når den er oppgitt.";
+export const SUMMARY_SCENARIO_EV_NOTE = "Totalen avhenger av om elbilfritaket gjelder. Det er ikke bekreftet.";
+export const SUMMARY_SCENARIO_GENERIC_NOTE = "Totalen avhenger av et forhold som ikke er avklart. Hvert scenario er vist.";
+export const SUMMARY_DEMO_LABEL = "Demo-estimat";
+export const SUMMARY_DEMO_NOTE = "Demo-estimat: bilens tekniske data, kurs og transport er syntetiske demoforutsetninger, ikke fra en leverandør.";
+export const SUMMARY_FX_TITLE = "Kurser brukt i estimatet";
+export const SUMMARY_FX_NONE = "Ingen kurs er brukt (kjøpesum i NOK).";
+export const SUMMARY_UNAVAILABLE_HEADLINE = "Estimert innkjøpskostnad til Norge: ikke beregnet";
+export const SUMMARY_UNAVAILABLE_LEAD = "Kan ikke beregnes ennå";
+export const SUMMARY_MISSING_INTRO = "Mangler";
+export const SUMMARY_MISSING_MORE = "m.fl.";
+export const SUMMARY_MISSING_DETAIL_TITLE = "Dette mangler for å beregne";
+export const SUMMARY_MISSING_REFINE_TITLE = "Dette gjør estimatet sikrere";
+/** Erstatter «Innkjøpskostnad … er ikke beregnet»-notisen når et beløp faktisk vises (ellers ville den motsagt estimatet). Budsjettvurderingen er fortsatt ikke gjort. */
+export const SUMMARY_BUDGET_NOTE = "Annonseprisen er ikke total innkjøpskostnad. Budsjettvurdering er ikke gjort.";
+

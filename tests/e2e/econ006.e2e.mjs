@@ -274,7 +274,11 @@ try {
   await saveForm(pA, fullValues("diesel"));
   e = await econ(pA);
   check(`J3 diesel: «Estimat — ikke validert: ${nok(exD.cash)}» (B-Merovo/fixturekonvensjon), positivt budsjett false`, e.status === "estimate" && e.label === "estimate_not_validated" && e.positive === "false" && e.headline === `Estimat — ikke validert: ${nok(exD.cash)}`, `${e.status} | ${e.headline}`);
-  check("J3: lagringsmelding vises, og budsjettnotatet er uendret (ikke beregnet)", (await pA.locator('[data-testid="econ-saved"]').count()) === 1 && (await pA.locator('[data-testid="budget-note"]').innerText()).includes("Innkjøpskostnad til Norge er ikke beregnet"));
+  { // ECON-003-2: når et beløp vises, må notisen ikke påstå «innkjøpskostnad ikke beregnet»; budsjettvurderingen er fortsatt ikke gjort
+    const note = await pA.locator('[data-testid="budget-note"]').innerText();
+    // Sjekknavnet er en CI-identitet (tests/ci-e2e-producers) og er beholdt uendret; betingelsen er oppdatert til den nye, ikke-motstridende notisen.
+    check("J3: lagringsmelding vises, og budsjettnotatet er uendret (ikke beregnet)", (await pA.locator('[data-testid="econ-saved"]').count()) === 1 && note.includes("Budsjettvurdering er ikke gjort") && !note.includes("Innkjøpskostnad til Norge er ikke beregnet"));
+  }
   if (e.status !== "estimate") console.error("J3 DEBUG:", e.text.slice(0, 1500));
   const sums = nb(await pA.locator('[data-testid="economics-sums"]').innerText({ timeout: 3000 }).catch(() => ""));
   check("J3: to summer (brutto utlegg og økonomisk kostnad) med forklaring av at brutto utlegg ikke nødvendigvis er kontantbetaling ved grensen", sums.includes(nok(exD.cash)) && /ikke nødvendigvis/i.test(await pA.locator('[data-testid="economics-gross-explain"]').innerText()) && (await pA.locator('[data-testid="economics-cost-explain"]').count()) === 1);
