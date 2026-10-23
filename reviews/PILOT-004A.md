@@ -1,6 +1,6 @@
 # PILOT-004A — Kjerneopprydding i forhandlerrettet økonomispråk
 
-Dato: 2026-10-23 · Basis: `main` cbf836b · Kode-commit: `78fc697` · Kun presentasjon. Ingen endring i formler, avgiftstabeller, mva.-/elbilfritaklogikk, FX, rettigheter, demofixturens verdier, kildefriskhet eller leverandører. PILOT-004B (utvidbar dypforklaring, bred dedup av usikkerhetslisten) er ikke startet.
+Dato: 2026-10-23 · Basis: `main` cbf836b · Kode-commit: `fe9f202` · Kun presentasjon. Ingen endring i formler, avgiftstabeller, mva.-/elbilfritaklogikk, FX, rettigheter, demofixturens verdier, kildefriskhet eller leverandører. PILOT-004B (utvidbar dypforklaring, bred dedup av usikkerhetslisten) er ikke startet.
 
 ## 1. Fjernet/skjult (legacy-elementer)
 
