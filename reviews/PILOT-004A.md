@@ -94,4 +94,4 @@ Kort (resultatliste) i nettleser: ingen legacy-statuslinje; 0 «ikke validert/go
 - **Tester avhenger ikke av gammel synlig ordlyd:** e2e leser `data-*`-attributtene; «headline» utledes av sammendragets nye, synlige tekst («Estimat: <total>»), ikke av legacy-ordlyd. Ny enhetstest låser at noden er `hidden`, tom, uten aria/rolle/tabindex, og at fjerning av den ikke endrer siden tekst.
 - Merknad: attributtverdien `data-economics-label="estimate_not_validated"` er en intern nøkkel (ikke brukersynlig, ikke tilgjengelighetseksponert). Den beholdes fordi e2e/typer bruker den; omdøping hører til en senere oppryddingsrunde, ikke dette.
 
-Tester etter sluttsjekken: `tests/pilot-004a-dealer-language.test.ts` 13/13; typecheck og lint OK. Se PR for full vitest-resultat.
+Tester etter sluttsjekken: `tests/pilot-004a-dealer-language.test.ts` 13/13; typecheck og lint OK. Full `vitest run`: **2 305 tester OK** (2 304 + den nye låsetesten). Én tidligere full kjøring hadde 4 feil i `hosted-launch`/`hosted-static` (tester som starter prosesser); de passerte i isolasjon (41/41) og i ny full kjøring ⇒ flak under belastning, ikke knyttet til denne endringen.
