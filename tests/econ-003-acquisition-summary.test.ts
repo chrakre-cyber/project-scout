@@ -299,13 +299,15 @@ describe("7. syntetisk demo: BMW iX3-søket virker, med demomerking og uten tall
     if (!r.ok || !r.spec) throw new Error(JSON.stringify(r.errors));
     return r.spec;
   };
-  const synth = () => new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => NOW });
-
-  it("uten forhandlerinput viser alle demokort «ikke beregnet» med klar årsak, bevarer demomerkingen, og viser ingen kroneverdi fra økonomien", async () => {
-    const out = await previewForDisplay(demoSpec(), { provider: synth(), now: () => NOW });
+  it("alle demokort uten forhandlerinput, utenom den kuraterte demobilen (egen fixture, se econ-003-demo-fixture), viser «ikke beregnet» med klar årsak og ingen økonomitall; demomerkingen er uendret", async () => {
+    const IN_WINDOW = new Date("2026-10-14T12:00:00Z"); // observasjonen er fersk ⇒ den kuraterte bilen beregnes; ellers ville utløpt kildedata skjult den
+    const provider = new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => IN_WINDOW });
+    const out = await previewForDisplay(demoSpec(), { provider, now: () => IN_WINDOW });
     if (!out.ok) throw new Error("demo feilet");
     expect(out.items.length).toBeGreaterThan(0);
-    for (const i of out.items) {
+    const others = out.items.filter((i) => !(i.economics.status !== "not_calculated" && i.economics.status !== "unavailable"));
+    expect(others.length).toBe(out.items.length - 1); // nøyaktig én (den kuraterte) beregnes
+    for (const i of others) {
       const html = card(i);
       expect(i.economics.status).toBe("not_calculated");
       expect(text(frag(html))).toContain("Estimert innkjøpskostnad til Norge: ikke beregnet");

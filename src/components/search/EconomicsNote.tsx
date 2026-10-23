@@ -31,7 +31,7 @@ export function EconomicsNote({ economics: e, compact = false, dealerFormHref }:
         )
         : <EconomicsExplanation e={e} formHref={dealerFormHref} />}
       <p className="text-xs" data-testid="economics-dealer-input">
-        {e.dealerInput.state === "none" ? DEALER_INPUT_TEXT.none : e.dealerInput.state === "in_use" ? DEALER_INPUT_TEXT.in_use : `${DEALER_INPUT_TEXT.needs_reconfirmation} (${e.dealerInput.reasons.map(staleReasonText).join("; ")}).`}
+        {e.dealerInput.state === "none" ? DEALER_INPUT_TEXT.none : e.dealerInput.state === "in_use" ? DEALER_INPUT_TEXT.in_use : e.dealerInput.state === "demo_fixture" ? DEALER_INPUT_TEXT.demo_fixture : `${DEALER_INPUT_TEXT.needs_reconfirmation} (${e.dealerInput.reasons.map(staleReasonText).join("; ")}).`}
       </p>
       {dealerFormHref && <p className="text-sm"><a className="font-semibold text-rust underline" href={dealerFormHref} data-testid="dealer-form-link">{DF_OPEN_LINK}</a></p>}
     </div>

@@ -1,7 +1,7 @@
 import type { AcquisitionSummary as Summary, FormFieldKey, SummaryLine } from "@/domain/search-economics";
 import {
-  FIELD_ANCHOR, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, SUMMARY_ESTIMATE_NOTE, SUMMARY_FX_NONE, SUMMARY_FX_TITLE, SUMMARY_LINE_ASSUMED, SUMMARY_LINE_LABEL, SUMMARY_LINE_UNKNOWN,
-  SUMMARY_MISSING_DETAIL_TITLE, SUMMARY_MISSING_INTRO, SUMMARY_MISSING_MORE, SUMMARY_PARTIAL_LABEL, SUMMARY_PARTIAL_NOTE, SUMMARY_PRICE_CLAIM_NOTE, SUMMARY_SCENARIO_EV_NOTE, SUMMARY_SCENARIO_GENERIC_NOTE, SUMMARY_TITLE, SUMMARY_TOTAL_LABEL,
+  FIELD_ANCHOR, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, SUMMARY_DEMO_FX_SOURCE, SUMMARY_DEMO_LABEL, SUMMARY_DEMO_NOTE, SUMMARY_ESTIMATE_NOTE, SUMMARY_FX_NONE, SUMMARY_FX_TITLE, SUMMARY_LINE_ASSUMED, SUMMARY_LINE_LABEL, SUMMARY_LINE_UNKNOWN,
+  SUMMARY_MISSING_DETAIL_TITLE, SUMMARY_MISSING_INTRO, SUMMARY_MISSING_REFINE_TITLE, SUMMARY_MISSING_MORE, SUMMARY_PARTIAL_LABEL, SUMMARY_PARTIAL_NOTE, SUMMARY_PRICE_CLAIM_NOTE, SUMMARY_SCENARIO_EV_NOTE, SUMMARY_SCENARIO_GENERIC_NOTE, SUMMARY_TITLE, SUMMARY_TOTAL_LABEL,
   SUMMARY_TOTAL_SCOPE, SUMMARY_TRANSPORT_NOTE, SUMMARY_UNAVAILABLE_HEADLINE, SUMMARY_UNAVAILABLE_LEAD, SUMMARY_VAT_SCOPE_NOTE, DF_FIX_LINK, economicsReasonText, formatNokExact, formatNokString,
 } from "@/lib/search-labels";
 
@@ -42,16 +42,19 @@ function Fx({ s }: { s: Calc }) {
       <p className="font-semibold">{SUMMARY_FX_TITLE}</p>
       {s.fx.length === 0 ? <p className="text-muted">{SUMMARY_FX_NONE}</p> : (
         <ul className="list-disc pl-5">{s.fx.map((f) => (
-          <li key={f.role} data-fx-role={f.role}><strong>{FX_ROLE_LABEL[f.role]}:</strong> {f.rate && f.pair ? `${f.pair} ${f.rate}` : "kurs mangler"} — {FX_SOURCE_LABEL[f.sourceKind]}</li>
+          <li key={f.role} data-fx-role={f.role}><strong>{FX_ROLE_LABEL[f.role]}:</strong> {f.rate && f.pair ? `${f.pair} ${f.rate}` : "kurs mangler"} — {s.demoInputs ? SUMMARY_DEMO_FX_SOURCE : FX_SOURCE_LABEL[f.sourceKind]}</li>
         ))}</ul>
       )}
     </div>
   );
 }
 
+const DemoChip = ({ s }: { s: Calc }) => (s.demoInputs ? <span className="mr-2 rounded-full border border-rust px-2 py-0.5 text-xs font-bold text-rust-dark" data-testid="acq-demo">{SUMMARY_DEMO_LABEL}</span> : null);
+
 function Notes({ s }: { s: Calc }) {
   return (
     <ul className="list-disc pl-5 text-xs text-muted" data-testid="acq-notes">
+      {s.demoInputs ? <li data-testid="acq-demo-note">{SUMMARY_DEMO_NOTE}</li> : null}
       <li>{SUMMARY_ESTIMATE_NOTE}</li>
       {s.priceFromListingClaim ? <li>{SUMMARY_PRICE_CLAIM_NOTE}</li> : null}
       <li>{SUMMARY_VAT_SCOPE_NOTE}</li>
@@ -60,11 +63,11 @@ function Notes({ s }: { s: Calc }) {
   );
 }
 
-function Missing({ fields, formHref }: { fields: readonly FormFieldKey[]; formHref?: string }) {
+function Missing({ fields, formHref, title = SUMMARY_MISSING_DETAIL_TITLE }: { fields: readonly FormFieldKey[]; formHref?: string; title?: string }) {
   if (fields.length === 0) return null;
   return (
     <div data-testid="acq-missing">
-      <p className="text-sm font-semibold">{SUMMARY_MISSING_DETAIL_TITLE}</p>
+      <p className="text-sm font-semibold">{title}</p>
       <ul className="list-disc pl-5 text-sm">
         {fields.map((f) => (
           <li key={f} data-field={f}>
@@ -104,14 +107,14 @@ export function AcquisitionSummary({ summary: s, compact = false, formHref }: { 
     if (compact) {
       return (
         <div className="mt-2 border-t border-sand pt-2" data-testid="acq-summary" data-acq-state="scenarios">
-          <p className="text-sm"><span className="text-muted">{SUMMARY_TOTAL_LABEL}: </span><strong className="text-base" data-testid="acq-total">{rangeText(s.scenarios)}</strong><span className="text-muted"> {SUMMARY_TOTAL_SCOPE}</span></p>
+          <p className="text-sm"><DemoChip s={s} /><span className="text-muted">{SUMMARY_TOTAL_LABEL}: </span><strong className="text-base" data-testid="acq-total">{rangeText(s.scenarios)}</strong><span className="text-muted"> {SUMMARY_TOTAL_SCOPE}</span></p>
           <p className="text-xs text-muted" data-testid="acq-scenarios">{scenarioNote(s.scenarios)} {s.scenarios.map((c) => `${c.label} ${nok(c.amountNok)}`).join(" · ")}</p>
         </div>
       );
     }
     return (
       <section className="space-y-3 rounded-2xl border border-sand bg-paper p-4 sm:p-5" aria-labelledby="acq-h" data-testid="acq-summary" data-acq-state="scenarios">
-        <h2 id="acq-h" className="text-lg font-bold">{SUMMARY_TITLE}</h2>
+        <h2 id="acq-h" className="text-lg font-bold">{SUMMARY_TITLE} <DemoChip s={s} /></h2>
         <p className="text-2xl font-bold tracking-tight text-forest">
           <span className="block text-sm font-semibold text-muted">{SUMMARY_TOTAL_LABEL}</span>
           <span data-testid="acq-total">{rangeText(s.scenarios)}</span><span className="ml-2 text-sm font-normal text-muted">{SUMMARY_TOTAL_SCOPE}</span>
@@ -121,7 +124,7 @@ export function AcquisitionSummary({ summary: s, compact = false, formHref }: { 
         <Lines s={s} />
         <Fx s={s} />
         <Notes s={s} />
-        <Missing fields={s.missing} formHref={formHref} />
+        <Missing fields={s.missing} formHref={formHref} title={SUMMARY_MISSING_REFINE_TITLE} />
       </section>
     );
   }
@@ -134,7 +137,7 @@ export function AcquisitionSummary({ summary: s, compact = false, formHref }: { 
     return (
       <div className="mt-2 border-t border-sand pt-2" data-testid="acq-summary" data-acq-state={s.state}>
         <p className="text-sm">
-          <span className="text-muted">{partial ? SUMMARY_PARTIAL_LABEL : SUMMARY_TOTAL_LABEL}: </span><strong className="text-base" data-testid="acq-total">{nok(s.amountNok)}</strong>
+          <DemoChip s={s} /><span className="text-muted">{partial ? SUMMARY_PARTIAL_LABEL : SUMMARY_TOTAL_LABEL}: </span><strong className="text-base" data-testid="acq-total">{nok(s.amountNok)}</strong>
           {partial ? null : <span className="text-muted"> {SUMMARY_TOTAL_SCOPE}</span>}
         </p>
         {partial ? <p className="text-xs text-muted" data-testid="acq-partial-note">{SUMMARY_PARTIAL_NOTE}{s.missing.length > 0 ? ` ${SUMMARY_MISSING_INTRO}: ${labelsOf(s.missing, 3)}.` : ""}</p> : null}
@@ -145,7 +148,7 @@ export function AcquisitionSummary({ summary: s, compact = false, formHref }: { 
 
   return (
     <section className="space-y-3 rounded-2xl border border-sand bg-paper p-4 sm:p-5" aria-labelledby="acq-h" data-testid="acq-summary" data-acq-state={s.state}>
-      <h2 id="acq-h" className="text-lg font-bold">{SUMMARY_TITLE}</h2>
+      <h2 id="acq-h" className="text-lg font-bold">{SUMMARY_TITLE} <DemoChip s={s} /></h2>
       <p className="text-2xl font-bold tracking-tight text-forest">
         <span className="block text-sm font-semibold text-muted">{partial ? SUMMARY_PARTIAL_LABEL : SUMMARY_TOTAL_LABEL}</span>
         <span data-testid="acq-total">{nok(s.amountNok)}</span>
@@ -155,7 +158,7 @@ export function AcquisitionSummary({ summary: s, compact = false, formHref }: { 
       <Lines s={s} />
       <Fx s={s} />
       <Notes s={s} />
-      <Missing fields={s.missing} formHref={formHref} />
+      <Missing fields={s.missing} formHref={formHref} title={partial ? SUMMARY_MISSING_DETAIL_TITLE : SUMMARY_MISSING_REFINE_TITLE} />
     </section>
   );
 }

@@ -20,7 +20,12 @@ export type ViewAmount =
   | { kind: "none"; reasons: string[] };
 
 /** Status på forhandleropplysningene uten å avsløre innhold: ingen / må bekreftes på nytt (med årsaker) / brukt. Fremmed input vises som «ingen». */
-export type DealerInputView = { state: "none" } | { state: "needs_reconfirmation"; reasons: string[] } | { state: "in_use" };
+export type DealerInputView =
+  | { state: "none" }
+  | { state: "needs_reconfirmation"; reasons: string[] }
+  | { state: "in_use" }
+  /** ECON-003-2: kun den kuraterte syntetiske demoen: forutsetningene er syntetiske demoverdier, ikke bekreftet av en forhandler. */
+  | { state: "demo_fixture" };
 
 export interface EconomicsViewLine { id: string; label: string; treatment: CostLineTreatment["treatment"]; counted: boolean; reason: string | null }
 

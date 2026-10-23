@@ -8,6 +8,7 @@ import { demoEnrichmentFor, demoMediaFor, type ListingEnrichment, type ListingMe
 import type { DisplayableListing, DisplayPolicy } from "@/domain/display-policy";
 import { applyDisplayPolicy } from "@/domain/display-policy";
 import { buildProvenance, evaluateProvenance } from "@/domain/provenance";
+import { DEMO_INPUTS_NOTE } from "@/domain/search-economics";
 import type { InternalProvenance, ProvenanceStatus } from "@/domain/provenance";
 import { matchingRights, policyForSource, restrictForMatching, rightsForSource } from "@/domain/provider-rights";
 import type { ProviderRightsProfile, ResolvedRights } from "@/domain/provider-rights";
@@ -17,6 +18,7 @@ import type { NormalizedListing } from "@/domain/types";
 import { EMPTY_QUERY, MarketplaceError, getMarketplaceProvider } from "@/providers/marketplace";
 import type { MarketplaceProvider } from "@/providers/marketplace";
 import { storedKey } from "./dealer-economics";
+import { DEMO_DEALERSHIP_ID, DEMO_SEARCH_ID, demoStoredInput, isCuratedDemoVehicle } from "./demo-economics";
 import { toDisplayEconomics, toDisplayEconomicsWithoutContext } from "./economics-view";
 import { PublicIdKeyMissingError, profileDigest, publicIdFor } from "./public-ids";
 import { handleFor } from "./result-handles";
@@ -117,10 +119,22 @@ function internalItem(item: PreviewItem, o: Required<Pick<DisplayOptions, "profi
   const policy = (o.policyFor ?? ((s: string, at: Date) => policyForSource(s, at, o.profiles)))(source, now);
   // ECON-005d: økonomi vurderes først ETTER at rettigheter og proveniens er gyldige, og vises bare gjennom rettighets- og feltvisningsgrensen.
   const ec = o.economics;
-  const economics = ec === undefined ? toDisplayEconomicsWithoutContext(rights, policy) : toDisplayEconomics(assessEconomics({
-    dealershipId: ec.dealershipId, searchId: ec.searchId, listing: item.listing, candidate: item.candidate, spec,
-    stored: ec.storedInputs.get(storedKey(item.candidate.id, item.candidate.version)) ?? null, profile: ec.profile, profiles: o.profiles, now,
-  }), policy);
+  const storedKeyOf = storedKey(item.candidate.id, item.candidate.version);
+  const dealerStored = ec?.storedInputs.get(storedKeyOf) ?? null;
+  // ECON-003-2: demoforutsetninger bare for den kuraterte syntetiske demobilen, og aldri når forhandleren har egen (også foreldet) input — forhandlerveien er uendret og autoritativ.
+  const demo = dealerStored === null && isCuratedDemoVehicle(item.listing, rights);
+  let economics: EconomicsView;
+  if (ec === undefined && !demo) economics = toDisplayEconomicsWithoutContext(rights, policy);
+  else {
+    let a = assessEconomics({
+      dealershipId: ec?.dealershipId ?? DEMO_DEALERSHIP_ID, searchId: ec?.searchId ?? DEMO_SEARCH_ID, listing: item.listing, candidate: item.candidate, spec,
+      stored: demo ? demoStoredInput({ dealershipId: ec?.dealershipId ?? DEMO_DEALERSHIP_ID, searchId: ec?.searchId ?? DEMO_SEARCH_ID, candidate: item.candidate, spec, rights, now }) : dealerStored,
+      profile: ec?.profile ?? null, profiles: o.profiles, now,
+    });
+    const demoUsed = demo && a.kind === "assessed";
+    if (demoUsed && a.kind === "assessed") a = { ...a, notes: [...a.notes, DEMO_INPUTS_NOTE] };
+    economics = toDisplayEconomics(a, policy, { demoInputs: demoUsed });
+  }
   return { ok: true, value: { display: toDisplayItem(item, policy, now, publicId, economics), provenance, handle: handleFor(provenance) } };
 }
 

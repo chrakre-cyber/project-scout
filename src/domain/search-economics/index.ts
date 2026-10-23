@@ -8,7 +8,7 @@ export { parseDealerInput, parseDealerProfile, toLineScopes, evaluateDealerInput
 export type * from "./dealer-input";
 export { toEconomicsView, notCalculatedView, dealerInputView, UNAVAILABLE_VIEW } from "./view";
 export type * from "./view";
-export { toAcquisitionSummary, addNok, summaryShowsAmount } from "./acquisition-summary";
+export { toAcquisitionSummary, addNok, summaryShowsAmount, DEMO_INPUTS_NOTE } from "./acquisition-summary";
 export type * from "./acquisition-summary";
 export { explainEconomics, uncertaintyCategory, fieldOfCode } from "./explain";
 export type * from "./explain";

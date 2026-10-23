@@ -18,7 +18,7 @@ export const NO_CONTEXT_VIEW: EconomicsView = Object.freeze(notCalculatedView(["
  * Porten gjelder ALLE grener — også tidlige avslag («ikke beregnet») og manglende kontekst: uten rett til å vise avledet økonomi (og pris) er modellen alltid «unavailable»,
  * uten avslagsårsaker og uten status for forhandlerbekreftelse. Bare med visningsrett vises «Ikke beregnet» med årsaker.
  */
-export function toDisplayEconomics(a: EconomicsAssessment, policy: DisplayPolicy): EconomicsView {
+export function toDisplayEconomics(a: EconomicsAssessment, policy: DisplayPolicy, opts: { demoInputs?: boolean } = {}): EconomicsView {
   if (a.kind === "unavailable") return UNAVAILABLE_VIEW;
   // Porten mot feltvisning: avledet økonomi avslører prisen, så den følger visningsretten for pris også når policyen er overstyrt eller snevret inn.
   if (policy.allow.price !== true) return UNAVAILABLE_VIEW;
@@ -27,7 +27,8 @@ export function toDisplayEconomics(a: EconomicsAssessment, policy: DisplayPolicy
     if (a.rights.display !== true) return UNAVAILABLE_VIEW;
     return notCalculatedView([a.reason], dealerInputView(a.dealerInput));
   }
-  return toEconomicsView(a.display, dealerInputView(a.dealerInput), a.notes, a.detail);
+  // ECON-003-2: den kuraterte demoen bruker syntetiske demoforutsetninger — aldri merket som «bekreftet av forhandler». Gjelder bare et faktisk beregnet resultat.
+  return toEconomicsView(a.display, opts.demoInputs === true ? { state: "demo_fixture" } : dealerInputView(a.dealerInput), a.notes, a.detail);
 }
 
 /**

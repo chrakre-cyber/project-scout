@@ -30,7 +30,9 @@ export interface SummaryLine {
 export interface SummaryFx { role: FxAssumption["role"]; pair: string | null; rate: string | null; sourceKind: FxAssumption["sourceKind"]; status: FxAssumption["status"] }
 
 export interface SummaryScenario { id: string; /** Motorens egen etikett (f.eks. «uten elbilfritak»). */ label: string; amountNok: string }
-type Computed = { lines: SummaryLine[]; fx: SummaryFx[]; missing: FormFieldKey[]; priceFromListingClaim: boolean };
+/** Notekode som merker at beregningen bruker de syntetiske demoforutsetningene for den kuraterte demoen (aldri satt for ekte eller leverandørbaserte resultater). */
+export const DEMO_INPUTS_NOTE = "demo_economics_inputs";
+type Computed = { lines: SummaryLine[]; fx: SummaryFx[]; missing: FormFieldKey[]; priceFromListingClaim: boolean; /** Syntetiske demoforutsetninger er brukt (vises som «Demo-estimat»). */ demoInputs: boolean };
 
 export type AcquisitionSummary =
   | { state: "hidden" }
@@ -79,7 +81,9 @@ const stateOf = (rows: readonly BreakdownRow[]): SummaryLineState => (rows.some(
 export function toAcquisitionSummary(view: EconomicsView): AcquisitionSummary {
   if (view.status === "unavailable") return { state: "hidden" };
   const x = view.explanation;
-  const collectable = byPriority((x?.missing ?? []).filter((m) => m.collectable).map((m) => m.field));
+  // Fradragsstatus og mva.-håndtering påvirker ikke totalen (brutto utlegg), bare den separate økonomiske kostnaden i detaljforklaringen: de er ikke «mangler» for dette sammendraget.
+  const NOT_TOTAL_FIELDS: readonly FormFieldKey[] = ["deduction", "vat_handling"];
+  const collectable = byPriority((x?.missing ?? []).filter((m) => m.collectable && !NOT_TOTAL_FIELDS.includes(m.field)).map((m) => m.field));
   if (view.status === "not_calculated") return { state: "unavailable", reasons: [...view.reasons], missing: collectable };
 
   const cash = view.cash;
@@ -121,7 +125,7 @@ export function toAcquisitionSummary(view: EconomicsView): AcquisitionSummary {
   if (othersSum !== null && !isZero(othersSum)) lines.push({ id: "other", amountNok: othersSum, state: stateOf(others) });
 
   const fx: SummaryFx[] = x.assumptions.fx.map((f) => ({ role: f.role, pair: f.pair, rate: f.rate, sourceKind: f.sourceKind, status: f.status }));
-  const rest: Computed = { lines, fx, missing: collectable, priceFromListingClaim: x.basisSummary === "listing_claim_only" };
+  const rest: Computed = { lines, fx, missing: collectable, priceFromListingClaim: x.basisSummary === "listing_claim_only", demoInputs: view.notes.includes(DEMO_INPUTS_NOTE) };
   return state === "scenarios" ? { state, scenarios, ...rest } : { state, amountNok: amountNok!, ...rest };
 }
 

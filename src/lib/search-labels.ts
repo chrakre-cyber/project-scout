@@ -158,6 +158,7 @@ const GENERIC_REASON = "Forutsetning mangler eller er ikke dokumentert.";
 export const ECONOMICS_REASON_TEXT: Record<string, string> = {
   // estimat
   purchase_price_listing_claim: "Kjøpesummen er en annonsepåstand, ikke bekreftet kjøpsgrunnlag.",
+  demo_economics_inputs: "Beregnet med syntetiske demoforutsetninger (ikke forhandlerens egne opplysninger).",
   vat_rules_unapproved: "Mva.-reglene er ikke godkjent for validering.",
   rounding_unconfirmed: "Avrundingsregelen er ikke bekreftet.",
   customs_fx_rule_unconfirmed: "Regelen for tollkurs er ikke bekreftet.",
@@ -223,6 +224,7 @@ export function economicsReasonText(code: string): string {
 
 /** Forhandleropplysninger: tilstand → tekst. */
 export const DEALER_INPUT_TEXT = {
+  demo_fixture: "Beregnet med syntetiske demoforutsetninger — ikke bekreftede forhandleropplysninger. Registrer egne opplysninger for å erstatte dem.",
   none: "Ingen bekreftede forhandleropplysninger for denne annonsen.",
   in_use: "Beregnet med bekreftede forhandleropplysninger.",
   needs_reconfirmation: "Forhandleropplysningene må bekreftes på nytt og er ikke brukt.",
@@ -427,6 +429,9 @@ export const SUMMARY_VAT_SCOPE_NOTE = "Fradragsrett for mva. er ikke lagt til gr
 export const SUMMARY_TRANSPORT_NOTE = "Transport er bare med når den er oppgitt.";
 export const SUMMARY_SCENARIO_EV_NOTE = "Totalen avhenger av om elbilfritaket gjelder. Det er ikke bekreftet.";
 export const SUMMARY_SCENARIO_GENERIC_NOTE = "Totalen avhenger av et forhold som ikke er avklart. Hvert scenario er vist.";
+export const SUMMARY_DEMO_FX_SOURCE = "Syntetisk demokurs — ikke en markedskurs";
+export const SUMMARY_DEMO_LABEL = "Demo-estimat";
+export const SUMMARY_DEMO_NOTE = "Demo-estimat: bilens tekniske data, kurs og transport er syntetiske demoforutsetninger, ikke fra en leverandør.";
 export const SUMMARY_FX_TITLE = "Kurser brukt i estimatet";
 export const SUMMARY_FX_NONE = "Ingen kurs er brukt (kjøpesum i NOK).";
 export const SUMMARY_UNAVAILABLE_HEADLINE = "Estimert innkjøpskostnad til Norge: ikke beregnet";
@@ -434,6 +439,7 @@ export const SUMMARY_UNAVAILABLE_LEAD = "Kan ikke beregnes ennå";
 export const SUMMARY_MISSING_INTRO = "Mangler";
 export const SUMMARY_MISSING_MORE = "m.fl.";
 export const SUMMARY_MISSING_DETAIL_TITLE = "Dette mangler for å beregne";
+export const SUMMARY_MISSING_REFINE_TITLE = "Dette gjør estimatet sikrere";
 /** Erstatter «Innkjøpskostnad … er ikke beregnet»-notisen når et beløp faktisk vises (ellers ville den motsagt estimatet). Budsjettvurderingen er fortsatt ikke gjort. */
 export const SUMMARY_BUDGET_NOTE = "Annonseprisen er ikke total innkjøpskostnad. Budsjettvurdering er ikke gjort.";
 
