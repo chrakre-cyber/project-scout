@@ -14,8 +14,8 @@ const REF = "abcdefghij0123456789";
 const target = { ref: REF, mode: "fresh" as "fresh" | "upgrade", stage: null, dbKind: "direct" as const, fingerprint: fingerprintOf(REF), masked: "ab…89" };
 
 describe("repoets migrasjoner og klassifisering", () => {
-  it("repoet har 12 migrasjoner og de tre aldri anvendt hostet er med", () => {
-    expect(repo).toHaveLength(12);
+  it("repoet har 13 migrasjoner (DATA-002D la til skrivebeskyttet rettighetsleseveg) og de tre aldri anvendt hostet er med", () => {
+    expect(repo).toHaveLength(13);
     for (const v of KNOWN_NEVER_APPLIED_HOSTED) expect(versions).toContain(v);
     expect(repoHash(repo)).toMatch(/^[0-9a-f]{64}$/);
   });

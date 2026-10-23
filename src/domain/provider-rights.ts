@@ -249,7 +249,7 @@ export const SYNTHETIC_RIGHTS_PROFILE: ProviderRightsProfile = Object.freeze({
   status: "verified",
   validFrom: "2026-10-01T00:00:00Z",
   validUntil: null,
-  sourceRef: "Intern syntetisk demokilde (DEV-003/DEV-005A): ingen ekte annonser og ingen eksterne vilkår.",
+  sourceRef: "Intern syntetisk demokilde (DEV-003/DEV-005A): ingen ekte annonser og ingen eksterne vilkår. Retensjon er en test-verdi, ikke en leverandøravtale.",
   verifiedBy: "DEV-005B0 (intern profil for syntetiske data)",
   verifiedAt: "2026-10-08T00:00:00Z",
   providerName: "Syntetisk demokilde",
