@@ -47,7 +47,15 @@ Docs: `DECISIONS.md` (runde 97), `MVP_BACKLOG.md`, `TEST_PLAN.md`, dette dokumen
 | `npm run qa:demo` | alle PASS |
 
 Dekning av kravene: (1) demoøkonomien finnes ved klokker 23.10., 29.10., 20.11. og 31.12.2026 (ekte pipeline, fornyet epoke) — alle etter det gamle utløpet bortsett fra den første; (2) samme 484 214 – 559 214 kr og samme linjer (424 925 / 18 058 / 8 000), samme observasjonstid; (3) generisk syntetisk annonse går fortsatt `stale`/`source_data` etter 7 døgn; (4) sandbox/leverandør/live og «ser ut som demobilen» får ordinær kildegrense (`source_data`); (5) rettighetsprofilens lagringstid og `retentionExpiresAt`/`isWithinRetention` uendret; (6) 2027-01-01 og senere: ingen estimat/scenarier; (7) `TRANSIENT_FRESH_MS`, 604 800 s, epoke, 48 t-vindu og `DOCUMENTED_RULE_PERIOD` uendret. **Mutasjonssjekk:** uten koblingen i `assessEconomics` feiler 5 tester; med policyen påført alle annonser feiler de to «generisk/leverandør»-testene.
-**Ikke kjørt i denne oppgaven:** nettleser-e2e-suitene (`search005`, `econ006`, `econ006d`) — endringen berører bare én gyldighetsgrense for den kuraterte demobilen og de oppgitte kontrollene er kjørt; suitene bør kjøres før PR hvis ønsket.
+**Nettleser-e2e mot dokumentert `main`-baseline (kjørt etter PILOT-003, commit `17fa854`):**
+
+| Suite | PILOT-003 | `main`-baseline (PILOT-002-koden, samme dag) | Sammenligning |
+|---|---|---|---|
+| `search005` | 77/77 OK | 77/77 OK | identisk |
+| `econ006` | 86/94, 8 feil | 86/94, 8 feil | **identisk feilsett** (full feillinje inkl. detaljtekst) |
+| `econ006d` | 23/26, 3 feil | 23/26, 3 feil | **identisk feilsett** (full feillinje inkl. detaljtekst) |
+
+Feilene er de kjente kalenderfølsomme (J3 ×3, J6, J7, J9 PHEV, avrundingslikhet, preview ×2 i `econ006`; J5 ×2 og B1 i `econ006d`) — ingen nye deterministiske feil, ingen endring i leverandør-/sandbox-/live- eller generisk syntetisk atferd. Baselineloggene er kjørt på PILOT-002-koden (identisk med `main` f8f105e, som bare legger til merge-commit). Den tidligere observerte flakete sjekken «alle action-svar … >10 svar» dukket ikke opp.
 
 ## 6. Nettleserverifisering (ekte app, PILOT-001-driveren)
 
@@ -65,4 +73,4 @@ Serverens klokke ble flyttet frem med et preload-skript utenfor repoet (`Date.no
 
 ## 8. Klar for PR?
 
-Ja, for review: alle kjørte kontroller grønne, policyen er isolert og dokumentert, og avgiftsgrensen er bevart. Anbefalt før PR: kjør e2e-suitene (se §5) og bekreft at PR-en bare skal dekke demoherdingen.
+Ja, for review: alle kjørte kontroller grønne, policyen er isolert og dokumentert, og avgiftsgrensen er bevart. e2e-suitene er kjørt og matcher `main`-baseline (se §5).
