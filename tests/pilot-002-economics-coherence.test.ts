@@ -207,3 +207,71 @@ describe("8–9. ellers uendret", () => {
     expect(whyShown({ ...i.assessment.vehicle, status: "match" } as never)).not.toMatch(/innkjøpskostnad/i);
   });
 });
+
+describe("10. ikke beregnet: ingen legacy-nedbrytning med kroneverdier (sluttregel), og verdifull forklaring beholdes ellers", () => {
+  const note = (e: EconomicsView, s = toAcquisitionSummary(e)) => text(renderToStaticMarkup(createElement(EconomicsNote, { economics: e, summary: s, dealerFormHref: "/f" })));
+  const transportRows = [{ id: "c1", kind: "transport", label: "Transport", treatment: "unsupported" as const, counted: false, amountNok: "8000" }];
+
+  it("1–3. utløpt demo (ekte pipeline, klokke etter profilens retensjon): ingen kroneverdier fra nedbrytningen, ingen transportlinje, men årsak + «dette mangler» + skjemalenke", async () => {
+    const LATE = new Date(NOW.getTime() + 9 * 86_400_000);
+    const out = await previewForDisplay(demoSpec(), { provider: new SyntheticMarketplaceProvider({ records: syntheticRawListings, now: () => LATE }), now: () => LATE });
+    if (!out.ok) throw new Error("demo feilet");
+    const pick = out.items.find((i) => i.economics.status === "not_calculated" && i.economics.explanation !== null); // den kuraterte demobilen, nå utløpt (9 dager > profilens 7)
+    if (!pick) throw new Error("fant ingen ikke-beregnet annonse med forklaring");
+    const s = toAcquisitionSummary(pick.economics);
+    expect(s.state).toBe("unavailable");
+    const t = detail(pick);
+    expect(t).not.toContain("Slik er beløpet bygget opp");
+    expect(t).not.toMatch(/Kjøpesum\s+[\d\s]+kr|Engangsavgift\s+[\d\s]+kr|Tollverdi\s+[\d\s]+kr|Transport til innførselsstedet\s+[\d\s]+kr/);
+    expect(t).not.toContain("Dine valgte tillegg fra søket");
+    expect(t).not.toMatch(/Transport[^.]{0,40}(ikke regnet med|med i estimatet)/);
+    expect(t).not.toMatch(/Minst/);
+    expect(t).toContain("Estimert innkjøpskostnad til Norge: ikke beregnet");
+    expect(t).toMatch(/Registrer|Dette mangler|Beregningen er utløpt|mangler/i);
+  });
+
+  it("1–3 (enhet): ikke-beregnet med kjent transport + ikke-støttet transportlinje ⇒ ingen nedbrytning/transportlinje; missing-guidance og skjemalenke beholdes", () => {
+    const e = lbView("2510", { purchase: false, transport: "known", rows: transportRows });
+    (e as { explanation: { missing: unknown[] } }).explanation.missing = [{ field: "fx_acquisition", collectable: true }];
+    const t = note(e);
+    const raw = renderToStaticMarkup(createElement(EconomicsNote, { economics: e, summary: toAcquisitionSummary(e), dealerFormHref: "/f" }));
+    expect(toAcquisitionSummary(e).state).toBe("unavailable");
+    expect(t).not.toContain("Slik er beløpet bygget opp");
+    expect(t).not.toMatch(/\d\s?kr/);
+    expect(t).not.toContain("Transport");
+    expect(t).toContain("Dette må oppgis for å beregne mer");
+    expect(raw).toContain('href="/f#f-');
+  });
+
+  it("4–5. estimat og scenarioområde (ekte demo) beholder nedbrytning, forutsetninger og søkelinje-forklaring", async () => {
+    const i = (await demoItems()).find((x) => toAcquisitionSummary(x.economics).state === "scenarios")!;
+    const t = detail(i);
+    expect(t).toContain("Slik er beløpet bygget opp");
+    expect(t).toMatch(/Kjøpesum\s+424\s925\skr/);
+    expect(t).toContain("Dine valgte tillegg fra søket");
+    expect(t).toContain(SEARCH_LINE_ENGINE_TRANSPORT_NOTE);
+    const e = lbView("112400", { transport: "known" });
+    expect(toAcquisitionSummary(e).state).toBe("partial");
+    // estimat (enhet): kjent total
+    const est = { ...lbView("0"), status: "estimate", labelKey: "estimate_not_validated", cash: { kind: "value", nok: "468723" }, landed: { kind: "value", nok: "468723" } } as unknown as EconomicsView;
+    expect(toAcquisitionSummary(est).state).toBe("estimate");
+    expect(note(est)).toContain("Slik er beløpet bygget opp");
+  });
+
+  it("6. meningsfull delsum beholder nedbrytningen", () => {
+    const e = lbView("112400", { transport: "known", rows: transportRows });
+    expect(toAcquisitionSummary(e).state).toBe("partial");
+    const t = note(e);
+    expect(t).toContain("Slik er beløpet bygget opp");
+    expect(t).toContain("100 000 kr");
+    expect(t).toContain(SEARCH_LINE_ENGINE_TRANSPORT_NOTE);
+  });
+
+  it("7. BMW iX3-demoens totaler er uendret", async () => {
+    const i = (await demoItems()).find((x) => toAcquisitionSummary(x.economics).state === "scenarios")!;
+    const s = toAcquisitionSummary(i.economics);
+    if (s.state !== "scenarios") throw new Error("forventet scenarier");
+    expect(s.scenarios.map((c) => c.amountNok)).toEqual(["484214", "559214"]);
+    expect(detail(i)).toContain("484 214 – 559 214 kr");
+  });
+});

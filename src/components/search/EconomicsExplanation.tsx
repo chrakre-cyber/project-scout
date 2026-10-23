@@ -122,18 +122,25 @@ export function EconomicsExplanation({ e, formHref, showSums = true }: { e: Excl
       {"cash" in e && showSums && <Sums e={e as Computable} />}
       {x && (
         <>
-          <p className="text-sm" data-testid="economics-basis-summary">{BASIS_SUMMARY_LABEL[x.basisSummary]}
-            {x.coverage.knownCostItems > 0 && <> <span data-testid="economics-coverage">{coverageText(x.coverage.documented, x.coverage.knownCostItems)}</span> <span className="text-xs text-muted">{COVERAGE_DISCLAIMER}</span></>}
-          </p>
-          <Breakdown x={x} />
+          {showSums && (
+            <>
+              {/* PILOT-002: kroneverdier (nedbrytning, grunnlagssetning, søketillegg) vises bare når sammendraget viser et beløp; i «ikke beregnet» ville de se ut som en delberegning. Forutsetninger, usikkerhet og «dette mangler» beholdes. */}
+              <p className="text-sm" data-testid="economics-basis-summary">{BASIS_SUMMARY_LABEL[x.basisSummary]}
+                {x.coverage.knownCostItems > 0 && <> <span data-testid="economics-coverage">{coverageText(x.coverage.documented, x.coverage.knownCostItems)}</span> <span className="text-xs text-muted">{COVERAGE_DISCLAIMER}</span></>}
+              </p>
+              <Breakdown x={x} />
+            </>
+          )}
           <Assumptions a={x.assumptions} />
-          <section aria-label={SEARCH_COSTS_TITLE} data-testid="economics-lines">
-            <h3 className="font-bold">{SEARCH_COSTS_TITLE}</h3>
-            {x.searchCosts.rows.length === 0 ? <p className="text-sm">Ingen tillegg lagt inn i søket.</p> : (
-              <ul className="list-disc pl-5">{x.searchCosts.rows.map((l) => <li key={l.id}>{l.label}{l.amountNok ? ` (${formatNokExact(l.amountNok)})` : ""}: {searchLineText(l, engineTransportIncluded)}</li>)}</ul>
-            )}
-            <p className="text-xs text-muted">{SEARCH_COSTS_NOTE}</p>
-          </section>
+          {showSums && (
+            <section aria-label={SEARCH_COSTS_TITLE} data-testid="economics-lines">
+              <h3 className="font-bold">{SEARCH_COSTS_TITLE}</h3>
+              {x.searchCosts.rows.length === 0 ? <p className="text-sm">Ingen tillegg lagt inn i søket.</p> : (
+                <ul className="list-disc pl-5">{x.searchCosts.rows.map((l) => <li key={l.id}>{l.label}{l.amountNok ? ` (${formatNokExact(l.amountNok)})` : ""}: {searchLineText(l, engineTransportIncluded)}</li>)}</ul>
+              )}
+              <p className="text-xs text-muted">{SEARCH_COSTS_NOTE}</p>
+            </section>
+          )}
           <Uncertainty x={x} />
           <Missing x={x} formHref={formHref} />
         </>
