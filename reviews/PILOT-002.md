@@ -89,3 +89,27 @@ Merknader: (a) e2e-sjekkenes betingelser er justert i fem sjekker (J1 ×3, J1-ba
 - **F-03 «ikke beregnet» + estimat:** ja for kort, detalj og sidebanner (verifisert i appen). «Ikke beregnet» står bare i sammendragets overskrift og på linjenivå (f.eks. MVA-linjen i scenarier, som er korrekt).
 - **F-04 «Minst 0 kr»:** ja — ingen vei fra motoren til bruker gir «Minst 0»; en meningsfull grense (>0) vises bare når sammendraget viser delsum. Ukjent post vises «ukjent», aldri 0.
 - Ikke løst (utenfor omfang, uendret): F-05 (tung ordlyd/«hva kan tallet brukes til»), F-11 (to titler/duplisert økonomiblokk i detalj utover den skjulte overskriften), F-01, F-06, F-07.
+
+## 9. Sluttkorreksjon: legacy-nedbrytning i «ikke beregnet» (commit `c32030f`)
+
+**Nyfunnet motsigelse** (målrettet nettleserverifisering av utløpt demo, side 62): sammendraget sa «ikke beregnet», men legacy-blokken viste likevel «Slik er beløpet bygget opp» med Kjøpesum 424 925 kr, Transport 8 000 kr, Engangsavgift og Tollverdi, samt «Transport (8 000 kr): støttes ikke (ikke regnet med)» like under. Det så ut som en delberegning og motsa både «ikke beregnet» og transportlinjen. Ikke en regresjon fra PILOT-002 (samme innhold i audit-kjøringen før endringene), men i kjernen av målet.
+
+**Sluttregel:** når sammendraget er `unavailable` vises ingen kroneverdier fra legacy-blokken: ingen nedbrytning, ingen grunnlagssetning/dokumentasjonsdekning, ingen «Dine valgte tillegg fra søket» (og dermed ingen transportlinje). Beholdt: årsak (f.eks. «Beregningen er utløpt»), forutsetninger (kurs, datoer, regelstatus), usikkerhet, «Dette må oppgis for å beregne mer» med lenke til forhandlerskjemaet, «Ikke rådgivning». For estimat, scenarier og meningsfull delsum er alt uendret (nedbrytning, søkelinje-forklaring og motor-transportnotisen).
+
+Endret: `src/components/search/EconomicsExplanation.tsx` (gating på `showSums`, som allerede følger sammendraget). Ingen formel, avgift, FX, rettighet eller demofixtur rørt.
+
+**Tester etter korreksjonen (faktisk kjørt):**
+
+| Kontroll | Resultat |
+|---|---|
+| `tests/pilot-002-economics-coherence.test.ts` | 16/16 OK (5 nye: utløpt demo i ekte pipeline og enhetsform; estimat/scenarier/delsum beholder nedbrytning; iX3-totaler uendret 484 214 / 559 214). Tilbakeføring av korreksjonen feller de 2 «ikke beregnet»-testene. |
+| Full `vitest run` | 99 filer / 2 280 tester OK |
+| `tsc --noEmit`, `eslint .`, `next build` | OK |
+| e2e `search005` | 77/77 OK |
+| e2e `econ006d` | 23/26 — identiske 3 feil som baseline (full linjesammenligning) |
+| e2e `econ006` | 86/94 — identiske 8 feil som baseline. En av to kjøringer hadde i tillegg «alle action-svar … >10 svar» (8 svar); ikke reprodusert i rerun (samme kode) ⇒ flak i telling, ikke lekkasje. |
+| Nettleser (PILOT-001-driveren, ny kjøring på sluttbygg) | 0 JS-/konsollfeil. Utløpt demo (side 62): én «ikke beregnet»-overskrift, **ingen** «Slik er beløpet bygget opp», **ingen** kroneverdier fra nedbrytning, **ingen** transportlinje/«med i estimatet»/«ikke regnet med», ingen «Minst», ingen «Brutto utlegg:»; «Dette må oppgis»-veiledning og forutsetninger beholdt. Uten-fixtur og «må kontrolleres» (41/42): samme rene bilde. Demobilen med scenarier (40/76): 484 214 – 559 214 kr, nedbrytning og motor-transportnotis til stede, ingen «ikke beregnet»-påstand. Alle resultatlister: 0 «Minst», 0 «ikke beregnet»-påstand ved siden av beløp. |
+
+## 10. Endelig vurdering
+
+PILOT-001 P1-motsigelsene F-02, F-03 og F-04 er løst, inkludert utløpt/«ikke beregnet»-tilstanden som sist ble verifisert i nettleser. Kode-commits: `3a82c02` (hovedendring), `c32030f` (sluttkorreksjon).
