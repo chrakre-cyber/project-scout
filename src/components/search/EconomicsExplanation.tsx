@@ -3,7 +3,7 @@ import {
   ASSUMPTIONS_TITLE, ASSUMPTION_SOURCE_LABEL, BASIS_LABEL, BASIS_SUMMARY_LABEL, BREAKDOWN_BASIS_NOTE, BREAKDOWN_CAPTION, BREAKDOWN_TITLE, COVERAGE_DISCLAIMER, CUSTOMS_DATE_KIND_LABEL,
   DEALER_FORM_NOT_AVAILABLE, DF_FIX_LINK, FIELD_ANCHOR, ECONOMIC_COST_EXPLAIN, ECONOMIC_COST_TITLE, ECONOMICS_NOT_ADVICE, ECONOMICS_UNCERTAINTY_INTRO, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, GROSS_OUTLAY_EXPLAIN, GROSS_OUTLAY_TITLE,
   MISSING_TITLE, NOT_COLLECTABLE_TEXT, REGISTRATION_DATE_KIND_LABEL, ROW_LABEL, RULES_NOT_APPROVED, SEARCH_COSTS_NOTE, SEARCH_COSTS_TITLE, STATE_LABEL, UNCERTAINTY_GROUP_TITLE, UNCERTAINTY_INPUT_BASIS_DEMO_TITLE,
-  VAT_HANDLING_LABEL, VAT_RECOVERABILITY_LABEL, coverageText, economicsNoteText, economicsReasonText, formatNokExact, formatNokString, isZeroNok, searchLineText,
+  GENERIC_REASON, VAT_HANDLING_LABEL, VAT_RECOVERABILITY_LABEL, coverageText, economicsNoteText, economicsReasonText, formatNokExact, formatNokString, isZeroNok, searchLineText,
 } from "@/lib/search-labels";
 
 type Computable = Extract<EconomicsView, { cash: unknown }>;
@@ -18,19 +18,41 @@ export function amountText(a: ViewAmount): string {
   }
 }
 
-/** To summer med forklaring: brutto utlegg (ikke nødvendigvis kontant ved grensen) og økonomisk kostnad (med scenarier ved ukjent fradragsstatus). */
-export function Sums({ e }: { e: Computable }) {
+const sameAmount = (a: ViewAmount, b: ViewAmount): boolean => {
+  if (a.kind !== b.kind) return false;
+  if (a.kind === "value") return a.nok === (b as typeof a).nok;
+  if (a.kind === "lower_bound") return a.minimumNok === (b as typeof a).minimumNok;
+  if (a.kind === "scenarios") {
+    const bs = [...(b as typeof a).scenarios].map((x) => x.nok).sort(), as = [...a.scenarios].map((x) => x.nok).sort();
+    return as.length === bs.length && as.every((v, i) => v === bs[i]);
+  }
+  return true;
+};
+
+/**
+ * Brutto utlegg (ikke nødvendigvis kontantbetaling ved grensen) og kostnad etter mva.-fradrag.
+ * PILOT-004A: `dedupe` = sammendraget vises og har allerede totalen (brutto utlegg er alltid samme tall som sammendragets total) ⇒ totalen gjentas ikke; forklaringen om kontantbetaling står én gang,
+ * og «Kostnad etter mva.-fradrag» vises bare når den avviker fra sammendragets total (fradrag kjent eller to scenarier) — ellers er den bare en gjentakelse.
+ */
+export function Sums({ e, dedupe = false }: { e: Computable; dedupe?: boolean }) {
+  const showLanded = !dedupe || !sameAmount(e.cash, e.landed);
   return (
     <div className="space-y-2" data-testid="economics-sums">
-      <div>
-        <p className="font-semibold">{GROSS_OUTLAY_TITLE}: <span data-testid="economics-cash">{amountText(e.cash)}</span></p>
-        <p className="text-xs text-muted" data-testid="economics-gross-explain">{GROSS_OUTLAY_EXPLAIN}</p>
-      </div>
-      <div>
-        <p className="font-semibold">{ECONOMIC_COST_TITLE}: <span data-testid="economics-landed">{amountText(e.landed)}</span></p>
-        {e.landed.kind === "scenarios" && <ul className="list-disc pl-5" data-testid="economics-scenarios">{e.landed.scenarios.map((s) => <li key={s.id}>{s.label}: {formatNokString(s.nok)}</li>)}</ul>}
-        <p className="text-xs text-muted" data-testid="economics-cost-explain">{ECONOMIC_COST_EXPLAIN}</p>
-      </div>
+      {dedupe
+        ? <p className="text-xs text-muted" data-testid="economics-gross-explain">{GROSS_OUTLAY_EXPLAIN}</p>
+        : (
+          <div>
+            <p className="font-semibold">{GROSS_OUTLAY_TITLE}: <span data-testid="economics-cash">{amountText(e.cash)}</span></p>
+            <p className="text-xs text-muted" data-testid="economics-gross-explain">{GROSS_OUTLAY_EXPLAIN}</p>
+          </div>
+        )}
+      {showLanded && (
+        <div>
+          <p className="font-semibold">{ECONOMIC_COST_TITLE}: <span data-testid="economics-landed">{amountText(e.landed)}</span></p>
+          {e.landed.kind === "scenarios" && <ul className="list-disc pl-5" data-testid="economics-scenarios">{e.landed.scenarios.map((s) => <li key={s.id}>{s.label}: {formatNokString(s.nok)}</li>)}</ul>}
+          <p className="text-xs text-muted" data-testid="economics-cost-explain">{ECONOMIC_COST_EXPLAIN}</p>
+        </div>
+      )}
     </div>
   );
 }
@@ -68,7 +90,7 @@ function Assumptions({ a }: { a: Explanation["assumptions"] }) {
       <ul className="list-disc pl-5">
         {a.fx.map((f) => (
           <li key={f.role} data-fx-role={f.role}>
-            <strong>{FX_ROLE_LABEL[f.role]}:</strong> {f.rate && f.pair ? `${f.pair} ${f.rate}` : "kurs mangler"} — {FX_SOURCE_LABEL[f.sourceKind]}{f.sourceLabel ? ` («${f.sourceLabel}»)` : ""}
+            <strong>{FX_ROLE_LABEL[f.role]}:</strong> {f.rate && f.pair ? `${f.pair} ${f.rate}` : "kurs mangler"} — {FX_SOURCE_LABEL[f.sourceKind]}{f.sourceLabel && f.sourceLabel !== FX_SOURCE_LABEL[f.sourceKind] ? ` («${f.sourceLabel}»)` : ""}
             {f.quotedAt ? `, notert ${f.quotedAt}` : ""}{f.effectiveAt ? `, gjelder ${f.effectiveAt}` : ""}{f.validTo ? `, gyldig til ${f.validTo}` : ""}
           </li>
         ))}
@@ -83,7 +105,11 @@ function Assumptions({ a }: { a: Explanation["assumptions"] }) {
 }
 
 function Uncertainty({ x }: { x: Explanation }) {
-  const groups = (Object.keys(UNCERTAINTY_GROUP_TITLE) as Array<keyof typeof UNCERTAINTY_GROUP_TITLE>).map((c) => [c, x.uncertainty.filter((u) => u.category === c)] as const).filter(([, l]) => l.length > 0);
+  const textOf = (c: string, code: string): string => (c === "not_collected" || code.endsWith("_unknown_no_dealer_basis") || code.endsWith("_defaulted_to_as_of") ? economicsNoteText(code) : economicsReasonText(code));
+  // PILOT-004A: en kode uten egen tekst gir den innholdsløse reserveteksten — den vises ikke som egen linje (og en gruppe uten linjer vises ikke).
+  const groups = (Object.keys(UNCERTAINTY_GROUP_TITLE) as Array<keyof typeof UNCERTAINTY_GROUP_TITLE>)
+    .map((c) => [c, x.uncertainty.filter((u) => u.category === c).map((u) => ({ code: u.code, t: textOf(c, u.code) })).filter((r) => r.t !== GENERIC_REASON)] as const)
+    .filter(([, l]) => l.length > 0);
   if (groups.length === 0) return null;
   return (
     <section aria-label={ECONOMICS_UNCERTAINTY_INTRO} data-testid="economics-uncertainty">
@@ -91,7 +117,7 @@ function Uncertainty({ x }: { x: Explanation }) {
       {groups.map(([c, list]) => (
         <div key={c} data-uncertainty={c}>
           <p className="text-sm font-semibold">{x.demoInputs && c === "input_basis" ? UNCERTAINTY_INPUT_BASIS_DEMO_TITLE : UNCERTAINTY_GROUP_TITLE[c]}</p>
-          <ul className="list-disc pl-5">{list.map((u) => <li key={u.code}>{c === "not_collected" || u.code.endsWith("_unknown_no_dealer_basis") || u.code.endsWith("_defaulted_to_as_of") ? economicsNoteText(u.code) : economicsReasonText(u.code)}</li>)}</ul>
+          <ul className="list-disc pl-5">{list.map((r) => <li key={r.code}>{r.t}</li>)}</ul>
         </div>
       ))}
     </section>
@@ -113,13 +139,13 @@ function Missing({ x, formHref }: { x: Explanation; formHref?: string }) {
 }
 
 /** Skrivebeskyttet forklaring av beløp og usikkerhet (ECON-006a). Tar bare visningsmodellen (bak rettighetsgrensen). */
-export function EconomicsExplanation({ e, formHref, showSums = true }: { e: Exclude<EconomicsView, { status: "unavailable" }>; formHref?: string; showSums?: boolean }) {
+export function EconomicsExplanation({ e, formHref, showSums = true, dedupe = false }: { e: Exclude<EconomicsView, { status: "unavailable" }>; formHref?: string; showSums?: boolean; dedupe?: boolean }) {
   const x = e.explanation;
   // (Bare når et estimat faktisk vises: `showSums`.) En uttrykkelig oppgitt motor-transport som er med i brutto utlegg (kjent/antatt, beløp satt) — da kan en søketransportlinje aldri beskrives som at «transport ikke er regnet med».
   const engineTransportIncluded = showSums && x !== null && x !== undefined && x.breakdown.some((r) => (r.id === "transport_to_border" || r.id === "transport_after_border") && r.inGrossOutlay && (r.state === "known" || r.state === "assumed") && r.amountNok !== null);
   return (
     <div className="space-y-3">
-      {"cash" in e && showSums && <Sums e={e as Computable} />}
+      {"cash" in e && showSums && <Sums e={e as Computable} dedupe={dedupe} />}
       {x && (
         <>
           {showSums && (

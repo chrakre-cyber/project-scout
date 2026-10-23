@@ -231,7 +231,7 @@ describe("faste etiketter og markup", () => {
   const allTexts = () => [...Object.values(ECONOMICS_LABELS), ECONOMICS_HEADING, ECONOMICS_RIGHTS_TEXT, ...Object.values(ECONOMICS_REASON_TEXT), ...Object.values(ECONOMICS_NOTE_TEXT), ...Object.values(DEALER_INPUT_TEXT), ...Object.values(LINE_TREATMENT_TEXT), staleReasonText("x")];
   it("etikettene er faste konstanter (snapshot)", () => {
     expect(ECONOMICS_LABELS).toEqual({
-      estimate_not_validated: "Estimat — ikke validert", incomplete_lower_bound: "Minst {amount} (ufullstendig)", scenarios: "Scenarier — fradragsstatus er ukjent",
+      estimate_not_validated: "Estimat", incomplete_lower_bound: "Minst {amount} (ufullstendig)", scenarios: "Scenarier — fradragsstatus er ukjent",
       not_calculated: "Ikke beregnet", rights_not_granted: "Ikke tilgjengelig for denne kilden", validated: "Validert beregning",
     });
     expect(ECONOMICS_NOT_BUDGET).toMatch(/ikke en budsjettvurdering/);
@@ -249,12 +249,15 @@ describe("faste etiketter og markup", () => {
     const i = await run({});
     const html = renderToStaticMarkup(createElement(ResultCard, { item: i, draftId: "d1", version: 1 }));
     expect(html).toContain(`data-economics-status="estimate"`);
-    expect(html).toContain(ECONOMICS_LABELS.estimate_not_validated);
-    expect(html).toContain("ikke en budsjettvurdering");
+    // PILOT-004A: sammendraget er den ene økonomiflaten på kortet; den gamle statuslinjen («Estimat — ikke validert: X») er borte (skjult statusnode beholder data-*)
+    expect(html).not.toContain("ikke validert");
+    expect(html).toContain("Budsjettvurdering er ikke gjort");
     expect(html).toContain(`data-positive-budget="false"`);
-    const fragment = /<p[^>]*data-testid="economics"[\s\S]*?<\/p>/.exec(html)?.[0] ?? "";
-    expect(fragment.length).toBeGreaterThan(0);
-    for (const re of POSITIVE) expect(stripNegations(fragment)).not.toMatch(re);
+    const fragment = /<span[^>]*data-testid="economics"[^>]*>/.exec(html)?.[0] ?? "";
+    expect(fragment).toContain("hidden");
+    const econ = html.slice(html.indexOf('data-testid="acq-summary"')).replace(/<[^>]+>/g, " "); // økonomidelen (ikke statusmerket «✓ Oppfyller kravene»)
+    expect(econ.length).toBeGreaterThan(0);
+    for (const re of POSITIVE) expect(stripNegations(econ)).not.toMatch(re);
     const hidden = await run({}, { profiles: [profile()] });
     const h2 = renderToStaticMarkup(createElement(EconomicsNote, { economics: hidden.economics, compact: true }));
     expect(h2).toContain(ECONOMICS_LABELS.rights_not_granted);

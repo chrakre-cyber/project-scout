@@ -3,6 +3,7 @@
  * klient- og serverkode. Interne koder (statuskoder, schema-navn, JSON) vises aldri i normal brukerflyt; kodene mappes her.
  */
 import { SYNTHETIC_ATTRIBUTION } from "@/domain/display-policy";
+import { DOCUMENTED_RULE_PERIOD } from "@/domain/economics/validity";
 import type { CostKind, CriterionId, VatBasis } from "@/domain/search-v2/types";
 
 /** De faste kostnadslinjene i skjemaet. Typen er også linjens varige id. */
@@ -126,9 +127,12 @@ export function formatNokExact(nok: string): string {
   return `${sign}${whole!.replace(/\B(?=(\d{3})+(?!\d))/g, " ")}${frac ? `,${frac.length < 2 ? frac.padEnd(2, "0") : frac}` : ""} kr`;
 }
 
+/** PILOT-004A: tilstanden «avgiftsgrunnlaget dekker ikke datoen» (akseptdato utenfor dokumentert periode). Ingen opplysning forhandleren kan registrere retter dette. */
+export const TAX_PERIOD_UNAVAILABLE = "Avgiftsgrunnlaget er ikke tilgjengelig for denne datoen.";
+export const TAX_PERIOD_EXPLAIN = `Beregningen dekker avgifts- og mva.-regler for ${DOCUMENTED_RULE_PERIOD.label}. Å registrere en annen dato retter ikke dette.`;
 export const ECONOMICS_HEADING = "Anslått innkjøpskostnad til Norge";
 export const ECONOMICS_LABELS = {
-  estimate_not_validated: "Estimat — ikke validert",
+  estimate_not_validated: "Estimat",
   incomplete_lower_bound: "Minst {amount} (ufullstendig)",
   scenarios: "Scenarier — fradragsstatus er ukjent",
   not_calculated: "Ikke beregnet",
@@ -154,24 +158,25 @@ export function economicsHeadline(v: EconomicsView): string {
   }
 }
 
-const GENERIC_REASON = "Forutsetning mangler eller er ikke dokumentert.";
+/** Reservetekst for en kode uten egen tekst. Innholdsløs: vises ikke som egen punktlinje i usikkerhetslisten (PILOT-004A). */
+export const GENERIC_REASON = "Forutsetning mangler eller er ikke dokumentert.";
 /** Koder fra økonomikjernen/mapperen → brukerspråk. Ukjent kode vises som generell tekst, aldri som rå kode. */
 export const ECONOMICS_REASON_TEXT: Record<string, string> = {
   // estimat
   purchase_price_listing_claim: "Kjøpesummen er en annonsepåstand, ikke bekreftet kjøpsgrunnlag.",
   demo_economics_inputs: "Beregnet med syntetiske demoforutsetninger (ikke forhandlerens egne opplysninger).",
-  vat_rules_unapproved: "Mva.-reglene er ikke godkjent for validering.",
+  vat_rules_unapproved: "Mva. må kontrolleres før kjøp.",
   rounding_unconfirmed: "Avrundingsregelen er ikke bekreftet.",
   customs_fx_rule_unconfirmed: "Regelen for tollkurs er ikke bekreftet.",
   customs_fx_fallback_acquisition_rate: "Anskaffelseskursen er brukt som tollkurs.",
-  customs_duty_ordinary_rate_unapproved: "Ordinær tollsats er ikke godkjent.",
+  customs_duty_ordinary_rate_unapproved: "Tollsatsen må kontrolleres før kjøp.",
   deduction_status_dealer_stated: "Fradragsstatus er oppgitt av forhandler.",
-  deduction_rule_unapproved: "Fradragsregelen er ikke godkjent.",
+  deduction_rule_unapproved: "Fradragsregelen må kontrolleres før kjøp.",
   foreign_vat_exclusion_dealer_stated: "Utenlandsk mva. er oppgitt av forhandler.",
   foreign_vat_exclusion_demo_assumed: "Utenlandsk mva. er en syntetisk demoantakelse.",
   deduction_status_demo_assumed: "Fradragsstatus er en syntetisk demoantakelse.",
   tax_estimate: "Engangsavgiften er et estimat.",
-  tax_profile_not_approved: "Avgiftsprofilen er ikke godkjent.",
+  tax_profile_not_approved: "Avgiftsgrunnlaget må kontrolleres før kjøp.",
   transport_default_assumed: "Transport er en antakelse.",
   assumed_default_amount: "Et beløp er en antakelse.",
   amount_scenario_assumption: "Et beløp bygger på et scenario.",
@@ -185,7 +190,7 @@ export const ECONOMICS_REASON_TEXT: Record<string, string> = {
   // ufullstendig / mangler
   acquisition_fx_missing: "Kurs for kjøpesummen mangler.", customs_fx_missing: "Tollkurs mangler.", customs_fx_period_missing: "Tollkursens gyldighetsperiode mangler.",
   customs_fx_suspended: "Tollkursen er suspendert.", customs_acceptance_date_unknown: "Akseptdato for tolldeklarasjonen er ukjent.",
-  customs_acceptance_date_outside_documented_period: "Akseptdatoen ligger utenfor dokumentert periode.",
+  customs_acceptance_date_outside_documented_period: TAX_PERIOD_UNAVAILABLE,
   transport_unknown: "Transport til innførselsstedet er ukjent.", transport_after_border_unknown: "Transport etter innførselsstedet er ukjent.",
   insurance_unknown: "Forsikring er ukjent.", loading_handling_unknown: "Lasting og håndtering er ukjent.", transportToBorder: "Transport til innførselsstedet er ukjent.",
   transportAfterBorder: "Transport etter innførselsstedet er ukjent.", insurance: "Forsikring er ukjent.", loading_handling: "Lasting og håndtering er ukjent.",
@@ -206,7 +211,7 @@ export const ECONOMICS_REASON_TEXT: Record<string, string> = {
   price_missing: "Annonsen oppgir ikke pris.", price_not_allowed: "Kilden gir ikke rett til å bruke prisen.", invalid_now: "Beregningstidspunktet er ugyldig.",
   candidate_listing_mismatch: "Annonsen og kandidaten hører ikke sammen. Forhandleropplysninger er ikke brukt.",
   source_observation_invalid: "Kildens observasjonstidspunkt er ugyldig.", source_observation_in_future: "Kildens observasjonstidspunkt ligger i fremtiden.",
-  cash_requirement_not_calculated: "Kontantbehovet er ikke beregnet.", assessment_not_validated: "Vurderingen er ikke validert.",
+  cash_requirement_not_calculated: "Kontantbehovet er ikke beregnet.", assessment_not_validated: "Vurderingen må kontrolleres før kjøp.",
 };
 const VALIDITY_TEXT: Record<string, string> = {
   source_data: "kildedataene er for gamle", rights_profile: "kildens rettighetsprofil er utløpt", technical_cap_24h: "vurderingen er eldre enn 24 timer", documented_rule_period: "den dokumenterte regelperioden er utløpt",
@@ -263,25 +268,25 @@ export function searchLineText(row: { kind: string; treatment: keyof typeof LINE
 // ---------------------------------------------------------------- ECON-006a: forklaring av beløp og usikkerhet (faste tekster)
 import type { BasisKey, BasisSummaryKey, FormFieldKey, RowId, RowState, UncertaintyCategory } from "@/domain/search-economics";
 
-/** Hovedmerkingen er «Estimat — ikke validert» (ECONOMICS_LABELS). «Ikke rådgivning» er et tillegg og erstatter ikke forklaringen av hva som er usikkert. */
+/** Hovedmerkingen er «Estimat» med «Endelig kostnad må kontrolleres før kjøp» (ECONOMICS_LABELS, RULES_NOT_APPROVED). «Ikke rådgivning» er et tillegg og erstatter ikke forklaringen av hva som er usikkert. */
 export const ECONOMICS_NOT_ADVICE = "Ikke rådgivning.";
 export const ECONOMICS_UNCERTAINTY_INTRO = "Hva som er usikkert i dette tallet:";
 export const GROSS_OUTLAY_TITLE = "Brutto utlegg";
 export const GROSS_OUTLAY_EXPLAIN =
   "Samlet utlegg for kjøpesum, transport, forsikring, mva. og registreringsavgifter, uavhengig av hvem som betaler når. Det er ikke nødvendigvis kontantbetaling ved grensen: kjøpesum, transport, mva. og avgifter forfaller til ulike tidspunkter, og mva.-registrerte rapporterer import-mva. i mva-meldingen.";
-export const ECONOMIC_COST_TITLE = "Økonomisk kostnad";
-export const ECONOMIC_COST_EXPLAIN = "Brutto utlegg justert for fradrag av import-mva. Er fradragsstatus ukjent, vises to scenarier i stedet for ett tall.";
+export const ECONOMIC_COST_TITLE = "Kostnad etter mva.-fradrag";
+export const ECONOMIC_COST_EXPLAIN = "Estimert total justert for fradrag av import-mva. Er fradragsstatus ukjent, vises to scenarier i stedet for ett tall.";
 export const BREAKDOWN_TITLE = "Slik er beløpet bygget opp";
 export const BREAKDOWN_CAPTION = "Poster i brutto utlegg, med tilstand og grunnlag";
-export const BREAKDOWN_BASIS_NOTE = "Beregningsgrunnlag (summeres ikke)";
+export const BREAKDOWN_BASIS_NOTE = "Grunnlag for beregningen (kommer ikke i tillegg)";
 export const ASSUMPTIONS_TITLE = "Forutsetninger";
-export const RULES_NOT_APPROVED = "Reglene for mva., avrunding, tollkurs og fradrag er ikke godkjent for validering. Alle tall er derfor estimater.";
+export const RULES_NOT_APPROVED = "Endelig kostnad må kontrolleres før kjøp. Avgift og mva. er beregnet av Merovo og er ikke en offisiell beregning.";
 export const SEARCH_COSTS_TITLE = "Dine valgte tillegg fra søket";
 export const SEARCH_COSTS_NOTE = "Tilleggene du la inn i søket er informasjon om hva som er regnet med eller ikke. De er ikke en budsjettvurdering.";
 export const MISSING_TITLE = "Dette må oppgis for å beregne mer";
 export const DEALER_FORM_NOT_AVAILABLE = "Skjema for forhandleropplysninger er ikke tilgjengelig i appen ennå.";
 export const NOT_COLLECTABLE_TEXT = "kan ikke registreres ennå";
-export const COVERAGE_DISCLAIMER = "Dette sier ikke at tallene er riktige, sikre eller godkjente.";
+export const COVERAGE_DISCLAIMER = "Det betyr ikke at tallene er riktige eller endelige — endelig kostnad må kontrolleres før kjøp.";
 
 export const ROW_LABEL: Record<RowId, string> = {
   purchase: "Kjøpesum", transport_to_border: "Transport til innførselsstedet", transport_after_border: "Transport etter innførselsstedet", insurance: "Forsikring",
@@ -293,7 +298,7 @@ export const ROW_LABEL: Record<RowId, string> = {
 export const STATE_LABEL: Record<RowState, string> = { known: "oppgitt eller beregnet", assumed: "antakelse", unknown: "ukjent", lower_bound: "nedre grense", not_applicable: "ikke relevant", excluded_by_scenario: "utelatt etter scenarioantakelse (regnet som 0)" };
 export const BASIS_LABEL: Record<BasisKey, string> = {
   listing_claim: "Annonsepåstand — ikke dokumentasjon", dealer_entered: "Oppgitt av forhandler", demo_assumption: "Syntetisk demoantakelse", document: "Tilbud eller dokument", assumed: "Antakelse (standardverdi eller scenario)",
-  stated_input: "Oppgitt i beregningen", engine_estimate: "Regelmotor — estimat (regler ikke godkjent)", computed: "Beregnet av regelmotoren", ordinary_rate_unapproved: "Ordinær sats fra tolltariffen (ikke godkjent)", unresolved: "Ikke løst",
+  stated_input: "Oppgitt i beregningen", engine_estimate: "Beregnet av Merovo — estimat", computed: "Beregnet av Merovo", ordinary_rate_unapproved: "Ordinær sats fra tolltariffen — må kontrolleres", unresolved: "Ikke avklart",
 };
 export const BASIS_SUMMARY_LABEL: Record<BasisSummaryKey, string> = {
   listing_claim_only: "Beløpene bygger på annonsepåstander.", dealer_stated: "Beløpene bygger på forhandleroppgitte opplysninger.", demo_assumptions: "Beløpene bygger på annonsepris og syntetiske demoantakelser.", partly_documented: "Noen kostnadsposter bygger på tilbud eller dokumenter.",
@@ -303,7 +308,7 @@ export const coverageText = (documented: number, known: number): string =>
 /** Gruppetittel for demoens syntetiske antakelser (ECON-003-2). */
 export const UNCERTAINTY_INPUT_BASIS_DEMO_TITLE = "Opplysninger som er annonsepåstander eller syntetiske demoantakelser";
 export const UNCERTAINTY_GROUP_TITLE: Record<UncertaintyCategory, string> = {
-  rule: "Regler som ikke er godkjent for validering", input_basis: "Opplysninger som er påstander eller forhandleroppgitt", assumption: "Antakelser",
+  rule: "Dette må kontrolleres før kjøp", input_basis: "Opplysninger som er påstander eller forhandleroppgitt", assumption: "Antakelser",
   missing: "Mangler (gir nedre grense eller ikke beregnet)", not_collected: "Ikke innsamlet i appen ennå", other: "Annet",
 };
 export const FIELD_LABEL: Record<FormFieldKey, string> = {
@@ -326,7 +331,7 @@ export const ASSUMPTION_SOURCE_LABEL: Record<string, string> = { dealer_entered:
 // ---------------------------------------------------------------- ECON-006b: forhandlerskjema og firmaprofil
 export const DF_TITLE = "Forhandleropplysninger";
 export const DF_INTRO = "Opplysningene er dine egne og gjelder bare denne annonserevisjonen i dette søket. Tomt felt betyr «ikke oppgitt» (ukjent) — aldri 0 og aldri dokumentert. Annonsens egne påstander fylles ikke ut for deg og er ikke dokumentasjon.";
-export const DF_NOT_VALIDATED = "Selv med bekreftede opplysninger er resultatet et estimat — ikke validert. Skjemaet godkjenner ingen regel og gir ingen budsjettvurdering.";
+export const DF_NOT_VALIDATED = "Selv med bekreftede opplysninger er resultatet et estimat. Endelig kostnad må kontrolleres før kjøp. Skjemaet gir ingen budsjettvurdering.";
 export const DF_CLAIMS_TITLE = "Annonsens påstander (ikke dokumentasjon)";
 export const DF_CONFIRM_LABEL = "Jeg bekrefter at opplysningene over er mine egne, og at de gjelder denne annonserevisjonen i dette søket.";
 export const DF_SUBMIT = "Bekreft og lagre";

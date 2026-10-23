@@ -141,7 +141,8 @@ describe("tekster", () => {
     for (const t of texts) expect(t).not.toMatch(/innenfor budsjett|treff|anbefal|garanti|sikker|trygg|riktig(?! )|nøyaktig|pålitelig/i);
     expect(L.DF_INTRO).toMatch(/ikke oppgitt/);
     expect(L.DF_INTRO).toMatch(/aldri 0/);
-    expect(L.DF_NOT_VALIDATED).toMatch(/estimat — ikke validert/);
+    expect(L.DF_NOT_VALIDATED).toMatch(/et estimat\. Endelig kostnad må kontrolleres før kjøp/);
+    expect(L.DF_NOT_VALIDATED).not.toMatch(/validert|godkjenner/);
   });
   it("sidene ligger bak sesjon og bruker bare serverlaget (statisk kontroll)", async () => {
     const { readFileSync } = await import("node:fs");

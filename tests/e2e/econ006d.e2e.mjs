@@ -106,9 +106,20 @@ async function econ(page) {
   const el = page.locator('[data-testid="economics"]').first();
   await el.waitFor({ timeout: 20000 });
   const attrs = await el.evaluate((e) => ({ status: e.getAttribute("data-economics-status"), positive: e.getAttribute("data-positive-budget") }));
-  return { ...attrs, text: nb(await el.innerText()), headline: nb(await page.locator('[data-testid="economics-headline"]').first().innerText().catch(() => "")) };
+  // PILOT-004A: «headline» utledes av sammendraget («Estimat: <total>») når den gamle overskriften er fjernet fra detaljen.
+  let headline = nb(await page.locator('[data-testid="economics-headline"]').first().innerText().catch(() => ""));
+  if (headline === "") {
+    const acq = await page.locator('[data-testid="acq-summary"]').first().getAttribute("data-acq-state").catch(() => null);
+    const total = acq === "estimate" || acq === "partial" ? nb(await page.locator('[data-testid="acq-total"]').first().innerText()) : "";
+    headline = acq === "estimate" ? `Estimat: ${total}` : acq === "partial" ? `Minst ${total} (ufullstendig)` : ""; // delsum ⇔ nedre grense (samme tall, samme betydning)
+  }
+  return { ...attrs, text: nb(await el.innerText()), headline };
 }
-const scenarioList = async (page) => (await page.locator('[data-testid="economics-scenarios"] li').allInnerTexts()).map(nb);
+// PILOT-004A: «kostnad etter mva.-fradrag»-listen vises bare når den avviker fra sammendragets total; ellers står scenariene (samme etiketter) i sammendraget.
+const scenarioList = async (page) => {
+  const legacy = await page.locator('[data-testid="economics-scenarios"] li').allInnerTexts();
+  return (legacy.length > 0 ? legacy : await page.locator('[data-testid="acq-scenarios"] li').allInnerTexts()).map(nb);
+};
 
 try {
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
@@ -132,7 +143,7 @@ try {
   let e = await econ(pA);
   let list = (await scenarioList(pA)).join(" | ");
   check("J5 diesel (fradragsstatus «ukjent»): status = scenarioer, aldri ett enkelt tall; positivt budsjett false", e.status === "scenarios" && e.positive === "false", `${e.status}`);
-  check(`J5 diesel: kontantbehov (brutto utlegg) er ÉN verdi ${nok(exD.cash)}, uavhengig av fradragsstatus`, nb(await pA.locator('[data-testid="economics-sums"]').innerText()).includes(nok(exD.cash)));
+  check(`J5 diesel: kontantbehov (brutto utlegg) er ÉN verdi ${nok(exD.cash)}, uavhengig av fradragsstatus`, nb(await pA.locator('[data-testid="acq-total"]').first().innerText()).includes(nok(exD.cash)));
   check(`J5 diesel: økonomisk kost = to scenarioer ${nok(exD.cash - exD.vat)} (hvis fradragsberettiget) og ${nok(exD.cash)} (hvis ikke) — merket med fradragsstatus`, (await scenarioList(pA)).length === 2 && list.includes(nok(exD.cash - exD.vat)) && list.includes(nok(exD.cash)) && /hvis fradragsberettiget/.test(list) && /hvis ikke fradragsberettiget/.test(list), list);
   check("J5 diesel: scenarioene nevner IKKE elbilfritak (det er en annen usikkerhet)", !/elbilfritak/i.test(list));
   const missD = nb(await pA.locator('[data-testid="economics-missing-fields"]').innerText());
@@ -153,10 +164,10 @@ try {
   e = await econ(pA);
   const four = await scenarioList(pA);
   check("BEV med BEGGE ukjente: fire kombinasjoner, alle merket med både elbilfritak og fradragsstatus, alle ulike; positivt false", e.status === "scenarios" && four.length === 4 && four.every((t) => /elbilfritak/i.test(t) && /fradragsberettiget/.test(t)) && new Set(four).size === 4 && e.positive === "false", four.join(" | "));
-  const sumsB = nb(await pA.locator('[data-testid="economics-sums"]').innerText());
+  const sumsB = nb(await pA.locator('[data-testid="acq-total"]').first().innerText()); // PILOT-004A: totalen (området) står i sammendraget, ikke i «Brutto utlegg»
   // Brutto utlegg vises som «Fra <laveste> (scenarier)» — ikke som ett tall; de enkelte kontantverdiene listes ikke (UX-begrensning, rapportert), men de ligger i økonomisk-kost-scenarioene for «ikke fradragsberettiget».
   check("BEV med begge ukjente: brutto utlegg vises som «Fra … (scenarier)» (laveste = med elbilfritak), ikke som ett tall, og er ikke merket med fradragsstatus; økonomisk-kost-listen inneholder begge kontantverdiene",
-    sumsB.includes(`Fra ${nok(exB.cashWithExemption)}`) && /scenarier/.test(sumsB) && !/fradragsberettiget/.test(sumsB.split("Økonomisk")[0] ?? "") && four.some((t) => t.includes(nok(exB.cashWithExemption))) && four.some((t) => t.includes(nok(exB.cash))), `${sumsB.slice(0, 300)} || ${four.join(" | ")}`);
+    sumsB.includes(nok(exB.cashWithExemption).replace(/ kr$/, "")) && sumsB.includes(nok(exB.cash).replace(/ kr$/, "")) && !/fradragsberettiget/.test(sumsB) && four.some((t) => t.includes(nok(exB.cashWithExemption))) && four.some((t) => t.includes(nok(exB.cash))), `${sumsB.slice(0, 300)} || ${four.join(" | ")}`);
   await shot(pA, "03-BEV-begge-ukjente");
 
   // ============================================================ 3. B1 — akseptdato utenfor dokumentert periode
@@ -168,13 +179,13 @@ try {
     e = await econ(pA);
     const t = await body(pA);
     check(`B1 (${label} 2026: ${date}): aldri estimat — status ${e.status}; positivt false; ingen punktestimat-tall`, ["not_calculated", "lower_bound"].includes(e.status) && e.positive === "false" && !t.includes(nok(exM.cash)), `${e.status} | ${e.headline}`);
-    check(`B1 (${date}): årsaken «Akseptdatoen ligger utenfor dokumentert periode.» vises, og tolldato er et registrerbart manglende felt med lenke`, t.includes("Akseptdatoen ligger utenfor dokumentert periode") && (await pA.locator('[data-testid="economics-missing-fields"] a[href$="#f-customs"]').count()) >= 1);
+    check(`B1 (${date}): årsaken «Akseptdatoen ligger utenfor dokumentert periode.» vises, og tolldato er et registrerbart manglende felt med lenke`, t.includes("Avgiftsgrunnlaget er ikke tilgjengelig for denne datoen") && !t.includes("Akseptdatoen ligger utenfor dokumentert periode") && (await pA.locator('a[href$="#f-customs"]').count()) === 0); // PILOT-004A: riktig årsak, og ingen «registrer dato»-lenke (en annen dato retter ikke avgiftsgrunnlaget)
     if (label === "etter") await shot(pA, "04-B1-akseptdato-utenfor-periode");
   }
   await pA.goto(urls(MAIN, S1, 1, pidM).form); await must(pA, '[data-testid="dealer-form"]');
   await saveForm(pA, { cd_date: D.today });
   e = await econ(pA);
-  check(`B1 kontroll: samme input med akseptdato i perioden gir «Estimat — ikke validert: ${nok(exM.cash)}» (så avslaget skyldes datoen)`, e.status === "estimate" && e.headline === `Estimat — ikke validert: ${nok(exM.cash)}`, `${e.status} | ${e.headline}`);
+  check(`B1 kontroll: samme input med akseptdato i perioden gir «Estimat — ikke validert: ${nok(exM.cash)}» (så avslaget skyldes datoen)`, e.status === "estimate" && e.headline === `Estimat: ${nok(exM.cash)}`, `${e.status} | ${e.headline}`);
 
   // ============================================================ 2. ukjent kjøretøy-/registreringsprofil
   for (const [sid, scen] of [[S3, "uspesifisert"], [S4, "varebil"]]) {

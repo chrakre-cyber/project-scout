@@ -2,7 +2,7 @@ import type { AcquisitionSummary as Summary, FormFieldKey, SummaryLine } from "@
 import {
   FIELD_ANCHOR, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, SUMMARY_DEMO_LABEL, SUMMARY_DEMO_NOTE, SUMMARY_ESTIMATE_NOTE, SUMMARY_FX_NONE, SUMMARY_FX_TITLE, SUMMARY_LINE_ASSUMED, SUMMARY_LINE_LABEL, SUMMARY_LINE_UNKNOWN,
   SUMMARY_MISSING_DETAIL_TITLE, SUMMARY_MISSING_INTRO, SUMMARY_MISSING_REFINE_TITLE, SUMMARY_MISSING_MORE, SUMMARY_PARTIAL_LABEL, SUMMARY_PARTIAL_NOTE, SUMMARY_PRICE_CLAIM_NOTE, SUMMARY_SCENARIO_EV_NOTE, SUMMARY_SCENARIO_GENERIC_NOTE, SUMMARY_TITLE, SUMMARY_TOTAL_LABEL,
-  SUMMARY_TOTAL_SCOPE, SUMMARY_TRANSPORT_NOTE, SUMMARY_UNAVAILABLE_HEADLINE, SUMMARY_UNAVAILABLE_LEAD, SUMMARY_VAT_SCOPE_NOTE, DF_FIX_LINK, economicsReasonText, formatNokExact, formatNokString,
+  SUMMARY_TOTAL_SCOPE, SUMMARY_TRANSPORT_NOTE, TAX_PERIOD_EXPLAIN, TAX_PERIOD_UNAVAILABLE, SUMMARY_UNAVAILABLE_HEADLINE, SUMMARY_UNAVAILABLE_LEAD, SUMMARY_VAT_SCOPE_NOTE, DF_FIX_LINK, economicsReasonText, formatNokExact, formatNokString,
 } from "@/lib/search-labels";
 
 /**
@@ -84,7 +84,9 @@ export function AcquisitionSummary({ summary: s, compact = false, formHref }: { 
   if (s.state === "hidden") return null;
 
   if (s.state === "unavailable") {
-    const why = s.missing.length > 0 ? `${SUMMARY_MISSING_INTRO}: ${labelsOf(s.missing, compact ? 3 : 6)}` : s.reasons.slice(0, 2).map(economicsReasonText).join(" ");
+    // PILOT-004A: gyldighetsgrensen i avgiftsgrunnlaget er den faktiske årsaken — aldri «registrer akseptdato».
+    const why = s.cause === "tax_period" ? (compact ? TAX_PERIOD_UNAVAILABLE : `${TAX_PERIOD_UNAVAILABLE} ${TAX_PERIOD_EXPLAIN}`)
+      : s.missing.length > 0 ? `${SUMMARY_MISSING_INTRO}: ${labelsOf(s.missing, compact ? 3 : 6)}` : s.reasons.slice(0, 2).map(economicsReasonText).join(" ");
     if (compact) {
       return (
         <div className="mt-2 border-t border-sand pt-2" data-testid="acq-summary" data-acq-state="unavailable">
@@ -97,7 +99,7 @@ export function AcquisitionSummary({ summary: s, compact = false, formHref }: { 
       <section className="space-y-2 rounded-2xl border border-sand bg-paper p-4 sm:p-5" aria-labelledby="acq-h" data-testid="acq-summary" data-acq-state="unavailable">
         <h2 id="acq-h" className="text-lg font-bold">{SUMMARY_TITLE}</h2>
         <p className="text-base font-bold" data-testid="acq-headline">{SUMMARY_UNAVAILABLE_HEADLINE}</p>
-        <p className="text-sm" data-testid="acq-why">{SUMMARY_UNAVAILABLE_LEAD}. {s.missing.length === 0 ? why : ""}</p>
+        <p className="text-sm" data-testid="acq-why">{SUMMARY_UNAVAILABLE_LEAD}. {s.cause === "tax_period" || s.missing.length === 0 ? why : ""}</p>
         <Missing fields={s.missing} formHref={formHref} />
       </section>
     );

@@ -108,7 +108,9 @@ const FIELD_OF: Record<string, FormFieldKey | null> = {
   transport_after_border_unknown: "transport_after_border", transportAfterBorder: "transport_after_border",
   insurance_unknown: "insurance", insurance: "insurance", loading_handling_unknown: "loading_handling", loading_handling: "loading_handling", loadingHandling: "loading_handling",
   acquisition_fx_missing: "fx_acquisition", customs_fx_missing: "fx_customs", customs_fx_period_missing: "fx_customs", customs_fx_suspended: "fx_customs",
-  customs_acceptance_date_unknown: "customs_date", customs_acceptance_date_outside_documented_period: "customs_date",
+  customs_acceptance_date_unknown: "customs_date",
+  // PILOT-004A: akseptdato utenfor dokumentert periode er en gyldighetsgrense i avgiftsgrunnlaget — ingen registrert dato retter det (ingen «Registrer»).
+  customs_acceptance_date_outside_documented_period: null,
   foreign_vat_exclusion_undocumented: "foreign_vat", unresolved_vat_recoverability: "deduction", vat_recoverability: "deduction", vat_handling_unknown: "vat_handling",
   acquisition_used: "listing_price_basis",
   ev_qualification_unresolved: "ev_qualification", ev_threshold_basis_not_documented: "ev_qualification", ev_threshold_basis_not_documented_for_import_type: "ev_qualification",

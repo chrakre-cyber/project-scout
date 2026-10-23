@@ -32,11 +32,19 @@ export interface SummaryFx { role: FxAssumption["role"]; pair: string | null; ra
 export interface SummaryScenario { id: string; /** Motorens egen etikett (f.eks. «uten elbilfritak»). */ label: string; amountNok: string }
 /** Notekode som merker at beregningen bruker de syntetiske demoforutsetningene for den kuraterte demoen (aldri satt for ekte eller leverandørbaserte resultater). */
 export const DEMO_INPUTS_NOTE = "demo_economics_inputs";
+/** Kjernens kode for akseptdato utenfor den dokumenterte avgiftsperioden (kun gjenkjenning; ingen regel er endret). */
+const TAX_PERIOD_CODE = "customs_acceptance_date_outside_documented_period";
 type Computed = { lines: SummaryLine[]; fx: SummaryFx[]; missing: FormFieldKey[]; priceFromListingClaim: boolean; /** Syntetiske demoforutsetninger er brukt (vises som «Demo-estimat»). */ demoInputs: boolean };
 
 export type AcquisitionSummary =
   | { state: "hidden" }
-  | { state: "unavailable"; reasons: string[]; missing: FormFieldKey[] }
+  | {
+      state: "unavailable";
+      reasons: string[];
+      missing: FormFieldKey[];
+      /** PILOT-004A: `tax_period` = akseptdatoen ligger utenfor avgiftsgrunnlagets dokumenterte periode (ingen registrert opplysning retter det). */
+      cause?: "tax_period";
+    }
   | ({
       state: "estimate" | "partial";
       /** `estimate`: motorens samlede brutto utlegg. `partial`: ufullstendig delsum (> 0) — aldri en total. */
@@ -84,7 +92,8 @@ export function toAcquisitionSummary(view: EconomicsView): AcquisitionSummary {
   // Fradragsstatus og mva.-håndtering påvirker ikke totalen (brutto utlegg), bare den separate økonomiske kostnaden i detaljforklaringen: de er ikke «mangler» for dette sammendraget.
   const NOT_TOTAL_FIELDS: readonly FormFieldKey[] = ["deduction", "vat_handling"];
   const collectable = byPriority((x?.missing ?? []).filter((m) => m.collectable && !NOT_TOTAL_FIELDS.includes(m.field)).map((m) => m.field));
-  if (view.status === "not_calculated") return { state: "unavailable", reasons: [...view.reasons], missing: collectable };
+  const taxPeriod = x?.uncertainty.some((u) => u.code === TAX_PERIOD_CODE) === true;
+  if (view.status === "not_calculated") return { state: "unavailable", reasons: [...view.reasons], missing: collectable, ...(taxPeriod ? { cause: "tax_period" as const } : {}) };
 
   const cash = view.cash;
   // Total: bare motorens brutto utlegg. Nedre grense bare som delsum > 0; scenarier som område; ellers ingen tall.
@@ -97,7 +106,7 @@ export function toAcquisitionSummary(view: EconomicsView): AcquisitionSummary {
     scenarios = cash.scenarios.map((c) => ({ id: c.id, label: c.label, amountNok: c.nok })).sort((a, b) => (BigInt(a.amountNok) < BigInt(b.amountNok) ? -1 : BigInt(a.amountNok) > BigInt(b.amountNok) ? 1 : 0));
     state = "scenarios";
   }
-  if ((amountNok === null && state !== "scenarios") || x === null) return { state: "unavailable", reasons: cash.kind === "none" ? [...cash.reasons] : [...view.incompleteReasons], missing: collectable };
+  if ((amountNok === null && state !== "scenarios") || x === null) return { state: "unavailable", reasons: cash.kind === "none" ? [...cash.reasons] : [...view.incompleteReasons], missing: collectable, ...(taxPeriod ? { cause: "tax_period" as const } : {}) };
 
   const row = (id: BreakdownRow["id"]) => x.breakdown.find((r) => r.id === id);
   const lines: SummaryLine[] = [];
