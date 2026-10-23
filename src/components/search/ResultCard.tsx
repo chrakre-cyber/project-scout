@@ -1,20 +1,24 @@
 import Link from "next/link";
 import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { StatusBadge, SyntheticChip } from "@/components/merovo/StatusBadge";
+import { AcquisitionSummary } from "@/components/search/AcquisitionSummary";
 import { EconomicsNote } from "@/components/search/EconomicsNote";
 import { Explanation } from "@/components/search/Explanation";
 import { BODY_LABEL, FUEL_LABEL, TRANSMISSION_LABEL, formatFirstRegistration, formatListingPrice, formatMileage, formatPriceBasis } from "@/lib/format";
 import { fieldText, fieldValue } from "@/lib/display-text";
 import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
-import { BUDGET_NOT_CALCULATED } from "@/lib/search-labels";
+import { summaryShowsAmount, toAcquisitionSummary } from "@/domain/search-economics";
+import { BUDGET_NOT_CALCULATED, SUMMARY_BUDGET_NOTE } from "@/lib/search-labels";
 import type { DisplayItem } from "@/server/search-display";
 
 /**
- * Resultatkort (DEV-006D). Rekkefølge: tittel + status → HVORFOR vist → krav-/ønskesammendrag → forklaring → fakta og annonsepris →
+ * Resultatkort (DEV-006D; ECON-003-2: anslått innkjøpskostnad til Norge som primær økonomiflate, avledet fra visningsmodellen; `EconomicsNote` beholdes under som statuslinje). Rekkefølge: tittel + status → HVORFOR vist → krav-/ønskesammendrag → forklaring → fakta og annonsepris →
  * kilde/demo-etikett. Annonseprisen er tydelig adskilt fra innkjøpskostnad (som ikke er beregnet).
  */
 export function ResultCard({ item, draftId, version, expanded = false }: { item: DisplayItem; draftId: string; version: number; expanded?: boolean }) {
   const { listing: l, assessment: a } = item;
+  const summary = toAcquisitionSummary(item.economics);
+  const amountShown = summaryShowsAmount(summary);
   const status = a.vehicle.status;
   const title = l.title.state === "value" ? `${l.title.value.make} ${l.title.value.model}${l.title.value.variant ? ` · ${l.title.value.variant}` : ""}` : fieldText(l.title, () => "");
   return (
@@ -53,7 +57,8 @@ export function ResultCard({ item, draftId, version, expanded = false }: { item:
             {l.price.state === "value"
               ? (() => { const price = formatListingPrice(l.price.value); return (<><p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span><strong className="text-base">{price.text}</strong>{price.note && <span className="text-muted"> ({price.note})</span>}</p><p className="text-xs text-muted">{formatPriceBasis(l.price.value)}</p></>); })()
               : <p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span>{fieldText(l.price, () => "")}</p>}
-            <p className="mt-1 text-xs" data-testid="budget-note">{BUDGET_NOT_CALCULATED}</p>
+            <p className="mt-1 text-xs" data-testid="budget-note">{amountShown ? SUMMARY_BUDGET_NOTE : BUDGET_NOT_CALCULATED}</p>
+            <AcquisitionSummary summary={summary} compact />
             <EconomicsNote economics={item.economics} compact />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2">

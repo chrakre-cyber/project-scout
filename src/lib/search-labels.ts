@@ -408,3 +408,32 @@ export const FIELD_ANCHOR: Record<FormFieldKey, string> = {
   fx_acquisition: "fxAcq", fx_customs: "fxCust", transport_to_border: "tb_amount", transport_after_border: "transportAfterBorder", insurance: "ins_amount", loading_handling: "loadingHandling",
   deduction: "vat", vat_handling: "vat", listing_price_basis: "costs", ev_qualification: "costs", commission: "costs", payment_costs: "costs", import_levies: "costs",
 };
+
+// ---------------------------------------------------------------- ECON-003-2: anslått innkjøpskostnad til Norge (sammendrag)
+// Norsk UI-språk. Alt er et estimat; ingen intern terminologi, ingen «0 kr» som plassholder, ingen «Minst 0 kr».
+export const SUMMARY_TITLE = "Estimert innkjøpskostnad til Norge";
+export const SUMMARY_TOTAL_LABEL = "Estimert total til Norge";
+export const SUMMARY_TOTAL_SCOPE = "inkl. engangsavgift og mva.";
+export const SUMMARY_PARTIAL_LABEL = "Foreløpig delsum — ufullstendig";
+export const SUMMARY_PARTIAL_NOTE = "Ikke en total: opplysninger mangler.";
+export const SUMMARY_LINE_LABEL: Record<"purchase" | "registration_tax" | "vat" | "transport" | "other", string> = {
+  purchase: "Kjøpesum", registration_tax: "Engangsavgift", vat: "MVA", transport: "Transport", other: "Øvrige poster",
+};
+export const SUMMARY_LINE_UNKNOWN = "ikke beregnet";
+export const SUMMARY_LINE_ASSUMED = "antatt";
+export const SUMMARY_ESTIMATE_NOTE = "Estimat basert på annonsepris og forhandlerens opplysninger. Ikke en offisiell avgiftsberegning.";
+export const SUMMARY_PRICE_CLAIM_NOTE = "Kjøpesummen er annonsepris (ikke bekreftet tilbud).";
+export const SUMMARY_VAT_SCOPE_NOTE = "Fradragsrett for mva. er ikke lagt til grunn i totalen.";
+export const SUMMARY_TRANSPORT_NOTE = "Transport er bare med når den er oppgitt.";
+export const SUMMARY_SCENARIO_EV_NOTE = "Totalen avhenger av om elbilfritaket gjelder. Det er ikke bekreftet.";
+export const SUMMARY_SCENARIO_GENERIC_NOTE = "Totalen avhenger av et forhold som ikke er avklart. Hvert scenario er vist.";
+export const SUMMARY_FX_TITLE = "Kurser brukt i estimatet";
+export const SUMMARY_FX_NONE = "Ingen kurs er brukt (kjøpesum i NOK).";
+export const SUMMARY_UNAVAILABLE_HEADLINE = "Estimert innkjøpskostnad til Norge: ikke beregnet";
+export const SUMMARY_UNAVAILABLE_LEAD = "Kan ikke beregnes ennå";
+export const SUMMARY_MISSING_INTRO = "Mangler";
+export const SUMMARY_MISSING_MORE = "m.fl.";
+export const SUMMARY_MISSING_DETAIL_TITLE = "Dette mangler for å beregne";
+/** Erstatter «Innkjøpskostnad … er ikke beregnet»-notisen når et beløp faktisk vises (ellers ville den motsagt estimatet). Budsjettvurderingen er fortsatt ikke gjort. */
+export const SUMMARY_BUDGET_NOTE = "Annonseprisen er ikke total innkjøpskostnad. Budsjettvurdering er ikke gjort.";
+

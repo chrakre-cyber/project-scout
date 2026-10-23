@@ -3,15 +3,17 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { CarPlaceholder } from "@/components/CarPlaceholder";
 import { StatusBadge, SyntheticChip } from "@/components/merovo/StatusBadge";
+import { AcquisitionSummary } from "@/components/search/AcquisitionSummary";
 import { EconomicsNote } from "@/components/search/EconomicsNote";
 import { Explanation } from "@/components/search/Explanation";
 import { DemoEnrichment } from "@/components/search/DemoEnrichment";
 import { ListingGallery } from "@/components/search/ListingGallery";
 import { ListingFacts } from "@/components/search/ListingFacts";
 import { PUBLIC_ID_PATTERN } from "@/domain/display-policy";
+import { summaryShowsAmount, toAcquisitionSummary } from "@/domain/search-economics";
 import { fieldValue } from "@/lib/display-text";
 import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
-import { BLOCKED_TEXT, DF_SAVED, BUDGET_NOT_CALCULATED, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { BLOCKED_TEXT, DF_SAVED, BUDGET_NOT_CALCULATED, SUMMARY_BUDGET_NOTE, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { getDraft } from "@/server/search-drafts";
 import { loadEconomicsContext } from "@/server/dealer-economics-context";
 import { detailForDisplay } from "@/server/search-display";
@@ -46,6 +48,8 @@ export default async function ListingDetailPage({ params, searchParams }: { para
 
   const { listing, assessment, unknowns, economics, media, enrichment } = detail.item;
   const status = assessment.vehicle.status;
+  const summary = toAcquisitionSummary(economics);
+  const formHref = economics.status === "unavailable" ? undefined : `/searches/${draft.id}/preview/${encodeURIComponent(listingId)}/dealer-input?v=${draft.version}`;
   const title = listing.title.state === "value"
     ? `${listing.title.value.make} ${listing.title.value.model}${listing.title.value.variant ? ` · ${listing.title.value.variant}` : ""}`
     : "Annonse";
@@ -70,11 +74,12 @@ export default async function ListingDetailPage({ params, searchParams }: { para
             <p className="mt-0.5 text-base" data-testid="why-shown">{whyShown(assessment.vehicle)}</p>
             <p className="mt-1 text-sm text-muted" data-testid="criteria-summary"><strong>Krav:</strong> {mustSummary(assessment.vehicle)} <strong>Ønsker:</strong> {wishSummary(assessment.vehicle)}</p>
           </div>
-          <p className="rounded-lg bg-sand-soft px-3 py-2 text-sm" data-testid="budget-note">{BUDGET_NOT_CALCULATED}</p>
+          <p className="rounded-lg bg-sand-soft px-3 py-2 text-sm" data-testid="budget-note">{summaryShowsAmount(summary) ? SUMMARY_BUDGET_NOTE : BUDGET_NOT_CALCULATED}</p>
         </div>
       </div>
       {sp.msg === "econ_saved" && <p role="status" className="rounded-lg border border-ok/40 bg-[#e5f0e8] p-3 text-sm text-ok" data-testid="econ-saved">{DF_SAVED}</p>}
-      <section aria-label="Anslått innkjøpskostnad til Norge"><EconomicsNote economics={economics} dealerFormHref={economics.status === "unavailable" ? undefined : `/searches/${draft.id}/preview/${encodeURIComponent(listingId)}/dealer-input?v=${draft.version}`} /></section>
+      <AcquisitionSummary summary={summary} formHref={formHref} />
+      <section aria-label="Anslått innkjøpskostnad til Norge — detaljert beregning"><EconomicsNote economics={economics} dealerFormHref={formHref} /></section>
       <section className="rounded-2xl border border-sand bg-paper p-4 sm:p-5" aria-labelledby="facts">
         <h2 id="facts" className="mb-2 text-lg font-bold">Opplysninger fra annonsen</h2>
         <ListingFacts listing={listing} />
