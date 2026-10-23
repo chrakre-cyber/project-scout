@@ -7,7 +7,7 @@ import { formatDateTime } from "@/lib/format";
 import { FlowStrip } from "@/components/merovo/FlowStrip";
 import { StatusBadge } from "@/components/merovo/StatusBadge";
 import { orderForPresentation } from "@/lib/search-explain";
-import { BUDGET_NOT_CALCULATED, criterionLabel, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { SUMMARY_BUDGET_NOTE, criterionLabel, SYNTHETIC_SOURCE_LABEL, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { equipmentLabel } from "@/lib/search-summary";
 import { getDraft } from "@/server/search-drafts";
 import { loadEconomicsContext } from "@/server/dealer-economics-context";
@@ -55,7 +55,7 @@ export default async function PreviewPage({ params, searchParams }: { params: Pr
       </div>
       <p className="rounded-lg border border-sand bg-sand-soft p-3 text-sm" data-testid="preview-notice">
         <strong>{SYNTHETIC_SOURCE_LABEL}.</strong> Demo mot syntetiske annonser. Resultatet beregnes nå, for denne forespørselen, og lagres ikke — det kan ikke åpnes igjen senere.
-        Ingen live kilde er brukt. {BUDGET_NOT_CALCULATED}
+        Ingen live kilde er brukt. {SUMMARY_BUDGET_NOTE}
       </p>
       <FlowStrip />
       <SpecSummary spec={draft.spec} />

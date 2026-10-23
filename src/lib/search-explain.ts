@@ -54,7 +54,7 @@ export function whyShown(v: VehicleEvaluation): string {
   if (v.status === "needs_review") {
     return `Ingen krav er kjent brutt, men ${list(of(v, "must", "unknown"))} er ikke oppgitt i annonsen og må kontrolleres hos kilden.${wish}`;
   }
-  return `Alle krav er oppfylt etter opplysningene i annonsen.${wish} Dette er ikke et økonomisk verifisert treff; innkjøpskostnaden er ikke beregnet.`;
+  return `Alle krav er oppfylt etter opplysningene i annonsen.${wish} Dette er ikke et økonomisk verifisert treff.`;
 }
 
 /**

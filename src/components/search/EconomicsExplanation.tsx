@@ -2,8 +2,8 @@ import type { Explanation, EconomicsView, ViewAmount } from "@/domain/search-eco
 import {
   ASSUMPTIONS_TITLE, ASSUMPTION_SOURCE_LABEL, BASIS_LABEL, BASIS_SUMMARY_LABEL, BREAKDOWN_BASIS_NOTE, BREAKDOWN_CAPTION, BREAKDOWN_TITLE, COVERAGE_DISCLAIMER, CUSTOMS_DATE_KIND_LABEL,
   DEALER_FORM_NOT_AVAILABLE, DF_FIX_LINK, FIELD_ANCHOR, ECONOMIC_COST_EXPLAIN, ECONOMIC_COST_TITLE, ECONOMICS_NOT_ADVICE, ECONOMICS_UNCERTAINTY_INTRO, FIELD_LABEL, FX_ROLE_LABEL, FX_SOURCE_LABEL, GROSS_OUTLAY_EXPLAIN, GROSS_OUTLAY_TITLE,
-  LINE_TREATMENT_TEXT, MISSING_TITLE, NOT_COLLECTABLE_TEXT, REGISTRATION_DATE_KIND_LABEL, ROW_LABEL, RULES_NOT_APPROVED, SEARCH_COSTS_NOTE, SEARCH_COSTS_TITLE, STATE_LABEL, UNCERTAINTY_GROUP_TITLE, UNCERTAINTY_INPUT_BASIS_DEMO_TITLE,
-  VAT_HANDLING_LABEL, VAT_RECOVERABILITY_LABEL, coverageText, economicsNoteText, economicsReasonText, formatNokExact, formatNokString,
+  MISSING_TITLE, NOT_COLLECTABLE_TEXT, REGISTRATION_DATE_KIND_LABEL, ROW_LABEL, RULES_NOT_APPROVED, SEARCH_COSTS_NOTE, SEARCH_COSTS_TITLE, STATE_LABEL, UNCERTAINTY_GROUP_TITLE, UNCERTAINTY_INPUT_BASIS_DEMO_TITLE,
+  VAT_HANDLING_LABEL, VAT_RECOVERABILITY_LABEL, coverageText, economicsNoteText, economicsReasonText, formatNokExact, formatNokString, isZeroNok, searchLineText,
 } from "@/lib/search-labels";
 
 type Computable = Extract<EconomicsView, { cash: unknown }>;
@@ -12,7 +12,7 @@ type Computable = Extract<EconomicsView, { cash: unknown }>;
 export function amountText(a: ViewAmount): string {
   switch (a.kind) {
     case "value": return formatNokString(a.nok);
-    case "lower_bound": return `Minst ${formatNokString(a.minimumNok)} (ufullstendig)`;
+    case "lower_bound": return isZeroNok(a.minimumNok) ? "Ikke beregnet" : `Minst ${formatNokString(a.minimumNok)} (ufullstendig)`;
     case "scenarios": return `Fra ${formatNokString(a.scenarios.reduce((m, s) => (BigInt(s.nok) < BigInt(m) ? s.nok : m), a.scenarios[0]?.nok ?? "0"))} (scenarier)`;
     case "none": return "Ikke beregnet";
   }
@@ -113,11 +113,13 @@ function Missing({ x, formHref }: { x: Explanation; formHref?: string }) {
 }
 
 /** Skrivebeskyttet forklaring av beløp og usikkerhet (ECON-006a). Tar bare visningsmodellen (bak rettighetsgrensen). */
-export function EconomicsExplanation({ e, formHref }: { e: Exclude<EconomicsView, { status: "unavailable" }>; formHref?: string }) {
+export function EconomicsExplanation({ e, formHref, showSums = true }: { e: Exclude<EconomicsView, { status: "unavailable" }>; formHref?: string; showSums?: boolean }) {
   const x = e.explanation;
+  // (Bare når et estimat faktisk vises: `showSums`.) En uttrykkelig oppgitt motor-transport som er med i brutto utlegg (kjent/antatt, beløp satt) — da kan en søketransportlinje aldri beskrives som at «transport ikke er regnet med».
+  const engineTransportIncluded = showSums && x !== null && x !== undefined && x.breakdown.some((r) => (r.id === "transport_to_border" || r.id === "transport_after_border") && r.inGrossOutlay && (r.state === "known" || r.state === "assumed") && r.amountNok !== null);
   return (
     <div className="space-y-3">
-      {"cash" in e && <Sums e={e as Computable} />}
+      {"cash" in e && showSums && <Sums e={e as Computable} />}
       {x && (
         <>
           <p className="text-sm" data-testid="economics-basis-summary">{BASIS_SUMMARY_LABEL[x.basisSummary]}
@@ -128,7 +130,7 @@ export function EconomicsExplanation({ e, formHref }: { e: Exclude<EconomicsView
           <section aria-label={SEARCH_COSTS_TITLE} data-testid="economics-lines">
             <h3 className="font-bold">{SEARCH_COSTS_TITLE}</h3>
             {x.searchCosts.rows.length === 0 ? <p className="text-sm">Ingen tillegg lagt inn i søket.</p> : (
-              <ul className="list-disc pl-5">{x.searchCosts.rows.map((l) => <li key={l.id}>{l.label}{l.amountNok ? ` (${formatNokExact(l.amountNok)})` : ""}: {LINE_TREATMENT_TEXT[l.treatment]}</li>)}</ul>
+              <ul className="list-disc pl-5">{x.searchCosts.rows.map((l) => <li key={l.id}>{l.label}{l.amountNok ? ` (${formatNokExact(l.amountNok)})` : ""}: {searchLineText(l, engineTransportIncluded)}</li>)}</ul>
             )}
             <p className="text-xs text-muted">{SEARCH_COSTS_NOTE}</p>
           </section>

@@ -78,7 +78,7 @@ export interface MissingField {
 export interface DocumentationCoverage { documented: number; knownCostItems: number }
 export type BasisSummaryKey = "listing_claim_only" | "dealer_stated" | "partly_documented" | "demo_assumptions";
 
-export interface SearchCostRow { id: string; label: string; treatment: CostLineTreatment["treatment"]; counted: boolean; amountNok: string | null }
+export interface SearchCostRow { id: string; kind: string; label: string; treatment: CostLineTreatment["treatment"]; counted: boolean; amountNok: string | null }
 
 export interface Explanation {
   breakdown: BreakdownRow[];
@@ -224,7 +224,7 @@ export function explainEconomics(a: { result: EconomicsResult; outcome: MappingO
   const lines = a.outcome?.lines ?? [];
   const counted = lines.filter((l) => l.counted && l.amountMinor !== null).reduce((t, l) => t + (l.amountMinor as bigint), 0n);
   const searchCosts = {
-    rows: lines.map((l) => ({ id: l.id, label: l.label, treatment: l.treatment, counted: l.counted, amountNok: l.amountMinor === null ? null : minorToNok(l.amountMinor) })),
+    rows: lines.map((l) => ({ id: l.id, kind: l.kind, label: l.label, treatment: l.treatment, counted: l.counted, amountNok: l.amountMinor === null ? null : minorToNok(l.amountMinor) })),
     countedNok: minorToNok(counted),
     uncountedLines: lines.filter((l) => l.treatment === "unknown_amount" || l.treatment === "unsupported" || (l.treatment === "unmapped_unknown_scope" && !l.counted)).length,
   };

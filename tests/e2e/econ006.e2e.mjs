@@ -222,10 +222,12 @@ try {
   for (const k of ["diesel", "phev", "bev"]) {
     const card = pA.locator(`li[data-listing="${D[k]}"] [data-testid="economics"]`).first();
     const attrs = await card.evaluate((e) => ({ s: e.getAttribute("data-economics-status"), p: e.getAttribute("data-positive-budget"), t: e.textContent ?? "" })); // textContent: kortene kan ligge i en sammenfoldet gruppe (skjult)
-    check(`J1 ${k}: uten bekreftede opplysninger er kortet «ikke beregnet» eller «Minst … (ufullstendig)» (nedre grense), aldri estimat eller positivt budsjettutfall`, attrs.p === "false" && (attrs.s === "not_calculated" || (attrs.s === "lower_bound" && /Minst .* \(ufullstendig\)/.test(nb(attrs.t)))), JSON.stringify(attrs));
+    // PILOT-002: en nedre grense som sammendraget ikke støtter vises ikke som «Minst …»; kortet sier da bare «ikke beregnet» (sammendraget er «unavailable»). Aldri estimat.
+    const acq = await pA.locator(`li[data-listing="${D[k]}"] [data-testid="acq-summary"]`).first().getAttribute("data-acq-state");
+    check(`J1 ${k}: uten bekreftede opplysninger er kortet «ikke beregnet» eller «Minst … (ufullstendig)» (nedre grense), aldri estimat eller positivt budsjettutfall`, attrs.p === "false" && (attrs.s === "not_calculated" || (attrs.s === "lower_bound" && (acq === "unavailable" || /Minst .* \(ufullstendig\)/.test(nb(attrs.t))))), JSON.stringify({ ...attrs, acq }));
   }
   const prevText = await body(pA);
-  check("J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede", prevText.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(scrub(prevText)) && /Syntetiske demodata/i.test(prevText), JSON.stringify({ a: prevText.includes("Innkjøpskostnad til Norge er ikke beregnet"), b: POSITIVE_WORDS.exec(scrub(prevText))?.[0], c: /Syntetiske demodata/i.test(prevText) }));
+  check("J1: kostnad til Norge er ikke beregnet for budsjett; ingen budsjettspråk; syntetisk-etikett til stede", prevText.includes("innkjøpskostnad til Norge: ikke beregnet") && !POSITIVE_WORDS.test(scrub(prevText)) && /Syntetiske demodata/i.test(prevText), JSON.stringify({ a: prevText.includes("innkjøpskostnad til Norge: ikke beregnet"), b: POSITIVE_WORDS.exec(scrub(prevText))?.[0], c: /Syntetiske demodata/i.test(prevText) }));
   await shot(pA, "01-preview-uten-opplysninger");
 
   // =============================================================== J2 detalj: hva mangler → skjema
@@ -340,7 +342,7 @@ try {
   const dieselCard = nb(await pA.locator(`li[data-listing="${D.diesel}"]`).evaluate((x) => x.textContent ?? ""));
   check("preview: kortene viser estimat/scenarier/ikke beregnet — ingen med positivt budsjettutfall; diesel-kortet viser estimatet merket «ikke validert»", cardStates.length >= 100 && cardStates.every((c) => c.p === "false") && cardStates.some((c) => c.s === "estimate") && cardStates.some((c) => c.s === "scenarios") && dieselCard.includes(`Estimat — ikke validert: ${nok(exD.cash)}`));
   const prev2 = await body(pA);
-  check("preview: budsjettvurderingen er fortsatt «ikke beregnet» og uten positivt språk/varsel", prev2.includes("Innkjøpskostnad til Norge er ikke beregnet") && !POSITIVE_WORDS.test(scrub(prev2)));
+  check("preview: budsjettvurderingen er fortsatt «ikke beregnet» og uten positivt språk/varsel", prev2.includes("innkjøpskostnad til Norge: ikke beregnet") && !POSITIVE_WORDS.test(scrub(prev2)));
   await shot(pA, "09-preview-med-estimater");
 
   // =============================================================== manglende opplysninger (diesel3): delvis lagring → ikke estimat; hva mangler lenker til felt

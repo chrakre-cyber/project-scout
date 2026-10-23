@@ -80,8 +80,6 @@ export const SOURCE_NOTE: Record<string, string> = {
   unrepresentable: "Verdien kan ikke gjengis sikkert",
 };
 
-/** Tekst for budsjettstatus som ikke er beregnet. Brukes bare når ingen kostnadsvurdering finnes. */
-export const BUDGET_NOT_CALCULATED = "Innkjøpskostnad til Norge er ikke beregnet. Annonseprisen er ikke total innkjøpskostnad, og det er ikke vurdert om bilen holder seg innenfor budsjettet.";
 
 /** Kandidatfelt → norsk navn (forklaringene fra kandidatadapteren bruker interne feltnavn). */
 export const CANDIDATE_FIELD_LABEL: Record<string, string> = {
@@ -141,13 +139,16 @@ export const ECONOMICS_LABELS = {
 export const ECONOMICS_NOT_BUDGET = "Dette er ikke en budsjettvurdering. Estimater, nedre grenser og scenarier gir aldri «innenfor budsjett», fullt treff eller varsel.";
 export const ECONOMICS_RIGHTS_TEXT = "Kilden gir ikke Merovo rett til å beregne eller vise avledet innkjøpskostnad. Ingen tall er beregnet eller vist.";
 
+/** PILOT-002: 0 er aldri en plassholder for ukjent; en «nedre grense» på 0 sier ingenting og vises ikke som beløp. */
+export const isZeroNok = (nok: string): boolean => /^0+(\.0+)?$/.test(nok);
+
 /** Overskriftstekst for en visningsmodell. Eneste sted tekst settes sammen av etikett + beløp. */
 export function economicsHeadline(v: EconomicsView): string {
   switch (v.status) {
     case "unavailable": return ECONOMICS_LABELS.rights_not_granted;
     case "not_calculated": return ECONOMICS_LABELS.not_calculated;
     case "estimate": return v.landed.kind === "value" ? `${ECONOMICS_LABELS.estimate_not_validated}: ${formatNokString(v.landed.nok)}` : ECONOMICS_LABELS.estimate_not_validated;
-    case "lower_bound": return v.landed.kind === "lower_bound" ? ECONOMICS_LABELS.incomplete_lower_bound.replace("{amount}", formatNokString(v.landed.minimumNok)) : ECONOMICS_LABELS.not_calculated;
+    case "lower_bound": return v.landed.kind === "lower_bound" && !isZeroNok(v.landed.minimumNok) ? ECONOMICS_LABELS.incomplete_lower_bound.replace("{amount}", formatNokString(v.landed.minimumNok)) : ECONOMICS_LABELS.not_calculated;
     case "scenarios": return ECONOMICS_LABELS.scenarios;
     case "validated": return v.landed.kind === "value" ? `${ECONOMICS_LABELS.validated}: ${formatNokString(v.landed.nok)}` : ECONOMICS_LABELS.validated;
   }
@@ -248,6 +249,16 @@ export const LINE_TREATMENT_TEXT = {
   mapped_to_input: "inngår i beregningen (telles én gang)", added_to_total: "lagt til som valgt kostnad", unmapped_unknown_scope: "omfang ikke bekreftet",
   unknown_amount: "beløp ukjent", unsupported: "støttes ikke (ikke regnet med)", not_included: "ikke inkludert i budsjettet",
 } as const;
+
+/**
+ * PILOT-002: søkelinjens behandling, men uten å motsi motoren. En søkelinje (f.eks. transport 8 000 kr ekskl. mva.) kan være «støttes ikke» som SØKELINJE (ingen mva.-regel for tillegg ⇒ ikke lagt til),
+ * mens motoren allerede har en egen, oppgitt transportpost (forhandleropplysning/demoforutsetning) som er med i estimatet. Teksten skiller disse: linjen er ikke brukt, transporten i estimatet er oppgitt separat.
+ */
+export const SEARCH_LINE_ENGINE_TRANSPORT_NOTE = "ikke brukt fra søket (støttes ikke). Transporten som er med i estimatet er oppgitt separat i forhandleropplysningene";
+export function searchLineText(row: { kind: string; treatment: keyof typeof LINE_TREATMENT_TEXT }, engineTransportIncluded: boolean): string {
+  if (row.kind === "transport" && engineTransportIncluded && (row.treatment === "unsupported" || row.treatment === "unknown_amount" || row.treatment === "unmapped_unknown_scope")) return SEARCH_LINE_ENGINE_TRANSPORT_NOTE;
+  return LINE_TREATMENT_TEXT[row.treatment];
+}
 
 // ---------------------------------------------------------------- ECON-006a: forklaring av beløp og usikkerhet (faste tekster)
 import type { BasisKey, BasisSummaryKey, FormFieldKey, RowId, RowState, UncertaintyCategory } from "@/domain/search-economics";
@@ -443,6 +454,6 @@ export const SUMMARY_MISSING_INTRO = "Mangler";
 export const SUMMARY_MISSING_MORE = "m.fl.";
 export const SUMMARY_MISSING_DETAIL_TITLE = "Dette mangler for å beregne";
 export const SUMMARY_MISSING_REFINE_TITLE = "Dette gjør estimatet sikrere";
-/** Erstatter «Innkjøpskostnad … er ikke beregnet»-notisen når et beløp faktisk vises (ellers ville den motsagt estimatet). Budsjettvurderingen er fortsatt ikke gjort. */
+/** PILOT-002: den ENESTE budsjettnotisen (kort, detalj og sidebanner), gyldig i alle økonomitilstander. Den påstår aldri at innkjøpskostnaden «ikke er beregnet» — den tilstanden eies av sammendraget (`SUMMARY_UNAVAILABLE_HEADLINE`). */
 export const SUMMARY_BUDGET_NOTE = "Annonseprisen er ikke total innkjøpskostnad. Budsjettvurdering er ikke gjort.";
 
