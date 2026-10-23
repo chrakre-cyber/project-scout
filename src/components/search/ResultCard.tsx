@@ -7,8 +7,8 @@ import { Explanation } from "@/components/search/Explanation";
 import { BODY_LABEL, FUEL_LABEL, TRANSMISSION_LABEL, formatFirstRegistration, formatListingPrice, formatMileage, formatPriceBasis } from "@/lib/format";
 import { fieldText, fieldValue } from "@/lib/display-text";
 import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
-import { summaryShowsAmount, toAcquisitionSummary } from "@/domain/search-economics";
-import { BUDGET_NOT_CALCULATED, SUMMARY_BUDGET_NOTE } from "@/lib/search-labels";
+import { toAcquisitionSummary } from "@/domain/search-economics";
+import { SUMMARY_BUDGET_NOTE } from "@/lib/search-labels";
 import type { DisplayItem } from "@/server/search-display";
 
 /**
@@ -18,7 +18,6 @@ import type { DisplayItem } from "@/server/search-display";
 export function ResultCard({ item, draftId, version, expanded = false }: { item: DisplayItem; draftId: string; version: number; expanded?: boolean }) {
   const { listing: l, assessment: a } = item;
   const summary = toAcquisitionSummary(item.economics);
-  const amountShown = summaryShowsAmount(summary);
   const status = a.vehicle.status;
   const title = l.title.state === "value" ? `${l.title.value.make} ${l.title.value.model}${l.title.value.variant ? ` · ${l.title.value.variant}` : ""}` : fieldText(l.title, () => "");
   return (
@@ -57,9 +56,9 @@ export function ResultCard({ item, draftId, version, expanded = false }: { item:
             {l.price.state === "value"
               ? (() => { const price = formatListingPrice(l.price.value); return (<><p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span><strong className="text-base">{price.text}</strong>{price.note && <span className="text-muted"> ({price.note})</span>}</p><p className="text-xs text-muted">{formatPriceBasis(l.price.value)}</p></>); })()
               : <p><span className="text-muted">Annonsepris (ikke innkjøpskostnad): </span>{fieldText(l.price, () => "")}</p>}
-            <p className="mt-1 text-xs" data-testid="budget-note">{amountShown ? SUMMARY_BUDGET_NOTE : BUDGET_NOT_CALCULATED}</p>
+            <p className="mt-1 text-xs" data-testid="budget-note">{SUMMARY_BUDGET_NOTE}</p>
             <AcquisitionSummary summary={summary} compact />
-            <EconomicsNote economics={item.economics} compact />
+            <EconomicsNote economics={item.economics} summary={summary} compact />
           </div>
           <div className="flex flex-wrap items-center justify-between gap-2">
             <SyntheticChip text={l.attribution} />

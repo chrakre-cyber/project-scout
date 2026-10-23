@@ -22,7 +22,7 @@ import { policyAllowing } from "@/domain/display-policy";
 import { REGISTERED_PROFILES, SYNTHETIC_DISPLAY_POLICY, rightsForSource, type ProviderRightsProfile } from "@/domain/provider-rights";
 import { addNok, toAcquisitionSummary, toEconomicsView, type AcquisitionSummary as Summary, type DealerInputV1, type EconomicsView } from "@/domain/search-economics";
 import type { NormalizedListing } from "@/domain/types";
-import { SUMMARY_BUDGET_NOTE, BUDGET_NOT_CALCULATED } from "@/lib/search-labels";
+import { SUMMARY_BUDGET_NOTE } from "@/lib/search-labels";
 import * as L from "@/lib/search-labels";
 import type { MarketplaceProvider } from "@/providers/marketplace";
 import { storedKey } from "@/server/dealer-economics";
@@ -315,7 +315,7 @@ describe("7. syntetisk demo: BMW iX3-søket virker, med demomerking og uten tall
       expect(html).not.toContain('data-testid="acq-total"');
       expect(text(frag(html))).not.toMatch(/\d\s?kr/);
       expect(text(html)).toMatch(/Syntetisk/i); // demomerkingen er uendret
-      expect(text(html)).toContain(BUDGET_NOT_CALCULATED.slice(0, 40)); // ingen estimat ⇒ den opprinnelige budsjettnotisen står
+      expect(text(html)).toContain(SUMMARY_BUDGET_NOTE); // PILOT-002: samme budsjettnotis i alle tilstander; «ikke beregnet» sies bare av sammendraget
     }
   });
 
@@ -350,7 +350,6 @@ describe("7. syntetisk demo: BMW iX3-søket virker, med demomerking og uten tall
     expect(text(frag(html))).toContain("Estimert total til Norge: 445 558 – 520 558 kr");
     expect(text(html)).toMatch(/Syntetisk/i);
     expect(html).toContain(SUMMARY_BUDGET_NOTE); // beløp vist ⇒ notisen motsier ikke estimatet
-    expect(html).not.toContain(BUDGET_NOT_CALCULATED);
   });
 });
 

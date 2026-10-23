@@ -10,10 +10,10 @@ import { DemoEnrichment } from "@/components/search/DemoEnrichment";
 import { ListingGallery } from "@/components/search/ListingGallery";
 import { ListingFacts } from "@/components/search/ListingFacts";
 import { PUBLIC_ID_PATTERN } from "@/domain/display-policy";
-import { summaryShowsAmount, toAcquisitionSummary } from "@/domain/search-economics";
+import { toAcquisitionSummary } from "@/domain/search-economics";
 import { fieldValue } from "@/lib/display-text";
 import { mustSummary, whyShown, wishSummary } from "@/lib/search-explain";
-import { BLOCKED_TEXT, DF_SAVED, BUDGET_NOT_CALCULATED, SUMMARY_BUDGET_NOTE, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
+import { BLOCKED_TEXT, DF_SAVED, SUMMARY_BUDGET_NOTE, CANDIDATE_FIELD_LABEL, SOURCE_NOTE, VEHICLE_STATUS_LABEL } from "@/lib/search-labels";
 import { getDraft } from "@/server/search-drafts";
 import { loadEconomicsContext } from "@/server/dealer-economics-context";
 import { detailForDisplay } from "@/server/search-display";
@@ -74,12 +74,12 @@ export default async function ListingDetailPage({ params, searchParams }: { para
             <p className="mt-0.5 text-base" data-testid="why-shown">{whyShown(assessment.vehicle)}</p>
             <p className="mt-1 text-sm text-muted" data-testid="criteria-summary"><strong>Krav:</strong> {mustSummary(assessment.vehicle)} <strong>Ønsker:</strong> {wishSummary(assessment.vehicle)}</p>
           </div>
-          <p className="rounded-lg bg-sand-soft px-3 py-2 text-sm" data-testid="budget-note">{summaryShowsAmount(summary) ? SUMMARY_BUDGET_NOTE : BUDGET_NOT_CALCULATED}</p>
+          <p className="rounded-lg bg-sand-soft px-3 py-2 text-sm" data-testid="budget-note">{SUMMARY_BUDGET_NOTE}</p>
         </div>
       </div>
       {sp.msg === "econ_saved" && <p role="status" className="rounded-lg border border-ok/40 bg-[#e5f0e8] p-3 text-sm text-ok" data-testid="econ-saved">{DF_SAVED}</p>}
       <AcquisitionSummary summary={summary} formHref={formHref} />
-      <section aria-label="Anslått innkjøpskostnad til Norge — detaljert beregning"><EconomicsNote economics={economics} dealerFormHref={formHref} /></section>
+      <section aria-label="Anslått innkjøpskostnad til Norge — detaljert beregning"><EconomicsNote economics={economics} summary={summary} dealerFormHref={formHref} /></section>
       <section className="rounded-2xl border border-sand bg-paper p-4 sm:p-5" aria-labelledby="facts">
         <h2 id="facts" className="mb-2 text-lg font-bold">Opplysninger fra annonsen</h2>
         <ListingFacts listing={listing} />

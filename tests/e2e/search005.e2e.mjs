@@ -233,7 +233,7 @@ try {
   check("GLS: ingen fullstendige treff, ærlig forklaring på hva demokilden mangler",
     (await pA.locator('[data-count="match"]').innerText()) === "0" && prev.includes("Ingen biler oppfyller alle kravene") && /Demokilden kan ikke oppgi:[^\n]*Modellår[^\n]*Antall seter/.test(prev), prev.slice(0, 600));
   check("GLS: viser at innkjøpskostnad til Norge ikke er beregnet; ingen total eller budsjettreff påstås",
-    prev.includes("Innkjøpskostnad til Norge er ikke beregnet") && !/(^|\n)\s*(Innenfor budsjett|Innenfor avvik|Over budsjett|Budsjettreff|Fullt treff)/i.test(prev) && !/Total innkjøpskostnad[^.\n]*\d/.test(prev));
+    prev.includes("innkjøpskostnad til Norge: ikke beregnet") && !/(^|\n)\s*(Innenfor budsjett|Innenfor avvik|Over budsjett|Budsjettreff|Fullt treff)/i.test(prev) && !/Total innkjøpskostnad[^.\n]*\d/.test(prev));
   check("GLS: resultatet sier at det beregnes nå og ikke lagres", prev.includes("lagres ikke") && prev.includes("lagret versjon 1"));
   check("GLS: dekning oppgis (alle vurdert, ikke avkortet)", (() => { const m = /Vurderte (\d+) av (\d+) annonser/.exec(prev); return !!m && m[1] === m[2] && Number(m[1]) >= 109; })() && prev.includes("Hele demokilden er hentet"));
   await shot(pA, "05-resultat-gls");
@@ -258,7 +258,7 @@ try {
     check("DATA-002C: resultatlenker og data-listing bruker bare opake Merovo-id-er (m1_…), aldri leverandørens id (syn-/demo-/dvar-)",
       hrefs.length >= 10 && hrefs.every((h) => /\/preview\/m1_[A-Za-z0-9_-]{24}\?v=\d+$/.test(h)) && attrs.every((a) => /^m1_[A-Za-z0-9_-]{24}$/.test(a)) && !(await pA.content()).match(/\b(syn|demo|dvar)-\d{3}\b/));
   }
-  check("treff: sier at innkjøpskostnad til Norge ikke er beregnet", matchText.includes("Innkjøpskostnad til Norge er ikke beregnet"));
+  check("treff: sier at innkjøpskostnad til Norge ikke er beregnet", matchText.includes("innkjøpskostnad til Norge: ikke beregnet"));
   check("DEV-006C: kort viser etiketten «Syntetiske demodata – ikke ekte leverandørdata», hvorfor vist og kravs-/ønskesammendrag",
     nb(await firstMatch.locator('[data-testid="source-label"]').innerText()).toLowerCase().includes("syntetiske demodata – ikke ekte leverandørdata")
     && (await firstMatch.locator('[data-testid="why-shown"]').innerText()).includes("Alle krav er oppfylt")
@@ -279,7 +279,7 @@ try {
   await pA.waitForSelector('[data-testid="detail-status"]');
   const det = nb(await pA.locator("body").innerText());
   check("detalj: syntetisk merking, ingen kilde-URL som lenke, ubetrodd tekst vist som tekst, ikke-beregnet kostnad",
-    det.includes("Syntetisk demoannonse") && det.includes("Innkjøpskostnad til Norge er ikke beregnet") && (await pA.locator('a[href^="http"]').count()) === 0);
+    det.includes("Syntetisk demoannonse") && det.includes("innkjøpskostnad til Norge: ikke beregnet") && (await pA.locator('a[href^="http"]').count()) === 0);
   await shot(pA, "08-detalj");
 
   // --- gjenåpne og endre: stabile kostnads-id-er, valuta/ukjent/0, datapresisjon, fritekstvariant

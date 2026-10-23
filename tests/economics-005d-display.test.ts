@@ -15,7 +15,7 @@ import type { NormalizedListing } from "@/domain/types";
 import type { MarketplaceProvider } from "@/providers/marketplace";
 import {
   ECONOMICS_HEADING, ECONOMICS_LABELS, ECONOMICS_NOT_BUDGET, ECONOMICS_NOTE_TEXT, ECONOMICS_REASON_TEXT, ECONOMICS_RIGHTS_TEXT, DEALER_INPUT_TEXT, LINE_TREATMENT_TEXT,
-  BUDGET_NOT_CALCULATED, economicsHeadline, economicsReasonText, formatNokString, staleReasonText,
+  economicsHeadline, economicsReasonText, formatNokString, staleReasonText,
 } from "@/lib/search-labels";
 import { loadStoredInputsForSearch, storedKey, type DealerEconomicsStore, type DealerInputRow } from "@/server/dealer-economics";
 import { detailForDisplay, previewForDisplay, type DisplayItem, type EconomicsContext } from "@/server/search-display";
@@ -227,7 +227,7 @@ describe("ingen positive budsjettutfall eller varsler fra økonomivisningen", ()
 
 describe("faste etiketter og markup", () => {
   const POSITIVE = [/innenfor budsjett/i, /innenfor avvik/i, /fullt treff/i, /holder (seg )?(innenfor )?budsjett/i, /anbefal/i, /god handel/i, /lønnsom/i, /gunstig/i, /✓|✔/];
-  const stripNegations = (h: string) => h.split(ECONOMICS_NOT_BUDGET).join("").split(BUDGET_NOT_CALCULATED).join("");
+  const stripNegations = (h: string) => h.split(ECONOMICS_NOT_BUDGET).join("");
   const allTexts = () => [...Object.values(ECONOMICS_LABELS), ECONOMICS_HEADING, ECONOMICS_RIGHTS_TEXT, ...Object.values(ECONOMICS_REASON_TEXT), ...Object.values(ECONOMICS_NOTE_TEXT), ...Object.values(DEALER_INPUT_TEXT), ...Object.values(LINE_TREATMENT_TEXT), staleReasonText("x")];
   it("etikettene er faste konstanter (snapshot)", () => {
     expect(ECONOMICS_LABELS).toEqual({
